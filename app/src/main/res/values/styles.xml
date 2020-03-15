@@ -1,4 +1,6 @@
 <resources>
+    <!-- #TODO: EditText styles {font , textSize, textColor,....} -->
+    <!-- #TODO: Textview styles {font , textSize, textColor,....} -->
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
