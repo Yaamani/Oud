@@ -5,31 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainLoginFragment"
-    android:background="@drawable/gradient_actual_login_color"
+    android:background="@drawable/gradient_login_color"
     android:orientation="vertical"
     android:gravity="center_horizontal"
 
     >
 
     <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text=""
+
+        />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
         android:layout_marginTop="20dp"
-       
+
 
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="a good phrase to fill this place."
-        android:textSize="25dp"
-        android:textStyle="italic"
-        android:textColor="#000000"
-        android:gravity="center"
+        android:text=""
 
         />
 
@@ -65,6 +68,14 @@
         android:layout_marginBottom="10dp"
         android:textSize="15sp"
         style="?android:attr/borderlessButtonStyle"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text=""
+
         />
 
 
