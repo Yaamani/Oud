@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainLoginFragment"
+    android:background="@drawable/gradient_actual_login_color"
+
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="a good phrase to fill this place."
+        android:textSize="25dp"
+        android:textStyle="italic"
+        android:textColor="#000000"
+
+        />
+    <Button
+        android:id="@+id/Btn_to_login_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/login"
+        android:layout_marginBottom="10dp"
+        android:textSize="15sp"
+        style="?android:attr/borderlessButtonStyle"
+        />
+
+    <Button
+        android:id="@+id/Btn_to_facebook_login_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/Btn_to_login_fragment"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="@string/connect_with_facebook"
+        android:background="@drawable/rounded_edge_button"
+        android:backgroundTint="@color/paleOrange"
+
+        />
+
+    <Button
+        android:id="@+id/Btn_to_signup_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/Btn_to_facebook_login_fragment"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="@string/sign_up"
+        android:background="@drawable/rounded_edge_button"
+        android:textColor="@color/paleOrange"
+        />
+
+
+
+</RelativeLayout>
