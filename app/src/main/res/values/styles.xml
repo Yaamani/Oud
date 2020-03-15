@@ -11,7 +11,9 @@
         <!--<item name="android:fontFamily">@font/hk_grotesk_semi_bold</item>-->
         <!--<item name="android:fontFamily">@font/hk_grotesk_bold</item>-->
         <!--<item name="android:fontFamily">@font/sk_modernist_regular</item>-->
-        <item name="android:fontFamily">@font/sk_modernist_bold</item>
+        <!--<item name="android:fontFamily">@font/sk_modernist_bold</item>-->
+        <item name="android:fontFamily">@font/gravity_bold</item>
+        <!--<item name="android:fontFamily">@font/gravity_book</item>-->
 
 
 
