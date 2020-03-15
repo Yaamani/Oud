@@ -17,5 +17,14 @@
     <fragment
         android:id="@+id/actualLoginFragment"
         android:name="com.example.oud.ActualLoginFragment"
-        android:label="ActualLoginFragment" />
+        android:label="ActualLoginFragment" >
+        <action
+            android:id="@+id/action_actualLoginFragment_to_forgetPasswordFragment"
+            app:destination="@id/forgetPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgetPasswordFragment"
+        android:name="com.example.oud.ForgetPasswordFragment"
+        android:label="fragment_forget_password"
+        tools:layout="@layout/fragment_forget_password" />
 </navigation>

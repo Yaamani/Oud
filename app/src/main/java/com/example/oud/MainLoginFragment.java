@@ -24,36 +24,19 @@ public class MainLoginFragment extends Fragment {
 
     //private static final String ARG_PARAM1 = "param1";
     //private static final String ARG_PARAM2 = "param2";
-    private Button loginBtn;
-    private Button signupBtn;
+    private Button toLoginBtn;
+    private Button toSignupBtn;
     private Button ConnectWithFacebookBtn;
 
     // TODO: Rename and change types of parameters
 
-    //private String mParam1;
-    //private String mParam2;
+
 
     public MainLoginFragment() {
         // Required empty public constructor
     }
 
-    /*
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainLoginFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    //public static MainLoginFragment newInstance(String param1, String param2) {
-    //   MainLoginFragment fragment = new MainLoginFragment();
-    //    Bundle args = new Bundle();
-    //    args.putString(ARG_PARAM1, param1);
-    //    args.putString(ARG_PARAM2, param2);
-    //    fragment.setArguments(args);
-    //    return fragment;
-    //}
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,9 +51,11 @@ public class MainLoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //TODO: add a toolbar to this fragment
+        //setToolbar();
         View v = inflater.inflate(R.layout.fragment_main_login, container, false);
-        loginBtn = v.findViewById(R.id.Btn_to_login_fragment);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        toLoginBtn = v.findViewById(R.id.Btn_to_login_fragment);
+        toLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 NavController navController =  Navigation.findNavController(view);
@@ -79,6 +64,13 @@ public class MainLoginFragment extends Fragment {
         });
 
 
+
+
         return v;
+    }
+
+    private void setToolbar(){
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
+
     }
 }

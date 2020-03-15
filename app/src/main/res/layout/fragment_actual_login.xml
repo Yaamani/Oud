@@ -14,7 +14,7 @@
 
 
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:textColor="#F9F9F9"
+        android:textSize="20dp"
 
 
         />
@@ -48,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:inputType="textPassword"
+        android:textSize="20dp"
 
 
         />
@@ -64,6 +66,7 @@
         />
 
     <Button
+        android:id="@+id/btn_to_forget_password"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:layout_gravity="center"
