@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainLoginFragment_to_actualLoginFragment"
             app:destination="@id/actualLoginFragment" />
+        <action
+            android:id="@+id/action_mainLoginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
     <fragment
         android:id="@+id/actualLoginFragment"
@@ -27,4 +30,8 @@
         android:name="com.example.oud.ForgetPasswordFragment"
         android:label="fragment_forget_password"
         tools:layout="@layout/fragment_forget_password" />
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.oud.SignupFragment"
+        android:label="SignupFragment" />
 </navigation>

@@ -12,5 +12,17 @@
 
 
     </style>
+    <style name="EditTextLogin" parent="AppTheme">
+        <item name="android:textSize">20dp</item>
+
+    </style>
+    <style name="TextViewLoginHeader" parent="AppTheme">
+        <item name="android:textSize">25dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#191815</item>
+
+
+    </style>
 
 </resources>
+

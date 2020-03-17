@@ -58,8 +58,15 @@ public class MainLoginFragment extends Fragment {
         toLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavController navController =  Navigation.findNavController(view);
-                navController.navigate(R.id.action_mainLoginFragment_to_actualLoginFragment);
+
+                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_actualLoginFragment);
+            }
+        });
+        toSignupBtn = v.findViewById(R.id.Btn_to_signup_fragment);
+        toSignupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_signupFragment);
             }
         });
 
