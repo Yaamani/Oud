@@ -10,6 +10,8 @@ import androidx.navigation.ui.NavigationUI;
 
 public class UserActivity extends AppCompatActivity {
 
+    private static final String TAG = UserActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

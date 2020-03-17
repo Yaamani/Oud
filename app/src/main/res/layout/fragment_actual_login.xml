@@ -56,14 +56,14 @@
 
 
     <Button
+        android:id="@+id/btn_login"
         android:layout_width="100sp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/login"
-        android:background="@drawable/rounded_edge_button"
-        android:textColor="@color/paleOrange"
         android:layout_marginBottom="10dp"
-        />
+        android:background="@drawable/rounded_edge_button"
+        android:text="@string/login"
+        android:textColor="@color/paleOrange" />
 
     <Button
         android:id="@+id/btn_to_forget_password"

@@ -3,6 +3,9 @@
 *.ap_
 *.aab
 
+# Macos related files (probably)
+.DS_Store
+
 # Files for the ART/Dalvik VM
 *.dex
 

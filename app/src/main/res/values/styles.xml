@@ -16,6 +16,7 @@
         <!--<item name="android:fontFamily">@font/gravity_book</item>-->
         <!--<item name="android:fontFamily">@font/gothic_a1_bold</item>-->
         <item name="android:fontFamily">@font/gothic_a1_extra_bold</item>
+        <!--<item name="android:fontFamily">@font/gothic_a1_black</item>-->
 
 
 
