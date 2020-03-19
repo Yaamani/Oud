@@ -21,7 +21,7 @@ public class LoggedInUser {
     private boolean verified;
     private String type;
 
-    @SerializedName("com.example.oud.api.Artist")
+    @SerializedName("Artist")
     private Artist artist;
 
     public String get_id() {
