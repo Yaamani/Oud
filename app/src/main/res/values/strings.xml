@@ -10,4 +10,8 @@
     <string name="login">login</string>
     <string name="sign_up">sign up</string>
     <string name="connect_with_facebook">connect with facebook</string>
+
+    <string name="facebook_app_id">2977054005685077</string>
+    <string name="fb_login_protocol_scheme">fb2977054005685077</string>
+
 </resources>
