@@ -1,5 +1,6 @@
 package com.example.oud;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.oud.api.LoggedInUser;
+import com.example.oud.api.OudApi;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /*
@@ -27,6 +39,8 @@ public class MainLoginFragment extends Fragment {
     private Button toLoginBtn;
     private Button toSignupBtn;
     private Button ConnectWithFacebookBtn;
+    private final String BASE_URL = "http://example.com";
+    OudApi oudApi;
 
     // TODO: Rename and change types of parameters
 
@@ -54,6 +68,44 @@ public class MainLoginFragment extends Fragment {
         //TODO: add a toolbar to this fragment
         //setToolbar();
         View v = inflater.inflate(R.layout.fragment_main_login, container, false);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        oudApi = retrofit.create(OudApi.class);
+
+
+        SharedPreferences prefs = v.getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        if(prefs.contains("token")){
+            //there is a stored token in the shared preferences
+            String token = prefs.getString("token","000000");
+            Call<LoggedInUser> call = oudApi.getUserProfile(token);
+            call.enqueue(new Callback<LoggedInUser>() {
+                @Override
+                public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
+                    if(response.isSuccessful()){
+                        //todo go to homepage
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<LoggedInUser> call, Throwable t) {
+                    // internet issue
+                }
+            });
+
+
+
+
+
+
+        }
+
+
+
+
+
         toLoginBtn = v.findViewById(R.id.Btn_to_login_fragment);
         toLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,6 +2,8 @@ package com.example.oud.api;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -27,6 +29,9 @@ public interface OudApi {
 
     @POST("/auth/google")
     Call<LoginResponse> authenticateWithGoogle(@Body AccessToken accessToken);
+
+    @GET("/me")
+    Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
 
 
 
