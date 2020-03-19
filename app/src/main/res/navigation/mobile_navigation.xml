@@ -12,14 +12,33 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.oud.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_search"
+        android:name="com.example.oud.ui.search.SearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.oud.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_library"
+        android:name="com.example.oud.ui.library.LibraryFragment"
+        android:label="@string/title_library"
+        tools:layout="@layout/fragment_library" />
+
+    <fragment
+        android:id="@+id/navigation_premium"
+        android:name="com.example.oud.ui.premium.PremiumFragment"
+        android:label="@string/title_premium"
+        tools:layout="@layout/fragment_premium" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.oud.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/navigation_server_out_of_reach"
+        android:name="com.example.oud.ServerOutOfReachFragment"
+        tools:layout="@layout/fragment_server_out_of_reach"/>
+
+
 </navigation>
