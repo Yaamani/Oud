@@ -1,14 +1,17 @@
 package com.example.oud.api;
 
-public class Song {
-    private String id;
+public class Track {
+    private String _id;
     private String name;
     private String albumId;
     private String type;
     private String audioUrl;
+    private int duration;
+    private int views;
+    private ArtistPreview[] artists;
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
     public String getName() {
@@ -39,8 +42,15 @@ public class Song {
         return artists;
     }
 
-    public Song(String id, String name, String albumId, String type, String audioUrl, int duration, int views, ArtistPreview[] artists) {
-        this.id = id;
+    public Track(String _id,
+                 String name,
+                 String albumId,
+                 String type,
+                 String audioUrl,
+                 int duration,
+                 int views,
+                 ArtistPreview[] artists) {
+        this._id = _id;
         this.name = name;
         this.albumId = albumId;
         this.type = type;
@@ -49,8 +59,4 @@ public class Song {
         this.views = views;
         this.artists = artists;
     }
-
-    private int duration;
-    private int views;
-    private ArtistPreview[] artists;
 }

@@ -7,7 +7,7 @@ public class Artist {
     private String[] images;
     private String name;
     private String bio;
-    private Song[] popularSongs;
+    private Track[] popularSongs;
     private String type;
 
     public String get_id() {
@@ -34,7 +34,7 @@ public class Artist {
         return bio;
     }
 
-    public Song[] getPopularSongs() {
+    public Track[] getPopularSongs() {
         return popularSongs;
     }
 
@@ -42,7 +42,7 @@ public class Artist {
         return type;
     }
 
-    public Artist(String _id, int followersCount, String[] genres, String[] images, String name, String bio, Song[] popularSongs, String type) {
+    public Artist(String _id, int followersCount, String[] genres, String[] images, String name, String bio, Track[] popularSongs, String type) {
         this._id = _id;
         this.followersCount = followersCount;
         this.genres = genres;

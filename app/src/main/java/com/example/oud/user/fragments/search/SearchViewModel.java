@@ -1,4 +1,4 @@
-package com.example.oud.ui.search;
+package com.example.oud.user.fragments.search;
 
 import androidx.lifecycle.ViewModel;
 

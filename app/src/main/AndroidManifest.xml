@@ -14,7 +14,7 @@
         android:supportsRtl="true"
     android:theme="@style/AppTheme" >
         <activity
-            android:name=".UserActivity"
+            android:name=".user.UserActivity"
             android:label="@string/title_activity_user">
         </activity>
         <activity android:name=".MainActivity"

@@ -7,38 +7,34 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.oud.ui.home.HomeFragment"
+        android:name="com.example.oud.user.fragments.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"
+        />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.oud.ui.search.SearchFragment"
+        android:name="com.example.oud.user.fragments.search.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_library"
-        android:name="com.example.oud.ui.library.LibraryFragment"
+        android:name="com.example.oud.user.fragments.library.LibraryFragment"
         android:label="@string/title_library"
         tools:layout="@layout/fragment_library" />
 
     <fragment
         android:id="@+id/navigation_premium"
-        android:name="com.example.oud.ui.premium.PremiumFragment"
+        android:name="com.example.oud.user.fragments.premium.PremiumFragment"
         android:label="@string/title_premium"
         tools:layout="@layout/fragment_premium" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.oud.ui.settings.SettingsFragment"
+        android:name="com.example.oud.user.fragments.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
-
-    <fragment
-        android:id="@+id/navigation_server_out_of_reach"
-        android:name="com.example.oud.ServerOutOfReachFragment"
-        tools:layout="@layout/fragment_server_out_of_reach"/>
 
 
 </navigation>

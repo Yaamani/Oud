@@ -12,12 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import com.example.oud.api.*;
-import com.google.gson.Gson;
+import com.example.oud.user.UserActivity;
 
 import android.telephony.TelephonyManager;
 
-
-import android.content.Context;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,7 +55,7 @@ public class ActualLoginFragment extends Fragment {
         //telephonyManager = (TelephonyManager) v.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 
         toForgetPasswordBtn = v.findViewById(R.id.btn_to_forget_password);
-        loginBtn = v .findViewById(R.id.Btn_login);
+        loginBtn = v .findViewById(R.id.btn_login);
         toForgetPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,8 +93,8 @@ public class ActualLoginFragment extends Fragment {
                             //TODO: go to homepage and forward the user data & token
                         }
                         else if (response.errorBody()!=null){
-                            Gson gson= new Gson();
-                            StatusMessageResponse errorMessage = gson.fromJson(response.errorBody().charStream(),StatusMessageResponse.class);
+                            /*Gson gson= new Gson();
+                            StatusMessageResponse errorMessage = gson.fromJson(response.errorBody().charStream(),StatusMessageResponse.class);*/
                             //TODO: show the error message
                         }
                     }

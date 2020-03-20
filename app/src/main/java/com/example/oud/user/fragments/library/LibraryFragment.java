@@ -1,4 +1,4 @@
-package com.example.oud.ui.search;
+package com.example.oud.user.fragments.library;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -14,24 +14,24 @@ import android.view.ViewGroup;
 
 import com.example.oud.R;
 
-public class SearchFragment extends Fragment {
+public class LibraryFragment extends Fragment {
 
-    private SearchViewModel mViewModel;
+    private LibraryViewModel mViewModel;
 
-    public static SearchFragment newInstance() {
-        return new SearchFragment();
+    public static LibraryFragment newInstance() {
+        return new LibraryFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(LibraryViewModel.class);
         // TODO: Use the ViewModel
     }
 
