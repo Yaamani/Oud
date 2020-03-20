@@ -30,7 +30,6 @@ public class ActualLoginFragment extends Fragment {
     private EditText usernameEditText;
     private EditText passwordEditText;
     TelephonyManager telephonyManager;
-    private final String BASE_URL = "http://example.com";
     OudApi oudApi;
 
 
@@ -81,7 +80,7 @@ public class ActualLoginFragment extends Fragment {
 
                 LoginBody loginBody = new LoginBody(device,new LoginUserInfo(username,password));
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(BASE_URL)
+                        .baseUrl(MainActivity.BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 oudApi = retrofit.create(OudApi.class);

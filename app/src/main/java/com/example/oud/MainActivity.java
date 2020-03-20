@@ -12,6 +12,8 @@ import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String BASE_URL = "http://example.com";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

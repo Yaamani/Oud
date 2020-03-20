@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.R;
 import com.example.oud.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 import com.example.oud.user.fragments.home.HomeFragment;
@@ -52,10 +53,13 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
         //holder.mTeamLogo.setImageDrawable(mLogos.get(position));
+        DrawableCrossFadeFactory factory =
+                new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
         Glide.with(mContext)
                 .load(mIcons.get(position))
                 .placeholder(R.drawable.ic_loading)
-                .transition(DrawableTransitionOptions.withCrossFade())
+                .transition(DrawableTransitionOptions.withCrossFade(factory))
                 .into(holder.mIcon);
 
         holder.mTitle.setText(mTitles.get(position));
