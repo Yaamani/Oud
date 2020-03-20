@@ -1,4 +1,4 @@
-§package com.example.oud.user.fragments.premium;
+package com.example.oud.user.fragments.premium;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oud.R;
+import com.example.oud.user.fragments.premium.PremiumViewModel;
 
 public class PremiumFragment extends Fragment {
 
