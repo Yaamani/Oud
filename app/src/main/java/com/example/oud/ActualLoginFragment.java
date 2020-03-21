@@ -80,7 +80,7 @@ public class ActualLoginFragment extends Fragment {
 
                 LoginBody loginBody = new LoginBody(device,new LoginUserInfo(username,password));
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(MainActivity.BASE_URL)
+                        .baseUrl(Constants.BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 oudApi = retrofit.create(OudApi.class);

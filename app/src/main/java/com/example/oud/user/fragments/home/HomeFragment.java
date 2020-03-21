@@ -1,7 +1,6 @@
 package com.example.oud.user.fragments.home;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.oud.Constants;
 import com.example.oud.R;
 import com.example.oud.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
@@ -27,9 +27,6 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
-
-    public static final int CATEGORIES_COUNT = 6;
-    public static final int HORIZONTAL_RECYCLERVIEW_ITEM_COUNT = 6;
 
     private ArrayList<String> mIcons;
     private ArrayList<String> mTitles;
@@ -46,7 +43,7 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         new Section(getContext(), this, homeViewModel.getRecentlyPlayedLiveData());
-        for (int i = 0; i < CATEGORIES_COUNT; i++) {
+        for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
             new Section(getContext(), this, homeViewModel.getCategoryLiveData(i));
         }
 
@@ -99,7 +96,7 @@ public class HomeFragment extends Fragment {
 
 
         mVerticalAdapter = new VerticalRecyclerViewAdapter(
-                this.getContext(), mIcons, mTitles, mInnerItemAdapters);
+                this.getContext(), mIcons, mTitles, mInnerItemAdapters, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
         recyclerView.setAdapter(mVerticalAdapter);
     }
 
