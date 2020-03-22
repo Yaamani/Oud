@@ -38,7 +38,7 @@ public class MainLoginFragment extends Fragment {
     //private static final String ARG_PARAM2 = "param2";
     private Button toLoginBtn;
     private Button toSignupBtn;
-    private Button ConnectWithFacebookBtn;
+    private Button connectWithFacebookBtn;
     private final String BASE_URL = "http://example.com";
     OudApi oudApi;
 
@@ -68,6 +68,60 @@ public class MainLoginFragment extends Fragment {
         //TODO: add a toolbar to this fragment
         //setToolbar();
         View v = inflater.inflate(R.layout.fragment_main_login, container, false);
+
+        initializeViews(v);
+        setButtonsOnClickListener();
+        checkSavedToken();
+
+
+
+
+
+        return v;
+    }
+
+
+    private void setToolbar(){
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
+
+    }
+
+    private void initializeViews(View v){
+        toLoginBtn = v.findViewById(R.id.Btn_to_login_fragment);
+        toSignupBtn = v.findViewById(R.id.Btn_to_signup_fragment);
+        connectWithFacebookBtn = v.findViewById(R.id.Btn_to_facebook_login_fragment);
+
+
+    }
+    private void setButtonsOnClickListener(){
+
+        toLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_actualLoginFragment);
+            }
+        });
+
+        toSignupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_signupFragment);
+            }
+        });
+
+        connectWithFacebookBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ConnectWithOtherServicesDialogFragment dialog = new ConnectWithOtherServicesDialogFragment() ;
+                dialog.show(getParentFragmentManager(),"a tag");
+            }
+        });
+
+    }
+
+    private void checkSavedToken(){
+        //checks if there is a saved token and if it gets the user's profile
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -75,7 +129,7 @@ public class MainLoginFragment extends Fragment {
         oudApi = retrofit.create(OudApi.class);
 
 
-        SharedPreferences prefs = v.getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         if(prefs.contains("token")){
             //there is a stored token in the shared preferences
             String token = prefs.getString("token","000000");
@@ -94,42 +148,8 @@ public class MainLoginFragment extends Fragment {
                     // internet issue
                 }
             });
-
-
-
-
-
-
         }
 
-
-
-
-
-        toLoginBtn = v.findViewById(R.id.Btn_to_login_fragment);
-        toLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_actualLoginFragment);
-            }
-        });
-        toSignupBtn = v.findViewById(R.id.Btn_to_signup_fragment);
-        toSignupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_mainLoginFragment_to_signupFragment);
-            }
-        });
-
-
-
-
-        return v;
-    }
-
-    private void setToolbar(){
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
 
     }
 }

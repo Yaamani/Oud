@@ -34,4 +34,12 @@
         android:id="@+id/signupFragment"
         android:name="com.example.oud.SignupFragment"
         android:label="SignupFragment" />
+    <fragment
+        android:id="@+id/connectWithOtherServicesDialogFragment"
+        android:name="com.example.oud.ConnectWithOtherServicesDialogFragment"
+        android:label="ConnectWithOtherServicesDialogFragment" >
+        <action
+            android:id="@+id/action_connectWithOtherServicesDialogFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
 </navigation>
