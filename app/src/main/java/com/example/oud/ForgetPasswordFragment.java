@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.example.oud.api.OudApi;
 
 
 /*
@@ -15,7 +18,9 @@ import android.view.ViewGroup;
  */
 public class ForgetPasswordFragment extends Fragment {
 
-
+    private Button getLinkBtn;
+    private final String BASE_URL = "http://example.com";
+    OudApi oudApi;
 
     public ForgetPasswordFragment() {
         // Required empty public constructor
@@ -33,7 +38,20 @@ public class ForgetPasswordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_forget_password, container, false);
+        View v = inflater.inflate(R.layout.fragment_forget_password, container, false);
+
+        return v;
+    }
+    private void initializeViews(View v){
+        getLinkBtn = v.findViewById(R.id.btn_forget_password_get_link);
+    }
+    private void setButtonsOnClickListeners(){
+
+        getLinkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 }
