@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.example.oud.api.*;
 import com.example.oud.user.UserActivity;
+import com.google.gson.Gson;
 
 import android.telephony.TelephonyManager;
 
@@ -72,7 +73,7 @@ public class ActualLoginFragment extends Fragment {
 
     private void initializeViews(View v) {
         toForgetPasswordBtn = v.findViewById(R.id.btn_to_forget_password);
-        loginBtn = v.findViewById(R.id.Btn_login);
+        loginBtn = v.findViewById(R.id.btn_login);
         usernameEditText = v.findViewById(R.id.text_login_username);
         passwordEditText = v.findViewById(R.id.text_login_password);
     }
@@ -108,7 +109,7 @@ public class ActualLoginFragment extends Fragment {
 
         LoginBody loginBody = new LoginBody(device, new LoginUserInfo(username, password));
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         oudApi = retrofit.create(OudApi.class);
