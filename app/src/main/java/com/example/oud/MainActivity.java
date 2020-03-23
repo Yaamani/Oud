@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide(); //hide the title bar
         setContentView(R.layout.activity_main);
         callbackManager = CallbackManager.Factory.create();//for facebook
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {

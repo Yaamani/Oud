@@ -2,6 +2,7 @@ package com.example.oud;
 
 
 import android.content.SharedPreferences;
+import android.net.ParseException;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import android.telephony.TelephonyManager;
 
 
 import android.content.Context;
+import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +40,7 @@ public class ActualLoginFragment extends Fragment {
     TelephonyManager telephonyManager;
     private final String BASE_URL = "http://example.com";
     OudApi oudApi;
+    TextView errorTextView;
 
 
     public ActualLoginFragment() {
@@ -77,6 +80,7 @@ public class ActualLoginFragment extends Fragment {
         loginBtn = v.findViewById(R.id.Btn_login);
         usernameEditText = v.findViewById(R.id.text_login_username);
         passwordEditText = v.findViewById(R.id.text_login_password);
+        errorTextView = v.findViewById(R.id.text_view_login_error_message);
     }
 
     private void setButtonsOnClickListeners() {
@@ -125,8 +129,12 @@ public class ActualLoginFragment extends Fragment {
 
                 } else if (response.errorBody() != null) {
                     Gson gson = new Gson();
-                    // StatusMessageResponse errorMessage = gson.fromJson(response.errorBody().charStream(),StatusMessageResponse.class);
-                    //TODO: show the error message
+                    try{
+                    StatusMessageResponse errorMessage = gson.fromJson(response.errorBody().charStream(),StatusMessageResponse.class);
+                    errorTextView.setText(errorMessage.getMessage());
+                    }catch (Exception e){
+                        errorTextView.setText(response.toString());
+                    }
                 }
             }
 

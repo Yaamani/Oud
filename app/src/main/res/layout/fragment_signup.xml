@@ -122,6 +122,7 @@
 
     <Button
         android:layout_width="150dp"
+        android:id="@+id/btn_signup"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/rounded_edge_button"
