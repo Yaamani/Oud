@@ -42,7 +42,14 @@ public class Artist {
         return type;
     }
 
-    public Artist(String _id, int followersCount, String[] genres, String[] images, String name, String bio, Track[] popularSongs, String type) {
+    public Artist(String _id,
+                  int followersCount,
+                  String[] genres,
+                  String[] images,
+                  String name,
+                  String bio,
+                  Track[] popularSongs,
+                  String type) {
         this._id = _id;
         this.followersCount = followersCount;
         this.genres = genres;

@@ -10,9 +10,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.oud.Constants;
 import com.example.oud.R;
 import com.example.oud.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
-import com.example.oud.user.fragments.home.HomeFragment;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
     private HorizontalSpaceDecoration horizontalSpaceDecoration;
     private RecyclerView.RecycledViewPool sharedPool;
 
-    public VerticalRecyclerViewAdapter(Context mContext, ArrayList<String> mIcons, ArrayList<String> mTitles, ArrayList<HorizontalRecyclerViewAdapter> mInnerItemAdapters) {
+    public VerticalRecyclerViewAdapter(Context mContext, ArrayList<String> mIcons, ArrayList<String> mTitles, ArrayList<HorizontalRecyclerViewAdapter> mInnerItemAdapters, int horizontalRecyclerViewItemCount) {
         this.mContext = mContext;
         this.mIcons = mIcons;
         this.mTitles = mTitles;
@@ -39,7 +39,7 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
 
         horizontalSpaceDecoration = new HorizontalSpaceDecoration(mContext.getResources(),
                 R.dimen.item_margin,
-                HomeFragment.HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
+                horizontalRecyclerViewItemCount);
         sharedPool = new RecyclerView.RecycledViewPool();
     }
 

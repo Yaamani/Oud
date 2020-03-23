@@ -1,53 +1,44 @@
 package com.example.oud.user.fragments.home;
 
+import com.example.oud.Constants;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class HomeViewModel extends ViewModel {
 
-    //private HomeRepository homeRepository;
+    private static final String TAG = HomeViewModel.class.getSimpleName();
+
+    private NestedRecyclerViewOuterItemSupplier homeRepository;
 
     private OuterItemLiveData recentlyPlayedLiveData;
     private OuterItemLiveData[] categoriesLiveData;
 
     public HomeViewModel() {
-
+        if (Constants.MOCK)
+            homeRepository = new HomeRepositoryMockService();
+        else homeRepository = new HomeRepository();
     }
 
     public OuterItemLiveData getRecentlyPlayedLiveData() {
         if (recentlyPlayedLiveData == null)
             //recentlyPlayedLiveData = homeRepository.loadRecentlyPlayed();
-            recentlyPlayedLiveData = loadDummy("Recently played");
+            recentlyPlayedLiveData = homeRepository.loadRecentlyPlayed();
 
         return recentlyPlayedLiveData;
     }
 
     public OuterItemLiveData getCategoryLiveData(int position) {
         if (categoriesLiveData == null)
-            categoriesLiveData = new OuterItemLiveData[HomeFragment.CATEGORIES_COUNT];
+            categoriesLiveData = new OuterItemLiveData[Constants.USER_HOME_CATEGORIES_COUNT];
 
         if (categoriesLiveData[position] == null)
-            categoriesLiveData[position] = loadDummy("Category " + position);
+            categoriesLiveData[position] = homeRepository.loadCategory(position);
 
         return categoriesLiveData[position];
     }
 
-    private OuterItemLiveData loadDummy(String dummyTitle) {
-        MutableLiveData<String> icon = new MutableLiveData<>(
-                "https://i.redd.it/qn7f9oqu7o501.jpg");
-        MutableLiveData<String> title = new MutableLiveData<>(dummyTitle);
-        InnerItemLiveData[] innerItems = new InnerItemLiveData[HomeFragment.HORIZONTAL_RECYCLERVIEW_ITEM_COUNT];
 
-        for (int i = 0; i < innerItems.length; i++) {
-            innerItems[i] = new InnerItemLiveData();
-            innerItems[i].mImage = new MutableLiveData<>(
-                    "https://i.redd.it/glin0nwndo501.jpg");
-            innerItems[i].mTitle = new MutableLiveData<>("Title " + i);
-            innerItems[i].mSubTitle = new MutableLiveData<>("Sub title " + i);
-        }
-
-        return new OuterItemLiveData(icon, title, innerItems);
-    }
 
     public static class OuterItemLiveData {
         private MutableLiveData<String> mIcon;
@@ -81,7 +72,9 @@ public class HomeViewModel extends ViewModel {
         private MutableLiveData<String> mSubTitle;
 
         public InnerItemLiveData() {
-
+            mImage = new MutableLiveData<>();
+            mTitle = new MutableLiveData<>();
+            mSubTitle = new MutableLiveData<>();
         }
 
         public MutableLiveData<String> getImage() {
