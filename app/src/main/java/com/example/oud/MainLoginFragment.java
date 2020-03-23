@@ -95,9 +95,10 @@ public class MainLoginFragment extends Fragment {
     }
 
     private void initializeViews(View v){
-        toLoginBtn = v.findViewById(R.id.Btn_to_login_fragment);
-        toSignupBtn = v.findViewById(R.id.Btn_to_signup_fragment);
-        connectWithFacebookBtn = v.findViewById(R.id.Btn_to_facebook_login_fragment);
+        toLoginBtn = v.findViewById(R.id.btn_to_login_fragment);
+        toSignupBtn = v.findViewById(R.id.btn_to_signup_fragment);
+        connectWithFacebookBtn = v.findViewById(R.id.btn_to_facebook_login_fragment);
+
 
 
     }

@@ -91,26 +91,21 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-//        if (requestCode == RC_SIGN_IN) {
-//            // The Task returned from this call is always completed, no need to attach
-//            // a listener.
-//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//
-//            try {
-//                GoogleSignInAccount googleAccount= task.getResult(ApiException.class);
-//                Toast.makeText(getContext(), googleAccount.getDisplayName(),Toast.LENGTH_LONG).show();
-//            }
-//            catch (ApiException e){
-//
-//                Log.e("TAG", "signInResult:failed code=" + e.getStatusCode());
-//                if(e.getStatusCode()==10)
-//                    Log.e("TAG", "if you have this problem visit this page https://developers.google.com/android/guides/client-auth");
-//
-//
-//
-//            }
-//          //Toast.makeText(getContext(),account,Toast.LENGTH_LONG);
-//        }
+       if (requestCode == RC_SIGN_IN) {
+           // The Task returned from this call is always completed, no need to attach
+           // a listener.
+           Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+           try {
+               GoogleSignInAccount googleAccount= task.getResult(ApiException.class);
+               Toast.makeText(getContext(), googleAccount.getDisplayName(),Toast.LENGTH_LONG).show();
+           }
+           catch (ApiException e){
+               Log.e("TAG", "signInResult:failed code=" + e.getStatusCode());
+               if(e.getStatusCode()==10)
+                   Log.e("TAG", "if you have this problem visit this page https://developers.google.com/android/guides/client-auth");
+           }
+         //Toast.makeText(getContext(),account,Toast.LENGTH_LONG);
+       }
 
 
     }
