@@ -38,7 +38,7 @@
 
 
     <Button
-        android:id="@+id/Btn_to_signup_fragment"
+        android:id="@+id/btn_to_signup_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -48,7 +48,7 @@
         android:textColor="@color/paleOrange"
         />
     <Button
-        android:id="@+id/Btn_to_facebook_login_fragment"
+        android:id="@+id/btn_to_facebook_login_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -59,7 +59,7 @@
         />
 
     <Button
-        android:id="@+id/Btn_to_login_fragment"
+        android:id="@+id/btn_to_login_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

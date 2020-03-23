@@ -77,7 +77,7 @@ public class ActualLoginFragment extends Fragment {
 
     private void initializeViews(View v) {
         toForgetPasswordBtn = v.findViewById(R.id.btn_to_forget_password);
-        loginBtn = v.findViewById(R.id.Btn_login);
+        loginBtn = v.findViewById(R.id.btn_login);
         usernameEditText = v.findViewById(R.id.text_login_username);
         passwordEditText = v.findViewById(R.id.text_login_password);
         errorTextView = v.findViewById(R.id.text_view_login_error_message);
