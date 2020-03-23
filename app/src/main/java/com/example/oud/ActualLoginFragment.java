@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +97,6 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 makeLoginRequest(view);
-
             }
         });
 
@@ -106,25 +106,26 @@ public class ActualLoginFragment extends Fragment {
     private void makeLoginRequest(View view) {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        Device device = new Device("id_test",
-                true,
-                true,
-                "device name test",
-                "device type test",
-                10);
 
-        LoginBody loginBody = new LoginBody(device, new LoginUserInfo(username, password));
+
+        LoginUserInfo loginUserInfo =  new LoginUserInfo(username, password);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
+
         oudApi = retrofit.create(OudApi.class);
-        Call<LoginResponse> call = oudApi.login(loginBody);
+        Call<LoginResponse> call = oudApi.login(loginUserInfo);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
+                errorTextView.setText("test");
+
                 if (response.isSuccessful()) {
                     //TODO: go to homepage and forward the user data & token
+                    errorTextView.setText(response.body().getUser().getEmail());
                     String token = response.body().getToken();
                     saveToken(view,token);
 
@@ -134,14 +135,14 @@ public class ActualLoginFragment extends Fragment {
                     StatusMessageResponse errorMessage = gson.fromJson(response.errorBody().charStream(),StatusMessageResponse.class);
                     errorTextView.setText(errorMessage.getMessage());
                     }catch (Exception e){
-                        errorTextView.setText(response.toString());
-                    }
+                      }
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 //TODO: make an internet connection error toast or something
+                errorTextView.setText("internet connection error");
             }
         });
 
@@ -155,4 +156,5 @@ public class ActualLoginFragment extends Fragment {
         prefsEditor.apply();    //token saved in shared preferences
 
     }
+
 }
