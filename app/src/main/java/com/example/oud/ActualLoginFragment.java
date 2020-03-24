@@ -125,7 +125,7 @@ public class ActualLoginFragment extends Fragment {
 
                 if (response.isSuccessful()) {
                     //TODO: go to homepage and forward the user data & token
-                    errorTextView.setText(response.body().getUser().getEmail());
+                    errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
                     saveToken(view,token);
 

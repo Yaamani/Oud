@@ -4,7 +4,10 @@ package com.example.oud;
 
 import android.content.SharedPreferences;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -35,7 +38,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @Config(sdk = 25,manifest=Config.NONE)
 @RunWith(RobolectricTestRunner.class)
-public class MainLoginFragmentTest {
+public class MainActivityTest {
     MainActivity mainActivity;
     MockWebServer server;
     String jsonResponse;
@@ -105,7 +108,7 @@ public class MainLoginFragmentTest {
 
         JSONObject json = new JSONObject();
         try {
-            json = new JSONObject(request1.getBody().toString().replace("[text=","").replace("]",""));
+            json = new JSONObject(request1.getBody().readUtf8());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -135,7 +138,7 @@ public class MainLoginFragmentTest {
         shadowOf(getMainLooper()).idle();
         TextView messageResponse = mainActivity.findViewById(R.id.text_view_login_error_message);
         String message = messageResponse.getText().toString();
-        Assert.assertEquals("example@example.com",message);
+        Assert.assertEquals("example@example.com",message);//change after the home page is added
 
 
     }
@@ -181,9 +184,115 @@ public class MainLoginFragmentTest {
         shadowOf(getMainLooper()).idle();
 
         SharedPreferences prefs = mainActivity.getApplicationContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        String savedToken = prefs.getString("token","error");
+        String savedToken = prefs.getString("token","");
         assertEquals("123456token",savedToken);
     }
+
+    @Test
+    public void checkSignupRequestSentCorrectly() throws JSONException {
+        //go to signupFragment
+        Button toSignupFragment = mainActivity.findViewById(R.id.btn_to_signup_fragment);
+        toSignupFragment.performClick();
+
+        fillSignupData();
+        //make the signup request
+        Button signupButton = mainActivity.findViewById(R.id.btn_signup);
+        signupButton.performClick();
+
+
+
+        RecordedRequest request1 = null;
+        try {
+            request1 = server.takeRequest();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals("/users/signUp", request1.getPath());
+
+        String jsonString =request1.getBody().readUtf8();
+
+        JSONObject json = new JSONObject();
+        try {
+            json = new JSONObject(jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String sentPassword = json.getString("password");
+        String sentUsername = json.getString("username");
+        String sentEmail = json.getString("email");
+        String gender = json.getString("gender");
+        assertEquals("123456789",sentPassword);
+        assertEquals("youssefmahmoud",sentUsername);
+        assertEquals("test@gmail.com",sentEmail);
+        assertEquals("m",gender);
+
+
+    }
+
+    @Test
+    public void checkSuccessfulSignupResponseReceivedCorrectly(){
+        //setup server response
+
+        setSuccessfulLoginResponse();
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(jsonResponse));
+
+        Button toSignupFragment = mainActivity.findViewById(R.id.btn_to_signup_fragment);
+        toSignupFragment.performClick();
+
+        fillSignupData();
+
+        Button signupButton = mainActivity.findViewById(R.id.btn_signup);
+        signupButton.performClick();
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        shadowOf(getMainLooper()).idle();
+        TextView messageResponse = mainActivity.findViewById(R.id.text_view_signup_error_message);
+        String message = messageResponse.getText().toString();
+        Assert.assertEquals("example@example.com",message);//change after the home page is added
+
+
+    }
+
+
+
+    @Test
+    public void checkUnSuccessfulSignupResponseReceivedCorrectly(){
+        //setup server response
+        setUnsuccessfulSignupResponse();
+        server.enqueue(new MockResponse().setResponseCode(400).setBody(jsonResponse));
+
+        //go to signupFragment
+        Button toSignupFragment = mainActivity.findViewById(R.id.btn_to_signup_fragment);
+        toSignupFragment.performClick();
+
+        fillSignupData();
+
+        Button signupButton = mainActivity.findViewById(R.id.btn_signup);
+        signupButton.performClick();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        shadowOf(getMainLooper()).idle();
+
+        TextView messageResponse = mainActivity.findViewById(R.id.text_view_signup_error_message);
+        String message = messageResponse.getText().toString();
+        Assert.assertEquals("username already taken",message);
+
+
+    }
+
 
     private void goToLoginFragmentAndPressLogin(){
         //go to actualLoginFragment
@@ -193,6 +302,25 @@ public class MainLoginFragmentTest {
         //make the login request
         Button loginBtn = mainActivity.findViewById(R.id.btn_login);
         loginBtn.performClick();
+    }
+
+    private void fillSignupData(){
+        //country default is egypt
+        EditText usernameEditText =mainActivity.findViewById(R.id.text_signup_username);
+        EditText displayNameEditText =mainActivity.findViewById(R.id.text_signup_display_name);
+        EditText emailEditText=mainActivity.findViewById(R.id.text_signup_email);
+        EditText passwordEditText=mainActivity.findViewById(R.id.text_signup_password);
+
+        RadioGroup genderRadioGroup =mainActivity.findViewById(R.id.radio_group_signup_gender);
+
+
+        usernameEditText.setText("youssefmahmoud");
+        displayNameEditText.setText("yousef dispalyname");
+        emailEditText.setText("test@gmail.com");
+        passwordEditText.setText("123456789");
+        genderRadioGroup.check(1);
+
+
     }
 
     private void setSuccessfulLoginResponse(){
@@ -263,8 +391,21 @@ public class MainLoginFragmentTest {
                 "}";
     }
 
+
+    private void setUnsuccessfulSignupResponse(){
+        jsonResponse = "{\n" +
+                "  \"status\": \"400\",\n" +
+                "  \"message\": \"username already taken\"\n" +
+                "}";
+    }
+
     @After
     public void cleanup(){
+        try {
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

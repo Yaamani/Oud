@@ -14,10 +14,10 @@ public interface OudApi {
     // Authentication
 
     @POST("/users/signUp")
-    Call<LoginResponse> signup(@Body SignupBody signupBody);
+    Call<LoginResponse> signup(@Body SignupUser signupUser);
 
     @POST("/users/login")
-    Call<LoginResponse> login(@Body LoginBody loginBody);
+    Call<LoginResponse> login(@Body LoginUserInfo loginUserInfo);
 
     @POST("/users/forgotPassword")
     Call<StatusMessageResponse> forgetPasswordRequest(@Body ForgetPasswordRequestBody forgetPasswordRequestBody);
