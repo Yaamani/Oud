@@ -399,6 +399,13 @@ public class MainActivityTest {
                 "}";
     }
 
+    private void setsuccessfulForgetPasswordResponse(){
+        jsonResponse = "{\n" +
+                "  \"status\": \"200\",\n" +
+                "  \"message\": \"Token sent to email!\"\n" +
+                "}";
+    }
+
     @After
     public void cleanup(){
         try {
