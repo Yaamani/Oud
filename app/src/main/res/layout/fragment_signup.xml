@@ -18,6 +18,19 @@
 
     <EditText
         style="@style/EditTextLogin"
+        android:id="@+id/text_signup_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/TextViewLoginHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Display name" />
+
+    <EditText
+        style="@style/EditTextLogin"
+        android:id="@+id/text_signup_display_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -32,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint=""
+        android:id="@+id/text_signup_email"
         android:inputType="textEmailAddress" />
 
     <TextView
@@ -45,7 +59,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint=""
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:id="@+id/text_signup_password"
+        />
 
     <TextView
         style="@style/TextViewLoginHeader"
@@ -55,11 +71,12 @@
 
 
     <Spinner
-        android:id="@+id/spinner_country_signup"
+        android:id="@+id/spinner_signup_country"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dialog"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        />
 
 
     <LinearLayout
@@ -82,7 +99,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:calendarViewShown="false"
-                android:datePickerMode="spinner" />
+                android:datePickerMode="spinner"
+                android:id="@+id/date_signup"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -96,6 +114,7 @@
                 android:text="Gender" />
 
             <RadioGroup
+                android:id="@+id/radio_group_signup_gender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -114,6 +133,12 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_view_signup_error_message"
+        />
 
     <TextView
         android:layout_width="match_parent"
