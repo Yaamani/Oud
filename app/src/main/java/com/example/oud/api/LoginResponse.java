@@ -2,6 +2,7 @@ package com.example.oud.api;
 
 public class LoginResponse {
     private LoggedInUser user;
+    private String token;
 
     public LoggedInUser getUser() {
         return user;
@@ -16,5 +17,5 @@ public class LoginResponse {
         this.token = token;
     }
 
-    private String token;
+
 }
