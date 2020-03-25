@@ -38,13 +38,18 @@ public interface OudApi {
     Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
 
 
-    // Home
 
-    @GET("me/player/recently-played")
+
+    @GET("/me/player/recently-played")
     Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("browse/categories")
-    Call<ListOfCategories> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
+    @GET("/browse/categories")
+    Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
+    @GET("/albums/{id}")
+    Call<Album> album(@Path("id") String id);
+
+    @GET("/browse/categories/{categoryId}")
+    Call<Category> category(@Path("categoryId") String categoryId);
 
 }

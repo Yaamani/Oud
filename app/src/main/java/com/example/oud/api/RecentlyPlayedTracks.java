@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 public class RecentlyPlayedTracks {
 
-    private RecentlyPlayedTrack[] items;
+    private ArrayList<RecentlyPlayedTrack> items;
     private int limit;
 
-    public RecentlyPlayedTracks(RecentlyPlayedTrack[] items, int limit) {
+    /*public RecentlyPlayedTracks(ArrayList<RecentlyPlayedTrack> items, int limit) {
         this.items = items;
         this.limit = limit;
-    }
+    }*/
 
-    public RecentlyPlayedTrack[] getItems() {
+    public ArrayList<RecentlyPlayedTrack> getItems() {
         return items;
     }
 

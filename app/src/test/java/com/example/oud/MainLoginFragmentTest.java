@@ -39,17 +39,17 @@ public class MainLoginFragmentTest {
 
     @Test
     public void checkLoginButton(){
-        Button toLoginFragmentBtn = mainActivity.findViewById(R.id.Btn_to_login_fragment);
+        Button toLoginFragmentBtn = mainActivity.findViewById(R.id.btn_to_login_fragment);
         toLoginFragmentBtn.performClick();
 
-        Button loginBtn = mainActivity.findViewById(R.id.Btn_login);
+        Button loginBtn = mainActivity.findViewById(R.id.btn_login);
         Assert.assertNotNull(loginBtn);
 
     }
 
     @Test
     public void checkSignupButton(){
-        Button toSignupFragmentBtn = mainActivity.findViewById(R.id.Btn_to_signup_fragment);
+        Button toSignupFragmentBtn = mainActivity.findViewById(R.id.btn_to_signup_fragment);
         toSignupFragmentBtn.performClick();
 
         Button signupBtn = mainActivity.findViewById(R.id.btn_signup);

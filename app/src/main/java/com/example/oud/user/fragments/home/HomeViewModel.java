@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.home;
 
 import com.example.oud.Constants;
 
+import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -9,15 +10,15 @@ public class HomeViewModel extends ViewModel {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private NestedRecyclerViewOuterItemSupplier homeRepository;
+    private HomeRepository homeRepository;
 
     private OuterItemLiveData recentlyPlayedLiveData;
     private OuterItemLiveData[] categoriesLiveData;
 
     public HomeViewModel() {
+        homeRepository = HomeRepository.getInstance();
         if (Constants.MOCK)
-            homeRepository = new HomeRepositoryMockService();
-        else homeRepository = new HomeRepository();
+            homeRepository.setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
     }
 
     public OuterItemLiveData getRecentlyPlayedLiveData() {
@@ -67,6 +68,8 @@ public class HomeViewModel extends ViewModel {
     }
 
     public static class InnerItemLiveData {
+        //private MutableLiveData<Integer> position;
+
         private MutableLiveData<String> mImage;
         private MutableLiveData<String> mTitle;
         private MutableLiveData<String> mSubTitle;
@@ -76,6 +79,10 @@ public class HomeViewModel extends ViewModel {
             mTitle = new MutableLiveData<>();
             mSubTitle = new MutableLiveData<>();
         }
+
+        /*public MutableLiveData<Integer> getPosition() {
+            return position;
+        }*/
 
         public MutableLiveData<String> getImage() {
             return mImage;

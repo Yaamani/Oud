@@ -1,22 +1,24 @@
 package com.example.oud.api;
 
-@Deprecated
-public class ListOfCategories {
+public class OudList<T> {
 
-    private Category category;
+    private T[] items;
+
     private int limit;
+
     private int offset;
+
     private int total;
 
-    public ListOfCategories(Category category, int limit, int offset, int total) {
-        this.category = category;
+    public OudList(T[] items, int limit, int offset, int total) {
+        this.items = items;
         this.limit = limit;
         this.offset = offset;
         this.total = total;
     }
 
-    public Category getCategory() {
-        return category;
+    public T[] getItems() {
+        return items;
     }
 
     public int getLimit() {

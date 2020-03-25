@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.example.oud.Constants;
 import com.example.oud.R;
 import com.example.oud.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 
@@ -103,7 +102,7 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
             super(itemView);
             mIcon = itemView.findViewById(R.id.image_item_outer_icon);
             mTitle = itemView.findViewById(R.id.txt_item_outer_title);
-            mInnerRecyclerView = itemView.findViewById(R.id.team_player_recycler_view);
+            mInnerRecyclerView = itemView.findViewById(R.id.recycler_view_item_outer);
         }
     }
 }

@@ -49,12 +49,13 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //holder.mImageView.setImageDrawable(mBitmaps.get(position));
         //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
 
-
+        //if (!mImages.get(position).equals(""))
         Glide.with(mContext)
                 .load(mImages.get(position))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .placeholder(R.drawable.ic_loading)
                 .into(holder.mImage);
+
         holder.mTitle.setText(mTitles.get(position));
         holder.mSubTitle.setText(mSubTitles.get(position));
     }
