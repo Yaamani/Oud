@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.testutils;
 
 
 import android.content.res.Resources;
@@ -15,10 +15,6 @@ import org.hamcrest.TypeSafeMatcher;
  */
 public class RecyclerViewMatcher {
     private final int recyclerViewId;
-
-    public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
-        return new RecyclerViewMatcher(recyclerViewId);
-    }
 
     public RecyclerViewMatcher(int recyclerViewId) {
         this.recyclerViewId = recyclerViewId;
@@ -58,6 +54,7 @@ public class RecyclerViewMatcher {
                             (RecyclerView) view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
                         childView = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+                        //childView = recyclerView.findViewHolderForLayoutPosition(position).itemView;
                     }
                     else {
                         return false;

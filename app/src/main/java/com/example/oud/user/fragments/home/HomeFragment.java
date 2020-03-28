@@ -1,6 +1,5 @@
 package com.example.oud.user.fragments.home;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,38 +9,25 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.example.oud.Constants;
 import com.example.oud.R;
-import com.example.oud.api.OudApi;
-import com.example.oud.api.RecentlyPlayedTrack;
-import com.example.oud.api.RecentlyPlayedTracks;
-import com.example.oud.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
-import com.example.oud.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
-import com.example.oud.nestedrecyclerview.decorations.VerticalSpaceDecoration;
+import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
+import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
+import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
+import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.VerticalSpaceDecoration;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
-    private ArrayList<String> mIcons;
+    private ArrayList<Integer> mIcons;
     private ArrayList<String> mTitles;
     private ArrayList<HorizontalRecyclerViewAdapter> mInnerItemAdapters;
 
@@ -49,16 +35,39 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+
+    private NestedRecyclerViewHelper recyclerViewHelper;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: ");
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
+
+        recyclerViewHelper = new NestedRecyclerViewHelper(this.getContext());
+
+        //if (savedInstanceState == null) {
+            //Log.i(TAG, "savedInstanceState = " + null);
+            /*new Section(getContext(), this, homeViewModel.getRecentlyPlayedLiveData(), 0);
+            for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
+                new Section(getContext(), this, homeViewModel.getCategoryLiveData(i), i+1);
+            }*/
+        //} else
+            //Log.i(TAG, "savedInstanceState !!!!!!!!!= " + null);
+
+        //handleRecentlyPlayed();
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+
+        Log.i(TAG, "onCreateView: ");
+        
+
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        new Section(getContext(), this, homeViewModel.getRecentlyPlayedLiveData());
-        /*for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
-            new Section(getContext(), this, homeViewModel.getCategoryLiveData(i));
-        }*/
 
         /*OkHttpClient client = new OkHttpClient();
         String base = Constants.YAMANI_MOCK_BASE_URL;
@@ -124,8 +133,30 @@ public class HomeFragment extends Fragment {
 
         Log.i(TAG, "onViewCreated: ");
 
-        handleVerticalRecyclerViewData();
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_home);
+        recyclerViewHelper.setRecyclerView(recyclerView);
+
+        /*if (recyclerView.getChildCount() == 0) {
+            if (savedInstanceState != null) return;
+            handleRecentlyPlayed();
+            handleCategories();
+        }*/
+
+
+        //if (savedInstanceState == null) {
+            if (recyclerViewHelper.getSectionCount() == 0) {
+                handleRecentlyPlayed();
+                handleCategories();
+            }
+        //} /*else*/
+            //recyclerViewHelper.getRecyclerView().getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("RV"));
+            //recyclerViewHelper.refreshRecyclerView();
+
+
+        /*if (savedInstanceState == null)
+            handleVerticalRecyclerViewData();*/
         //initializeVerticalRecyclerView();
+
     }
 
     @Override
@@ -134,6 +165,20 @@ public class HomeFragment extends Fragment {
 
         Log.i(TAG, "onStart: ");
     }
+
+    /*@Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("RV", recyclerViewHelper.getRecyclerView().getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+
+    }*/
 
     @Override
     public void onDestroyView() {
@@ -154,6 +199,66 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void handleRecentlyPlayed() {
+        MutableLiveData<Boolean> areThereRecentlyPlayedTracks = homeViewModel.getAreThereRecentlyPlayedTracks();
+
+        areThereRecentlyPlayedTracks.observe(getViewLifecycleOwner(), b -> {
+            if (b) {
+
+                if (recyclerViewHelper.getSectionCount() > 0)
+                    if (recyclerViewHelper.getSection(0).getTitle() != null)
+                        if (recyclerViewHelper.getSection(0).getTitle().equals("Recently played")) return; //already loaded
+
+                handleRecentlyPlayedSection(0, homeViewModel.getRecentlyPlayedLiveData());
+            }
+        });
+    }
+
+    private void handleCategories() {
+        for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
+            HomeViewModel.OuterItemLiveData categoryData = homeViewModel.getCategoryLiveData(i);
+            handleCategorySection(recyclerViewHelper.getSectionCount(), categoryData);
+        }
+    }
+
+    private void handleRecentlyPlayedSection(int position, HomeViewModel.OuterItemLiveData outerItemLiveData) {
+        NestedRecyclerViewHelper.Section section = new NestedRecyclerViewHelper.Section();
+
+        outerItemLiveData.getIcon().observe(getViewLifecycleOwner(), section::setIcon);
+        outerItemLiveData.getTitle().observe(getViewLifecycleOwner(), section::setTitle);
+        for (HomeViewModel.InnerItemLiveData itemData : outerItemLiveData.getInnerItems().getValue()) {
+
+            NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
+            section.addItem(item);
+
+            itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+            itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+            itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
+        }
+
+        recyclerViewHelper.addSection(position, section);
+    }
+
+    private void handleCategorySection(int position, HomeViewModel.OuterItemLiveData outerItemLiveData) {
+        NestedRecyclerViewHelper.Section section = new NestedRecyclerViewHelper.Section();
+
+        outerItemLiveData.getInnerItems().observe(getViewLifecycleOwner(), innerItemLiveData -> {
+            outerItemLiveData.getIcon().observe(getViewLifecycleOwner(), section::setIcon);
+            outerItemLiveData.getTitle().observe(getViewLifecycleOwner(), section::setTitle);
+
+            for (HomeViewModel.InnerItemLiveData itemData : innerItemLiveData) {
+                NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
+                section.addItem(item);
+
+                itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+                itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+                itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
+            }
+        });
+
+
+        recyclerViewHelper.addSection(position, section);
+    }
 
     private void initializeVerticalRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
@@ -163,8 +268,9 @@ public class HomeFragment extends Fragment {
         recyclerView.addItemDecoration(new VerticalSpaceDecoration(getResources(), R.dimen.item_margin));
 
 
+
         mVerticalAdapter = new VerticalRecyclerViewAdapter(
-                this.getContext(), mIcons, mTitles, mInnerItemAdapters, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
+                this.getContext(), mIcons, mTitles, mInnerItemAdapters);
         recyclerView.setAdapter(mVerticalAdapter);
     }
 
@@ -181,10 +287,12 @@ public class HomeFragment extends Fragment {
 
 
 
-    public class Section {
+/*    public class Section {
         private Context mContext;
 
-        private String mIcon;
+        private int position;
+
+        private Integer mIcon;
         private String mTitle;
         private ArrayList<String> mInnerImages;
         private ArrayList<String> mInnerTitles;
@@ -193,18 +301,32 @@ public class HomeFragment extends Fragment {
         private HorizontalRecyclerViewAdapter mAdapter;
 
         public Section(Context mContext,
-                    LifecycleOwner lifecycleOwner,
-                    final HomeViewModel.OuterItemLiveData liveData) {
+                       LifecycleOwner lifecycleOwner,
+                       final HomeViewModel.OuterItemLiveData liveData,
+                       int position) {
 
             this.mContext = mContext;
+
+            this.position = position;
+
 
             liveData.getIcon().observe(lifecycleOwner, s -> {
 
                 mIcon = liveData.getIcon().getValue();
                 if (mIcons == null)
-                    mIcons = new ArrayList<>();
+                    mIcons = new ArrayList<Integer>();
                 //mLogos.contains()
-                mIcons.add(mIcon);
+
+                boolean success = false;
+                while (!success) {
+                    try {
+                        mIcons.set(position, mIcon);
+                        success = true;
+                    } catch (IndexOutOfBoundsException e) {
+                        mIcons.add(null);
+                    }
+                }
+                //mIcons.add(mIcon);
 
 
                 handleVerticalRecyclerViewData();
@@ -212,21 +334,31 @@ public class HomeFragment extends Fragment {
 
             liveData.getTitle().observe(lifecycleOwner, new Observer<String>() {
                 @Override
-                public void onChanged(String integer) {
+                public void onChanged(String s) {
                     mTitle = liveData.getTitle().getValue();
 
                     if (mTitles == null)
                         mTitles = new ArrayList<>();
-                    mTitles.add(mTitle);
+
+                    boolean success = false;
+                    while (!success) {
+                        try {
+                            mTitles.set(position, s);
+                            success = true;
+                        } catch (IndexOutOfBoundsException e) {
+                            mTitles.add(null);
+                        }
+                    }
+                    //mTitles.add(mTitle);
 
                     handleVerticalRecyclerViewData();
                 }
             });
 
-            for (int i = 0; i < liveData.getInnerItems().length; i++) {
+            for (int i = 0; i < liveData.getInnerItems().size(); i++) {
                 final int final_i = i;
 
-                liveData.getInnerItems()[i].getImage().observe(lifecycleOwner, s -> {
+                liveData.getInnerItems().get(i).getImage().observe(lifecycleOwner, s -> {
                     if (mInnerImages == null)
                         mInnerImages = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
 
@@ -246,7 +378,7 @@ public class HomeFragment extends Fragment {
                     handleVerticalRecyclerViewData();
                 });
 
-                liveData.getInnerItems()[i].getTitle().observe(lifecycleOwner, s -> {
+                liveData.getInnerItems().get(i).getTitle().observe(lifecycleOwner, s -> {
                     if (mInnerTitles == null)
                         mInnerTitles = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
 
@@ -267,7 +399,7 @@ public class HomeFragment extends Fragment {
                     handleVerticalRecyclerViewData();
                 });
 
-                liveData.getInnerItems()[i].getSubTitle().observe(lifecycleOwner, s -> {
+                liveData.getInnerItems().get(i).getSubTitle().observe(lifecycleOwner, s -> {
                     if (mInnerSubTitles == null)
                         mInnerSubTitles = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
 
@@ -298,12 +430,23 @@ public class HomeFragment extends Fragment {
                         & (mInnerTitles.size() == mInnerSubTitles.size())) {
 
                     if (mAdapter == null) {
-                        /*initializeRecyclerView();*/
+                        *//*initializeRecyclerView();*//*
                         mAdapter = new HorizontalRecyclerViewAdapter(mContext, mInnerImages, mInnerTitles, mInnerSubTitles);
 
                         if (mInnerItemAdapters == null)
                             mInnerItemAdapters = new ArrayList<>();
-                        mInnerItemAdapters.add(mAdapter);
+
+                        boolean success = false;
+                        while (!success) {
+                            try {
+                                mInnerItemAdapters.set(position, mAdapter);
+                                success = true;
+                            } catch (IndexOutOfBoundsException e) {
+                                mInnerItemAdapters.add(null);
+                            }
+                        }
+
+                        //mInnerItemAdapters.add(mAdapter);
                     } else updateHorizontalRecyclerView();
                 }
             }
@@ -312,5 +455,5 @@ public class HomeFragment extends Fragment {
         private void updateHorizontalRecyclerView() {
             mAdapter.notifyDataSetChanged();
         }
-    }
+    }*/
 }

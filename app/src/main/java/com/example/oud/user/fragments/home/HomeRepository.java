@@ -3,8 +3,12 @@ package com.example.oud.user.fragments.home;
 import android.util.Log;
 
 import com.example.oud.Constants;
+import com.example.oud.EventListener;
 import com.example.oud.api.Album;
+import com.example.oud.api.Category;
 import com.example.oud.api.OudApi;
+import com.example.oud.api.OudList;
+import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTrack;
 import com.example.oud.api.RecentlyPlayedTracks;
 
@@ -25,6 +29,12 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
 
     private String baseUrl;
 
+    private ArrayList<RecentlyPlayedTrack> fetchedRecentlyPlayedTracks;
+
+    private boolean fetchingForCategoryListStarted = false;
+    private OudList<Category> fetchedCategoryList;
+    private ArrayList<EventListener> onCategoryListLoadedListeners = new ArrayList<>();
+
     private HomeRepository() {
         this.baseUrl = Constants.BASE_URL;
     }
@@ -33,41 +43,156 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
         return instance;
     }
 
-    public String getBaseUrl() {
-        return baseUrl;
-    }
+    public MutableLiveData<Boolean> areThereRecentlyPlayedTracks() {
+        MutableLiveData<Boolean> areThereRecentlyPlayedTracks = new MutableLiveData<>();
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        OudApi oudApi = instantiateRetrofitOudApi();
+
+        fetchRecentlyPlayedTracks(oudApi, areThereRecentlyPlayedTracks);
+
+        return areThereRecentlyPlayedTracks;
     }
 
     public HomeViewModel.OuterItemLiveData loadRecentlyPlayed() {
 
-        MutableLiveData<String> icon = new MutableLiveData<>(
-                "https://iconmonstr.com/wp-content/g/gd/makefg.php?i=../assets/preview/2017/png/iconmonstr-time-17.png&r=255&g=255&b=255");
-        MutableLiveData<String> title = new MutableLiveData<>("Recently played");
-        HomeViewModel.InnerItemLiveData[] innerItems = new HomeViewModel.InnerItemLiveData[Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT];
+        if (fetchedRecentlyPlayedTracks == null)
+            throw new IllegalStateException("You should know if there are recently played tracks or not first. call " +
+                    "areThereRecentlyPlayedTracks() and observe the changes. When you observe true, you can call loadRecentlyPlayed().");
 
-        for (int i = 0; i < innerItems.length; i++) {
-            innerItems[i] = new HomeViewModel.InnerItemLiveData();
-            /*innerItems[i].getTitle().setValue("");
-            innerItems[i].getSubTitle().setValue("");
-            innerItems[i].getImage().setValue("");*/
+        if (fetchedRecentlyPlayedTracks.isEmpty())
+            throw new IllegalStateException("There are no recently played tracks to load.");
+
+        MutableLiveData<Integer> icon = new MutableLiveData<Integer>(
+                Constants.USER_HOME_RECENTLY_PLAYED_ICON);
+
+        MutableLiveData<String> title = new MutableLiveData<>("Recently played");
+
+        MutableLiveData<ArrayList<HomeViewModel.InnerItemLiveData>> innerItemsLiveData =
+                new MutableLiveData<>(new ArrayList<>());
+
+        OudApi oudApi = instantiateRetrofitOudApi();
+
+        for (int i = 0; i < fetchedRecentlyPlayedTracks.size(); i++) {
+            HomeViewModel.InnerItemLiveData current = new HomeViewModel.InnerItemLiveData();
+            innerItemsLiveData.getValue().add(current);
+
+            current.getTitle().setValue(fetchedRecentlyPlayedTracks.get(i).getTrack().getName());
+
+            fetchAlbumData(oudApi, fetchedRecentlyPlayedTracks.get(i).getTrack().getAlbumId(), current);
         }
 
-        OudApi oudApi = instantiateRetrofitOddAdi();
 
-        fetchRecentlyPlayedTracks(oudApi, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, innerItems);
+        //fetchRecentlyPlayedTracks(oudApi, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, innerItemsLiveData);
+
+
+        return new HomeViewModel.OuterItemLiveData(icon, title, innerItemsLiveData);
+    }
+
+    //public
+
+    public HomeViewModel.OuterItemLiveData loadCategory(int position) {
+
+        MutableLiveData<Integer> icon = new MutableLiveData<>(
+                Constants.USER_HOME_RECENTLY_CATEGORY_ICON);
+
+        MutableLiveData<String> title = new MutableLiveData<>();
+        MutableLiveData<ArrayList<HomeViewModel.InnerItemLiveData>> innerItems = new MutableLiveData<>();
+
+
+
+        OudApi oudApi = instantiateRetrofitOudApi();
+
+        fetchCategoryList(oudApi);
+
+        if (fetchedCategoryList == null)
+            onCategoryListLoadedListeners.add(() -> fetchCategory(oudApi, position, title, innerItems));
+        else
+            fetchCategory(oudApi, position, title, innerItems);
 
         return new HomeViewModel.OuterItemLiveData(icon, title, innerItems);
     }
 
-    @Override
-    public HomeViewModel.OuterItemLiveData loadCategory(int position) {
-        return null;
+    private void fetchCategory(OudApi oudApi,
+                               int position,
+                               MutableLiveData<String> title,
+                               MutableLiveData<ArrayList<HomeViewModel.InnerItemLiveData>> innerItemsLiveData) {
+
+        Category category = fetchedCategoryList.getItems().get(position);
+
+        title.setValue(category.getName());
+
+        ArrayList<HomeViewModel.InnerItemLiveData> innerItems = new ArrayList<>(category.getPlaylists().size());
+
+        int loops = category.getPlaylists().size();
+        for (int i = 0; i < loops; i++) {
+
+            innerItems.add(new HomeViewModel.InnerItemLiveData());
+            innerItems.get(i).getSubTitle().setValue("");
+
+            String playlistId = category.getPlaylists().get(i);
+            fetchPlaylist(oudApi, playlistId, innerItems.get(i));
+        }
+
+        innerItemsLiveData.setValue(innerItems);
     }
 
-    private OudApi instantiateRetrofitOddAdi(){
+    private void fetchPlaylist(OudApi oudApi, String playlistId, HomeViewModel.InnerItemLiveData innerItem) {
+
+        Call<Playlist> playlistCall = oudApi.playlist(playlistId);
+        playlistCall.enqueue(new Callback<Playlist>() {
+            @Override
+            public void onResponse(Call<Playlist> call, Response<Playlist> response) {
+                if(!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                Playlist playlist = response.body();
+                innerItem.getImage().setValue(playlist.getImage());
+                innerItem.getTitle().setValue(playlist.getName());
+            }
+
+            @Override
+            public void onFailure(Call<Playlist> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+
+    private void fetchCategoryList(OudApi oudApi) {
+        if (fetchedCategoryList != null | fetchingForCategoryListStarted)
+            return;
+
+        fetchingForCategoryListStarted = true;
+
+        Call<OudList<Category>> categoryCall = oudApi.listOfCategories(null, Constants.USER_HOME_CATEGORIES_COUNT);
+
+        categoryCall.enqueue(new Callback<OudList<Category>>() {
+            @Override
+            public void onResponse(Call<OudList<Category>> call, Response<OudList<Category>> response) {
+                if (!response.isSuccessful()) {
+                    fetchingForCategoryListStarted = false;
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                fetchedCategoryList = response.body();
+
+                while (onCategoryListLoadedListeners.size() != 0) {
+                    onCategoryListLoadedListeners.remove(0).onTriggered();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OudList<Category>> call, Throwable t) {
+                fetchingForCategoryListStarted = false;
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private OudApi instantiateRetrofitOudApi(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -76,7 +201,44 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
         return retrofit.create(OudApi.class);
     }
 
-    private void fetchRecentlyPlayedTracks(OudApi oudApi, int itemsCount, HomeViewModel.InnerItemLiveData[] innerItems) {
+    private void fetchRecentlyPlayedTracks(OudApi oudApi, MutableLiveData<Boolean> areThereRecentlyPlayedTracks) {
+        Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
+                oudApi.recentlyPlayedTracks(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
+        recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
+
+            @Override
+            public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                if (response.code() == 204) {
+                    areThereRecentlyPlayedTracks.setValue(false);
+                    return;
+                }
+
+                RecentlyPlayedTracks recentlyPlayedTracks = response.body();
+
+                fetchedRecentlyPlayedTracks = recentlyPlayedTracks.getItems();
+
+                if (fetchedRecentlyPlayedTracks.isEmpty()) {
+                    areThereRecentlyPlayedTracks.setValue(false);
+                    return;
+                }
+
+                areThereRecentlyPlayedTracks.setValue(true);
+            }
+
+            @Override
+            public void onFailure(Call<RecentlyPlayedTracks> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Deprecated
+    private void fetchRecentlyPlayedTracks(OudApi oudApi, int itemsCount, ArrayList<HomeViewModel.InnerItemLiveData> innerItems) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
                 oudApi.recentlyPlayedTracks(itemsCount, null, null);
         recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
@@ -85,18 +247,19 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());
+                    return;
                 }
 
                 RecentlyPlayedTracks recentlyPlayedTracks = response.body();
 
                 ArrayList<RecentlyPlayedTrack> list = recentlyPlayedTracks.getItems();
 
-                for (int i = 0; i < innerItems.length; i++) {
+                for (int i = 0; i < innerItems.size(); i++) {
 
-                    HomeViewModel.InnerItemLiveData current = innerItems[i];
+                    HomeViewModel.InnerItemLiveData current = innerItems.get(i);
 
                     //innerItems[i].getPosition().setValue(i);
-                    innerItems[i].getTitle().setValue(list.get(i).getTrack().getName());
+                    innerItems.get(i).getTitle().setValue(list.get(i).getTrack().getName());
 
                     fetchAlbumData(oudApi, list.get(i).getTrack().getAlbumId(), current);
                 }
@@ -120,6 +283,7 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             public void onResponse(Call<Album> call, Response<Album> response) {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());
+                    return;
                 }
 
                 Album album = response.body();
@@ -135,6 +299,14 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
                 t.printStackTrace();
             }
         });
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
 }

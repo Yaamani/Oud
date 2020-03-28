@@ -2,7 +2,8 @@ package com.example.oud.user.fragments.home;
 
 import com.example.oud.Constants;
 
-import androidx.core.util.Pair;
+import java.util.ArrayList;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -12,6 +13,7 @@ public class HomeViewModel extends ViewModel {
 
     private HomeRepository homeRepository;
 
+    private MutableLiveData<Boolean> areThereRecentlyPlayedTracks;
     private OuterItemLiveData recentlyPlayedLiveData;
     private OuterItemLiveData[] categoriesLiveData;
 
@@ -21,9 +23,14 @@ public class HomeViewModel extends ViewModel {
             homeRepository.setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
     }
 
+    public MutableLiveData<Boolean> getAreThereRecentlyPlayedTracks() {
+        if (areThereRecentlyPlayedTracks == null)
+            areThereRecentlyPlayedTracks = homeRepository.areThereRecentlyPlayedTracks();
+        return areThereRecentlyPlayedTracks;
+    }
+
     public OuterItemLiveData getRecentlyPlayedLiveData() {
         if (recentlyPlayedLiveData == null)
-            //recentlyPlayedLiveData = homeRepository.loadRecentlyPlayed();
             recentlyPlayedLiveData = homeRepository.loadRecentlyPlayed();
 
         return recentlyPlayedLiveData;
@@ -42,19 +49,19 @@ public class HomeViewModel extends ViewModel {
 
 
     public static class OuterItemLiveData {
-        private MutableLiveData<String> mIcon;
+        private MutableLiveData<Integer> mIcon;
         private MutableLiveData<String> mTitle;
-        private InnerItemLiveData[] mInnerItems;
+        private MutableLiveData<ArrayList<InnerItemLiveData>> mInnerItems;
 
-        public OuterItemLiveData(MutableLiveData<String> mIcon,
+        public OuterItemLiveData(MutableLiveData<Integer> mIcon,
                                  MutableLiveData<String> mTitle,
-                                 InnerItemLiveData[] mInnerItems) {
+                                 MutableLiveData<ArrayList<InnerItemLiveData>> mInnerItems) {
             this.mIcon = mIcon;
             this.mTitle = mTitle;
             this.mInnerItems = mInnerItems;
         }
 
-        public MutableLiveData<String> getIcon() {
+        public MutableLiveData<Integer> getIcon() {
             return mIcon;
         }
 
@@ -62,7 +69,7 @@ public class HomeViewModel extends ViewModel {
             return mTitle;
         }
 
-        public InnerItemLiveData[] getInnerItems() {
+        public MutableLiveData<ArrayList<InnerItemLiveData>> getInnerItems() {
             return mInnerItems;
         }
     }
