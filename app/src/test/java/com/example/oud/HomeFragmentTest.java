@@ -1,7 +1,5 @@
 package com.example.oud;
 
-import android.view.View;
-
 import com.example.oud.api.Album;
 import com.example.oud.api.Category;
 import com.example.oud.api.OudApi;
@@ -12,8 +10,6 @@ import com.example.oud.api.Track;
 import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.home.HomeRepository;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +20,9 @@ import org.robolectric.annotation.LooperMode;
 import java.io.IOException;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.espresso.ViewAssertion;
-import androidx.test.espresso.ViewInteraction;
+import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Retrofit;
@@ -70,6 +62,7 @@ public class HomeFragmentTest {
         HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString());
 
         FragmentScenario scenario = FragmentScenario.launchInContainer(HomeFragment.class);
+        //scenario.moveToState(Lifecycle.State.CREATED);
         //shadowOf(getMainLooper()).idle();
 
         for (int i = 0; i < 2; i++) {

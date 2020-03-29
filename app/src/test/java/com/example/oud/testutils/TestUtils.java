@@ -8,6 +8,8 @@ import com.example.tryingstuff.OudApiJsonGenerator;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -25,6 +27,27 @@ public class TestUtils {
         return mockWebServer;
     }
 
+    public static MockWebServer getOudMockServerTimeoutFailure() {
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer.setDispatcher(getOudMockServerTimeoutFailureDispatcher());
+        return mockWebServer;
+    }
+
+    private static Dispatcher getOudMockServerTimeoutFailureDispatcher() {
+        Dispatcher dispatcher = new Dispatcher() {
+            @NotNull
+            @Override
+            public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) throws InterruptedException {
+                return new MockResponse()
+                        .setResponseCode(200)
+                        .throttleBody(1, 1, TimeUnit.MINUTES)
+                        .setBody(OudApiJsonGenerator.getJsonTrack(0));
+            }
+        };
+
+        return dispatcher;
+    }
+
     private static Dispatcher getOudMockServerDispatcher(int recentlyPlayedTrackCount, 
                                                          int categoryPlaylistCount, 
                                                          int playlistTrackCount) {
@@ -32,12 +55,26 @@ public class TestUtils {
             @NotNull
             @Override
             public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) throws InterruptedException {
+
                 String path = recordedRequest.getRequestUrl().encodedPath();
-                
+
+                // paths with character at the end
                 switch (path) {
                     case "/me/player/recently-played":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonRecentlyPlayed(recentlyPlayedTrackCount));
-                        
+                        return new MockResponse()
+                                .setResponseCode(200)
+                                .setBody(OudApiJsonGenerator.getJsonRecentlyPlayed(recentlyPlayedTrackCount));
+
+                    case "/browse/categories":
+                        return new MockResponse()
+                                .setResponseCode(200)
+                                .setBody(OudApiJsonGenerator.getJsonListOfCategories(Constants.USER_HOME_CATEGORIES_COUNT, 7));
+                }
+
+                // paths with integer at the end
+                //int i = Integer.parseInt(path.substring(path.length() - 1));
+                switch (path/*.substring(0, path.length()-1)*/) {
+
                     case "/albums/album0":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonAlbum(0));
                     case "/albums/album1":
@@ -50,9 +87,12 @@ public class TestUtils {
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonAlbum(4));
                     case "/albums/album5":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonAlbum(5));
-                        
-                    case "/browse/categories":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonListOfCategories(Constants.USER_HOME_CATEGORIES_COUNT, 7));
+
+
+                    /*case "/albums/album":
+                        return new MockResponse()
+                                .setResponseCode(200)
+                                .setBody(OudApiJsonGenerator.getJsonAlbum(i));*/
                         
                     case "/browse/categories/category0":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(0, categoryPlaylistCount));
@@ -68,6 +108,11 @@ public class TestUtils {
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(5, categoryPlaylistCount));
                     case "/browse/categories/category6":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(6, categoryPlaylistCount));
+
+                    /*case "/browse/categories/category":
+                        return new MockResponse()
+                                .setResponseCode(200)
+                                .setBody(OudApiJsonGenerator.getJsonCategory(i, categoryPlaylistCount));*/
                         
                     case "/playlists/playlist0":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonPlaylist(0, playlistTrackCount));
@@ -169,6 +214,11 @@ public class TestUtils {
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonPlaylist(48, playlistTrackCount));
                     case "/playlists/playlist49":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonPlaylist(49, playlistTrackCount));
+
+                    /*case "/playlists/playlist":
+                        return new MockResponse()
+                                .setResponseCode(200)
+                                .setBody(OudApiJsonGenerator.getJsonPlaylist(i, playlistTrackCount));*/
 
                 }
                 return new MockResponse().setResponseCode(404);

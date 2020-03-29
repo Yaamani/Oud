@@ -2,8 +2,10 @@ package com.example.oud.user.fragments.home;
 
 import android.util.Log;
 
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.EventListener;
+import com.example.oud.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.Category;
 import com.example.oud.api.OudApi;
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -28,6 +29,8 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
     public static HomeRepository instance = new HomeRepository();
 
     private String baseUrl;
+    private ConnectionStatusListener connectionStatusListener;
+    //private OudApi oudApi = instantiateRetrofitOudApi();
 
     private ArrayList<RecentlyPlayedTrack> fetchedRecentlyPlayedTracks;
 
@@ -139,11 +142,12 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
     private void fetchPlaylist(OudApi oudApi, String playlistId, HomeViewModel.InnerItemLiveData innerItem) {
 
         Call<Playlist> playlistCall = oudApi.playlist(playlistId);
-        playlistCall.enqueue(new Callback<Playlist>() {
+        /*playlistCall.enqueue(new Callback<Playlist>() {
             @Override
             public void onResponse(Call<Playlist> call, Response<Playlist> response) {
                 if(!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());
+                    //connectionFailedListener.onConnectionFailure();
                     return;
                 }
 
@@ -155,6 +159,24 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             @Override
             public void onFailure(Call<Playlist> call, Throwable t) {
                 t.printStackTrace();
+                connectionFailedListener.onConnectionFailure();
+            }
+        });*/
+
+        playlistCall.enqueue(new FailureSuccessHandledCallback<Playlist>(connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Playlist> call, Response<Playlist> response) {
+                super.onResponse(call, response);
+
+                if(!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    //connectionFailedListener.onConnectionFailure();
+                    return;
+                }
+
+                Playlist playlist = response.body();
+                innerItem.getImage().setValue(playlist.getImage());
+                innerItem.getTitle().setValue(playlist.getName());
             }
         });
     }
@@ -168,12 +190,13 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
 
         Call<OudList<Category>> categoryCall = oudApi.listOfCategories(null, Constants.USER_HOME_CATEGORIES_COUNT);
 
-        categoryCall.enqueue(new Callback<OudList<Category>>() {
+        /*categoryCall.enqueue(new Callback<OudList<Category>>() {
             @Override
             public void onResponse(Call<OudList<Category>> call, Response<OudList<Category>> response) {
                 if (!response.isSuccessful()) {
                     fetchingForCategoryListStarted = false;
                     Log.e(TAG, "onResponse: " + response.code());
+                    connectionFailedListener.onConnectionFailure();
                     return;
                 }
 
@@ -188,23 +211,41 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             public void onFailure(Call<OudList<Category>> call, Throwable t) {
                 fetchingForCategoryListStarted = false;
                 t.printStackTrace();
+                connectionFailedListener.onConnectionFailure();
+            }
+        });*/
+
+        categoryCall.enqueue(new FailureSuccessHandledCallback<OudList<Category>>(connectionStatusListener) {
+            @Override
+            public void onResponse(Call<OudList<Category>> call, Response<OudList<Category>> response) {
+                super.onResponse(call, response);
+
+                if (!response.isSuccessful()) {
+                    fetchingForCategoryListStarted = false;
+                    Log.e(TAG, "onResponse: " + response.code());
+                    //connectionFailedListener.onConnectionFailure();
+                    return;
+                }
+
+                fetchedCategoryList = response.body();
+
+                while (onCategoryListLoadedListeners.size() != 0) {
+                    onCategoryListLoadedListeners.remove(0).onTriggered();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OudList<Category>> call, Throwable t) {
+                super.onFailure(call, t);
+                fetchingForCategoryListStarted = false;
             }
         });
-    }
-
-    private OudApi instantiateRetrofitOudApi(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit.create(OudApi.class);
     }
 
     private void fetchRecentlyPlayedTracks(OudApi oudApi, MutableLiveData<Boolean> areThereRecentlyPlayedTracks) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
                 oudApi.recentlyPlayedTracks(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
-        recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
+        /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
             public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
@@ -233,6 +274,36 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             @Override
             public void onFailure(Call<RecentlyPlayedTracks> call, Throwable t) {
                 t.printStackTrace();
+                connectionFailedListener.onConnectionFailure();
+
+            }
+        });*/
+
+        recentlyPlayedTracksCall.enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(connectionStatusListener) {
+            @Override
+            public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
+                super.onResponse(call, response);
+
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                if (response.code() == 204) {
+                    areThereRecentlyPlayedTracks.setValue(false);
+                    return;
+                }
+
+                RecentlyPlayedTracks recentlyPlayedTracks = response.body();
+
+                fetchedRecentlyPlayedTracks = recentlyPlayedTracks.getItems();
+
+                if (fetchedRecentlyPlayedTracks.isEmpty()) {
+                    areThereRecentlyPlayedTracks.setValue(false);
+                    return;
+                }
+
+                areThereRecentlyPlayedTracks.setValue(true);
             }
         });
     }
@@ -241,7 +312,7 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
     private void fetchRecentlyPlayedTracks(OudApi oudApi, int itemsCount, ArrayList<HomeViewModel.InnerItemLiveData> innerItems) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
                 oudApi.recentlyPlayedTracks(itemsCount, null, null);
-        recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
+        /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
             public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
@@ -268,17 +339,42 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             @Override
             public void onFailure(Call<RecentlyPlayedTracks> call, Throwable t) {
                 t.printStackTrace();
+                connectionFailedListener.onConnectionFailure();
+            }
+        });*/
+
+        recentlyPlayedTracksCall.enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(connectionStatusListener) {
+            @Override
+            public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
+                super.onResponse(call, response);
+
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                RecentlyPlayedTracks recentlyPlayedTracks = response.body();
+
+                ArrayList<RecentlyPlayedTrack> list = recentlyPlayedTracks.getItems();
+
+                for (int i = 0; i < innerItems.size(); i++) {
+
+                    HomeViewModel.InnerItemLiveData current = innerItems.get(i);
+
+                    //innerItems[i].getPosition().setValue(i);
+                    innerItems.get(i).getTitle().setValue(list.get(i).getTrack().getName());
+
+                    fetchAlbumData(oudApi, list.get(i).getTrack().getAlbumId(), current);
+                }
             }
         });
-
-
 
     }
 
     private void fetchAlbumData(OudApi oudApi, String albumId, HomeViewModel.InnerItemLiveData innerItem) {
         Call<Album> albumCall = oudApi.album(albumId);
 
-        albumCall.enqueue(new Callback<Album>() {
+       /* albumCall.enqueue(new Callback<Album>() {
             @Override
             public void onResponse(Call<Album> call, Response<Album> response) {
                 if (!response.isSuccessful()) {
@@ -297,8 +393,39 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             @Override
             public void onFailure(Call<Album> call, Throwable t) {
                 t.printStackTrace();
+                connectionFailedListener.onConnectionFailure();
             }
-        });
+        });*/
+
+       albumCall.enqueue(new FailureSuccessHandledCallback<Album>(connectionStatusListener) {
+           @Override
+           public void onResponse(Call<Album> call, Response<Album> response) {
+               super.onResponse(call, response);
+
+               if (!response.isSuccessful()) {
+                   Log.e(TAG, "onResponse: " + response.code());
+                   return;
+               }
+
+               Album album = response.body();
+
+               Log.i(TAG, "onResponse: albumId = " + album.get_id() + ", trackId = " + innerItem.getTitle().getValue());
+
+               innerItem.getImage().setValue(album.getImage());
+               innerItem.getSubTitle().setValue(album.getName());
+           }
+       });
+    }
+
+    private OudApi instantiateRetrofitOudApi(){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(OudApi.class);
+
     }
 
     public String getBaseUrl() {
@@ -306,7 +433,20 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
     }
 
     public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        //if (oudApi == null)
+            this.baseUrl = baseUrl;
+        /*else
+            throw new RuntimeException("Base url won't be changed during runtime.");*/
+
+        Log.i(TAG, "setBaseUrl: " + baseUrl);
+
     }
 
+    public ConnectionStatusListener getConnectionStatusListener() {
+        return connectionStatusListener;
+    }
+
+    public void setConnectionStatusListener(ConnectionStatusListener connectionStatusListener) {
+        this.connectionStatusListener = connectionStatusListener;
+    }
 }

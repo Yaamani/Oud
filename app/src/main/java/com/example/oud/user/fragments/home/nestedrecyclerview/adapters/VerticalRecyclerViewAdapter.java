@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,6 +77,11 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
 
         String recyclerViewTagPrefix = mContext.getResources().getString(R.string.tag_home_outer_item_recycler_view);
         holder.mInnerRecyclerView.setTag(recyclerViewTagPrefix + position);
+
+        /*RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+
+        holder.mInnerRecyclerView.setItemAnimator()*/;
+
         handleHorizontalRecyclerView(holder.mInnerRecyclerView, position);
         //holder.mTeamPlayers.setAdapter(players.get(position));
     }

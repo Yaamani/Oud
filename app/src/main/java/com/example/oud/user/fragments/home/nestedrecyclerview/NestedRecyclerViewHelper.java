@@ -97,6 +97,15 @@ public class NestedRecyclerViewHelper {
         return sections.get(position);
     }
 
+    public void clearRecyclerView() {
+        while (!sections.isEmpty()) {
+            while (!sections.get(0).items.isEmpty()) {
+                sections.get(0).removeItem(0);
+            }
+            removeSection(0);
+        }
+    }
+
     public void refreshRecyclerView() {
         //if (mVerticalAdapter)
         mVerticalAdapter.notifyDataSetChanged();

@@ -4,7 +4,9 @@ public class DesktopTryingStuff {
     public static void main(String[] args) {
         System.out.println("HI");
 
-        System.out.println(OudApiJsonGenerator.getJsonRecentlyPlayed(6));
+        //System.out.println(OudApiJsonGenerator.getJsonRecentlyPlayed(6));
+
+        System.out.println(Integer.valueOf("Hi10".substring(3, 4)));
 
         for (int i = 0; i < 50; i++) {
             //System.out.println("\"playlist" + i + "\": " + OudApiJsonGenerator.getJsonPlaylist(i, -1) + ", ");

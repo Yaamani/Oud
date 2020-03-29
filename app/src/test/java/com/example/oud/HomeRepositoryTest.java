@@ -10,10 +10,7 @@ import com.example.oud.api.Track;
 import com.example.oud.testutils.TestUtils;
 import com.example.oud.user.fragments.home.HomeRepository;
 import com.example.oud.user.fragments.home.HomeViewModel;
-import com.example.tryingstuff.OudApiJsonGenerator;
-import com.google.common.truth.Truth;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,9 +23,6 @@ import org.robolectric.annotation.LooperMode;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -47,17 +41,6 @@ public class HomeRepositoryTest {
     public void setUp() {
         mockWebServer = TestUtils.getOudMockServer(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, 7, 7);
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @NotNull
-                    @Override
-                    public Response intercept(@NotNull Chain chain) throws IOException {
-                        return null;
-                    }
-                }).build();
-
-
-
         oudApi = new Retrofit.Builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -65,11 +48,33 @@ public class HomeRepositoryTest {
                 .create(OudApi.class);
 
 
+
     }
 
-    @Test
+    /*@Test
     public void test_areThereRecentlyPlayedTracks() {
 
+    }*/
+
+    @Test
+    public void test_connectionFailure() {
+        HomeViewModel homeViewModel = new HomeViewModel();
+        HomeRepository.getInstance().setBaseUrl(TestUtils.getOudMockServerTimeoutFailure().url("/").toString());
+
+        HomeRepository.getInstance().loadCategory(0);
+
+        for (int i = 0; i < 2; i++) {
+            try {
+                Thread.sleep(5500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            shadowOf(getMainLooper()).idle();
+        }
+
+        assertThat(homeViewModel.getConnectionStatus().getValue())
+                .isEqualTo(false);
     }
 
     @Test

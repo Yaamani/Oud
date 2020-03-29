@@ -6,4 +6,6 @@
     <dimen name="item_margin">8dp</dimen>
     <dimen name="item_inner_image_size">150dp</dimen>
     <dimen name="item_outer_icon_size">40dp</dimen>
+
+    <dimen name="offline_layout_size">35dp</dimen>
 </resources>

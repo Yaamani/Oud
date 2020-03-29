@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +15,10 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.R;
+import com.example.oud.ReconnectingListener;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
@@ -23,7 +26,7 @@ import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.Vertic
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements ReconnectingListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -48,81 +51,40 @@ public class HomeFragment extends Fragment {
 
         recyclerViewHelper = new NestedRecyclerViewHelper(this.getContext());
 
-        //if (savedInstanceState == null) {
-            //Log.i(TAG, "savedInstanceState = " + null);
-            /*new Section(getContext(), this, homeViewModel.getRecentlyPlayedLiveData(), 0);
-            for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
-                new Section(getContext(), this, homeViewModel.getCategoryLiveData(i), i+1);
-            }*/
-        //} else
-            //Log.i(TAG, "savedInstanceState !!!!!!!!!= " + null);
+    }
 
-        //handleRecentlyPlayed();
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        homeViewModel =
+                ViewModelProviders.of(this).get(HomeViewModel.class);
+
+
+        homeViewModel.getConnectionStatus().observe(this, connectionStatus -> {
+            if (context instanceof ConnectionStatusListener) {
+
+                ConnectionStatusListener connectionStatusListener = ((ConnectionStatusListener) context);
+
+                if (connectionStatus == Constants.ConnectionStatus.SUCCESSFUL)
+                    connectionStatusListener.onConnectionSuccess();
+                else
+                    connectionStatusListener.onConnectionFailure();
+
+
+
+            } else {
+                throw new RuntimeException(context.toString() +
+                        " must implement " + ConnectionStatusListener.class.getSimpleName());
+            }
+        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         Log.i(TAG, "onCreateView: ");
-        
-
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-
-
-        /*OkHttpClient client = new OkHttpClient();
-        String base = Constants.YAMANI_MOCK_BASE_URL;
-        Request request = new Request.Builder().url(base + "/me/player/recently-played").build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful())
-                    Log.i(TAG, "onResponse: " + response.body().string());
-                else
-                    Log.e(TAG, "onResponse: " + "Fail");
-
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-
-                Log.e(TAG, "onFailure: " + "Fail");
-            }
-        });*/
-
-        /*Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.YAMANI_MOCK_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        OudApi oudApi = retrofit.create(OudApi.class);
-        retrofit2.Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
-                oudApi.recentlyPlayedTracks(Constants.USER_HOME_CATEGORIES_COUNT, null, null);
-        recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
-            @Override
-            public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
-                if (!response.isSuccessful()) {
-                    Log.e(TAG, "onResponse: " + "Fail, code = " + response.code());
-                    return;
-                }
-
-                RecentlyPlayedTracks recentlyPlayedTracks = response.body();
-                Log.i(TAG, "onResponse: " + recentlyPlayedTracks.getItems()[0].getPlayedAt());
-            }
-
-            @Override
-            public void onFailure(Call<RecentlyPlayedTracks> call, Throwable t) {
-                t.printStackTrace();
-
-                Log.e(TAG, "onFailure: " + "Fail");
-            }
-        });*/
-
-        //handleVerticalRecyclerViewData();
-        //initializeVerticalRecyclerView();
-
-
-        Log.i(TAG, "onCreateView: ");        
 
         return root;
     }
@@ -134,28 +96,14 @@ public class HomeFragment extends Fragment {
         Log.i(TAG, "onViewCreated: ");
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_home);
+
         recyclerViewHelper.setRecyclerView(recyclerView);
 
-        /*if (recyclerView.getChildCount() == 0) {
-            if (savedInstanceState != null) return;
+
+        if (recyclerViewHelper.getSectionCount() == 0) {
             handleRecentlyPlayed();
             handleCategories();
-        }*/
-
-
-        //if (savedInstanceState == null) {
-            if (recyclerViewHelper.getSectionCount() == 0) {
-                handleRecentlyPlayed();
-                handleCategories();
-            }
-        //} /*else*/
-            //recyclerViewHelper.getRecyclerView().getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("RV"));
-            //recyclerViewHelper.refreshRecyclerView();
-
-
-        /*if (savedInstanceState == null)
-            handleVerticalRecyclerViewData();*/
-        //initializeVerticalRecyclerView();
+        }
 
     }
 
@@ -166,37 +114,10 @@ public class HomeFragment extends Fragment {
         Log.i(TAG, "onStart: ");
     }
 
-    /*@Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelable("RV", recyclerViewHelper.getRecyclerView().getLayoutManager().onSaveInstanceState());
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-
-    }*/
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-    }
-
-    private void handleVerticalRecyclerViewData() {
-        if (mIcons != null & mTitles != null & mInnerItemAdapters != null) {
-
-            if ((mIcons.size() == mTitles.size())
-                    & (mTitles.size() == mInnerItemAdapters.size())) {
-
-                if (mVerticalAdapter == null) {
-                    initializeVerticalRecyclerView();
-                } else updateVerticalRecyclerView();
-            }
-        }
     }
 
     private void handleRecentlyPlayed() {
@@ -274,186 +195,15 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(mVerticalAdapter);
     }
 
-    private void updateVerticalRecyclerView() {
-        RecyclerView recyclerView  = getView().findViewById(R.id.recycler_view_home);
-        if (recyclerView.getAdapter() == null)
-            initializeVerticalRecyclerView();
+    @Override
+    public void onTryingToReconnect() {
+        recyclerViewHelper.clearRecyclerView();
+        handleRecentlyPlayed();
+        handleCategories();
 
-        mVerticalAdapter.notifyDataSetChanged();
     }
 
-
-
-
-
-
-/*    public class Section {
-        private Context mContext;
-
-        private int position;
-
-        private Integer mIcon;
-        private String mTitle;
-        private ArrayList<String> mInnerImages;
-        private ArrayList<String> mInnerTitles;
-        private ArrayList<String> mInnerSubTitles;
-
-        private HorizontalRecyclerViewAdapter mAdapter;
-
-        public Section(Context mContext,
-                       LifecycleOwner lifecycleOwner,
-                       final HomeViewModel.OuterItemLiveData liveData,
-                       int position) {
-
-            this.mContext = mContext;
-
-            this.position = position;
-
-
-            liveData.getIcon().observe(lifecycleOwner, s -> {
-
-                mIcon = liveData.getIcon().getValue();
-                if (mIcons == null)
-                    mIcons = new ArrayList<Integer>();
-                //mLogos.contains()
-
-                boolean success = false;
-                while (!success) {
-                    try {
-                        mIcons.set(position, mIcon);
-                        success = true;
-                    } catch (IndexOutOfBoundsException e) {
-                        mIcons.add(null);
-                    }
-                }
-                //mIcons.add(mIcon);
-
-
-                handleVerticalRecyclerViewData();
-            });
-
-            liveData.getTitle().observe(lifecycleOwner, new Observer<String>() {
-                @Override
-                public void onChanged(String s) {
-                    mTitle = liveData.getTitle().getValue();
-
-                    if (mTitles == null)
-                        mTitles = new ArrayList<>();
-
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            mTitles.set(position, s);
-                            success = true;
-                        } catch (IndexOutOfBoundsException e) {
-                            mTitles.add(null);
-                        }
-                    }
-                    //mTitles.add(mTitle);
-
-                    handleVerticalRecyclerViewData();
-                }
-            });
-
-            for (int i = 0; i < liveData.getInnerItems().size(); i++) {
-                final int final_i = i;
-
-                liveData.getInnerItems().get(i).getImage().observe(lifecycleOwner, s -> {
-                    if (mInnerImages == null)
-                        mInnerImages = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
-
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            mInnerImages.set(final_i, s);
-                            success = true;
-                        } catch (IndexOutOfBoundsException e) {
-                            mInnerImages.add(null);
-                            //mInnerImages.set(final_i, s);
-                        }
-                    }
-
-                    handleHorizontalRecyclerViewData();
-
-                    handleVerticalRecyclerViewData();
-                });
-
-                liveData.getInnerItems().get(i).getTitle().observe(lifecycleOwner, s -> {
-                    if (mInnerTitles == null)
-                        mInnerTitles = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
-
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            mInnerTitles.set(final_i, s);
-                            success = true;
-                        } catch (IndexOutOfBoundsException e) {
-                            mInnerTitles.add(null);
-                            //mInnerImages.set(final_i, s);
-                        }
-                    }
-                    //mInnerTitles.set(final_i, s);
-
-                    handleHorizontalRecyclerViewData();
-
-                    handleVerticalRecyclerViewData();
-                });
-
-                liveData.getInnerItems().get(i).getSubTitle().observe(lifecycleOwner, s -> {
-                    if (mInnerSubTitles == null)
-                        mInnerSubTitles = new ArrayList<>(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
-
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            mInnerSubTitles.set(final_i, s);
-                            success = true;
-                        } catch (IndexOutOfBoundsException e) {
-                            mInnerSubTitles.add(null);
-                            //mInnerImages.set(final_i, s);
-                        }
-                    }
-                    //mInnerSubTitles.set(final_i, s);
-
-                    handleHorizontalRecyclerViewData();
-
-                    handleVerticalRecyclerViewData();
-                });
-            }
-        }
-
-        private void handleHorizontalRecyclerViewData() {
-
-            if (mInnerImages != null & mInnerTitles != null & mInnerSubTitles != null) {
-
-                if ((mInnerImages.size() == mInnerTitles.size())
-                        & (mInnerTitles.size() == mInnerSubTitles.size())) {
-
-                    if (mAdapter == null) {
-                        *//*initializeRecyclerView();*//*
-                        mAdapter = new HorizontalRecyclerViewAdapter(mContext, mInnerImages, mInnerTitles, mInnerSubTitles);
-
-                        if (mInnerItemAdapters == null)
-                            mInnerItemAdapters = new ArrayList<>();
-
-                        boolean success = false;
-                        while (!success) {
-                            try {
-                                mInnerItemAdapters.set(position, mAdapter);
-                                success = true;
-                            } catch (IndexOutOfBoundsException e) {
-                                mInnerItemAdapters.add(null);
-                            }
-                        }
-
-                        //mInnerItemAdapters.add(mAdapter);
-                    } else updateHorizontalRecyclerView();
-                }
-            }
-        }
-
-        private void updateHorizontalRecyclerView() {
-            mAdapter.notifyDataSetChanged();
-        }
+    /*public interface UserHomeCommunicationListener {
+        void onConnectionFailure();
     }*/
 }
