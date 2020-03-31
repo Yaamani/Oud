@@ -17,15 +17,24 @@ import android.view.ViewGroup;
 
 import com.example.oud.Constants;
 import com.example.oud.R;
+import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.fragments.home.HomeViewModel;
 
 import java.util.ArrayList;
 
-public class PlaylistFragment extends Fragment {
+public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> {
 
-    private PlaylistViewModel mViewModel;
+    //private PlaylistViewModel mViewModel;
 
     private Constants.PlaylistFragmentType type;
     private String id;
+
+    public PlaylistFragment() {
+        super(PlaylistViewModel.class,
+                R.layout.fragment_playlist,
+                R.id.progress_playlist,
+                null);
+    }
 
     public static PlaylistFragment newInstance(Constants.PlaylistFragmentType type, String id) {
         PlaylistFragment playlistFragment = new PlaylistFragment();
@@ -39,9 +48,9 @@ public class PlaylistFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_playlist, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
 
         Bundle args = getArguments();
         if (args != null) {
@@ -55,8 +64,7 @@ public class PlaylistFragment extends Fragment {
 
 
 
-
-        RecyclerView recyclerView = v.findViewById(R.id.recycler_view_playlist_tracks);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_playlist_tracks);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<String> trackNames = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
@@ -66,23 +74,11 @@ public class PlaylistFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         //adapter.notifyDataSetChanged();
 
-        return v;
+
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mViewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
-        // TODO: Use the ViewModel
+    public void onTryingToReconnect() {
+        super.onTryingToReconnect();
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        /*mViewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
-        // TODO: Use the ViewModel*/
-
-
-    }
-
 }

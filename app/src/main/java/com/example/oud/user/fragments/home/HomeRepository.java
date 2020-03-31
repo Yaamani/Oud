@@ -13,6 +13,7 @@ import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTrack;
 import com.example.oud.api.RecentlyPlayedTracks;
+import com.example.oud.connectionaware.ConnectionAwareRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,14 +24,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
+public class HomeRepository extends ConnectionAwareRepository implements NestedRecyclerViewOuterItemSupplier {
 
     private static final String TAG = HomeRepository.class.getSimpleName();
 
     public static HomeRepository instance = new HomeRepository();
-
-    private String baseUrl;
-    private ConnectionStatusListener connectionStatusListener;
     //private OudApi oudApi = instantiateRetrofitOudApi();
 
     private ArrayList<RecentlyPlayedTrack> fetchedRecentlyPlayedTracks;
@@ -39,9 +37,6 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
     private OudList<Category> fetchedCategoryList;
     private ArrayList<EventListener> onCategoryListLoadedListeners = new ArrayList<>();
 
-    private HomeRepository() {
-        this.baseUrl = Constants.BASE_URL;
-    }
 
     public static HomeRepository getInstance() {
         return instance;
@@ -435,36 +430,5 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
        });
     }
 
-    private OudApi instantiateRetrofitOudApi(){
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit.create(OudApi.class);
-
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        //if (oudApi == null)
-            this.baseUrl = baseUrl;
-        /*else
-            throw new RuntimeException("Base url won't be changed during runtime.");*/
-
-        Log.i(TAG, "setBaseUrl: " + baseUrl);
-
-    }
-
-    public ConnectionStatusListener getConnectionStatusListener() {
-        return connectionStatusListener;
-    }
-
-    public void setConnectionStatusListener(ConnectionStatusListener connectionStatusListener) {
-        this.connectionStatusListener = connectionStatusListener;
-    }
 }
