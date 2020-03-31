@@ -88,7 +88,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
         homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
-        homeTransaction.addToBackStack(null);
+        //homeTransaction.addToBackStack(null);
+        bottomNavViewBackStack.push(R.id.navigation_home);
         homeTransaction.commit();
 
         //navView.setSelectedItemId(R.id.navigation_search);
@@ -143,9 +144,14 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
     private void handleBottomNavViewBackStack(BottomNavigationView navView) {
         if (backButtonPressed & !bottomNavViewBackStack.isEmpty()) { // pop & peak
+
             bottomNavViewBackStack.pop();
-            int itemId = bottomNavViewBackStack.peek();
-            navView.setSelectedItemId(itemId);
+
+            if (!bottomNavViewBackStack.isEmpty()) {
+                int itemId = bottomNavViewBackStack.peek();
+                navView.setSelectedItemId(itemId);
+            }
+
         } else  // push
             bottomNavViewBackStack.push(navView.getSelectedItemId());
 
