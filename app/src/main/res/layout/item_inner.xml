@@ -6,7 +6,8 @@
     android:layout_marginTop="@dimen/item_margin"
     android:layout_marginRight="@dimen/item_margin"
     android:animateLayoutChanges="true"
-    android:layoutAnimation="@anim/item_inner_layout_appear">
+    android:layoutAnimation="@anim/item_inner_layout_appear"
+    android:id="@+id/relative_layout_item_inner">
 
 
     <ImageView
@@ -14,8 +15,7 @@
         android:layout_width="@dimen/item_inner_image_size"
         android:layout_height="@dimen/item_inner_image_size"
         android:foregroundGravity="center"
-        android:scaleType="centerCrop"
-        app:srcCompat="@mipmap/ic_launcher" />
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/txt_item_inner_title"

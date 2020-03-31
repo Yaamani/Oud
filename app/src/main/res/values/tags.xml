@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_home_outer_item_title">tag_home_outer_item_title_</string>
+    <string name="tag_home_outer_item_icon">tag_home_outer_item_icon_</string>
+    <string name="tag_home_outer_item_recycler_view">tag_home_outer_item_recycler_view_</string>
+    <string name="tag_home_inner_item_image">tag_home_inner_item_image_</string>
+    <string name="tag_home_inner_item_title">tag_home_inner_item_title_</string>
+    <string name="tag_home_inner_item_subtitle">tag_home_inner_item_subtitle_</string>
+</resources>

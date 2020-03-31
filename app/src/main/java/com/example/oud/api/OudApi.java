@@ -1,5 +1,7 @@
 package com.example.oud.api;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -46,10 +48,13 @@ public interface OudApi {
     @GET("/browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/albums/{id}")
-    Call<Album> album(@Path("id") String id);
-
     @GET("/browse/categories/{categoryId}")
     Call<Category> category(@Path("categoryId") String categoryId);
+
+    @GET("/albums/{albumId}")
+    Call<Album> album(@Path("albumId") String albumId);
+
+    @GET("/playlists/{playlistId}")
+    Call<Playlist> playlist(@Path("playlistId") String playlistId);
 
 }

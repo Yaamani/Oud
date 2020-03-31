@@ -1,4 +1,4 @@
-package com.example.oud.nestedrecyclerview.decorations;
+package com.example.oud.user.fragments.home.nestedrecyclerview.decorations;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class HorizontalSpaceDecoration extends RecyclerView.ItemDecoration {
 
     private final int horizontalSpace;
-    private int itemCount;
+    private int itemCount = 0;
 
-    public HorizontalSpaceDecoration(Resources resources, @DimenRes int horizontalSpace, int itemCount) {
+    public HorizontalSpaceDecoration(Resources resources, @DimenRes int horizontalSpace) {
         this.horizontalSpace = (int) resources.getDimension(horizontalSpace);
-        this.itemCount = itemCount;
+        //this.itemCount = itemCount;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -40,5 +40,17 @@ public class HorizontalSpaceDecoration extends RecyclerView.ItemDecoration {
             if (parent.getChildAdapterPosition(view) == itemCount - 1)
                 outRect.left = horizontalSpace;
         }
+    }
+
+    public int getHorizontalSpace() {
+        return horizontalSpace;
+    }
+
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(int itemCount) {
+        this.itemCount = itemCount;
     }
 }

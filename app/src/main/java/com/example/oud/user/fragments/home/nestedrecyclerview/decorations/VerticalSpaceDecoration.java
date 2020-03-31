@@ -1,4 +1,4 @@
-package com.example.oud.nestedrecyclerview.decorations;
+package com.example.oud.user.fragments.home.nestedrecyclerview.decorations;
 
 import android.content.res.Resources;
 import android.graphics.Rect;

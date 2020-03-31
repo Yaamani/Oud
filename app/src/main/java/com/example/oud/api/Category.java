@@ -1,13 +1,15 @@
 package com.example.oud.api;
 
+import java.util.ArrayList;
+
 public class Category {
 
     private String _id;
     private String name;
     private String icon;
-    private String[] playlists;
+    private ArrayList<String> playlists;
 
-    public Category(String _id, String name, String icon, String[] playlists) {
+    public Category(String _id, String name, String icon, ArrayList<String> playlists) {
         this._id = _id;
         this.name = name;
         this.icon = icon;
@@ -26,7 +28,7 @@ public class Category {
         return icon;
     }
 
-    public String[] getPlaylists() {
+    public ArrayList<String> getPlaylists() {
         return playlists;
     }
 }

@@ -1,14 +1,15 @@
 package com.example.oud.user.fragments.home;
 
 import com.example.oud.Constants;
+import com.example.oud.R;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import androidx.lifecycle.MutableLiveData;
 
+@Deprecated
 public class HomeRepositoryMockService implements NestedRecyclerViewOuterItemSupplier{
-
 
     private static final String TAG = HomeRepositoryMockService.class.getSimpleName();
 
@@ -44,31 +45,28 @@ public class HomeRepositoryMockService implements NestedRecyclerViewOuterItemSup
     }
 
     private HomeViewModel.OuterItemLiveData loadDummy(String dummyTitle) {
-        String recentlyPlayedIcon =
-                "https://iconmonstr.com/wp-content/g/gd/makefg.php?i=../assets/preview/2012/png/iconmonstr-undo-4.png&r=255&g=255&b=255";
-        String categoryIcon =
-                "https://iconmonstr.com/wp-content/g/gd/makefg.php?i=../assets/preview/2019/png/iconmonstr-party-17.png&r=255&g=255&b=255";
+        Integer recentlyPlayedIcon = R.drawable.ic_history2;
+        Integer categoryIcon = R.drawable.ic_category;
 
-
-        MutableLiveData<String> icon = new MutableLiveData<>();
+        MutableLiveData<Integer> icon = new MutableLiveData<>();
 
         if (dummyTitle.equals( "Recently played"))
             icon.setValue(recentlyPlayedIcon);
         else icon.setValue(categoryIcon);
 
         MutableLiveData<String> title = new MutableLiveData<>(dummyTitle);
-        HomeViewModel.InnerItemLiveData[] innerItems = new HomeViewModel.InnerItemLiveData[Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT];
+        ArrayList<HomeViewModel.InnerItemLiveData> innerItems = new ArrayList<>();
 
-        for (int i = 0; i < innerItems.length; i++) {
-            innerItems[i] = new HomeViewModel.InnerItemLiveData();
+        for (int i = 0; i < innerItems.size(); i++) {
+            innerItems.set(i, new HomeViewModel.InnerItemLiveData());
 
             Random random = new Random();
-            innerItems[i].getImage().setValue(landscapes.get(random.nextInt(landscapes.size())));
-            innerItems[i].getTitle().setValue("Title " + i);
-            innerItems[i].getSubTitle().setValue("Sub title " + i);
+            innerItems.get(i).getImage().setValue(landscapes.get(random.nextInt(landscapes.size())));
+            innerItems.get(i).getTitle().setValue("Title " + i);
+            innerItems.get(i).getSubTitle().setValue("Sub title " + i);
         }
 
-        return new HomeViewModel.OuterItemLiveData(icon, title, innerItems);
+        return new HomeViewModel.OuterItemLiveData(icon, title, new MutableLiveData<>(innerItems));
     }
 
 }
