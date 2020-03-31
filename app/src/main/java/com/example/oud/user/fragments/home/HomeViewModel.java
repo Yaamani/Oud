@@ -4,6 +4,7 @@ import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -102,10 +103,13 @@ public class HomeViewModel extends ViewModel implements ConnectionStatusListener
         private MutableLiveData<String> mTitle;
         private MutableLiveData<String> mSubTitle;
 
+        private MutableLiveData<HashMap<String, Object>> mRelatedInfo;
+
         public InnerItemLiveData() {
             mImage = new MutableLiveData<>();
             mTitle = new MutableLiveData<>();
             mSubTitle = new MutableLiveData<>();
+            mRelatedInfo = new MutableLiveData<>();
         }
 
         /*public MutableLiveData<Integer> getPosition() {
@@ -122,6 +126,10 @@ public class HomeViewModel extends ViewModel implements ConnectionStatusListener
 
         public MutableLiveData<String> getSubTitle() {
             return mSubTitle;
+        }
+
+        public MutableLiveData<HashMap<String, Object>> getRelatedInfo() {
+            return mRelatedInfo;
         }
     }
 

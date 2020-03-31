@@ -15,6 +15,7 @@ import com.example.oud.api.RecentlyPlayedTrack;
 import com.example.oud.api.RecentlyPlayedTracks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
@@ -80,6 +81,10 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
             innerItemsLiveData.getValue().add(current);
 
             current.getTitle().setValue(fetchedRecentlyPlayedTracks.get(i).getTrack().getName());
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put(Constants.TRACK_ID_KEY, fetchedRecentlyPlayedTracks.get(i).getTrack().get_id());
+            current.getRelatedInfo().setValue(map);
 
             fetchAlbumData(oudApi, fetchedRecentlyPlayedTracks.get(i).getTrack().getAlbumId(), current);
         }
@@ -175,8 +180,13 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
                 }
 
                 Playlist playlist = response.body();
+
                 innerItem.getImage().setValue(playlist.getImage());
                 innerItem.getTitle().setValue(playlist.getName());
+
+                HashMap<String, Object> map = new HashMap<>();
+                map.put(Constants.PLAYLIST_ID_KEY, playlist.getId());
+                innerItem.getRelatedInfo().setValue(map);
             }
         });
     }
@@ -364,6 +374,10 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
                     //innerItems[i].getPosition().setValue(i);
                     innerItems.get(i).getTitle().setValue(list.get(i).getTrack().getName());
 
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put(Constants.TRACK_ID_KEY, list.get(i).getTrack().get_id());
+                    innerItems.get(i).getRelatedInfo().setValue(map);
+
                     fetchAlbumData(oudApi, list.get(i).getTrack().getAlbumId(), current);
                 }
             }
@@ -413,6 +427,10 @@ public class HomeRepository implements NestedRecyclerViewOuterItemSupplier {
 
                innerItem.getImage().setValue(album.getImage());
                innerItem.getSubTitle().setValue(album.getName());
+
+               /*HashMap<String, Object> map = new HashMap<>();
+               map.put(Constants.ALBUM_ID_KEY, album.get_id());
+               innerItem.getRelatedInfo().setValue(map);*/
            }
        });
     }

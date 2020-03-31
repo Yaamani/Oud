@@ -6,13 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oud.ConnectionStatusListener;
@@ -20,24 +21,15 @@ import com.example.oud.Constants;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
-import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
-import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
-import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.VerticalSpaceDecoration;
-
-import java.util.ArrayList;
+import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 
 public class HomeFragment extends Fragment implements ReconnectingListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
-    private ArrayList<Integer> mIcons;
-    private ArrayList<String> mTitles;
-    private ArrayList<HorizontalRecyclerViewAdapter> mInnerItemAdapters;
-
-    private VerticalRecyclerViewAdapter mVerticalAdapter;
-
     private HomeViewModel homeViewModel;
 
+    private PlaylistFragmentOpeningListener playlistFragmentOpeningListener;
 
     private NestedRecyclerViewHelper recyclerViewHelper;
 
@@ -78,6 +70,14 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
                         " must implement " + ConnectionStatusListener.class.getSimpleName());
             }
         });
+
+
+        if (context instanceof PlaylistFragmentOpeningListener) {
+            playlistFragmentOpeningListener = ((PlaylistFragmentOpeningListener) context);
+        } else {
+            throw new RuntimeException(getContext().toString()
+                    + " must implement " + PlaylistFragmentOpeningListener.class.getSimpleName());
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -85,6 +85,14 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
 
         Log.i(TAG, "onCreateView: ");
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        homeViewModel.getConnectionStatus().observe(getViewLifecycleOwner(), connectionStatus -> {
+            ProgressBar progressBar = root.findViewById(R.id.progress_home);
+            if (progressBar != null)
+                if (progressBar.getVisibility() == View.VISIBLE)
+                    progressBar.setVisibility(View.GONE);
+
+        });
 
         return root;
     }
@@ -153,8 +161,14 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
             section.addItem(item);
 
             itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
-            itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
+            itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+
+            itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
+                String trackId = (String) map.get(Constants.TRACK_ID_KEY);
+                item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
+                item.setClickListener(v -> Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show());
+            });
         }
 
         recyclerViewHelper.addSection(position, section);
@@ -174,6 +188,12 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
                 itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
                 itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
                 itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
+
+                itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
+                    String playlistId = (String) map.get(Constants.PLAYLIST_ID_KEY);
+                    item.getRelatedInfo().put(Constants.PLAYLIST_ID_KEY, playlistId);
+                    item.setClickListener(v -> openPlaylistFragment(Constants.PlaylistFragmentType.PLAYLIST, playlistId));
+                });
             }
         });
 
@@ -181,22 +201,17 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
         recyclerViewHelper.addSection(position, section);
     }
 
-    private void initializeVerticalRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view_home);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        //recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
-        recyclerView.addItemDecoration(new VerticalSpaceDecoration(getResources(), R.dimen.item_margin));
-
-
-
-        mVerticalAdapter = new VerticalRecyclerViewAdapter(
-                this.getContext(), mIcons, mTitles, mInnerItemAdapters);
-        recyclerView.setAdapter(mVerticalAdapter);
+    private void openPlaylistFragment(Constants.PlaylistFragmentType type, String id) {
+        playlistFragmentOpeningListener.onOpeningPlaylistFragment(type, id);
     }
 
     @Override
     public void onTryingToReconnect() {
+        ProgressBar progressBar = getView().findViewById(R.id.progress_home);
+        if (progressBar != null)
+            if (progressBar.getVisibility() == View.GONE)
+                progressBar.setVisibility(View.VISIBLE);
+
         recyclerViewHelper.clearRecyclerView();
         handleRecentlyPlayed();
         handleCategories();

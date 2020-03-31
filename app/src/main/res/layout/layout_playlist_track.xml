@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_playlist_track"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_track_playlist"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_track_playlist"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_track_playlist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="Track"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_track_playlist"
+        app:layout_constraintEnd_toStartOf="@+id/btn_track_reorder_playlist"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_track_playlist"
+        app:layout_constraintTop_toTopOf="@+id/img_track_playlist" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_track_reorder_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:adjustViewBounds="true"
+        android:background="#00FFFFFF"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_reorder"
+        app:layout_constraintBottom_toBottomOf="@+id/img_track_playlist"
+        app:layout_constraintEnd_toStartOf="@+id/btn_track_like_playlist"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/txt_track_playlist"
+        app:layout_constraintTop_toTopOf="@+id/img_track_playlist" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_track_like_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:adjustViewBounds="true"
+        android:background="#00FFFFFF"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_heart"
+        app:layout_constraintBottom_toBottomOf="@+id/img_track_playlist"
+        app:layout_constraintEnd_toStartOf="@+id/btn_track_options_playlist"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_track_reorder_playlist"
+        app:layout_constraintTop_toTopOf="@+id/img_track_playlist" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_track_options_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:adjustViewBounds="true"
+        android:background="#00FFFFFF"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_options"
+        app:layout_constraintBottom_toBottomOf="@+id/img_track_playlist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_track_like_playlist"
+        app:layout_constraintTop_toTopOf="@+id/img_track_playlist" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

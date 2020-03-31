@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,12 +23,20 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     private Context mContext;
 
+    private ArrayList<View.OnClickListener> clickListeners;
+
     private ArrayList<String> images;
     private ArrayList<String> titles;
     private ArrayList<String> subtitles;
 
-    public HorizontalRecyclerViewAdapter(Context mContext, ArrayList<String> images, ArrayList<String> titles, ArrayList<String> subtitles) {
+    public HorizontalRecyclerViewAdapter(Context mContext,
+                                         ArrayList<View.OnClickListener> clickListeners,
+                                         ArrayList<String> images,
+                                         ArrayList<String> titles,
+                                         ArrayList<String> subtitles) {
         this.mContext = mContext;
+
+        this.clickListeners = clickListeners;
         this.images = images;
         this.titles = titles;
         this.subtitles = subtitles;
@@ -45,6 +54,8 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
         //holder.mImageView.setImageDrawable(mBitmaps.get(position));
         //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
+
+        holder.mLayout.setOnClickListener(clickListeners.get(position));
 
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
@@ -82,16 +93,24 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     public static class InnerItemViewHolder extends RecyclerView.ViewHolder {
 
+        private RelativeLayout mLayout;
+
         private ImageView mImage;
         private TextView mTitle;
         private TextView mSubTitle;
 
         public InnerItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            mLayout = itemView.findViewById(R.id.relative_layout_item_inner);
+
             mImage = itemView.findViewById(R.id.image_item_inner);
             mTitle = itemView.findViewById(R.id.txt_item_inner_title);
             mSubTitle = itemView.findViewById(R.id.txt_item_inner_sub_title);
         }
+    }
+
+    public ArrayList<View.OnClickListener> getClickListeners() {
+        return clickListeners;
     }
 
     public ArrayList<String> getImages() {

@@ -117,14 +117,14 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
 
     }
 
-    public static class OuterItemViewHolder extends RecyclerView.ViewHolder {
+    static class OuterItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;
         private TextView mTitle;
         private RecyclerView mInnerRecyclerView;
 
 
-        public OuterItemViewHolder(@NonNull View itemView) {
+        OuterItemViewHolder(@NonNull View itemView) {
             super(itemView);
             mIcon = itemView.findViewById(R.id.image_item_outer_icon);
             mTitle = itemView.findViewById(R.id.txt_item_outer_title);

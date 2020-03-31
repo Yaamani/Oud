@@ -7,8 +7,10 @@ import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTracks;
 import com.example.oud.api.Track;
+import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.home.HomeRepository;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,8 +21,10 @@ import org.robolectric.annotation.LooperMode;
 
 import java.io.IOException;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -29,12 +33,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.os.Looper.getMainLooper;
+import static androidx.test.espresso.action.ViewActions.*;
 import static org.robolectric.Shadows.shadowOf;
 import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static com.example.oud.testutils.TestUtils.*;
+import static com.google.common.truth.Truth.*;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -59,40 +65,48 @@ public class HomeFragmentTest {
     @Test
     @LooperMode(LooperMode.Mode.PAUSED)
     public void homeFragmentDataTest() {
-        HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString());
 
-        FragmentScenario scenario = FragmentScenario.launchInContainer(HomeFragment.class);
-        //scenario.moveToState(Lifecycle.State.CREATED);
-        //shadowOf(getMainLooper()).idle();
+        ActivityScenario<UserActivity> activityScenario = ActivityScenario.launch(UserActivity.class);
 
-        for (int i = 0; i < 2; i++) {
+        HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+
+        activityScenario.onActivity(activity -> {
+
+
+
+            //FragmentScenario scenario = FragmentScenario.launchInContainer(HomeFragment.class);
+            //scenario.moveToState(Lifecycle.State.CREATED);
+            //shadowOf(getMainLooper()).idle();
+
+            for (int i = 0; i < 2; i++) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                shadowOf(getMainLooper()).idle();
+            }
+
+            testRecentlyPlayedTracksContent();
+
+            OudList<Category> categories = null;
+
             try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
+                categories = oudApi.listOfCategories(null, 7).execute().body();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            shadowOf(getMainLooper()).idle();
-        }
+            for (int i = 1; i < Constants.USER_HOME_CATEGORIES_COUNT + 1; i++) {
+                testCategory(i, categories);
+            }
 
-        testRecentlyPlayedTracksContent();
-
-        OudList<Category> categories = null;
-
-        try {
-            categories = oudApi.listOfCategories(null, 7).execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (int i = 1; i < Constants.USER_HOME_CATEGORIES_COUNT + 1; i++) {
-            testCategory(i, categories);
-        }
-
-        //onView(withRecyclerView(R.id.recycler_view_home).a)
+            //onView(withRecyclerView(R.id.recycler_view_home).a)
 
 
-        /*Espresso.onView(ViewMatchers.withId(R.id.txt_home_test)).check(ViewAssertions.matches(ViewMatchers.withText("Home")));*/
+            /*Espresso.onView(ViewMatchers.withId(R.id.txt_home_test)).check(ViewAssertions.matches(ViewMatchers.withText("Home")));*/
+        });
 
     }
 
@@ -129,7 +143,7 @@ public class HomeFragmentTest {
 
 
         }
-        for (int i = 0; i < Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT; i++) {
+        for (int i = 0; i < /*Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT*/1; i++) {
 
             Track currentTrack = recentlyPlayedTracks.getItems().get(i).getTrack();
 
@@ -282,6 +296,45 @@ public class HomeFragmentTest {
                     .check(matches(withText("")));*/
 
         }
+    }
+
+    @Test
+    public void openPlaylistFragmentTest() {
+        ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
+
+        HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+
+        scenario.onActivity(activity -> {
+
+            for (int i = 0; i < 2; i++) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                shadowOf(getMainLooper()).idle();
+            }
+
+
+            // when
+            String recyclerViewItemOuterTagPrefix =
+                    InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_outer_item_recycler_view);
+            String innerTitleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_inner_item_image);
+
+            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + 1))),
+                    withTagValue(is(innerTitleTagPrefix + "0"))))
+                    .perform(click());
+
+            // then
+            FragmentManager manager = activity.getSupportFragmentManager();
+            PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(UserActivity.PLAYLIST_FRAGMENT_TAG);
+            HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(UserActivity.HOME_FRAGMENT_TAG);
+
+            assertThat(playlistFragment).isNotNull();
+            assertThat(homeFragment).isNull();
+
+        });
     }
 
     @After

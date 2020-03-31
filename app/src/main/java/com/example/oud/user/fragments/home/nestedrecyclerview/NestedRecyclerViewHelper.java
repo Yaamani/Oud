@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.home.nestedrecyclerview;
 
 import android.content.Context;
+import android.view.View;
 
 import com.example.oud.R;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
@@ -10,6 +11,7 @@ import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.Vertic
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,15 +64,17 @@ public class NestedRecyclerViewHelper {
         mVerticalAdapter.getTitles().add(position, section.title);
 
         ArrayList<Item> items = section.items;
+        ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
         ArrayList<String> imageUls = new ArrayList<>();
         ArrayList<String> titles = new ArrayList<>();
         ArrayList<String> subtitles = new ArrayList<>();
         for (Item item : items) {
+            clickListeners.add(item.clickListener);
             imageUls.add(item.imageUrl);
             titles.add(item.title);
             subtitles.add(item.subtitle);
         }
-        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, imageUls, titles, subtitles);
+        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, titles, subtitles);
         mVerticalAdapter.getInnerItemAdapters().add(position, hAdapter);
 
         mVerticalAdapter.notifyDataSetChanged();
@@ -182,6 +186,7 @@ public class NestedRecyclerViewHelper {
 
             int index = helper.sections.indexOf(Section.this);
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(index);
+            hAdapter.getClickListeners().add(position, item.clickListener);
             hAdapter.getImages().add(position, item.imageUrl);
             hAdapter.getTitles().add(position, item.title);
             hAdapter.getSubtitles().add(position, item.subtitle);
@@ -229,11 +234,17 @@ public class NestedRecyclerViewHelper {
         private String title;
         private String subtitle;
 
+        private HashMap<String, Object> relatedInfo = new HashMap<>();
+
+        private View.OnClickListener clickListener;
+
         public Item() {
 
         }
 
         public Item(String imageUrl, String title, String subtitle) {
+
+
             setImageUrl(imageUrl);
             setTitle(title);
             setSubtitle(subtitle);
@@ -287,6 +298,23 @@ public class NestedRecyclerViewHelper {
             hAdapter.getSubtitles().set(itemIndex, subtitle);
 
             hAdapter.notifyDataSetChanged();
+        }
+
+        public void setClickListener(View.OnClickListener clickListener) {
+            this.clickListener = clickListener;
+
+            if (helper == null) return;
+
+            int sectionIndex = helper.sections.indexOf(section);
+            int itemIndex = section.items.indexOf(Item.this);
+            HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
+            hAdapter.getClickListeners().set(itemIndex, clickListener);
+
+            hAdapter.notifyDataSetChanged();
+        }
+
+        public HashMap<String, Object> getRelatedInfo() {
+            return relatedInfo;
         }
 
         public String getImageUrl() {

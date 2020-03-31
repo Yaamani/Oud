@@ -1,26 +1,33 @@
 package com.example.oud.user;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
+import com.example.oud.Constants;
 import com.example.oud.OfflineFragment;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.library.LibraryFragment;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
+import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.fragments.premium.PremiumFragment;
 import com.example.oud.user.fragments.search.SearchFragment;
 import com.example.oud.user.fragments.settings.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Stack;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener {
+public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener {
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
@@ -30,6 +37,14 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     public static final String PREMIUM_FRAGMENT_TAG = "PREMIUM";
     public static final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
     public static final String OFFLINE_FRAGMENT_TAG = "OFFLINE";
+    public static final String PLAYLIST_FRAGMENT_TAG = "PLAYLIST";
+
+    private Toast mConnectionFailedToast;
+
+    private boolean backButtonPressed = false;
+    //private boolean navigationItemReselected = false;
+    private Stack<Integer> bottomNavViewBackStack = new Stack<>(); // Menu Item Ids
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +59,39 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 
-        navView.setOnNavigationItemSelectedListener(item -> inflateFragmentBasedOnMenuItem(item.getItemId()));
+        navView.setOnNavigationItemSelectedListener(item -> {
+            if (backButtonPressed)
+                return true;
 
-        navView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
-            @Override
-            public void onNavigationItemReselected(@NonNull MenuItem item) {
-                Log.i(TAG, "onNavigationItemReselected: ");
-            }
+            /*if (navigationItemReselected) {
+                navigationItemReselected = false;
+                return true;
+            }*/
+
+            return UserActivity.this.inflateFragmentBasedOnMenuItem(item.getItemId());
         });
 
+        navView.setOnNavigationItemReselectedListener(item -> {
+            Log.i(TAG, "onNavigationItemReselected: ");
+            //navigationItemReselected = true;
+            if (backButtonPressed) return;
+
+            handleBottomNavViewItemReselected();
+        });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Log.i(TAG, "Back stack : " + "Changed.");
+            handleBottomNavViewBackStack(navView);
+        });
+
+
+
+        FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
+        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
+        homeTransaction.addToBackStack(null);
+        homeTransaction.commit();
+
+        //navView.setSelectedItemId(R.id.navigation_search);
 
         /*FragmentContainerView container = findViewById(R.id.nav_host_fragment);
         Log.i(TAG, "onCreate: " + getSupportFragmentManager().findFragmentByTag("Offline"));
@@ -102,35 +141,83 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         NavigationUI.setupWithNavController(navView, navController);*/
     }
 
+    private void handleBottomNavViewBackStack(BottomNavigationView navView) {
+        if (backButtonPressed & !bottomNavViewBackStack.isEmpty()) { // pop & peak
+            bottomNavViewBackStack.pop();
+            int itemId = bottomNavViewBackStack.peek();
+            navView.setSelectedItemId(itemId);
+        } else  // push
+            bottomNavViewBackStack.push(navView.getSelectedItemId());
+
+        backButtonPressed = false;
+    }
+
+    private void handleBottomNavViewItemReselected() {
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (f instanceof HomeFragment) return;
+        else if (f instanceof SearchFragment) return;
+        else if (f instanceof LibraryFragment) return;
+        else if (f instanceof PremiumFragment) return;
+        else if (f instanceof SettingsFragment) return;
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        inflateFragmentBasedOnMenuItem(navView.getSelectedItemId());
+    }
+
     private boolean inflateFragmentBasedOnMenuItem(int itemId) {
         //Fragment selected = null;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
 
 
         switch (itemId) {
             case R.id.navigation_home:
                 //selected = new HomeFragment();
-                transaction.replace(R.id.nav_host_fragment, HomeFragment.class, null, HOME_FRAGMENT_TAG);
+                HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(HOME_FRAGMENT_TAG);
+                if (homeFragment == null)
+                    transaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
+                else
+                    transaction.replace(R.id.nav_host_fragment, homeFragment, HOME_FRAGMENT_TAG);
 
                 break;
             case R.id.navigation_search:
                 //selected = new SearchFragment();
-                transaction.replace(R.id.nav_host_fragment, SearchFragment.class, null, SEARCH_FRAGMENT_TAG);
+                SearchFragment searchFragment = (SearchFragment) manager.findFragmentByTag(SEARCH_FRAGMENT_TAG);
+                if (searchFragment == null)
+                    transaction.replace(R.id.nav_host_fragment, new SearchFragment(), SEARCH_FRAGMENT_TAG);
+                else
+                    transaction.replace(R.id.nav_host_fragment, searchFragment, SEARCH_FRAGMENT_TAG);
 
                 break;
             case R.id.navigation_library:
                 //selected = new LibraryFragment();
-                transaction.replace(R.id.nav_host_fragment, LibraryFragment.class, null, LIBRARY_FRAGMENT_TAG);
+                LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(LIBRARY_FRAGMENT_TAG);
+                if (libraryFragment == null)
+                    transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), LIBRARY_FRAGMENT_TAG);
+                else
+                    transaction.replace(R.id.nav_host_fragment,libraryFragment, LIBRARY_FRAGMENT_TAG);
+
 
                 break;
             case R.id.navigation_premium:
                 //selected = new PremiumFragment();
-                transaction.replace(R.id.nav_host_fragment, PremiumFragment.class, null, PREMIUM_FRAGMENT_TAG);
+                PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(PREMIUM_FRAGMENT_TAG);
+                if (premiumFragment == null)
+                    transaction.replace(R.id.nav_host_fragment, new PremiumFragment(), PREMIUM_FRAGMENT_TAG);
+                else
+                    transaction.replace(R.id.nav_host_fragment, premiumFragment, PREMIUM_FRAGMENT_TAG);
+
 
                 break;
             case R.id.navigation_settings:
                 //selected = new SettingsFragment();
-                transaction.replace(R.id.nav_host_fragment, SettingsFragment.class, null, SETTINGS_FRAGMENT_TAG);
+                SettingsFragment settingsFragment = (SettingsFragment) manager.findFragmentByTag(SETTINGS_FRAGMENT_TAG);
+                if (settingsFragment == null)
+                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(), SETTINGS_FRAGMENT_TAG);
+                else
+                    transaction.replace(R.id.nav_host_fragment, settingsFragment, SETTINGS_FRAGMENT_TAG);
+
 
                 break;
         }
@@ -140,14 +227,19 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
 
+
+
         return true;
     }
 
     @Override
     public void onBackPressed() {
+
+        Log.i(TAG, "Back stack : " + "Back button pressed.");
+        backButtonPressed = true;
         super.onBackPressed();
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        /*BottomNavigationView navView = findViewById(R.id.nav_view);
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         if (f instanceof HomeFragment)
@@ -159,7 +251,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         else if (f instanceof PremiumFragment)
             navView.getMenu().getItem(3).setChecked(true);
         else if (f instanceof SettingsFragment)
-            navView.getMenu().getItem(4).setChecked(true);
+            navView.getMenu().getItem(4).setChecked(true);*/
 
         //navView.setAlpha(0.5f);
 
@@ -170,8 +262,17 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
     @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "onConfigurationChanged: ");
+    }
+
+    @Override
     public void onConnectionSuccess() {
         hideOfflineFragment();
+
+        if (mConnectionFailedToast != null)
+            mConnectionFailedToast.cancel();
     }
 
     @Override
@@ -181,6 +282,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
             offlineFragmentTransaction.replace(R.id.fragment_offline_container, new OfflineFragment(), OFFLINE_FRAGMENT_TAG);
             offlineFragmentTransaction.commitNow();
         }
+
+        if (mConnectionFailedToast == null) {
+            mConnectionFailedToast = Toast.makeText(this, R.string.connection_failed, Toast.LENGTH_SHORT);
+        }
+        mConnectionFailedToast.show();
 
     }
 
@@ -228,6 +334,21 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
             offlineFragmentTransaction.remove(offlineFragment);
             offlineFragmentTransaction.commitNow();
         }
+    }
+
+    @Override
+    public void onOpeningPlaylistFragment(Constants.PlaylistFragmentType type, String id) {
+        FragmentManager manager = getSupportFragmentManager();
+        PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(PLAYLIST_FRAGMENT_TAG);
+        if (playlistFragment == null)
+            playlistFragment = PlaylistFragment.newInstance(type, id);
+
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.nav_host_fragment, playlistFragment, PLAYLIST_FRAGMENT_TAG);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.commit();
     }
 
     /*public interface UserActivityCommunicationListener {

@@ -33,7 +33,8 @@
         </activity>
         <activity
             android:name=".user.UserActivity"
-            android:label="@string/title_activity_user"></activity>
+            android:label="@string/title_activity_user"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"/>
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
