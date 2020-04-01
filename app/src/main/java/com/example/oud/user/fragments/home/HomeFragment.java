@@ -22,6 +22,7 @@ import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
+import com.example.oud.user.player.PlayerInterface;
 
 public class HomeFragment extends Fragment implements ReconnectingListener {
 
@@ -32,6 +33,8 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
     private PlaylistFragmentOpeningListener playlistFragmentOpeningListener;
 
     private NestedRecyclerViewHelper recyclerViewHelper;
+
+    private PlayerInterface talkToPlayer ;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,9 +57,10 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
 
 
         homeViewModel.getConnectionStatus().observe(this, connectionStatus -> {
-            if (context instanceof ConnectionStatusListener) {
+            if (context instanceof ConnectionStatusListener && context instanceof PlayerInterface) {
 
                 ConnectionStatusListener connectionStatusListener = ((ConnectionStatusListener) context);
+                talkToPlayer = (PlayerInterface) context;
 
                 if (connectionStatus == Constants.ConnectionStatus.SUCCESSFUL)
                     connectionStatusListener.onConnectionSuccess();
@@ -67,7 +71,7 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
 
             } else {
                 throw new RuntimeException(context.toString() +
-                        " must implement " + ConnectionStatusListener.class.getSimpleName());
+                        " must implement " + ConnectionStatusListener.class.getSimpleName() + PlayerInterface.class.getSimpleName());
             }
         });
 
@@ -167,7 +171,11 @@ public class HomeFragment extends Fragment implements ReconnectingListener {
             itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                 String trackId = (String) map.get(Constants.TRACK_ID_KEY);
                 item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
-                item.setClickListener(v -> Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show());
+                item.setClickListener(v -> {
+                    Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();
+                    talkToPlayer.restAndPlay(true);
+                    talkToPlayer.createSmallFragmentForFirstTime();
+                });
             });
         }
 

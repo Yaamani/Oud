@@ -1,8 +1,15 @@
 package com.example.oud.user;
 
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
@@ -17,6 +24,11 @@ import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.fragments.premium.PremiumFragment;
 import com.example.oud.user.fragments.search.SearchFragment;
 import com.example.oud.user.fragments.settings.SettingsFragment;
+import com.example.oud.user.player.PlayerFragment;
+import com.example.oud.user.player.PlayerHelper;
+import com.example.oud.user.player.PlayerInterface;
+import com.example.oud.user.player.SmallPlayerFragment;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Stack;
@@ -24,10 +36,12 @@ import java.util.Stack;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.media.session.MediaButtonReceiver;
 
-public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener {
+public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener , PlayerInterface {
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
@@ -38,6 +52,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     public static final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
     public static final String OFFLINE_FRAGMENT_TAG = "OFFLINE";
     public static final String PLAYLIST_FRAGMENT_TAG = "PLAYLIST";
+    public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL PLAYER";
+    public static final String BIG_PLAYER_FRAGMENT_TAG = "BIG PLAYER";
 
     private Toast mConnectionFailedToast;
 
@@ -45,14 +61,24 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     //private boolean navigationItemReselected = false;
     private Stack<Integer> bottomNavViewBackStack = new Stack<>(); // Menu Item Ids
 
+    private NotificationManager mNotificationManager;
+    private static MediaSessionCompat mMediaSession;
+    private PlayerHelper playerHelper;
+
+    private Fragment mSmallPLayerFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+        mSmallPLayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);
         getSupportActionBar().hide();
 
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        playerHelper = new PlayerHelper(this,mNotificationManager);
+        mMediaSession = PlayerHelper.getMediaSession();
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -85,6 +111,15 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         });
 
 
+        FragmentTransaction bigPlayer = getSupportFragmentManager().beginTransaction();
+        FragmentContainerView fragmentContainerView = findViewById(R.id.container_small_player);
+
+        fragmentContainerView.setOnClickListener(view -> {
+
+            bigPlayer.replace(R.id.big_player_fragment , new PlayerFragment(),BIG_PLAYER_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
         homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
@@ -171,6 +206,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         FragmentTransaction transaction = manager.beginTransaction();
 
 
+
         switch (itemId) {
             case R.id.navigation_home:
                 //selected = new HomeFragment();
@@ -180,6 +216,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 else
                     transaction.replace(R.id.nav_host_fragment, homeFragment, HOME_FRAGMENT_TAG);
 
+                /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_search:
                 //selected = new SearchFragment();
@@ -188,6 +225,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                     transaction.replace(R.id.nav_host_fragment, new SearchFragment(), SEARCH_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, searchFragment, SEARCH_FRAGMENT_TAG);
+
+                /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
 
                 break;
             case R.id.navigation_library:
@@ -198,7 +237,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 else
                     transaction.replace(R.id.nav_host_fragment,libraryFragment, LIBRARY_FRAGMENT_TAG);
 
-
+                /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_premium:
                 //selected = new PremiumFragment();
@@ -208,7 +247,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 else
                     transaction.replace(R.id.nav_host_fragment, premiumFragment, PREMIUM_FRAGMENT_TAG);
 
-
+                /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_settings:
                 //selected = new SettingsFragment();
@@ -218,9 +257,10 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 else
                     transaction.replace(R.id.nav_host_fragment, settingsFragment, SETTINGS_FRAGMENT_TAG);
 
-
+                /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
         }
+
 
         //transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
         transaction.addToBackStack(null);
@@ -349,6 +389,69 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
+    }
+
+    /**
+     * these functions deal with track in fragments (home or search) and small player fragment
+     * */
+    @Override
+    public SimpleExoPlayer getSimpleExoPlayer() {
+
+       return playerHelper.getExoPlayer();
+    }
+
+
+    @Override
+    public void setTrackId(String trackId) {
+
+        Bundle bundle = new Bundle();
+        bundle.putString("trackId",trackId);
+
+    }
+
+    @Override
+    public boolean restAndPlay(boolean state) {
+
+        return state;
+    }
+
+    @Override
+    public void createSmallFragmentForFirstTime() {
+
+        /*Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);*/
+
+        FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
+        smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(),SMALL_PLAYER_FRAGMENT_TAG)
+                .commit();
+
+
+    }
+
+
+    public static class MediaReceiver extends BroadcastReceiver {
+
+        public MediaReceiver() {
+
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            MediaButtonReceiver.handleIntent(mMediaSession, intent);
+
+        }
+    }
+
+    public class BecomingNoisyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+
+                if(playerHelper != null) {
+                    playerHelper.getExoPlayer().setPlayWhenReady(false);
+                }
+            }
+        }
     }
 
     /*public interface UserActivityCommunicationListener {
