@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.home;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,34 +10,28 @@ import java.util.HashMap;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel implements ConnectionStatusListener {
+public class HomeViewModel extends ConnectionAwareViewModel<HomeRepository> implements ConnectionStatusListener {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private HomeRepository homeRepository;
-
-    private MutableLiveData<Constants.ConnectionStatus> connectionStatus = new MutableLiveData<Constants.ConnectionStatus>();
 
     private MutableLiveData<Boolean> areThereRecentlyPlayedTracks;
     private OuterItemLiveData recentlyPlayedLiveData;
     private OuterItemLiveData[] categoriesLiveData;
 
     public HomeViewModel() {
-        homeRepository = HomeRepository.getInstance();
-        homeRepository.setConnectionStatusListener(this);
-        if (Constants.MOCK)
-            homeRepository.setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
+        super(HomeRepository.getInstance(), Constants.YAMANI_MOCK_BASE_URL);
     }
 
     public MutableLiveData<Boolean> getAreThereRecentlyPlayedTracks() {
         if (areThereRecentlyPlayedTracks == null)
-            areThereRecentlyPlayedTracks = homeRepository.areThereRecentlyPlayedTracks();
+            areThereRecentlyPlayedTracks = repo.areThereRecentlyPlayedTracks();
         return areThereRecentlyPlayedTracks;
     }
 
     public OuterItemLiveData getRecentlyPlayedLiveData() {
         if (recentlyPlayedLiveData == null)
-            recentlyPlayedLiveData = homeRepository.loadRecentlyPlayed();
+            recentlyPlayedLiveData = repo.loadRecentlyPlayed();
 
         return recentlyPlayedLiveData;
     }
@@ -46,24 +41,20 @@ public class HomeViewModel extends ViewModel implements ConnectionStatusListener
             categoriesLiveData = new OuterItemLiveData[Constants.USER_HOME_CATEGORIES_COUNT];
 
         if (categoriesLiveData[position] == null)
-            categoriesLiveData[position] = homeRepository.loadCategory(position);
+            categoriesLiveData[position] = repo.loadCategory(position);
 
         return categoriesLiveData[position];
     }
 
-    public MutableLiveData<Constants.ConnectionStatus> getConnectionStatus() {
-        return connectionStatus;
-    }
-
-    @Override
-    public void onConnectionSuccess() {
-        connectionStatus.setValue(Constants.ConnectionStatus.SUCCESSFUL);
-    }
-
     @Override
     public void onConnectionFailure() {
-        connectionStatus.setValue(Constants.ConnectionStatus.FAILED);
+        super.onConnectionFailure();
 
+        clearData();
+    }
+
+    @Override
+    public void clearData() {
         areThereRecentlyPlayedTracks = null;
         recentlyPlayedLiveData = null;
         categoriesLiveData = null;
