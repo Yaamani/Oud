@@ -31,6 +31,8 @@ android {
         }
     }
 
+    dataBinding.enabled = true
+
 }
 
 dependencies {
@@ -98,5 +100,9 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
 
     implementation project(':tryingstuff')
+
+    // Recyclerview swipe item decorator
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.2'
+
 
 }

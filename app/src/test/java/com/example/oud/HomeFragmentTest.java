@@ -22,8 +22,6 @@ import org.robolectric.annotation.LooperMode;
 import java.io.IOException;
 
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -328,8 +326,8 @@ public class HomeFragmentTest {
 
             // then
             FragmentManager manager = activity.getSupportFragmentManager();
-            PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(UserActivity.PLAYLIST_FRAGMENT_TAG);
-            HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(UserActivity.HOME_FRAGMENT_TAG);
+            PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
+            HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
 
             assertThat(playlistFragment).isNotNull();
             assertThat(homeFragment).isNull();
