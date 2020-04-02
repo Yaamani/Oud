@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
     android:background="@color/colorPrimaryDark"
     android:layoutDirection="ltr"
     android:padding="8dp"
@@ -14,99 +13,109 @@
         android:id="@+id/text_constant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:text="playing from album"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_album_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_constant"
         android:layout_centerHorizontal="true"
         android:text="Manic"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_constant" />
 
 
-    <!--<com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
         android:id="@id/exo_content_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        >-->
-
-    <LinearLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/exo_controller"
-        android:layout_below="@id/text_album_name"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical">
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/text_track_details"
+        app:layout_constraintTop_toBottomOf="@id/text_album_name"
+        android:focusable="false"
+        app:resize_mode="fixed_height"
+        >
 
         <ImageView
             android:id="@id/exo_artwork"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            tools:ignore="Suspicious0dp"
-            tools:src="@drawable/bach1" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.2"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            tools:src="@drawable/ic_launcher_background" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_heart_thin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
-            <TextView
-                android:id="@+id/text_player_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="9255"
-                app:layout_constraintBottom_toTopOf="@id/text_artist_name"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/text_track_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/exo_controller"
+        app:layout_constraintEnd_toEndOf="@id/exo_content_frame"
+        app:layout_constraintStart_toStartOf="@id/exo_content_frame"
+        app:layout_constraintTop_toBottomOf="@id/exo_content_frame"
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp">
 
-            <TextView
-                android:id="@+id/text_artist_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="mohamed"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_player_name" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_heart_thin"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="parent"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/text_player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="9255"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/text_artist_name"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/text_artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mohamed"
+            app:layout_constraintStart_toStartOf="@id/text_player_name"
+            app:layout_constraintTop_toBottomOf="@id/text_player_name" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <TextView
         android:id="@id/exo_error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!--</com.google.android.exoplayer2.ui.AspectRatioFrameLayout>-->
 
     <com.google.android.exoplayer2.ui.PlayerControlView
         android:id="@id/exo_controller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:show_shuffle_button="true"
-
+        app:show_timeout="0"
         />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

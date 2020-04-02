@@ -11,9 +11,13 @@
     tools:targetApi="jelly_bean_mr1">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/seekbar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/content_control">
+        app:layout_constraintBottom_toTopOf="@id/content_control"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
         <!--<SeekBar
             android:id="@id/exo_progress"
@@ -58,7 +62,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seekbar_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <ImageView
             android:id="@id/exo_shuffle"

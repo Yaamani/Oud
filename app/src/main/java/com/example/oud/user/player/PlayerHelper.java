@@ -51,6 +51,8 @@ public class PlayerHelper implements ExoPlayer.EventListener {
     /*private Song mSong;*/ //here will get id of song
     private PlaybackStateCompat.Builder mSaBuilder;
     private NotificationManager mNotificationManager;
+    private String mTrackId;
+    private boolean resetPlay;
 
 
     public PlayerHelper(Context context, NotificationManager nM) {
@@ -58,9 +60,7 @@ public class PlayerHelper implements ExoPlayer.EventListener {
         userContext = context;
         mNotificationManager = nM;
 
-        initializePlayer();
         initializeMediaSession();
-        handleAudioFocus();
 
     }
 
@@ -77,7 +77,7 @@ public class PlayerHelper implements ExoPlayer.EventListener {
         return mExoPlayer;
     }
 
-    public void initializePlayer() {
+    public void initializePlayer(Uri trackUri) {
 
         if (mExoPlayer == null) {
 
@@ -97,9 +97,25 @@ public class PlayerHelper implements ExoPlayer.EventListener {
             mExoPlayer.prepare(mediaSource);
             /*mExoPlayer.setPlayWhenReady(true);*/
             mExoPlayer.addListener(this);
+            handleAudioFocus();
 
         }
 
+    }
+    public void setTrackId(String trackID){
+        mTrackId = trackID;
+    }
+    public String getTrackId(){
+
+        return mTrackId;
+    }
+
+    public void setResetPlay(boolean resetPlay) {
+        this.resetPlay = resetPlay;
+    }
+
+    public boolean isResetPlay() {
+        return resetPlay;
     }
 
     public class mySessionCallback extends MediaSessionCompat.Callback {
@@ -163,10 +179,12 @@ public class PlayerHelper implements ExoPlayer.EventListener {
 
     public void releasePlayer() {
 
-        mExoPlayer.stop();
-        mNotificationManager.cancelAll();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mExoPlayer != null) {
+            mExoPlayer.stop();
+            mNotificationManager.cancelAll();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

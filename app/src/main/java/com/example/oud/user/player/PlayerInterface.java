@@ -4,11 +4,11 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 
 public interface PlayerInterface {
 
+
     public SimpleExoPlayer getSimpleExoPlayer();
 
-    public void setTrackId(String trackID);
+    public void configurePlayer(String trackId,boolean resetPlay);
 
-    public boolean restAndPlay(boolean state);
+    public PlayerHelper getPlayerHelper();
 
-    public void createSmallFragmentForFirstTime ();
 }
