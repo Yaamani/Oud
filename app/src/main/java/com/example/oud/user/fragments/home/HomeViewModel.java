@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 public class HomeViewModel extends ConnectionAwareViewModel<HomeRepository> implements ConnectionStatusListener {
 
@@ -25,13 +24,13 @@ public class HomeViewModel extends ConnectionAwareViewModel<HomeRepository> impl
 
     public MutableLiveData<Boolean> getAreThereRecentlyPlayedTracks() {
         if (areThereRecentlyPlayedTracks == null)
-            areThereRecentlyPlayedTracks = repo.areThereRecentlyPlayedTracks();
+            areThereRecentlyPlayedTracks = mRepo.areThereRecentlyPlayedTracks();
         return areThereRecentlyPlayedTracks;
     }
 
     public OuterItemLiveData getRecentlyPlayedLiveData() {
         if (recentlyPlayedLiveData == null)
-            recentlyPlayedLiveData = repo.loadRecentlyPlayed();
+            recentlyPlayedLiveData = mRepo.loadRecentlyPlayed();
 
         return recentlyPlayedLiveData;
     }
@@ -41,7 +40,7 @@ public class HomeViewModel extends ConnectionAwareViewModel<HomeRepository> impl
             categoriesLiveData = new OuterItemLiveData[Constants.USER_HOME_CATEGORIES_COUNT];
 
         if (categoriesLiveData[position] == null)
-            categoriesLiveData[position] = repo.loadCategory(position);
+            categoriesLiveData[position] = mRepo.loadCategory(position);
 
         return categoriesLiveData[position];
     }

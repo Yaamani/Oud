@@ -12,15 +12,15 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
 
     private static final String TAG = ConnectionAwareViewModel.class.getSimpleName();
 
-    protected ConnectionAwareRepo repo;
+    protected ConnectionAwareRepo mRepo;
 
     private MutableLiveData<Constants.ConnectionStatus> connectionStatus;
 
     public ConnectionAwareViewModel(ConnectionAwareRepo repoInstance, String MOCK_SERVER_URL) {
-        repo = repoInstance;
-        repo.setConnectionStatusListener(this);
+        mRepo = repoInstance;
+        mRepo.setConnectionStatusListener(this);
         if (Constants.MOCK)
-            repo.setBaseUrl(MOCK_SERVER_URL);
+            mRepo.setBaseUrl(MOCK_SERVER_URL);
     }
 
     public MutableLiveData<Constants.ConnectionStatus> getConnectionStatus() {

@@ -226,7 +226,7 @@ public class OudApiJsonGenerator {
         String s = "{" +
                 "  \"_id\": \"playlist" + i + "\"," +
                 "  \"name\": \"playlist" + i + "\"," +
-                "  \"owner\": \"string\"," +
+                "  \"owner\": \"user" + i + "\"," +
                 "  \"collaborative\": true," +
                 "  \"description\": \"string\"," +
                 "  \"followersCount\": " + i + "," +

@@ -45,15 +45,9 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
-    public static final String HOME_FRAGMENT_TAG = "HOME";
-    public static final String SEARCH_FRAGMENT_TAG = "SEARCH";
-    public static final String LIBRARY_FRAGMENT_TAG = "LIBRARY";
-    public static final String PREMIUM_FRAGMENT_TAG = "PREMIUM";
-    public static final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
-    public static final String OFFLINE_FRAGMENT_TAG = "OFFLINE";
-    public static final String PLAYLIST_FRAGMENT_TAG = "PLAYLIST";
-    public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL PLAYER";
-    public static final String BIG_PLAYER_FRAGMENT_TAG = "BIG PLAYER";
+
+    private String userId;
+
 
     private Toast mConnectionFailedToast;
     private BottomNavigationView bottomNavigationView;
@@ -86,10 +80,13 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
             FragmentTransaction bigPlayer = getSupportFragmentManager().beginTransaction();
             bottomNavigationView.setVisibility(View.GONE);
-            bigPlayer.replace(R.id.big_player_fragment, new PlayerFragment(), BIG_PLAYER_FRAGMENT_TAG)
+            bigPlayer.replace(R.id.big_player_fragment, new PlayerFragment(), Constants.BIG_PLAYER_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
         });
+
+        userId = (String) getIntent().getExtras().get(Constants.USER_ID_KEY);
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -120,12 +117,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
             handleBottomNavViewBackStack(navView);
         });
 
-
-
-
-
         FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
-        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
+        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), Constants.HOME_FRAGMENT_TAG);
         //homeTransaction.addToBackStack(null);
         bottomNavViewBackStack.push(R.id.navigation_home);
         homeTransaction.commit();
@@ -199,6 +192,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     private void handleBottomNavViewItemReselected() {
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
         if (f instanceof HomeFragment) return;
         else if (f instanceof SearchFragment) return;
         else if (f instanceof LibraryFragment) return;
@@ -219,52 +213,52 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         switch (itemId) {
             case R.id.navigation_home:
                 //selected = new HomeFragment();
-                HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(HOME_FRAGMENT_TAG);
+                HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
                 if (homeFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new HomeFragment(), HOME_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new HomeFragment(), Constants.HOME_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment, homeFragment, HOME_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, homeFragment, Constants.HOME_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_search:
                 //selected = new SearchFragment();
-                SearchFragment searchFragment = (SearchFragment) manager.findFragmentByTag(SEARCH_FRAGMENT_TAG);
+                SearchFragment searchFragment = (SearchFragment) manager.findFragmentByTag(Constants.SEARCH_FRAGMENT_TAG);
                 if (searchFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new SearchFragment(), SEARCH_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new SearchFragment(), Constants.SEARCH_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment, searchFragment, SEARCH_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, searchFragment, Constants.SEARCH_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
 
                 break;
             case R.id.navigation_library:
                 //selected = new LibraryFragment();
-                LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(LIBRARY_FRAGMENT_TAG);
+                LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(Constants.LIBRARY_FRAGMENT_TAG);
                 if (libraryFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), LIBRARY_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), Constants.LIBRARY_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment,libraryFragment, LIBRARY_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment,libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_premium:
                 //selected = new PremiumFragment();
-                PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(PREMIUM_FRAGMENT_TAG);
+                PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(Constants.PREMIUM_FRAGMENT_TAG);
                 if (premiumFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new PremiumFragment(), PREMIUM_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new PremiumFragment(), Constants.PREMIUM_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment, premiumFragment, PREMIUM_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, premiumFragment, Constants.PREMIUM_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_settings:
                 //selected = new SettingsFragment();
-                SettingsFragment settingsFragment = (SettingsFragment) manager.findFragmentByTag(SETTINGS_FRAGMENT_TAG);
+                SettingsFragment settingsFragment = (SettingsFragment) manager.findFragmentByTag(Constants.SETTINGS_FRAGMENT_TAG);
                 if (settingsFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(), SETTINGS_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(), Constants.SETTINGS_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment, settingsFragment, SETTINGS_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, settingsFragment, Constants.SETTINGS_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
@@ -285,9 +279,21 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     public void onBackPressed() {
 
         Log.i(TAG, "Back stack : " + "Back button pressed.");
+
         bottomNavigationView.setVisibility(View.VISIBLE);
         backButtonPressed = true;
         super.onBackPressed();
+
+
+
+        if (getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment) instanceof RenameFragment)
+            RenameFragment.hideRenameFragment(this, R.id.nav_host_fragment);
+        else {
+            backButtonPressed = true;
+            super.onBackPressed();
+        }
+
+
 
         /*BottomNavigationView navView = findViewById(R.id.nav_view);
 
@@ -327,9 +333,9 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
     @Override
     public void onConnectionFailure() {
-        if (getSupportFragmentManager().findFragmentByTag(OFFLINE_FRAGMENT_TAG) == null) {
+        if (getSupportFragmentManager().findFragmentByTag(Constants.OFFLINE_FRAGMENT_TAG) == null) {
             FragmentTransaction offlineFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            offlineFragmentTransaction.replace(R.id.fragment_offline_container, new OfflineFragment(), OFFLINE_FRAGMENT_TAG);
+            offlineFragmentTransaction.replace(R.id.fragment_offline_container, new OfflineFragment(), Constants.OFFLINE_FRAGMENT_TAG);
             offlineFragmentTransaction.commitNow();
         }
 
@@ -347,11 +353,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         Fragment fragment = null;
 
-        String[] fragmentTags = {HOME_FRAGMENT_TAG,
-                LIBRARY_FRAGMENT_TAG,
-                SEARCH_FRAGMENT_TAG,
-                PREMIUM_FRAGMENT_TAG,
-                SETTINGS_FRAGMENT_TAG};
+        String[] fragmentTags = {Constants.HOME_FRAGMENT_TAG,
+                Constants.LIBRARY_FRAGMENT_TAG,
+                Constants.SEARCH_FRAGMENT_TAG,
+                Constants.PREMIUM_FRAGMENT_TAG,
+                Constants.SETTINGS_FRAGMENT_TAG};
 
         for (String tag : fragmentTags) {
             fragment = getSupportFragmentManager().findFragmentByTag(tag);
@@ -378,7 +384,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
     private void hideOfflineFragment() {
-        OfflineFragment offlineFragment = (OfflineFragment) getSupportFragmentManager().findFragmentByTag(OFFLINE_FRAGMENT_TAG);
+        OfflineFragment offlineFragment = (OfflineFragment) getSupportFragmentManager().findFragmentByTag(Constants.OFFLINE_FRAGMENT_TAG);
         if (offlineFragment != null) {
             FragmentTransaction offlineFragmentTransaction = getSupportFragmentManager().beginTransaction();
             offlineFragmentTransaction.remove(offlineFragment);
@@ -387,15 +393,18 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
     @Override
-    public void onOpeningPlaylistFragment(Constants.PlaylistFragmentType type, String id) {
+    public void onOpeningPlaylistFragment(Constants.PlaylistFragmentType type, String playlistOrAlbumId) {
         FragmentManager manager = getSupportFragmentManager();
-        PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(PLAYLIST_FRAGMENT_TAG);
+        PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
         if (playlistFragment == null)
-            playlistFragment = PlaylistFragment.newInstance(type, id);
+            playlistFragment = PlaylistFragment.newInstance(userId, type, playlistOrAlbumId);
+        else {
+            playlistFragment.setArguments(PlaylistFragment.myArgs(userId, type, playlistOrAlbumId));
+        }
 
 
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.nav_host_fragment, playlistFragment, PLAYLIST_FRAGMENT_TAG);
+        transaction.replace(R.id.nav_host_fragment, playlistFragment, Constants.PLAYLIST_FRAGMENT_TAG);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
@@ -419,15 +428,28 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         if(mSmallPlayerFragment == null) {
 
             FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
-            smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(), SMALL_PLAYER_FRAGMENT_TAG)
+            smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
                     .commit();
         }
 
     }
 
     @Override
+
     public PlayerHelper getPlayerHelper() {
         return mPlayerHelper;
+    }
+
+    public void createSmallFragmentForFirstTime() {
+
+        /*Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);*/
+
+        FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
+        smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
+                .commit();
+
+
+
     }
 
     @Override

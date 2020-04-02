@@ -24,12 +24,14 @@ import com.example.oud.user.fragments.playlist.PlaylistViewModel;
 
 import java.lang.reflect.ParameterizedType;
 
-public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwareViewModel> extends Fragment implements ReconnectingListener {
+public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwareViewModel> extends Fragment implements ReconnectingListener, ConnectionStatusListener{
 
     private static final String TAG = ConnectionAwareFragment.class.getSimpleName();
 
     protected ConnectionAwareViewM mViewModel;
     private Class<ConnectionAwareViewM> viewModelClass;
+
+    private ConnectionStatusListener connectionStatusListenerWhoHandlesYouAreOffline; // Most likey an activity.
 
     @LayoutRes
     private int layoutId;
@@ -62,12 +64,19 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
         progressBar = root.findViewById(progressBarId);
 
-        if (swipeRefreshLayoutId != null)
+        if (swipeRefreshLayoutId != null) {
             swipeRefreshLayout = root.findViewById(swipeRefreshLayoutId);
+            swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        }
 
         return root;
     }
 
+    /**
+     * ViewModel object is available here.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -78,12 +87,13 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         mViewModel.getConnectionStatus().observe(getViewLifecycleOwner(), connectionStatus -> {
             if (getContext() instanceof ConnectionStatusListener) {
 
-                ConnectionStatusListener connectionStatusListener = ((ConnectionStatusListener) getContext());
+                connectionStatusListenerWhoHandlesYouAreOffline = ((ConnectionStatusListener) getContext());
 
-                if (connectionStatus == Constants.ConnectionStatus.SUCCESSFUL)
-                    connectionStatusListener.onConnectionSuccess();
-                else
-                    connectionStatusListener.onConnectionFailure();
+                if (connectionStatus == Constants.ConnectionStatus.SUCCESSFUL) {
+                    onConnectionSuccess();
+                } else {
+                    onConnectionFailure();
+                }
 
 
 
@@ -93,6 +103,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
             }
 
 
+            Log.i(TAG, "onViewCreated: " + connectionStatus);
 
 
             if (progressBar != null)
@@ -114,6 +125,15 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
     }
 
+    @Override
+    public void onConnectionSuccess() {
+        connectionStatusListenerWhoHandlesYouAreOffline.onConnectionSuccess();
+    }
+
+    @Override
+    public void onConnectionFailure() {
+        connectionStatusListenerWhoHandlesYouAreOffline.onConnectionFailure();
+    }
 
     @Override
     public void onTryingToReconnect() {
