@@ -22,6 +22,9 @@ public class Constants {
     public static final String PLAYLIST_FRAGMENT_TAG = "PLAYLIST";
     public static final String RENAME_FRAGMENT_TAG = "RENAME_FRAGMENT";
 
+    public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";
+    public static final String BIG_PLAYER_FRAGMENT_TAG = "BIG_PLAYER";
+
     public static final String ID_KEY = "ID";
     public static final String USER_ID_KEY = "USER_ID";
     public static final String PLAYLIST_ID_KEY = "PLAYLIST_ID";

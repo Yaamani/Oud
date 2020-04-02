@@ -114,7 +114,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         fragmentContainerView.setOnClickListener(view -> {
 
-            bigPlayer.replace(R.id.big_player_fragment , new PlayerFragment(),BIG_PLAYER_FRAGMENT_TAG)
+            bigPlayer.replace(R.id.big_player_fragment , new PlayerFragment(), Constants.BIG_PLAYER_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
         });
@@ -436,7 +436,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         /*Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);*/
 
         FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
-        smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(),SMALL_PLAYER_FRAGMENT_TAG)
+        smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
                 .commit();
 
 
