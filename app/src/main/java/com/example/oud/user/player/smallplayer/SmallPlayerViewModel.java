@@ -18,7 +18,7 @@ public class SmallPlayerViewModel extends ConnectionAwareViewModel<SmallPlayerRe
 
         if(trackMutableLiveData == null){
 
-            trackMutableLiveData = repo.fetchTrack(id);
+            trackMutableLiveData = mRepo.fetchTrack(id);
         }
         return trackMutableLiveData;
     }
