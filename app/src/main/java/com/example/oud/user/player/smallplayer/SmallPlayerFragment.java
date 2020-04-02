@@ -1,4 +1,4 @@
-package com.example.oud.user.player;
+package com.example.oud.user.player.smallplayer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,12 +6,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import com.example.oud.R;
+import com.example.oud.api.Track;
+import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.player.PlayerHelper;
+import com.example.oud.user.player.PlayerInterface;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -30,63 +36,82 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-public class SmallPlayerFragment extends Fragment {
+public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerViewModel> {
 
     private View v;
     private PlayerControlView mPlayerControlView;
     private SimpleExoPlayer mExoPlayer;
-    private PlayerInterface mExoPlayerListener;
-    private boolean restPlayer ;
-    private DefaultTimeBar defaultTimeBar ;
+    private PlayerInterface mPlayerInterface;
+    private boolean restPlayer = false;
+    private PlayerHelper mPlayerHelper;
+    private DefaultTimeBar defaultTimeBar;
+    private Track track;
+    private String trackID ="track";
 
-    public interface ExoPlayerListener{
-
-        public SimpleExoPlayer getSimpleExoPlayer();
-
-        public int getTrackId(int trackID);
-
-        public boolean restAndPlay(boolean state);
-
+    public SmallPlayerFragment() {
+        super(SmallPlayerViewModel.class, R.layout.small_player_fragment, R.id.loading_track, null);
     }
+
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        v = inflater.inflate(R.layout.small_player_fragment, container, false);
+        mPlayerHelper = mPlayerInterface.getPlayerHelper();
+
+        trackID = mPlayerHelper.getTrackId();
+        Toast.makeText(getContext(), trackID, Toast.LENGTH_SHORT).show();
+
+        restPlayer = mPlayerHelper.isResetPlay();
+
+        v = view;
 
         initializeViews();
-        initializePlayerControlView();
 
-        restPlayer = mExoPlayerListener.restAndPlay(false);
+        mViewModel.getTrackMutableLiveData(trackID).observe(getViewLifecycleOwner(), track -> {
 
-        if(restPlayer){
-            playAndRest();
+            this.track = track;
+
+        });
+
+
+        if(restPlayer) {
+
+            mPlayerHelper.initializePlayer(Uri.parse(trackID/*track.getAudioUrl()*/));
+
+            initializePlayerControlView();
+
+            mExoPlayer.seekTo(0);
+            mExoPlayer.setPlayWhenReady(true);
+
         }
 
-        return v;
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            mExoPlayerListener = (PlayerInterface) context;
 
-        }
-        catch (ClassCastException e){
-            throw new ClassCastException(context.toString() + " must implement SendMediaSession");
+            mPlayerInterface = (PlayerInterface) context;
+
+        } catch (ClassCastException e) {
+
+            throw new ClassCastException(context.toString() +
+                    " must implement methods of  PlayerInterface");
         }
     }
 
-    private void initializeViews(){
+    private void initializeViews() {
 
         mPlayerControlView = v.findViewById(R.id.player_control_view);
         defaultTimeBar = v.findViewById(R.id.exo_progress);
     }
 
-    private void initializePlayerControlView(){
+    private void initializePlayerControlView() {
 
-        mExoPlayer = mExoPlayerListener.getSimpleExoPlayer();
+        /*mExoPlayer = mPlayerInterface.getSimpleExoPlayer();*/
+        mExoPlayer = mPlayerHelper.getExoPlayer();
 
         defaultTimeBar.setEnabled(false);
 
@@ -94,17 +119,10 @@ public class SmallPlayerFragment extends Fragment {
 
     }
 
-    private void playAndRest(){
-
-        mExoPlayer.seekTo(0);
-        mExoPlayer.setPlayWhenReady(true);
-
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*stateOfFirstPlaying = true;*/
+        restPlayer = false;
     }
 
    /* @Override

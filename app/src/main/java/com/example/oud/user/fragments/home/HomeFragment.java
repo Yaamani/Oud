@@ -159,9 +159,9 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
                 String trackId = (String) map.get(Constants.TRACK_ID_KEY);
                 item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
                 item.setClickListener(v -> {
-                    Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();
-                    talkToPlayer.restAndPlay(true);
-                    talkToPlayer.createSmallFragmentForFirstTime();
+                    /*Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();*/
+                    talkToPlayer.configurePlayer(trackId,true);
+
                 });
             });
         }

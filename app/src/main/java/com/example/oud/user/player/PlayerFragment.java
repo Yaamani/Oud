@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.oud.R;
 
+import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
@@ -37,7 +38,7 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
 
 
     private View v;
-    private SmallPlayerFragment.ExoPlayerListener exoPlayerListener;
+    private PlayerInterface mPlayerInterface;
 
 
 
@@ -66,7 +67,7 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            exoPlayerListener = (SmallPlayerFragment.ExoPlayerListener) context;
+            mPlayerInterface = (PlayerInterface) context;
 
         }
         catch (ClassCastException e){
@@ -83,10 +84,10 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
 
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.bach1));
         mPlayerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE | RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
-        /*mPlayerView.setControllerAutoShow(false);
+        mPlayerView.setControllerAutoShow(false);
         mPlayerView.showController();
-        mPlayerView.setControllerHideOnTouch(false);*/
-        mExoPlayer = exoPlayerListener.getSimpleExoPlayer();
+        mPlayerView.setControllerHideOnTouch(false);
+        mExoPlayer = mPlayerInterface.getSimpleExoPlayer();
         mPlayerView.setPlayer(mExoPlayer);
 
 
