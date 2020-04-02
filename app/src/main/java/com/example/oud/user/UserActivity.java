@@ -290,8 +290,10 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
             RenameFragment.hideRenameFragment(this, R.id.nav_host_fragment);
         else {
             backButtonPressed = true;
+
             super.onBackPressed();
         }
+
 
 
 
