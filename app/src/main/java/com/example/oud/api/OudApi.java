@@ -67,7 +67,7 @@ public interface OudApi {
     @PUT("/playlists/{playlistId}")
     Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
-    @PUT("/playlists/{playlistId}")
-    Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );
+    /*@PUT("/playlists/{playlistId}")
+    Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
 
 }

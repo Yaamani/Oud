@@ -281,17 +281,16 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         Log.i(TAG, "Back stack : " + "Back button pressed.");
 
         bottomNavigationView.setVisibility(View.VISIBLE);
-        backButtonPressed = true;
-        super.onBackPressed();
-
 
 
         if (getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment) instanceof RenameFragment)
             RenameFragment.hideRenameFragment(this, R.id.nav_host_fragment);
         else {
             backButtonPressed = true;
+
             super.onBackPressed();
         }
+
 
 
 
