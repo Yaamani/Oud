@@ -10,6 +10,7 @@
         <item name="colorAccent">@color/colorAccent</item>
 
 
+
         <!--<item name="android:fontFamily">@font/hk_grotesk_semi_bold</item>-->
         <!--<item name="android:fontFamily">@font/hk_grotesk_bold</item>-->
         <!--<item name="android:fontFamily">@font/sk_modernist_regular</item>-->
@@ -38,9 +39,10 @@
         <item name="android:textSize">25sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#191815</item>
-
-
     </style>
+
+
+
 
 </resources>
 

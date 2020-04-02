@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/colorPrimaryDark">
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/content_control"
+        tools:targetApi="lollipop" />
+
+    <LinearLayout
+        android:id="@+id/content_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:src="@drawable/ic_heart_thin" />
+
+        <TextView
+            android:id="@+id/text_artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Truth Hurts"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/text_player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=".Lizzo"
+            android:textColor="@android:color/black" />
+
+        <ImageButton
+            android:id="@id/exo_play"
+            style="@style/ExoMediaButton.Play" />
+
+        <ImageButton
+            android:id="@id/exo_pause"
+            style="@style/ExoMediaButton.Pause" />
+
+        <ImageButton
+            android:id="@id/exo_next"
+            style="@style/ExoMediaButton.Next" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

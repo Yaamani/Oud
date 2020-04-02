@@ -25,6 +25,7 @@ import com.example.oud.ReconnectingListener;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
+import com.example.oud.user.player.PlayerInterface;
 
 public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
@@ -35,11 +36,15 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
     private NestedRecyclerViewHelper recyclerViewHelper;
 
+
+    private PlayerInterface talkToPlayer ;
+
     private RecyclerView recyclerView;
 
     public HomeFragment() {
         super(HomeViewModel.class, R.layout.fragment_home, R.id.progress_home, R.id.swipe_refresh_home);
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +59,32 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
+
+       HomeViewModel homeViewModel =
+                ViewModelProviders.of(this).get(HomeViewModel.class);
+
+
+        homeViewModel.getConnectionStatus().observe(this, connectionStatus -> {
+            if (context instanceof ConnectionStatusListener) {
+
+                ConnectionStatusListener connectionStatusListener = ((ConnectionStatusListener) context);
+                talkToPlayer = (PlayerInterface) context;
+
+                if (connectionStatus == Constants.ConnectionStatus.SUCCESSFUL)
+                    connectionStatusListener.onConnectionSuccess();
+                else
+                    connectionStatusListener.onConnectionFailure();
+
+
+
+            } else {
+                throw new RuntimeException(context.toString() +
+                        " must implement " + ConnectionStatusListener.class.getSimpleName() + PlayerInterface.class.getSimpleName());
+            }
+        });
+
+
 
         if (context instanceof PlaylistFragmentOpeningListener) {
             playlistFragmentOpeningListener = ((PlaylistFragmentOpeningListener) context);
@@ -127,7 +158,11 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                 String trackId = (String) map.get(Constants.TRACK_ID_KEY);
                 item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
-                item.setClickListener(v -> Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show());
+                item.setClickListener(v -> {
+                    Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();
+                    talkToPlayer.restAndPlay(true);
+                    talkToPlayer.createSmallFragmentForFirstTime();
+                });
             });
         }
 
