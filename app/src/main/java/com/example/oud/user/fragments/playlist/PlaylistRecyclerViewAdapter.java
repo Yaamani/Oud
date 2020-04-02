@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.playlist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +21,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.TrackItemViewHolder> {
 
+    private static final String TAG = PlaylistRecyclerViewAdapter.class.getSimpleName();
+
     private Context mContext;
 
     private ArrayList<String> mTrackImages;
     private ArrayList<String> mTrackNames;
+    
+    private ArrayList<View> reorderingSeparators;
 
     public PlaylistRecyclerViewAdapter(Context mContext, ArrayList<String> mTrackImages, ArrayList<String> mTrackNames) {
         this.mContext = mContext;
         this.mTrackImages = mTrackImages;
         this.mTrackNames = mTrackNames;
+        
+        reorderingSeparators = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public TrackItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_playlist_track, parent, false);
+        
+        reorderingSeparators.add(view.findViewById(R.id.track_reorder_separator_above));
+        reorderingSeparators.add(view.findViewById(R.id.track_reorder_separator_below));
+        
         return new TrackItemViewHolder(view);
     }
 
@@ -58,6 +69,15 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
     @Override
     public int getItemCount() {
         return mTrackNames.size();
+    }
+
+
+
+    public void hideAllReorderingSeparators() {
+        Log.i(TAG, "hideAllReorderingSeparators: " + reorderingSeparators.size());
+        for (View separator : reorderingSeparators) {
+            separator.setVisibility(View.INVISIBLE);
+        }
     }
 
     public ArrayList<String> getTrackImages() {

@@ -8,6 +8,7 @@ import com.example.oud.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.Playlist;
+import com.example.oud.api.ReorderPlaylistPayload;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 
 import androidx.lifecycle.MutableLiveData;
@@ -78,5 +79,17 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
 
         return albumMutableLiveData;
+    }
+
+    public void reorderTrack(String playlistId, int fromPosition, int toPosition) {
+        OudApi oudApi = instantiateRetrofitOudApi();
+
+        ReorderPlaylistPayload reorderPlaylistPayload = new ReorderPlaylistPayload(fromPosition, 1, toPosition);
+
+        Call reorderCall = oudApi.reorderPlaylistTracks(playlistId, reorderPlaylistPayload);
+
+        reorderCall.enqueue(new FailureSuccessHandledCallback(connectionStatusListener));
+
+
     }
 }

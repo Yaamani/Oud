@@ -39,7 +39,7 @@ public class SmallPlayerFragment extends Fragment {
     private boolean restPlayer ;
     private DefaultTimeBar defaultTimeBar ;
 
-   /* public interface ExoPlayerListener{
+    public interface ExoPlayerListener{
 
         public SimpleExoPlayer getSimpleExoPlayer();
 
@@ -47,7 +47,7 @@ public class SmallPlayerFragment extends Fragment {
 
         public boolean restAndPlay(boolean state);
 
-    }*/
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

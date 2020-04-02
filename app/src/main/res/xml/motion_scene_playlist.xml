@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <Transition
+    android:id="@+id/transition_playlist"
     app:constraintSetStart="@+id/fragment_playlist_start"
     app:constraintSetEnd="@+id/fragment_playlist_end">
 

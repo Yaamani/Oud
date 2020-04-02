@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.playlist;
 
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
 import com.example.oud.R;
+import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.RenameFragment;
@@ -51,6 +53,23 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
     private ImageButton mImageButtonRename;
+
+
+
+
+
+
+    private int positionBeforeDeletion;
+    private String trackImageBeforeDeletion;
+    private String trackNameBeforeDeletion;
+
+    private String playlistNameBeforeRenaming;
+
+    private int reorderingFromPosition;
+    private int reorderingToPosition;
+
+
+
 
     public PlaylistFragment() {
         super(PlaylistViewModel.class,
@@ -94,33 +113,23 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         touchHelper = new ItemTouchHelper(recyclerViewTouchCallback);
         touchHelper.attachToRecyclerView(mRecyclerViewTracks);
 
+
         mImageViewPlaylist = view.findViewById(R.id.img_playlist);
 
         mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
         mTextViewPlaylistName.setSelected(true);
-        mTextViewPlaylistName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.i(TAG, "onTextChanged: ");
-                // Server stuff
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                
-            }
-        });
+        mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
 
 
         mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
         mImageButtonRename.setOnClickListener(v -> {
-            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, mTextViewPlaylistName.getText().toString(), mTextViewPlaylistName);
+            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
+            playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
+
+            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, mTextViewPlaylistName);
         });
+
+
 
 
 
@@ -137,7 +146,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
 
     private void disableEditing(View view) {
         view.findViewById(R.id.btn_rename_playlist).setVisibility(View.GONE);
@@ -162,12 +175,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         mViewModel.getPlaylistLiveData(playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
 
 
-            boolean editable = true;
 
-            if (!playlist.getOwner().equals(userId)) {
-                editable = true;
+            if (!playlist.isCollaborative() & !playlist.getOwner().equals(userId))
                 disableEditing(view);
-            }
+
 
 
             DrawableCrossFadeFactory factory =
@@ -195,7 +206,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 trackImages.add("");
 
                 int _i = i;
-                mViewModel.getAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
+                mViewModel.getTrackAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
                         album -> {
                             trackImages.set(_i, album.getImage());
                             adapter.notifyItemChanged(_i);
@@ -209,20 +220,78 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private void handleAlbumData(PlaylistViewModel mViewMode, View view) {
+        mViewModel.getAlbumLiveData(playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
+            DrawableCrossFadeFactory factory =
+                    new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
+            Glide.with(getContext())
+                    .load(album.getImage())
+                    .placeholder(R.drawable.ic_loading)
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
+                    .into(mImageViewPlaylist);
+
+            mTextViewPlaylistName.setText(album.getName());
+
+            OudList<Track> tracksOudList = album.getTracks();
+            ArrayList<Track> tracks = tracksOudList.getItems();
+            ArrayList<String> trackImages = new ArrayList<>();
+            ArrayList<String> trackNames = new ArrayList<>();
+
+            adapter = new PlaylistRecyclerViewAdapter(getContext(), trackImages, trackNames);
+
+
+            for (int i = 0; i < tracks.size(); i++) {
+
+                Track current = tracks.get(i);
+
+                trackImages.add(album.getImage());
+
+                trackNames.add(current.getName());
+            }
+
+            mRecyclerViewTracks.setAdapter(adapter);
+        });
     }
 
     private ItemTouchHelper.SimpleCallback recyclerViewTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
+        boolean moved = false;
+        int posBeforeMoving;
+
+        View toBeReorderedView;
 
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
+
+            moved = true;
+
             int fromPosition = viewHolder.getAdapterPosition();
             int toPosition = target.getAdapterPosition();
-            Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
+
+            //viewHolder.itemView.setAlpha(0.5f);
+            toBeReorderedView = viewHolder.itemView;
+
+            adapter.hideAllReorderingSeparators();
+            if (toPosition > fromPosition)
+                target.itemView.findViewById(R.id.track_reorder_separator_below).setVisibility(View.VISIBLE);
+            else if (toPosition < fromPosition)
+                target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);
+
+            /*Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
             Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
+            adapter.notifyItemMoved(fromPosition, toPosition);*/
+
+            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
+            reorderingFromPosition = fromPosition;
+            reorderingToPosition = toPosition;
+
+
+            Log.i(TAG, "onMove: " + fromPosition + " -> " + toPosition);
+
+
+
+
             return false;
         }
 
@@ -235,6 +304,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             String trackName = adapter.getTrackNames().remove(position);
             adapter.notifyItemRemoved(position);
 
+            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
+            positionBeforeDeletion = position;
+
             //mMotionLayout.refreshDrawableState();
             //mMotionLayout.jumpDrawablesToCurrentState();
             //if (mMotionLayout.getProgress() != 0 | mMotionLayout.getProgress() != 1)
@@ -243,6 +315,41 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             snackbarUndoTrackRemoved(position, trackImage, trackName);
 
+        }
+
+        @Override
+        public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+            super.onSelectedChanged(viewHolder, actionState);
+            Log.i(TAG, "onSelectedChanged: " + actionState);
+
+
+
+
+            if (moved) {
+                Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
+                Collections.swap(adapter.getTrackNames(), reorderingFromPosition, reorderingToPosition);
+                adapter.notifyItemMoved(reorderingFromPosition, reorderingToPosition);
+                //adapter.notifyDataSetChanged();
+                // Server stuff
+                mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
+
+                adapter.hideAllReorderingSeparators();
+
+                if (toBeReorderedView != null)
+                    toBeReorderedView.setAlpha(1);
+
+            } else {
+                if (viewHolder != null)
+                    viewHolder.itemView.setAlpha(0.5f);
+            }
+
+            moved = false;
+        }
+
+        @Override
+        public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
+            super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+            Log.i(TAG, "onMoved: ");
         }
 
         @Override
@@ -270,9 +377,31 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
                 // Server stuff
+                mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
             }
         }).show();
     }
+
+    private TextWatcher renameTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            Log.i(TAG, "onTextChanged: ");
+            // Server stuff
+            // Current operation has been set in onClickListener
+
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     private void undoDeletionRecyclerView(int position, String trackImage, String trackName) {
         adapter.getTrackImages().add(position, trackImage);
@@ -286,14 +415,36 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         adapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
     }
 
+    private void undoRenaming(String previousName) {
+        mTextViewPlaylistName.setText(previousName);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
+        //mViewModel.setCurrentOperation(null);
     }
 
     @Override
     public void onConnectionFailure() {
         super.onConnectionFailure();
+
+        // Undo the current operation
+
+        switch (mViewModel.getCurrentOperation()) {
+            case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                break;
+            case RENAME: undoRenaming(playlistNameBeforeRenaming);
+                break;
+            case REORDER: undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
+                break;
+            case UPLOAD_IMAGE:
+                break;
+
+        }
+
+
+        mViewModel.setCurrentOperation(null);
     }
 
     @Override

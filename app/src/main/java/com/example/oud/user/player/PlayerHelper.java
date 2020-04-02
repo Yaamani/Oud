@@ -279,7 +279,7 @@ public class PlayerHelper implements ExoPlayer.EventListener {
         }
 
         mMediaSession.setPlaybackState(mSaBuilder.build());
-        showNotification(mSaBuilder.build());
+        //showNotification(mSaBuilder.build());
     }
 
     @Override
