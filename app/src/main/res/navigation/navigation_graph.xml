@@ -47,6 +47,6 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.oud.ProfileFragment"
+        android:name="com.example.oud.user.fragments.profile.ProfileFragment"
         android:label="ProfileFragment" />
 </navigation>
