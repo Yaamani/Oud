@@ -325,6 +325,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
 
 
+
         /*BottomNavigationView navView = findViewById(R.id.nav_view);
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
