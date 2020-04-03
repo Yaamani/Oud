@@ -7,6 +7,9 @@
     <string name="title_premium">Premium</string>
     <string name="title_settings">Settings</string>
 
+    <string name="you_are_offline">You are offline !!</string>
+    <string name="connection_failed">Connection failed.</string>
+
     <string name="offline">"You're offline !!"</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -17,5 +20,11 @@
 
     <string name="facebook_app_id">3359308630752975</string>
     <string name="fb_login_protocol_scheme">fb3359308630752975</string>
+
+    <string name="rename">Rename</string>
+    
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="restart">Restart</string>
 
 </resources>

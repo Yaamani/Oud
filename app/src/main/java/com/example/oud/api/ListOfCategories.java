@@ -1,5 +1,6 @@
 package com.example.oud.api;
 
+@Deprecated
 public class ListOfCategories {
 
     private Category category;

@@ -3,16 +3,19 @@ package com.example.oud.api;
 import com.google.gson.JsonObject;
 
 import okhttp3.MultipartBody;
+import java.util.ArrayList;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -54,11 +57,29 @@ public interface OudApi {
     
     // Home
 
-    @GET("me/player/recently-played")
+
+    @GET("/me/player/recently-played")
     Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("browse/categories")
-    Call<ListOfCategories> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
+    @GET("/browse/categories")
+    Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
+    @GET("/browse/categories/{categoryId}")
+    Call<Category> category(@Path("categoryId") String categoryId);
+
+    @GET("/albums/{albumId}")
+    Call<Album> album(@Path("albumId") String albumId);
+
+    @GET("/playlists/{playlistId}")
+    Call<Playlist> playlist(@Path("playlistId") String playlistId);
+
+    /*@HTTP(method = "DELETE", path = "/playlists/{playlistId}", hasBody = true)
+    Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
+
+    @PUT("/playlists/{playlistId}")
+    Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
+
+    /*@PUT("/playlists/{playlistId}")
+    Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
 
 }

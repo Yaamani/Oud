@@ -79,6 +79,7 @@ public class MainLoginFragment extends Fragment {
         Button homeTest = v.findViewById(R.id.btn_home_test);
         homeTest.setOnClickListener(v1 -> {
             Intent i = new Intent(getActivity(), UserActivity.class);
+            i.putExtra(Constants.USER_ID_KEY, "user0");
             startActivity(i);
         });
 
