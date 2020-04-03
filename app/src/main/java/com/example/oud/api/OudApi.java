@@ -82,4 +82,12 @@ public interface OudApi {
     /*@PUT("/playlists/{playlistId}")
     Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
 
+
+    @GET("/users/{user_id}/playlists")
+    Call<UserPlaylistsResponse> getUserPlaylists(@Path("user_id") String userId);
+
+    @GET("/users/{user_id}")
+    Call<ProfilePreview> getUserById(@Path("user_id") String userId);
+
+
 }
