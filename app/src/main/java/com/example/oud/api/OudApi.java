@@ -23,34 +23,34 @@ public interface OudApi {
 
     // Authentication
 
-    @POST("/users/signUp")
+    @POST("users/signUp")
     Call<LoginResponse> signup(@Body SignupUser signupUser);
 
-    @POST("/users/login")
+    @POST("users/login")
     Call<LoginResponse> login(@Body LoginUserInfo loginUserInfo);
 
-    @POST("/users/forgotPassword")
+    @POST("users/forgotPassword")
     Call<StatusMessageResponse> forgetPasswordRequest(@Body ForgetPasswordRequestBody forgetPasswordRequestBody);
 
-    @PATCH("/users/resetPassword/{token}")
+    @PATCH("users/resetPassword/{token}")
     Call<LoginResponse> resetPassword(@Path("token") String token, @Body ResetPasswordBody resetPasswordBody);
 
-    @PATCH("/users/verify/{token}")
+    @PATCH("users/verify/{token}")
     Call<LoginResponse> verifyEmail(@Path("token") String token);
 
-    @POST("/auth/facebook")
-    Call<JsonObject> authenticateWithFacebook(@Body AccessToken accessToken);
+    @POST("auth/facebook")
+    Call<ResponseBody> authenticateWithFacebook(@Body AccessToken accessToken);
 
-    @POST("/auth/google")
-    Call<JsonObject> authenticateWithGoogle(@Body AccessToken accessToken);
+    @POST("auth/google")
+    Call<ResponseBody> authenticateWithGoogle(@Body AccessToken accessToken);
 
-    @GET("/me")
+    @GET("me")
     Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
 
-    @PATCH("/me/auth/facebook")
+    @PATCH("me/auth/facebook")
     Call<LoginResponse> getLoginResponseFromFacebookAccessToken(@Body AccessToken accessToken);
 
-    @PATCH("/me/auth/google")
+    @PATCH("me/auth/google")
     Call<LoginResponse> getLoginResponseFromGoogleAccessToken(@Body AccessToken accessToken);
 
 
@@ -58,16 +58,16 @@ public interface OudApi {
     // Home
 
 
-    @GET("/me/player/recently-played")
+    @GET("me/player/recently-played")
     Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("/browse/categories")
+    @GET("browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/browse/categories/{categoryId}")
+    @GET("browse/categories/{categoryId}")
     Call<Category> category(@Path("categoryId") String categoryId);
 
-    @GET("/albums/{albumId}")
+    @GET("albums/{albumId}")
     Call<Album> album(@Path("albumId") String albumId);
 
     @GET("/playlists/{playlistId}")

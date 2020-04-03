@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.oud.api.AccessToken;
 import com.example.oud.api.LoginResponse;
 import com.example.oud.api.OudApi;
+import com.example.oud.user.UserActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -35,13 +36,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Arrays;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -114,7 +120,6 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
        if (requestCode == RC_SIGN_IN) {
@@ -123,14 +128,15 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
            try {
                GoogleSignInAccount googleAccount= task.getResult(ApiException.class);
-               googleAccount.getIdToken();
+               makeGoogleAuthenticationRequest(googleAccount.getIdToken());
+               //Toast.makeText(getApplicationContext(),googleAccount.getEmail(),Toast.LENGTH_LONG).show();
+
            }
            catch (ApiException e){
                Log.e("TAG", "signInResult:failed code=" + e.getStatusCode());
                if(e.getStatusCode()==10)
                    Log.e("TAG", "if you have this problem visit this page https://developers.google.com/android/guides/client-auth");
            }
-         //Toast.makeText(getContext(),account,Toast.LENGTH_LONG);
        }
 
 
@@ -142,24 +148,25 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
 
 
         AccessToken accessToken = new AccessToken(accessTokenString);
-        Call<JsonObject> call = oudApi.authenticateWithFacebook(accessToken);
-        call.enqueue(new Callback<JsonObject>() {
+        Call<ResponseBody> call = oudApi.authenticateWithFacebook(accessToken);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
+                    if(response.body().toString().contains("\"token\":")){
+                        Gson gson = new Gson();
+                        LoginResponse loginResponse = gson.fromJson(response.body().toString(),LoginResponse.class);
+                        saveToken(loginResponse.getToken());
 
-
-                    if(response.body().toString().contains("\"_id\":")){
-                        getTokenFromGoogleAccessToken(accessTokenString);
-
+                        Intent i = new Intent(getActivity(), UserActivity.class);
+                        i.putExtra(Constants.USER_ID_KEY, loginResponse.getUser().get_id());
+                        startActivity(i);
                     }
-                    else if (response.body().toString().contains("google_id")){
+                    else {
                         //the user is not signed up yet
-                        myViewModel.setSignupWithGoogle(true);
-                        giveDataToViewModelFromGoogleAuthenticationResponse(response.body());
-                        //close the opened dialog
+                        //Toast.makeText(getApplicationContext(),"user not registered",Toast.LENGTH_LONG).show();
+                        giveDataToMainActivity(JsonParser.parseString(response.body().toString()).getAsJsonObject());
 
-                        //go to sign up fragment
                         FragmentTransaction ft = getParentFragmentManager().beginTransaction();
                         ft.add(R.id.nav_host_fragment,new SignupFragment());
                         ft.addToBackStack(null).commit();
@@ -173,7 +180,7 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
             }
         });
@@ -182,49 +189,25 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
 
     }
 
-    private void giveDataToViewModelFromGoogleAuthenticationResponse(JsonObject jsonResponse){
+    private void giveDataToMainActivity(JsonObject jsonResponse){
+
+        MainActivity mainActivity = (MainActivity) getActivity();
 
         if(jsonResponse.toString().contains("email")){
-            myViewModel.setEmail(jsonResponse.get("email").toString());
+            mainActivity.setEmail(jsonResponse.get("email").toString());
         }
         if(jsonResponse.toString().contains("gender")){
-            myViewModel.setGender(jsonResponse.get("gender").toString());
+            mainActivity.setGender(jsonResponse.get("gender").toString());
         }
         if(jsonResponse.toString().contains("displayName")){
-            myViewModel.setDisplayName(jsonResponse.get("displayName").toString());
+            mainActivity.setDisplayname(jsonResponse.get("displayName").toString());
         }
         if(jsonResponse.toString().contains("birthDate")){
-            myViewModel.setBirthDate(jsonResponse.get("birthDate").toString());
+            mainActivity.setBirthDate(jsonResponse.get("birthDate").toString());
         }
 
     }
 
-    private void getTokenFromGoogleAccessToken(String accessTokenString){
-
-        AccessToken accessToken = new AccessToken(accessTokenString);
-        Call<LoginResponse> call = oudApi.getLoginResponseFromGoogleAccessToken(accessToken);
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if(response.isSuccessful()){
-
-                    String token = response.body().getToken();
-                    saveToken(token);
-
-                    //go to home page
-
-                    dismiss();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
-            }
-        });
-
-    }
     private void saveToken(String token){
 
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);

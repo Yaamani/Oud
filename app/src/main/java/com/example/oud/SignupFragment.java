@@ -191,7 +191,16 @@ public class SignupFragment extends Fragment {
         else
            gender="F";
 
-        String dateOfBirth = dateOfBirthDatePicker.getYear()+"-"+dateOfBirthDatePicker.getMonth()+"-"+dateOfBirthDatePicker.getDayOfMonth();
+
+        String month =dateOfBirthDatePicker.getMonth()+"";
+        if(month.length()==1)
+            month= "0"+month;
+
+        String day =dateOfBirthDatePicker.getDayOfMonth()+"";
+        if(day.length()==1)
+            day= "0"+day;
+        String dateOfBirth = dateOfBirthDatePicker.getYear()+"-"+month+"-"+day;
+        Toast.makeText(getContext(),dateOfBirth,Toast.LENGTH_LONG).show();
         String country = countrySpinner.getSelectedItem().toString();
         country = country.substring(country.indexOf("(") + 1);
         country = country.substring(0, country.indexOf(")"));
@@ -210,8 +219,7 @@ public class SignupFragment extends Fragment {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
-                    //todo go to choose artists page
-                    //errorTextView.setText(response.body().getUser().getEmail());//remove after select artists page is done & change test
+
                     String token = response.body().getToken();
                     saveToken(v,token);
                     Intent i = new Intent(getActivity(), UserActivity.class);
@@ -248,13 +256,14 @@ public class SignupFragment extends Fragment {
     }
 
     private void fillDataFromFacebookIfAvailable(){
-        if(!myViewModel.isSignupWithFacebook())
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(!mainActivity.isSignupWithFacebook())
             return;
 
-        String email = myViewModel.getEmail();
-        String displayName =myViewModel.getDisplayName();
-        String  birthDate = myViewModel.getBirthDate();
-        String gender= myViewModel.getGender();
+        String email = mainActivity.getEmail();
+        String displayName =mainActivity.getDisplayname();
+        String  birthDate =mainActivity.getBirthDate();
+        String gender= mainActivity.getGender();
 
         if(email!=null)
             emailEditText.setText(email);
@@ -279,13 +288,14 @@ public class SignupFragment extends Fragment {
     }
 
     private void fillDataFromGoogleIfAvailable(){
-        if(!myViewModel.isSignupWithGoogle())
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(!mainActivity.getGoogleSignup())
             return;
 
-        String email = myViewModel.getEmail();
-        String displayName =myViewModel.getDisplayName();
-        String  birthDate = myViewModel.getBirthDate();
-        String gender= myViewModel.getGender();
+        String email = mainActivity.getEmail();
+        String displayName =mainActivity.getDisplayname();
+        String  birthDate =mainActivity.getBirthDate();
+        String gender= mainActivity.getGender();
 
         if(email!=null)
             emailEditText.setText(email);

@@ -40,7 +40,6 @@ public class MainLoginFragment extends Fragment {
     private Button toLoginBtn;
     private Button toSignupBtn;
     private Button connectWithFacebookBtn;
-    private final String BASE_URL = "http://example.com";
     OudApi oudApi;
 
     // TODO: Rename and change types of parameters
@@ -134,7 +133,7 @@ public class MainLoginFragment extends Fragment {
     private void checkSavedToken(){
         //checks if there is a saved token and if it gets the user's profile
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         oudApi = retrofit.create(OudApi.class);
@@ -161,6 +160,7 @@ public class MainLoginFragment extends Fragment {
                     // internet issue
                 }
             });
+
         }
 
 

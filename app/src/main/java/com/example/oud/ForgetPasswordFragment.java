@@ -68,6 +68,7 @@ public class ForgetPasswordFragment extends Fragment {
         getLinkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                makeForgetPasswordRequest(view);
 
             }
         });
@@ -93,10 +94,7 @@ public class ForgetPasswordFragment extends Fragment {
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
 
-                errorTextView.setText("test");
-
                 if (response.isSuccessful()) {
-                    //TODO: go to homepage and forward the user data & token
                     errorTextView.setText(response.body().getMessage());
 
                 } else if (response.errorBody() != null) {
