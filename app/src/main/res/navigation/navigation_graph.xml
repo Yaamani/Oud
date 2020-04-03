@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mainLoginFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_mainLoginFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/actualLoginFragment"
@@ -42,4 +45,8 @@
             android:id="@+id/action_connectWithOtherServicesDialogFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.oud.ProfileFragment"
+        android:label="ProfileFragment" />
 </navigation>
