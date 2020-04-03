@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.user.fragments.profile;
 
 import androidx.lifecycle.ViewModel;
 

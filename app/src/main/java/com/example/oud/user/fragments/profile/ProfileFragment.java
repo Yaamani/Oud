@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.user.fragments.profile;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.oud.R;
 
 import java.util.ArrayList;
 
