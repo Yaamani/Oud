@@ -21,6 +21,7 @@ public class Constants {
     public static final String OFFLINE_FRAGMENT_TAG = "OFFLINE";
     public static final String PLAYLIST_FRAGMENT_TAG = "PLAYLIST";
     public static final String RENAME_FRAGMENT_TAG = "RENAME_FRAGMENT";
+    public static final String OPTIONS_FRAGMENT_TAG = "OPTIONS_FRAGMENT";
 
     public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";
     public static final String BIG_PLAYER_FRAGMENT_TAG = "BIG_PLAYER";

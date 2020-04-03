@@ -25,11 +25,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
+import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.RenameFragment;
+import com.example.oud.RenameFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -53,6 +54,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
     private ImageButton mImageButtonRename;
+    private ImageButton mImageButtonOptions;
 
 
 
@@ -107,6 +109,17 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
         mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
+
+        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
+        mImageButtonOptions.setOnClickListener(v -> {
+            /*OptionsFragment.builder(getActivity())
+                    .addItem(R.drawable.ic_category, "Hi", v1 -> Log.i(TAG, "Hi Clicked"))
+                    .addItem(null, "Hello", v1 -> Log.i(TAG, "Hello Clicked"))
+                    .addItem(null, "Cheers", null)
+                    .addItem(null, "Chao", null)
+                    .addItem(null, "5moa", null)
+                    .show();*/
+        });
 
         mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
         mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -186,7 +199,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             Glide.with(getContext())
                     .load(playlist.getImage())
-                    .placeholder(R.drawable.ic_loading)
+                    .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);
 

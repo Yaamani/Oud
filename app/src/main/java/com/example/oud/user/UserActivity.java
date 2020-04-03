@@ -1,5 +1,6 @@
 package com.example.oud.user;
 
+import android.animation.ValueAnimator;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,8 +16,10 @@ import android.widget.Toast;
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.OfflineFragment;
+import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
+import com.example.oud.RenameFragment;
 import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
@@ -80,6 +83,14 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
             FragmentTransaction bigPlayer = getSupportFragmentManager().beginTransaction();
             bottomNavigationView.setVisibility(View.GONE);
+            // TODO: Animate instead of just setVisibility(View.GONE)
+
+            /*ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1000).setDuration(400);
+            valueAnimator.addUpdateListener(animation -> bottomNavigationView.setY((Float) animation.getAnimatedValue()));
+            valueAnimator.start();*/
+
+
+
             bigPlayer.replace(R.id.big_player_fragment, new PlayerFragment(), Constants.BIG_PLAYER_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
@@ -93,6 +104,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         // menu should be considered as top level destinations.
 
         navView.setOnNavigationItemSelectedListener(item -> {
+
+            if (OptionsFragment.doesOptionsFragmentExist(this, R.id.container_options)) {
+                OptionsFragment.hideOptionsFragment(this, R.id.container_options);
+            }
+
             if (backButtonPressed)
                 return true;
 
@@ -107,6 +123,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         navView.setOnNavigationItemReselectedListener(item -> {
             Log.i(TAG, "onNavigationItemReselected: ");
             //navigationItemReselected = true;
+
+            if (OptionsFragment.doesOptionsFragmentExist(this, R.id.container_options)) {
+                OptionsFragment.hideOptionsFragment(this, R.id.container_options);
+            }
+
             if (backButtonPressed) return;
 
             handleBottomNavViewItemReselected();
@@ -280,16 +301,26 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         Log.i(TAG, "Back stack : " + "Back button pressed.");
 
+
+
+        if (RenameFragment.doesRenameFragmentExist(this, R.id.nav_host_fragment)) {
+            RenameFragment.hideRenameFragment(this, R.id.nav_host_fragment);
+            return;
+        }
+
+        if (OptionsFragment.doesOptionsFragmentExist(this, R.id.container_options)) {
+            OptionsFragment.hideOptionsFragment(this, R.id.container_options);
+            return;
+        }
+
+
         bottomNavigationView.setVisibility(View.VISIBLE);
 
 
-        if (getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment) instanceof RenameFragment)
-            RenameFragment.hideRenameFragment(this, R.id.nav_host_fragment);
-        else {
-            backButtonPressed = true;
+        backButtonPressed = true;
 
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+
 
 
 
