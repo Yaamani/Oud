@@ -120,7 +120,7 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
-                errorTextView.setText("test");
+                //errorTextView.setText("test");
 
                 if (response.isSuccessful()) {
                     errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
@@ -143,7 +143,8 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 //TODO: make an internet connection error toast or something
-                errorTextView.setText("internet connection error");
+
+                errorTextView.setText(t.getMessage());
             }
         });
 
