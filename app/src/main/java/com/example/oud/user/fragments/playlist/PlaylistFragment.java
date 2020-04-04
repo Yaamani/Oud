@@ -284,7 +284,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             int toPosition = target.getAdapterPosition();
 
             //viewHolder.itemView.setAlpha(0.5f);
-            toBeReorderedView = viewHolder.itemView;
+            //toBeReorderedView = viewHolder.itemView;
 
             adapter.hideAllReorderingSeparators();
             if (toPosition > fromPosition)
@@ -337,6 +337,18 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             Log.i(TAG, "onSelectedChanged: " + actionState);
 
 
+            if (toBeReorderedView != null)
+                toBeReorderedView.setAlpha(1);
+
+            /*if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+                if (viewHolder != null)
+                    viewHolder.itemView.setAlpha(1);
+            } else*/ if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                if (viewHolder != null) {
+                    viewHolder.itemView.setAlpha(0.5f);
+                    toBeReorderedView = viewHolder.itemView;
+                }
+            }
 
 
             if (moved) {
@@ -350,13 +362,13 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 adapter.hideAllReorderingSeparators();
 
-                if (toBeReorderedView != null)
-                    toBeReorderedView.setAlpha(1);
+                /*if (toBeReorderedView != null)
+                    toBeReorderedView.setAlpha(1);*/
 
-            } else {
+            }/* else {
                 if (viewHolder != null)
                     viewHolder.itemView.setAlpha(0.5f);
-            }
+            }*/
 
             moved = false;
         }
