@@ -367,7 +367,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         if (getSupportFragmentManager().findFragmentByTag(Constants.OFFLINE_FRAGMENT_TAG) == null) {
             FragmentTransaction offlineFragmentTransaction = getSupportFragmentManager().beginTransaction();
             offlineFragmentTransaction.replace(R.id.fragment_offline_container, new OfflineFragment(), Constants.OFFLINE_FRAGMENT_TAG);
-            offlineFragmentTransaction.commitNow();
+            offlineFragmentTransaction.commit();
         }
 
         if (mConnectionFailedToast == null) {
@@ -419,7 +419,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         if (offlineFragment != null) {
             FragmentTransaction offlineFragmentTransaction = getSupportFragmentManager().beginTransaction();
             offlineFragmentTransaction.remove(offlineFragment);
-            offlineFragmentTransaction.commitNow();
+            offlineFragmentTransaction.commit();
         }
     }
 
