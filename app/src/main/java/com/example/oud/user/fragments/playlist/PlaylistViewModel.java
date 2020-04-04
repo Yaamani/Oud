@@ -50,12 +50,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
             playlistLiveData = mRepo.fetchPlaylist(playlistId);
         } else {
 
-            String currentId = playlistLiveData.getValue().getId();
-            if (currentId.equals(playlistId)) {
-                return playlistLiveData;
-            } else {
-                // Fetch
-                playlistLiveData = mRepo.fetchPlaylist(playlistId);
+            if (playlistLiveData.getValue() != null) {
+                String currentId = playlistLiveData.getValue().getId();
+                if (currentId.equals(playlistId)) {
+                    return playlistLiveData;
+                } else {
+                    // Fetch
+                    playlistLiveData = mRepo.fetchPlaylist(playlistId);
+                }
             }
         }
 
@@ -84,12 +86,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         if (albumLiveData == null)
             albumLiveData = mRepo.fetchAlbum(albumId);
         else {
-            String currentId = albumLiveData.getValue().get_id();
-            if (currentId.equals(albumId)) {
-                return albumLiveData;
-            } else {
-                // Fetch
-                albumLiveData = mRepo.fetchAlbum(albumId);
+            if (albumLiveData.getValue() != null) {
+                String currentId = albumLiveData.getValue().get_id();
+                if (currentId.equals(albumId)) {
+                    return albumLiveData;
+                } else {
+                    // Fetch
+                    albumLiveData = mRepo.fetchAlbum(albumId);
+                }
             }
         }
 
