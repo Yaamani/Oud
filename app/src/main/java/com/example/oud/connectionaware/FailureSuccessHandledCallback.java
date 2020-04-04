@@ -31,7 +31,8 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
         Log.i(TAG, "onResponse: " + "SUCCESS");
         connectionStatusListener.onConnectionSuccess();
 
-        repo.calls.remove(call);
+        if (repo != null)
+            repo.calls.remove(call);
 
         clear();
     }
@@ -54,6 +55,9 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
     }
 
     private void cancelAllRequests() {
+        if (repo == null)
+            return;
+
         for (Call c : repo.calls) {
             c.cancel();
         }
