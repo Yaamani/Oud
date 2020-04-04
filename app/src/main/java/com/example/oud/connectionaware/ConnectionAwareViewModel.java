@@ -32,13 +32,13 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
     @Override
     public void onConnectionSuccess() {
         connectionStatus.setValue(Constants.ConnectionStatus.SUCCESSFUL);
-        Log.i(TAG, "onConnectionSuccess: ");
+        //Log.i(TAG, "onConnectionSuccess: ");
     }
 
     @Override
     public void onConnectionFailure() {
         connectionStatus.setValue(Constants.ConnectionStatus.FAILED);
-        Log.i(TAG, "onConnectionSuccess: ");
+        //Log.i(TAG, "onConnectionSuccess: ");
         clearData();
     }
 

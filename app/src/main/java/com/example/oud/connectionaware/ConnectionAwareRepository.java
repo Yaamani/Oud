@@ -6,6 +6,9 @@ import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.api.OudApi;
 
+import java.util.ArrayList;
+
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -15,6 +18,7 @@ public class ConnectionAwareRepository {
 
     private String baseUrl;
     protected ConnectionStatusListener connectionStatusListener;
+    ArrayList<Call> calls;
 
     public ConnectionAwareRepository() {
         this.baseUrl = Constants.BASE_URL;
@@ -30,6 +34,15 @@ public class ConnectionAwareRepository {
 
         return retrofit.create(OudApi.class);
 
+    }
+
+    protected <T> Call<T> addCall(Call<T> call) {
+        if (calls == null)
+            calls = new ArrayList<>();
+
+        calls.add(call);
+
+        return call;
     }
 
     public String getBaseUrl() {

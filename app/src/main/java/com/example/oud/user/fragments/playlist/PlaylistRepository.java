@@ -2,9 +2,7 @@ package com.example.oud.user.fragments.playlist;
 
 import android.util.Log;
 
-import com.example.oud.ConnectionStatusListener;
-import com.example.oud.Constants;
-import com.example.oud.FailureSuccessHandledCallback;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.Playlist;
@@ -14,8 +12,6 @@ import com.example.oud.connectionaware.ConnectionAwareRepository;
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PlaylistRepository extends ConnectionAwareRepository {
 
