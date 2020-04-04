@@ -64,6 +64,7 @@ public class OudApiJsonGenerator {
     };
 
     public static final int JSON_GENERATION_ALBUM_TRACK_COUNT = 10;
+    public static final int JSON_GENERATION_ARTIST_TRACK_COUNT = 10;
 
 
 
@@ -162,6 +163,32 @@ public class OudApiJsonGenerator {
                 "   \"type\": \"artist_type" + i + "\"," +
                 "   \"image\": \"" + PORTRAITS[portraitIndex] + "\"" +
                 "}";
+    }
+
+    public static String getJsonArtist(int i) {
+        String s = "";
+        s += "{" +
+                "  \"_id\": \"artist" + i + "\"," +
+                "  \"followersCount\": 10000" + i + "," +
+                "  \"genres\": [" +
+                "    \"genre" + i / 2 + "\", " +
+                "    \"genre" + i + "\"" +
+                "  ]," +
+                "  \"images\": [" +
+                "\"" + PORTRAITS[i % PORTRAITS.length] + "\"" +
+                "  ]," +
+                "  \"name\": \"artist" + i + "\"," +
+                "  \"bio\": \"I'm artist" + i + "\"," +
+                "  \"popularSongs\": [";
+        for (int _i = 0; _i < JSON_GENERATION_ARTIST_TRACK_COUNT; _i++) {
+            s += getJsonTrack(_i);
+            if (_i < JSON_GENERATION_ARTIST_TRACK_COUNT - 1)
+                s += ", ";
+        }
+                s += "  ]," +
+                "  \"type\": \"type" + i + "\"" +
+                "}";
+        return s;
     }
 
     /**

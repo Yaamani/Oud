@@ -21,6 +21,8 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Response;
 
+// Wow it really needs to be refactored :(
+
 public class HomeRepository extends ConnectionAwareRepository implements NestedRecyclerViewOuterItemSupplier {
 
     private static final String TAG = HomeRepository.class.getSimpleName();

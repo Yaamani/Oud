@@ -113,7 +113,13 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
         if (recyclerViewHelper.getSectionCount() == 1) {
             handleRecentlyPlayed();
             handleCategories();
-        }
+        } /*else {
+            for (int i = 0;i < recyclerViewHelper.getSectionCount(); i++) {
+                for (int j = 0; j < recyclerViewHelper.getSection(i).getItemCount(); j++) {
+                    if ()
+                }
+            }
+        }*/
     }
 
     @Override

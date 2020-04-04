@@ -71,4 +71,6 @@ public interface OudApi {
     /*@PUT("/playlists/{playlistId}")
     Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
 
+    @GET("/artists/{artistId}")
+    Call<Artist> artist(@Path("artistId") String artistId);
 }

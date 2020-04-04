@@ -1,13 +1,15 @@
 package com.example.oud.api;
 
+import java.util.ArrayList;
+
 public class Artist {
     private String _id;
     private int followersCount;
-    private String[] genres;
-    private String[] images;
+    private ArrayList<String> genres;
+    private ArrayList<String> images;
     private String name;
     private String bio;
-    private Track[] popularSongs;
+    private ArrayList<Track> popularSongs;
     private String type;
 
     public String get_id() {
@@ -18,11 +20,11 @@ public class Artist {
         return followersCount;
     }
 
-    public String[] getGenres() {
+    public ArrayList<String> getGenres() {
         return genres;
     }
 
-    public String[] getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
@@ -34,7 +36,7 @@ public class Artist {
         return bio;
     }
 
-    public Track[] getPopularSongs() {
+    public ArrayList<Track> getPopularSongs() {
         return popularSongs;
     }
 
@@ -44,11 +46,11 @@ public class Artist {
 
     public Artist(String _id,
                   int followersCount,
-                  String[] genres,
-                  String[] images,
+                  ArrayList<String> genres,
+                  ArrayList<String> images,
                   String name,
                   String bio,
-                  Track[] popularSongs,
+                  ArrayList<Track> popularSongs,
                   String type) {
         this._id = _id;
         this.followersCount = followersCount;

@@ -8,12 +8,12 @@ public class DesktopTryingStuff {
 
         System.out.println(Integer.valueOf("Hi10".substring(3, 4)));
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 15; i++) {
             //System.out.println("\"playlist" + i + "\": " + OudApiJsonGenerator.getJsonPlaylist(i, -1) + ", ");
             //System.out.println(OudApiJsonGenerator.getJsonPlaylist(i, -1));
             //System.out.println("\"/playlists/playlist" + i + "\": " + "\"/playlist" + i + "\", ");
-            System.out.println("\"track" + i + "\": " + OudApiJsonGenerator.getJsonTrack(i) + ", ");
-
+            //System.out.println("\"track" + i + "\": " + OudApiJsonGenerator.getJsonTrack(i) + ", ");
+            System.out.println(OudApiJsonGenerator.getJsonArtist(i) + ", ");
         }
 
 

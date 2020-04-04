@@ -4,6 +4,7 @@ public class Track {
     private String _id;
     private String name;
     private String albumId;
+    private Album album;
     private String type;
     private String audioUrl;
     private int duration;
@@ -20,6 +21,10 @@ public class Track {
 
     public String getAlbumId() {
         return albumId;
+    }
+
+    public Album getAlbum() {
+        return album;
     }
 
     public String getType() {
@@ -45,6 +50,7 @@ public class Track {
     public Track(String _id,
                  String name,
                  String albumId,
+                 Album album,
                  String type,
                  String audioUrl,
                  int duration,
@@ -53,10 +59,13 @@ public class Track {
         this._id = _id;
         this.name = name;
         this.albumId = albumId;
+        this.album = album;
         this.type = type;
         this.audioUrl = audioUrl;
         this.duration = duration;
         this.views = views;
         this.artists = artists;
     }
+
+
 }

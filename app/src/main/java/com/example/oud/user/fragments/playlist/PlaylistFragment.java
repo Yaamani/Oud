@@ -115,8 +115,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         mImageButtonOptions.setOnClickListener(v -> {
             OptionsFragment.builder(getActivity())
                     .addItem(null, "Go To Artist", v1 -> {
+                        ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
                         getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.nav_host_fragment, new ArtistFragment(), Constants.ARTIST_FRAGMENT_TAG)
+                                .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
                                 .addToBackStack(null)
                                 .commit();
                     })

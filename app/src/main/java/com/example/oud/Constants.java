@@ -32,6 +32,7 @@ public class Constants {
     public static final String PLAYLIST_ID_KEY = "PLAYLIST_ID";
     public static final String TRACK_ID_KEY = "TRACK_ID";
     public static final String ALBUM_ID_KEY = "ALBUM_ID";
+    public static final String ARTIST_ID_KEY = "ARTIST_ID";
     public static final String PLAYLIST_FRAGMENT_TYPE_KEY = "PLAYLIST_FRAGMENT_TYPE";
 
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
