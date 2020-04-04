@@ -31,6 +31,7 @@ import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -342,6 +343,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
                 Collections.swap(adapter.getTrackNames(), reorderingFromPosition, reorderingToPosition);
                 adapter.notifyItemMoved(reorderingFromPosition, reorderingToPosition);
+                mRecyclerViewTracks.getLayoutManager().scrollToPosition(reorderingToPosition);
                 //adapter.notifyDataSetChanged();
                 // Server stuff
                 mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);

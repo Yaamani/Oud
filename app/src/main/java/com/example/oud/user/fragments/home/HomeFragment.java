@@ -151,7 +151,10 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
             section.addItem(item);
 
-            itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+            itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> {
+                item.setImageUrl(imageUrl);
+                recyclerView.getLayoutManager().scrollToPosition(0);
+            });
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
 
