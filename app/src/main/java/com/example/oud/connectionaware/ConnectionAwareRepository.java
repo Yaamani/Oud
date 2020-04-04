@@ -7,6 +7,7 @@ import com.example.oud.Constants;
 import com.example.oud.api.OudApi;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -18,7 +19,7 @@ public class ConnectionAwareRepository {
 
     private String baseUrl;
     protected ConnectionStatusListener connectionStatusListener;
-    ArrayList<Call> calls;
+    LinkedList<Call> calls;
 
     public ConnectionAwareRepository() {
         this.baseUrl = Constants.BASE_URL;
@@ -38,7 +39,7 @@ public class ConnectionAwareRepository {
 
     protected <T> Call<T> addCall(Call<T> call) {
         if (calls == null)
-            calls = new ArrayList<>();
+            calls = new LinkedList<>();
 
         calls.add(call);
 
