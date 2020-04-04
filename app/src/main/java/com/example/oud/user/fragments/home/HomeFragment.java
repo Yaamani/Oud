@@ -109,7 +109,9 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
 
 
-        if (recyclerViewHelper.getSectionCount() == 0) {
+
+        // 1 not 0 because there's a dummy section at the top
+        if (recyclerViewHelper.getSectionCount() == 1) {
             handleRecentlyPlayed();
             handleCategories();
         }
@@ -133,7 +135,8 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
                     if (recyclerViewHelper.getSection(0).getTitle() != null)
                         if (recyclerViewHelper.getSection(0).getTitle().equals("Recently played")) return; //already loaded
 
-                handleRecentlyPlayedSection(0, mViewModel.getRecentlyPlayedLiveData());
+                // at position 1 not 0 because there's a dummy section at 0.
+                handleRecentlyPlayedSection(1, mViewModel.getRecentlyPlayedLiveData());
             }
         });
     }
@@ -158,10 +161,21 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> {
                 item.setImageUrl(imageUrl);
 
+                /*Log.i(TAG, "handleRecentlyPlayedSection: "
+                        + recyclerView.computeVerticalScrollExtent() + ", " +
+                        + recyclerView.computeVerticalScrollOffset() + ", " +
+                        + recyclerView.computeVerticalScrollRange());
 
-                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext());
-                smoothScroller.setTargetPosition(0);
-                recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+                if (recyclerView.computeVerticalScrollOffset() == 0) {
+
+                    RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext());
+                    smoothScroller.setTargetPosition(0);
+                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+
+                }*/
+
+
+
             });
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
@@ -177,6 +191,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             });
         }
 
+        //recyclerViewHelper.addSection(0, new NestedRecyclerViewHelper.Section());
         recyclerViewHelper.addSection(position, section);
     }
 
@@ -204,7 +219,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
         });
 
 
-        recyclerViewHelper.addSection(position, section);
+        recyclerViewHelper.addSection(/*position,*/ section);
     }
 
     private void openPlaylistFragment(Constants.PlaylistFragmentType type, String id) {

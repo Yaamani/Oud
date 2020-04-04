@@ -108,6 +108,14 @@ public class NestedRecyclerViewHelper {
             }
             removeSection(0);
         }
+
+        addDummy();
+    }
+
+    private void addDummy() {
+        // This dummy section because when adding a section at the top, it doesn't appear unless you scroll.
+        NestedRecyclerViewHelper.Section s = new NestedRecyclerViewHelper.Section();
+        addSection(0, s);
     }
 
     public void refreshRecyclerView() {
@@ -130,6 +138,9 @@ public class NestedRecyclerViewHelper {
         if (mVerticalAdapter == null)
             mVerticalAdapter = new VerticalRecyclerViewAdapter(context);
         recyclerView.setAdapter(mVerticalAdapter);
+
+        if (mVerticalAdapter.getItemCount() == 0)
+            addDummy();
     }
 
 
