@@ -277,27 +277,30 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
+            int fromPosition = viewHolder.getAdapterPosition();
+
+            if (!moved) {
+                reorderingFromPosition = fromPosition;
+            }
 
             moved = true;
 
-            int fromPosition = viewHolder.getAdapterPosition();
             int toPosition = target.getAdapterPosition();
 
             //viewHolder.itemView.setAlpha(0.5f);
             //toBeReorderedView = viewHolder.itemView;
 
-            adapter.hideAllReorderingSeparators();
+            /*adapter.hideAllReorderingSeparators();
             if (toPosition > fromPosition)
                 target.itemView.findViewById(R.id.track_reorder_separator_below).setVisibility(View.VISIBLE);
             else if (toPosition < fromPosition)
-                target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);
+                target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);*/
 
-            /*Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
+            Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
             Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);*/
+            adapter.notifyItemMoved(fromPosition, toPosition);
 
             mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
-            reorderingFromPosition = fromPosition;
             reorderingToPosition = toPosition;
 
 
@@ -352,18 +355,22 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
             if (moved) {
-                Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
+                /*Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
                 Collections.swap(adapter.getTrackNames(), reorderingFromPosition, reorderingToPosition);
                 adapter.notifyItemMoved(reorderingFromPosition, reorderingToPosition);
-                mRecyclerViewTracks.getLayoutManager().scrollToPosition(reorderingToPosition);
+                mRecyclerViewTracks.getLayoutManager().scrollToPosition(reorderingToPosition);*/
                 //adapter.notifyDataSetChanged();
+                //adapter.hideAllReorderingSeparators();
+
+
+
                 // Server stuff
-                mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
+                if (reorderingToPosition != reorderingFromPosition)
+                    mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
 
-                adapter.hideAllReorderingSeparators();
 
-                /*if (toBeReorderedView != null)
-                    toBeReorderedView.setAlpha(1);*/
+
+
 
             }/* else {
                 if (viewHolder != null)

@@ -3,6 +3,7 @@ package com.example.oud.user.fragments.playlist;
 import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
+import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
@@ -106,7 +107,9 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponReordering() {
-        Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
+        //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
+        Track track = playlistLiveData.getValue().getTracks().remove(reorderingFromPosition);
+        playlistLiveData.getValue().getTracks().add(reorderingToPosition, track);
     }
 
     @Override
