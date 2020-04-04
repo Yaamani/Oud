@@ -50,12 +50,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
             playlistLiveData = mRepo.fetchPlaylist(playlistId);
         } else {
 
-            String currentId = playlistLiveData.getValue().getId();
-            if (currentId.equals(playlistId)) {
-                return playlistLiveData;
-            } else {
-                // Fetch
-                playlistLiveData = mRepo.fetchPlaylist(playlistId);
+            if (playlistLiveData.getValue() != null) {
+                String currentId = playlistLiveData.getValue().getId();
+                if (currentId.equals(playlistId)) {
+                    return playlistLiveData;
+                } else {
+                    // Fetch
+                    playlistLiveData = mRepo.fetchPlaylist(playlistId);
+                }
             }
         }
 
