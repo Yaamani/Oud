@@ -32,7 +32,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         OudApi oudApi = instantiateRetrofitOudApi();
         Call<Playlist> playlistCall = oudApi.playlist(playlistId);
 
-        playlistCall.enqueue(new FailureSuccessHandledCallback<Playlist>(connectionStatusListener) {
+        addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
             public void onResponse(Call<Playlist> call, Response<Playlist> response) {
                 super.onResponse(call, response);
@@ -57,7 +57,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         OudApi oudApi = instantiateRetrofitOudApi();
         Call<Album> albumCall = oudApi.album(albumId);
 
-        albumCall.enqueue(new FailureSuccessHandledCallback<Album>(connectionStatusListener) {
+        addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
 
             @Override
             public void onResponse(Call<Album> call, Response<Album> response) {
@@ -84,7 +84,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         Call reorderCall = oudApi.reorderPlaylistTracks(playlistId, reorderPlaylistPayload);
 
-        reorderCall.enqueue(new FailureSuccessHandledCallback(connectionStatusListener));
+        addCall(reorderCall).enqueue(new FailureSuccessHandledCallback(this));
 
 
     }
