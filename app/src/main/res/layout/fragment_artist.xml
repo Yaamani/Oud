@@ -93,9 +93,24 @@
                 android:layout_marginBottom="@dimen/artist_layout_margin"
                 android:text="@string/popular_songs"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/recycler_view_popular_songs"
-                app:layout_constraintStart_toStartOf="@+id/recycler_view_popular_songs"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_artist_no_songs_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_songs_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_albums"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_popular_songs" />
 
             <TextView
                 android:id="@+id/txt_artist_albums"
@@ -105,9 +120,24 @@
                 android:layout_marginBottom="@dimen/artist_layout_margin"
                 android:text="@string/albums"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/recycler_view_albums"
-                app:layout_constraintStart_toStartOf="@+id/recycler_view_albums"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_popular_songs" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_songs_to_show" />
+
+            <TextView
+                android:id="@+id/txt_artist_no_albums_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_albums_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_similar_artists"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_albums" />
 
             <TextView
                 android:id="@+id/txt_artist_similar_artists"
@@ -117,10 +147,24 @@
                 android:layout_marginBottom="@dimen/artist_layout_margin"
                 android:text="@string/similar_artists"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/recycler_view_artist_similar_artists"
-                app:layout_constraintStart_toStartOf="@+id/recycler_view_artist_similar_artists"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_albums" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_albums_to_show" />
 
+            <TextView
+                android:id="@+id/txt_artist_no_artists_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_albums_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_about"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_artist_similar_artists" />
 
             <TextView
                 android:id="@+id/txt_artist_about"
@@ -130,9 +174,10 @@
                 android:layout_marginBottom="@dimen/artist_layout_margin"
                 android:text="@string/about"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/txt_artist_about_bio"
-                app:layout_constraintStart_toStartOf="@+id/txt_artist_about_bio"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_artist_similar_artists" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_artists_to_show" />
 
 
             <TextView
@@ -152,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                app:layout_constraintBottom_toTopOf="@+id/txt_artist_about"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_artists_to_show"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_artist_similar_artists" />
@@ -163,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                app:layout_constraintBottom_toTopOf="@+id/txt_artist_similar_artists"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_albums_to_show"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_artist_albums" />
@@ -174,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                app:layout_constraintBottom_toTopOf="@+id/txt_artist_albums"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_songs_to_show"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_artist_popular_songs" />
