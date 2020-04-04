@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -102,7 +104,9 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
 
         recyclerView = view.findViewById(R.id.recycler_view_home);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerViewHelper.setRecyclerView(recyclerView);
+
 
 
         if (recyclerViewHelper.getSectionCount() == 0) {
@@ -153,7 +157,11 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
             itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> {
                 item.setImageUrl(imageUrl);
-                recyclerView.getLayoutManager().scrollToPosition(0);
+
+
+                RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext());
+                smoothScroller.setTargetPosition(0);
+                recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
             });
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
