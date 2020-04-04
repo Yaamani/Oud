@@ -1617,9 +1617,9 @@
       "image": "https://i.pinimg.com/564x/ed/ec/ba/edecbabce240d759b58e04ad579b49c5.jpg",
       "public": true,
       "type": "string",
-      "insert_before": 1,
+      "insert_before": 5,
       "range_length": 1,
-      "range_start": 0
+      "range_start": 2
     },
     {
       "_id": "playlist1",

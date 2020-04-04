@@ -113,13 +113,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
         mImageButtonOptions.setOnClickListener(v -> {
-            /*OptionsFragment.builder(getActivity())
-                    .addItem(R.drawable.ic_category, "Hi", v1 -> Log.i(TAG, "Hi Clicked"))
-                    .addItem(null, "Hello", v1 -> Log.i(TAG, "Hello Clicked"))
-                    .addItem(null, "Cheers", null)
-                    .addItem(null, "Chao", null)
-                    .addItem(null, "5moa", null)
-                    .show();*/
+            OptionsFragment.builder(getActivity())
+                    .addItem(null, "Go To Artist", v1 -> {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.nav_host_fragment, new ArtistFragment(), Constants.ARTIST_FRAGMENT_TAG)
+                                .addToBackStack(null)
+                                .commit();
+                    })
+                    .show();
         });
 
         mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);

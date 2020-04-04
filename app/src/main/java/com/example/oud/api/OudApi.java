@@ -64,7 +64,8 @@ public interface OudApi {
     /*@HTTP(method = "DELETE", path = "/playlists/{playlistId}", hasBody = true)
     Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
 
-    @PUT("/playlists/{playlistId}")
+    //@PUP("/playlists/{playlistId}")
+    @PATCH("/playlists/{playlistId}")
     Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     /*@PUT("/playlists/{playlistId}")

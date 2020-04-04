@@ -109,7 +109,6 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
 
 
-
         // 1 not 0 because there's a dummy section at the top
         if (recyclerViewHelper.getSectionCount() == 1) {
             handleRecentlyPlayed();

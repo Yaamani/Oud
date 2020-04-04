@@ -27,4 +27,10 @@
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
 
+
+    <string name="popular_songs">Popular songs</string>
+    <string name="albums">Albums</string>
+    <string name="similar_artists">Similar artists</string>
+    <string name="about">About</string>
+
 </resources>
