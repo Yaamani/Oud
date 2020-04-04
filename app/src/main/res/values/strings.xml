@@ -12,15 +12,16 @@
 
     <string name="offline">"You're offline !!"</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">login</string>
     <string name="sign_up">sign up</string>
     <string name="connect_with_facebook">connect with facebook</string>
 
-    <string name="facebook_app_id">3359308630752975</string>
-    <string name="fb_login_protocol_scheme">fb3359308630752975</string>
+    <string name="facebook_app_id">2977054005685077</string>
+    <string name="fb_login_protocol_scheme">fb2977054005685077</string>
 
+    <!--other facebook app  3359308630752975 -->
     <string name="rename">Rename</string>
     
     <string name="play">Play</string>

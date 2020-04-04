@@ -148,7 +148,7 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
 
 
         AccessToken accessToken = new AccessToken(accessTokenString);
-        Call<ResponseBody> call = oudApi.authenticateWithFacebook(accessToken);
+        Call<ResponseBody> call = oudApi.authenticateWithGoogle(accessToken);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

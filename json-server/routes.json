@@ -68,6 +68,11 @@
     "/playlists/playlist46": "/playlist46", 
     "/playlists/playlist47": "/playlist47", 
     "/playlists/playlist48": "/playlist48", 
-    "/playlists/playlist49": "/playlist49"
+    "/playlists/playlist49": "/playlist49",
+
+
+    "/users/1":"/user1",
+
+    "/users/1/playlists":"/playlistsUser1"
 
 }

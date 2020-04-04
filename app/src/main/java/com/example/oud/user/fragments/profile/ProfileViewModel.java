@@ -1,5 +1,7 @@
 package com.example.oud.user.fragments.profile;
 
+import android.net.Uri;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -8,12 +10,13 @@ import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
 import com.example.oud.api.UserPlaylistsResponse;
 
+import java.net.URI;
 import java.util.List;
 
 public class ProfileViewModel extends ViewModel implements ConnectionStatusListener {
 
     private ProfileRepository repository;
-    private MutableLiveData<Boolean> connectionSuccessful;
+    private MutableLiveData<Boolean> connectionSuccessful = new MutableLiveData<>();
     private MutableLiveData<ProfilePreview> profile;
     private MutableLiveData<List<PlaylistPreview>> playlists;
 
@@ -28,6 +31,9 @@ public class ProfileViewModel extends ViewModel implements ConnectionStatusListe
             playlists = repository.loadUserPlaylists(userId);
 
         return playlists;
+    }
+    public void updateProfileImage(String token, Uri image){
+        repository.setProfileImage(token,image);
     }
 
 
