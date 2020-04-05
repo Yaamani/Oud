@@ -29,6 +29,22 @@
         "total": 20
       },
 
+      "followingUser1":{
+        "items": [
+          {"_id": "1", "name": "artist1","type": "artist","image": "https://source.unsplash.com/random/812x601"},
+          {"_id": "2", "name": "artist2","type": "artist","image": "https://source.unsplash.com/random/823x602"},
+          {"_id": "3", "name": "artist3","type": "artist","image": "https://source.unsplash.com/random/833x603"},
+          {"_id": "4", "name": "artist4","type": "artist","image": "https://source.unsplash.com/random/845x604"}
+          
+          
+          
+        ],
+        "limit": 0,
+        "offset": 0,
+        "total": 4
+      },
+
+
   "recently-played": {
     "items": [
       {

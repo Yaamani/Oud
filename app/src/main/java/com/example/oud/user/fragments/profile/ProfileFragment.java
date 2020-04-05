@@ -23,13 +23,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.oud.OptionsFragment;
 import com.example.oud.R;
+import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -47,7 +50,8 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImageView;
     private TextView profileDisplaynameTextView;
     private BottomNavigationView navigationView;
-    private Button renameButton;;
+    private ImageButton renameButton;
+    private ImageButton optionsButton;
 
 
     private ProfileViewModel mViewModel;
@@ -132,17 +136,38 @@ public class ProfileFragment extends Fragment {
         profileImageView = v.findViewById(R.id.image_profile_fragment);
         profileDisplaynameTextView = v.findViewById(R.id.text_profile_fragment_display_name);
         navigationView = v.findViewById(R.id.navigation_bar_profile);
+        renameButton = v.findViewById(R.id.btn_rename_profile);
+        optionsButton = v.findViewById(R.id.btn_profile_options);
     }
 
     private void setButtonsOnClickListener(){
-        profileImageView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener updateImageOnClickListener=new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
             }
+        };
+
+        View.OnClickListener renameOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RenameFragment.showRenameFragment(getActivity(),R.id.nav_host_fragment,profileDisplaynameTextView.getText().toString(),profileDisplaynameTextView);
+            }
+        };
+
+        profileImageView.setOnClickListener(updateImageOnClickListener);
+        renameButton.setOnClickListener(renameOnClickListener);
+        optionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OptionsFragment.builder(getActivity())
+                        .addItem(R.drawable.ic_camera,"Update profile Picture",updateImageOnClickListener)
+                        .addItem(R.drawable.ic_rename, "Change displayName",renameOnClickListener).show();
+            }
         });
+
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

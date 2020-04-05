@@ -74,20 +74,17 @@
     "/users/1/playlists?offset=11":"/playlistsUser1",
 
     "/users/1/playlists?offset=17":"/playlistsUser1",
+    
 
     "/users/1/followers?type=user&offset=0":"/followersUser1",
 
     "/users/1/followers?type=user&offset=5":"/followersUser1",
 
     "/users/1/followers?type=user&offset=11":"/followersUser1",
+    
+    "/users/1/following?type=artist&offset=0":"/followingUser1"
 
-    "/users/1/following?type=arist&offset=0":"/followersUser1",
-
-    "/users/1/following?type=artist&offset=5":"/followersUser1",
-
-    "/users/1/following?type=artist&offset=11":"/followersUser1",
-
-    "/users/1/following?type=artist&offset=17":"/followersUser1"
+    
 
     
 

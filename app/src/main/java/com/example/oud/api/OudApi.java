@@ -9,6 +9,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -107,7 +108,8 @@ public interface OudApi {
     @GET("/users/{user_id}/following")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
-
+    @PATCH("me/update/display")//todo add when back end finished
+    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATIONS") String token,@Body String displayName);
 
 
 
