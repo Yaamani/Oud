@@ -77,7 +77,7 @@ public class NestedRecyclerViewHelper {
         HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, titles, subtitles);
         mVerticalAdapter.getInnerItemAdapters().add(position, hAdapter);
 
-        mVerticalAdapter.notifyDataSetChanged();
+        mVerticalAdapter.notifyItemInserted(position);
 
     }
 
@@ -90,7 +90,7 @@ public class NestedRecyclerViewHelper {
         mVerticalAdapter.getTitles().remove(position);
         mVerticalAdapter.getInnerItemAdapters().remove(position);
 
-        mVerticalAdapter.notifyDataSetChanged();
+        mVerticalAdapter.notifyItemRemoved(position);
     }
 
     public int getSectionCount() {
@@ -108,11 +108,19 @@ public class NestedRecyclerViewHelper {
             }
             removeSection(0);
         }
+
+        addDummy();
+    }
+
+    private void addDummy() {
+        // This dummy section because when adding a section at the top, it doesn't appear unless you scroll.
+        NestedRecyclerViewHelper.Section s = new NestedRecyclerViewHelper.Section();
+        addSection(0, s);
     }
 
     public void refreshRecyclerView() {
         //if (mVerticalAdapter)
-        mVerticalAdapter.notifyDataSetChanged();
+        //mVerticalAdapter.notifyDataSetChanged();
     }
 
     // TODO: This method is used only for testing. When you are not running tests for this class comment it.
@@ -130,6 +138,9 @@ public class NestedRecyclerViewHelper {
         if (mVerticalAdapter == null)
             mVerticalAdapter = new VerticalRecyclerViewAdapter(context);
         recyclerView.setAdapter(mVerticalAdapter);
+
+        if (mVerticalAdapter.getItemCount() == 0)
+            addDummy();
     }
 
 
@@ -160,7 +171,7 @@ public class NestedRecyclerViewHelper {
             int index = helper.sections.indexOf(Section.this);
             helper.mVerticalAdapter.getIcons().set(index, icon);
 
-            helper.mVerticalAdapter.notifyDataSetChanged();
+            helper.mVerticalAdapter.notifyItemChanged(index);
         }
 
         public void setTitle(String title) {
@@ -171,7 +182,7 @@ public class NestedRecyclerViewHelper {
             int index = helper.sections.indexOf(Section.this);
             helper.mVerticalAdapter.getTitles().set(index, title);
 
-            helper.mVerticalAdapter.notifyDataSetChanged();
+            helper.mVerticalAdapter.notifyItemChanged(index);
         }
 
         public void addItem(Item item) {
@@ -191,7 +202,7 @@ public class NestedRecyclerViewHelper {
             hAdapter.getTitles().add(position, item.title);
             hAdapter.getSubtitles().add(position, item.subtitle);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemInserted(position);
         }
 
         public void removeItem(int position) {
@@ -206,7 +217,7 @@ public class NestedRecyclerViewHelper {
             hAdapter.getTitles().remove(position);
             hAdapter.getSubtitles().remove(position);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemRemoved(position);
         }
 
         public int getIcon() {
@@ -271,7 +282,7 @@ public class NestedRecyclerViewHelper {
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
             hAdapter.getImages().set(itemIndex, imageUrl);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemChanged(itemIndex);
         }
 
         public void setTitle(String title) {
@@ -284,7 +295,7 @@ public class NestedRecyclerViewHelper {
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
             hAdapter.getTitles().set(itemIndex, title);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemChanged(itemIndex);
         }
 
         public void setSubtitle(String subtitle) {
@@ -297,7 +308,7 @@ public class NestedRecyclerViewHelper {
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
             hAdapter.getSubtitles().set(itemIndex, subtitle);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemChanged(itemIndex);
         }
 
         public void setClickListener(View.OnClickListener clickListener) {
@@ -310,7 +321,7 @@ public class NestedRecyclerViewHelper {
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
             hAdapter.getClickListeners().set(itemIndex, clickListener);
 
-            hAdapter.notifyDataSetChanged();
+            hAdapter.notifyItemChanged(itemIndex);
         }
 
         public HashMap<String, Object> getRelatedInfo() {

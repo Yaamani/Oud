@@ -1,15 +1,9 @@
 {
     "/me/player/recently-played": "/recently-played", 
-    
-    "/albums/album0": "/album0", 
-    "/albums/album1": "/album1", 
-    "/albums/album2": "/album2", 
-    "/albums/album3": "/album3", 
-    "/albums/album4": "/album4", 
-    "/albums/album5": "/album5", 
+    "/me/player/recently-played?limit=6": "/recently-played", 
 
     "/browse/categories": "/categories", 
-    "/browse/categories?limit=7": "/categories", 
+    "/browse/categories?limit=7": "/categories_list",
 
     "/browse/categories/category0": "/category0", 
     "/browse/categories/category1": "/category1", 

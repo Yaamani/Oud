@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -102,10 +104,13 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
 
         recyclerView = view.findViewById(R.id.recycler_view_home);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerViewHelper.setRecyclerView(recyclerView);
 
 
-        if (recyclerViewHelper.getSectionCount() == 0) {
+
+        // 1 not 0 because there's a dummy section at the top
+        if (recyclerViewHelper.getSectionCount() == 1) {
             handleRecentlyPlayed();
             handleCategories();
         }
@@ -129,7 +134,8 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
                     if (recyclerViewHelper.getSection(0).getTitle() != null)
                         if (recyclerViewHelper.getSection(0).getTitle().equals("Recently played")) return; //already loaded
 
-                handleRecentlyPlayedSection(0, mViewModel.getRecentlyPlayedLiveData());
+                // at position 1 not 0 because there's a dummy section at 0.
+                handleRecentlyPlayedSection(1, mViewModel.getRecentlyPlayedLiveData());
             }
         });
     }
@@ -151,7 +157,25 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
             section.addItem(item);
 
-            itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+            itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> {
+                item.setImageUrl(imageUrl);
+
+                /*Log.i(TAG, "handleRecentlyPlayedSection: "
+                        + recyclerView.computeVerticalScrollExtent() + ", " +
+                        + recyclerView.computeVerticalScrollOffset() + ", " +
+                        + recyclerView.computeVerticalScrollRange());
+
+                if (recyclerView.computeVerticalScrollOffset() == 0) {
+
+                    RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext());
+                    smoothScroller.setTargetPosition(0);
+                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+
+                }*/
+
+
+
+            });
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
 
@@ -166,6 +190,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
             });
         }
 
+        //recyclerViewHelper.addSection(0, new NestedRecyclerViewHelper.Section());
         recyclerViewHelper.addSection(position, section);
     }
 
@@ -193,7 +218,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
         });
 
 
-        recyclerViewHelper.addSection(position, section);
+        recyclerViewHelper.addSection(/*position,*/ section);
     }
 
     private void openPlaylistFragment(Constants.PlaylistFragmentType type, String id) {

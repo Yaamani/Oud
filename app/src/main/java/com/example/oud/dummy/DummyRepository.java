@@ -1,7 +1,7 @@
 package com.example.oud.dummy;
 
 import com.example.oud.ConnectionStatusListener;
-import com.example.oud.FailureSuccessHandledCallback;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.OudApi;
 

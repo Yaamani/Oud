@@ -3,6 +3,7 @@ package com.example.oud.user.fragments.playlist;
 import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
+import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
@@ -49,12 +50,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
             playlistLiveData = mRepo.fetchPlaylist(playlistId);
         } else {
 
-            String currentId = playlistLiveData.getValue().getId();
-            if (currentId.equals(playlistId)) {
-                return playlistLiveData;
-            } else {
-                // Fetch
-                playlistLiveData = mRepo.fetchPlaylist(playlistId);
+            if (playlistLiveData.getValue() != null) {
+                String currentId = playlistLiveData.getValue().getId();
+                if (currentId.equals(playlistId)) {
+                    return playlistLiveData;
+                } else {
+                    // Fetch
+                    playlistLiveData = mRepo.fetchPlaylist(playlistId);
+                }
             }
         }
 
@@ -83,12 +86,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         if (albumLiveData == null)
             albumLiveData = mRepo.fetchAlbum(albumId);
         else {
-            String currentId = albumLiveData.getValue().get_id();
-            if (currentId.equals(albumId)) {
-                return albumLiveData;
-            } else {
-                // Fetch
-                albumLiveData = mRepo.fetchAlbum(albumId);
+            if (albumLiveData.getValue() != null) {
+                String currentId = albumLiveData.getValue().get_id();
+                if (currentId.equals(albumId)) {
+                    return albumLiveData;
+                } else {
+                    // Fetch
+                    albumLiveData = mRepo.fetchAlbum(albumId);
+                }
             }
         }
 
@@ -106,7 +111,9 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponReordering() {
-        Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
+        //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
+        Track track = playlistLiveData.getValue().getTracks().remove(reorderingFromPosition);
+        playlistLiveData.getValue().getTracks().add(reorderingToPosition, track);
     }
 
     @Override

@@ -58,6 +58,11 @@ public class OudApiJsonGenerator {
             "https://i.pinimg.com/564x/42/b7/24/42b724475f83ff2228623263de4bba4c.jpg"
     };
 
+    public static final String[] AUDIO_URLS = {
+            "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "https://server10.mp3quran.net/ajm/128/114.mp3"
+    };
+
     public static final int JSON_GENERATION_ALBUM_TRACK_COUNT = 10;
 
 
@@ -134,6 +139,7 @@ public class OudApiJsonGenerator {
     public static String getJsonTrack(int i) {
         int artistIndex = i % JSON_GENERATION_ALBUM_TRACK_COUNT;
         int albumIndex = i % JSON_GENERATION_ALBUM_TRACK_COUNT;
+        int urlIndex = i % AUDIO_URLS.length;
         return "{" +
                 "  \"_id\": \"track" + i + "\"," +
                 "  \"name\": \"track" + i + "\"," +
@@ -142,7 +148,7 @@ public class OudApiJsonGenerator {
                 "  ]," +
                 "  \"albumId\": \"album" + albumIndex + "\"," +
                 "  \"type\": \"string\"," +
-                "  \"audioUrl\": \"string\"," +
+                "  \"audioUrl\": \"" + AUDIO_URLS[urlIndex] + "\"," +
                 "  \"duartion\": 100" + i + "," +
                 "  \"views\": 100" + i + "" +
                 "}";

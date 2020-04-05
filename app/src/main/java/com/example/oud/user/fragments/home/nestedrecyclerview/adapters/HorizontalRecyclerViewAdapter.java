@@ -63,7 +63,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         Glide.with(mContext)
                 .load(images.get(position))
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.ic_loading)
+                .placeholder(R.drawable.ic_oud_loading)
                 //.error(R.drawable.ic_warning)
                 .into(holder.mImage);
 

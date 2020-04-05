@@ -25,11 +25,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
+import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.RenameFragment;
+import com.example.oud.RenameFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -53,6 +55,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
     private ImageButton mImageButtonRename;
+    private ImageButton mImageButtonOptions;
 
 
 
@@ -107,6 +110,18 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
         mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
+
+        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
+        mImageButtonOptions.setOnClickListener(v -> {
+            OptionsFragment.builder(getActivity())
+                    .addItem(null, "Go To Artist", v1 -> {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.nav_host_fragment, new ArtistFragment(), Constants.ARTIST_FRAGMENT_TAG)
+                                .addToBackStack(null)
+                                .commit();
+                    })
+                    .show();
+        });
 
         mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
         mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -186,7 +201,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             Glide.with(getContext())
                     .load(playlist.getImage())
-                    .placeholder(R.drawable.ic_loading)
+                    .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);
 
@@ -263,27 +278,30 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
+            int fromPosition = viewHolder.getAdapterPosition();
+
+            if (!moved) {
+                reorderingFromPosition = fromPosition;
+            }
 
             moved = true;
 
-            int fromPosition = viewHolder.getAdapterPosition();
             int toPosition = target.getAdapterPosition();
 
             //viewHolder.itemView.setAlpha(0.5f);
-            toBeReorderedView = viewHolder.itemView;
+            //toBeReorderedView = viewHolder.itemView;
 
-            adapter.hideAllReorderingSeparators();
+            /*adapter.hideAllReorderingSeparators();
             if (toPosition > fromPosition)
                 target.itemView.findViewById(R.id.track_reorder_separator_below).setVisibility(View.VISIBLE);
             else if (toPosition < fromPosition)
-                target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);
+                target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);*/
 
-            /*Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
+            Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
             Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);*/
+            adapter.notifyItemMoved(fromPosition, toPosition);
 
             mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
-            reorderingFromPosition = fromPosition;
             reorderingToPosition = toPosition;
 
 
@@ -323,25 +341,42 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             Log.i(TAG, "onSelectedChanged: " + actionState);
 
 
+            if (toBeReorderedView != null)
+                toBeReorderedView.setAlpha(1);
+
+            /*if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+                if (viewHolder != null)
+                    viewHolder.itemView.setAlpha(1);
+            } else*/ if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                if (viewHolder != null) {
+                    viewHolder.itemView.setAlpha(0.5f);
+                    toBeReorderedView = viewHolder.itemView;
+                }
+            }
 
 
             if (moved) {
-                Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
+                /*Collections.swap(adapter.getTrackImages(), reorderingFromPosition, reorderingToPosition);
                 Collections.swap(adapter.getTrackNames(), reorderingFromPosition, reorderingToPosition);
                 adapter.notifyItemMoved(reorderingFromPosition, reorderingToPosition);
+                mRecyclerViewTracks.getLayoutManager().scrollToPosition(reorderingToPosition);*/
                 //adapter.notifyDataSetChanged();
+                //adapter.hideAllReorderingSeparators();
+
+
+
                 // Server stuff
-                mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
+                if (reorderingToPosition != reorderingFromPosition)
+                    mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
 
-                adapter.hideAllReorderingSeparators();
 
-                if (toBeReorderedView != null)
-                    toBeReorderedView.setAlpha(1);
 
-            } else {
+
+
+            }/* else {
                 if (viewHolder != null)
                     viewHolder.itemView.setAlpha(0.5f);
-            }
+            }*/
 
             moved = false;
         }

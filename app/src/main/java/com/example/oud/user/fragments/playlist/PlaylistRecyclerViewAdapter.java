@@ -57,7 +57,7 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
         Glide.with(mContext)
                 .load(mTrackImages.get(position))
-                .placeholder(R.drawable.ic_loading)
+                .placeholder(R.drawable.ic_oud_loading)
                 .transition(DrawableTransitionOptions.withCrossFade(factory))
                 .into(holder.mTrackImage);
 

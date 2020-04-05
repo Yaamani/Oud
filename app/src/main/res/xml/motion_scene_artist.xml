@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <Transition
+        android:id="@+id/transition_artist"
+        app:constraintSetStart="@id/fragment_artist_start"
+        app:constraintSetEnd="@id/fragment_artist_end">
+
+        <OnSwipe
+            app:touchAnchorId="@+id/scroll_view_artist"
+            app:touchAnchorSide="top"
+            app:dragDirection="dragUp"
+            app:onTouchUp="autoComplete" />
+
+    </Transition>
+
+
+
+    <ConstraintSet
+        android:id="@+id/fragment_artist_start">
+
+        <Constraint
+            android:id="@+id/img_artist"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/img_artist_blurred"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:alpha="0"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <Constraint
+            android:id="@+id/view_artist_img_tint"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_options"
+            app:layout_constraintBottom_toBottomOf="@+id/img_artist"
+            app:layout_constraintEnd_toEndOf="@+id/img_artist"
+            app:layout_constraintStart_toStartOf="@+id/img_artist"
+            app:layout_constraintTop_toTopOf="@+id/img_artist"/>
+
+        <Constraint
+            android:id="@+id/txt_artist_name"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Artist Name"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/img_artist"
+            app:layout_constraintEnd_toEndOf="@+id/img_artist"
+            app:layout_constraintStart_toStartOf="@+id/img_artist"
+            app:layout_constraintTop_toTopOf="@+id/img_artist" />
+
+        <Constraint
+            android:id="@+id/scroll_view_artist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="250dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </ConstraintSet>
+
+
+
+
+
+
+    <ConstraintSet
+        android:id="@+id/fragment_artist_end">
+
+        <Constraint
+            android:id="@+id/img_artist"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/img_artist_blurred"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:alpha="1"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/view_artist_img_tint"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_options"
+            app:layout_constraintBottom_toBottomOf="@+id/img_artist"
+            app:layout_constraintEnd_toEndOf="@+id/img_artist"
+            app:layout_constraintStart_toStartOf="@+id/img_artist"
+            app:layout_constraintTop_toTopOf="@+id/img_artist"/>
+
+        <Constraint
+            android:id="@+id/txt_artist_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Artist Name"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/img_artist"
+            app:layout_constraintEnd_toEndOf="@+id/img_artist"
+            app:layout_constraintStart_toStartOf="@+id/img_artist"
+            app:layout_constraintTop_toTopOf="@+id/img_artist" />
+
+        <Constraint
+            android:id="@+id/scroll_view_artist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="72dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </ConstraintSet>
+
+</MotionScene>

@@ -23,9 +23,18 @@
 
     <!--other facebook app  3359308630752975 -->
     <string name="rename">Rename</string>
-    
+
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
+
+
+    <string name="popular_songs">Popular songs</string>
+    <string name="albums">Albums</string>
+    <string name="similar_artists">Similar artists</string>
+    <string name="about">About</string>
+    <string name="no_songs_to_show">No songs to show</string>
+    <string name="no_albums_to_show">No albums to show</string>
+    <string name="no_artists_to_show">No artists to show</string>
 
 </resources>
