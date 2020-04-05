@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ProfileFragment profileFragment = ProfileFragment.newInstance("1");
-                getParentFragmentManager().beginTransaction().add(R.id.nav_host_fragment,profileFragment).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.nav_host_fragment,profileFragment).commit();
 
             }
         });

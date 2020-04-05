@@ -28,7 +28,7 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     private Context context;
 
 
-    public ProfileFollowersRecyclerViewAdapter(ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds, Context context) {
+    public ProfileFollowersRecyclerViewAdapter( Context context ,ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds) {
         this.followerNames = followerNames;
         this.followerImagesUrls = followerImagesUrls;
         this.followerIds = followerIds;
@@ -37,9 +37,9 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
 
     @NonNull
     @Override
-    public ProfileFollowersRecyclerViewAdapter.FollowersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist_profile,parent,false);
-        ProfileFollowersRecyclerViewAdapter.FollowersViewHolder viewHolder = new ProfileFollowersRecyclerViewAdapter.FollowersViewHolder(view);
+    public FollowersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_follower_profile,parent,false);
+        FollowersViewHolder viewHolder = new ProfileFollowersRecyclerViewAdapter.FollowersViewHolder(view);
         return viewHolder;
     }
 

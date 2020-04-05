@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
-import com.example.oud.FailureSuccessHandledCallback;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;
@@ -76,50 +76,7 @@ public class ProfileRepository  {
     }
 
 
-    public  MutablePlaylistWithTotal loadUserPlaylists(String userId){
-        MutableLiveData<List<PlaylistPreview>> mutablePlaylists = new MutableLiveData<>();
-        MutableLiveData<Integer> total= new MutableLiveData<>();
 
-        Call<UserPlaylistsResponse> call = oudApi.getUserPlaylists(userId);
-
-        call.enqueue(new FailureSuccessHandledCallback<UserPlaylistsResponse>(listener){
-            @Override
-            public void onResponse(Call call, Response response) {
-                super.onResponse(call, response);
-                if(response.isSuccessful()){
-                    total.setValue(((UserPlaylistsResponse) response.body()).getTotal());
-                    mutablePlaylists.setValue(((UserPlaylistsResponse) response.body()).getPlaylists());
-                }
-            }
-
-
-        });
-        return new MutablePlaylistWithTotal(mutablePlaylists,total);
-    }
-
-
-
-    public void loadMoreUserPlaylists(String userId,int offset,MutableLiveData<List<PlaylistPreview>> mutablePlaylists){
-
-
-        Call<UserPlaylistsResponse> call = oudApi.getMoreUserPlaylists(userId,offset);
-
-        call.enqueue(new FailureSuccessHandledCallback<UserPlaylistsResponse>(listener){
-            @Override
-            public void onResponse(Call call, Response response) {
-                super.onResponse(call, response);
-                if(response.isSuccessful()){
-                    UserPlaylistsResponse userPlaylistsResponse = ((UserPlaylistsResponse) response.body());
-                    List<PlaylistPreview>  previouslyLoadedList = mutablePlaylists.getValue();
-                    List<PlaylistPreview>  newLoadedPlaylists =userPlaylistsResponse.getPlaylists();
-                    previouslyLoadedList.addAll(newLoadedPlaylists);
-                    mutablePlaylists.setValue(previouslyLoadedList);
-                }
-            }
-
-
-        });
-    }
 
 
     public void setProfileImage(String token , Uri newImage){

@@ -145,6 +145,9 @@ public class ProfileFragment extends Fragment {
                     case R.id.navigation_profile_playlists:
                         openFragment(ProfilePlaylistsFragment.newInstance(userId));
                         return true;
+                    case R.id.navigation_profile_followers:
+                        openFragment(ProfileFollowersFragment.newInstance(userId));
+                        return true;
                 }
 
                 return false;
@@ -164,7 +167,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void openFragment(Fragment fragment){
-        getChildFragmentManager().beginTransaction().add(R.id.fragment_host_profile,fragment).commit();
+        getChildFragmentManager().beginTransaction().replace(R.id.fragment_host_profile,fragment).commit();
     }
 
 

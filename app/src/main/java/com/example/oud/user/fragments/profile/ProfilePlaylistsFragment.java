@@ -20,13 +20,14 @@ import android.widget.Toast;
 
 import com.example.oud.R;
 import com.example.oud.api.PlaylistPreview;
+import com.example.oud.connectionaware.ConnectionAwareFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfilePlaylistsFragment extends Fragment {
+public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePlaylistsViewModel> {
 
-    private ProfilePlaylistsViewModel mViewModel;
+
 
     private ArrayList<String> playlistNames = new ArrayList<>();
     private ArrayList<String> playlistImageUrls = new ArrayList<>();
@@ -43,32 +44,34 @@ public class ProfilePlaylistsFragment extends Fragment {
         this.userId = userId;
     }
 
+    public ProfilePlaylistsFragment(){
+        super(ProfilePlaylistsViewModel.class,
+                R.layout.fragment_profile_playlists,
+                R.id.progress_bar_profile_playlist,
+                null);
+    }
+
     public static ProfilePlaylistsFragment newInstance(String id) {
+
         ProfilePlaylistsFragment fragment =  new ProfilePlaylistsFragment();
         fragment.setUserId(id);
         return  fragment;
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_profile_playlists, container, false);
-        recyclerView = v.findViewById(R.id.recycler_view_profile_playlists);
-        loadMoreButton = v.findViewById(R.id.btn_profile_playlist_load_more);
-        return v;
-    }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+        recyclerView = view.findViewById(R.id.recycler_view_profile_playlists);
+        loadMoreButton = view.findViewById(R.id.btn_profile_playlist_load_more);
         loadMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mViewModel.loadMorePlaylists(userId);
             }
         });
-        mViewModel = ViewModelProviders.of(this).get(ProfilePlaylistsViewModel.class);
+
+
         mViewModel.getUserPlaylists(userId).observe(getViewLifecycleOwner(), new Observer<List<PlaylistPreview>>() {
             @Override
             public void onChanged(List<PlaylistPreview> playlistPreviews) {
@@ -80,7 +83,7 @@ public class ProfilePlaylistsFragment extends Fragment {
                     playlistImageUrls.add(playlistPreviews.get(position).getImageUrl());
                     playlistIds.add(playlistPreviews.get(position).getId());
                 }
-                initRecyclerView();
+                setRecyclerView();
 
                 if(mViewModel.getTotalNumberOfPlaylists().getValue()>playlistPreviews.size() && playlistPreviews.size()>5){
                     getActivity().runOnUiThread(new Runnable() {
@@ -103,8 +106,19 @@ public class ProfilePlaylistsFragment extends Fragment {
 
     }
 
-    private void initRecyclerView(){
-        Log.d("TAG", "initRecyclerView: init recyclerview.");
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+
+
+    }
+
+    private void setRecyclerView(){
+
 
         adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds);
 

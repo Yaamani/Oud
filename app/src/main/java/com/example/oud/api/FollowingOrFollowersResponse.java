@@ -1,14 +1,13 @@
 package com.example.oud.api;
 
+import java.util.List;
+
 public class FollowingOrFollowersResponse {
-    UserOrArtistPreview items;
+    List<UserOrArtistPreview> items;
     int limit;
     int offset;
     int total;
 
-    public UserOrArtistPreview getItems() {
-        return items;
-    }
 
     public int getLimit() {
         return limit;
@@ -22,7 +21,11 @@ public class FollowingOrFollowersResponse {
         return total;
     }
 
-    public FollowingOrFollowersResponse(UserOrArtistPreview items, int limit, int offset, int total) {
+    public List<UserOrArtistPreview> getItems() {
+        return items;
+    }
+
+    public FollowingOrFollowersResponse(List<UserOrArtistPreview> items, int limit, int offset, int total) {
         this.items = items;
         this.limit = limit;
         this.offset = offset;

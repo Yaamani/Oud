@@ -4,30 +4,24 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.oud.ConnectionStatusListener;
+import com.example.oud.Constants;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.UserPlaylistsResponse;
+import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 
-import java.util.Arrays;
 import java.util.List;
 
-public class ProfilePlaylistsViewModel extends ViewModel implements ConnectionStatusListener {
-    private ProfileRepository repository;
-    private MutableLiveData<Boolean> connectionSuccessful = new MutableLiveData<>();
+public class ProfilePlaylistsViewModel extends ConnectionAwareViewModel<ProfilePlaylistRepository> {
     private MutableLiveData<List<PlaylistPreview>> playlists;
     private MutableLiveData<Integer> totalNumberOfPlaylists;
 
-    public boolean isAllLoaded() {
-        return allLoaded;
-    }
-
-    private boolean allLoaded=false;
 
     public MutableLiveData<List<PlaylistPreview>> getUserPlaylists(String userId){
         MutablePlaylistWithTotal result;
         if(playlists == null){
-            result = repository.loadUserPlaylists(userId);
+            result = mRepo.loadUserPlaylists(userId);
             playlists = result.getPlaylists();
             totalNumberOfPlaylists = result.getTotal();
 
@@ -40,27 +34,31 @@ public class ProfilePlaylistsViewModel extends ViewModel implements ConnectionSt
     public void loadMorePlaylists(String userId){
         if(playlists == null)
             return;
-        repository.loadMoreUserPlaylists(userId,playlists.getValue().size()-1,playlists);
+        mRepo.loadMoreUserPlaylists(userId,playlists.getValue().size()-1,playlists);
 
     }
 
 
     public ProfilePlaylistsViewModel() {
-        repository = new ProfileRepository(this);
+        super(new ProfilePlaylistRepository(), Constants.YAMANI_MOCK_BASE_URL);
     }
 
     @Override
     public void onConnectionSuccess() {
-        connectionSuccessful.setValue(true);
+        super.onConnectionSuccess();
     }
 
     @Override
     public void onConnectionFailure() {
-        connectionSuccessful.setValue(false);
+        super.onConnectionFailure();
     }
 
-    public MutableLiveData<Boolean> getConnectionSuccessful() {
-        return connectionSuccessful;
+    @Override
+    public void clearData() {
+        playlists = null;
+        totalNumberOfPlaylists = null;
+
     }
+
 
 }

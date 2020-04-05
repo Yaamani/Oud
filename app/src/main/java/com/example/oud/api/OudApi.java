@@ -101,8 +101,10 @@ public interface OudApi {
     Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
 
 
-    @GET//todo add when back end finished
-    Call<FollowingOrFollowersResponse> getFollowers(@Query("type") String type);
+    @GET("/users/{user_id}/followers")//todo add when back end finished
+    Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
+
+
 
 
 }
