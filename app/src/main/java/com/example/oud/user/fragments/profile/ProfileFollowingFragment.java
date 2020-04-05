@@ -23,62 +23,61 @@ import com.example.oud.connectionaware.ConnectionAwareFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFollowersViewModel> {
+public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFollowingViewModel> {
 
     private String userId;
-
-    private ArrayList<String> followersNames = new ArrayList<>();
-    private ArrayList<String> followersImageUrls = new ArrayList<>();
-    private ArrayList<String> followersIds = new ArrayList<>();
-    private ArrayList<String> followersTypes = new ArrayList<>();
-
     private RecyclerView recyclerView;
     private Button loadMoreButton;
+    private ArrayList<String> followedArtistsNames = new ArrayList<>();
+    private ArrayList<String> followedArtistsImageUrls = new ArrayList<>();
+    private ArrayList<String> followedArtistsIds = new ArrayList<>();
+    private ArrayList<String> followedArtistsTypes = new ArrayList<>();
 
-    public static ProfileFollowersFragment newInstance(String id) {
-        ProfileFollowersFragment fragment = new ProfileFollowersFragment();
+
+    public static ProfileFollowingFragment newInstance(String id) {
+        ProfileFollowingFragment fragment = new ProfileFollowingFragment();
         fragment.setUserId(id);
         return fragment;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public ProfileFollowersFragment(){
-        super(ProfileFollowersViewModel.class,
-                R.layout.fragment_profile_followers,
-                R.id.progress_bar_profile_followers,
+    public ProfileFollowingFragment(){
+        super(ProfileFollowingViewModel.class,
+                R.layout.fragment_profile_following,
+                R.id.progress_bar_profile_following,
                 null);
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerView = view.findViewById(R.id.recycler_view_profile_followers);
-        loadMoreButton = view.findViewById(R.id.btn_profile_followers_load_more);
-
+        recyclerView = view.findViewById(R.id.recycler_view_profile_following);
+        loadMoreButton = view.findViewById(R.id.btn_profile_following_load_more);
         loadMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewModel.loadMorePlaylists(userId);
+                mViewModel.loadMoreFollowedArtists(userId);
             }
         });
-
-        mViewModel.getUserFollowers(userId).observe(getViewLifecycleOwner(), new Observer<List<UserOrArtistPreview>>() {
+        mViewModel.getUserFollowedArtists(userId).observe(getViewLifecycleOwner(), new Observer<List<UserOrArtistPreview>>() {
             @Override
             public void onChanged(List<UserOrArtistPreview> userOrArtistPreviews) {
-                followersIds.clear();
-                followersImageUrls.clear();
-                followersNames.clear();
-                followersTypes.clear();
+                followedArtistsIds.clear();
+                followedArtistsImageUrls.clear();
+                followedArtistsNames.clear();
+                followedArtistsTypes.clear();
                 for(int position =0 ;position<userOrArtistPreviews.size();position++){
-                    followersIds.add(userOrArtistPreviews.get(position).getId());
-                    followersNames.add(userOrArtistPreviews.get(position).getName());
-                    followersImageUrls.add(userOrArtistPreviews.get(position).getImageUrl());
-                    followersTypes.add(userOrArtistPreviews.get(position).getType());
+                    followedArtistsIds.add(userOrArtistPreviews.get(position).getId());
+                    followedArtistsNames.add(userOrArtistPreviews.get(position).getName());
+                    followedArtistsImageUrls.add(userOrArtistPreviews.get(position).getImageUrl());
+                    followedArtistsTypes.add(userOrArtistPreviews.get(position).getType());
                 }
                 setRecyclerView();
-                if(mViewModel.getTotalNumberOfFollowers().getValue()>userOrArtistPreviews.size() && userOrArtistPreviews.size()>5){
+                if(mViewModel.getTotalNumberOfFollowedArtists().getValue()>userOrArtistPreviews.size() && userOrArtistPreviews.size()>5){
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -93,23 +92,26 @@ public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFol
                             loadMoreButton.setVisibility(View.GONE);
                         }
                     });
+
+
             }
         });
 
-
     }
 
-    private void setRecyclerView(){
-
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followersNames,followersImageUrls,followersTypes);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+    }
 
+
+    private void setRecyclerView(){
+
+        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
 }
+

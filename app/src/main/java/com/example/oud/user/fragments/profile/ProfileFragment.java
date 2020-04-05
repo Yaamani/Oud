@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -46,12 +47,14 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImageView;
     private TextView profileDisplaynameTextView;
     private BottomNavigationView navigationView;
+    private Button renameButton;;
 
 
     private ProfileViewModel mViewModel;
     private String userId;
 
     ProfilePlaylistsFragment profilePlaylistsFragment;
+    ProfileFollowersFragment profileFollowersFragment;
 
 
 
@@ -71,6 +74,9 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         initializeViews(v);
         setButtonsOnClickListener();
+        profilePlaylistsFragment= ProfilePlaylistsFragment.newInstance(userId);
+        profileFollowersFragment= ProfileFollowersFragment.newInstance(userId);
+        navigationView.setSelectedItemId(R.id.navigation_profile_playlists);
 
         return v;
     }
@@ -143,11 +149,13 @@ public class ProfileFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()){
                     case R.id.navigation_profile_playlists:
-                        openFragment(ProfilePlaylistsFragment.newInstance(userId));
+                        openFragment(profilePlaylistsFragment);
                         return true;
                     case R.id.navigation_profile_followers:
-                        openFragment(ProfileFollowersFragment.newInstance(userId));
+                        openFragment(profileFollowersFragment);
                         return true;
+                    case R.id.navigation_profile_following:
+                        openFragment(ProfileFollowingFragment.newInstance(userId));
                 }
 
                 return false;

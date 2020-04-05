@@ -58,6 +58,7 @@ public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePla
         return  fragment;
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -120,7 +121,7 @@ public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePla
     private void setRecyclerView(){
 
 
-        adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds);
+        adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds,userId);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

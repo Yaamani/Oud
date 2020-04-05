@@ -104,6 +104,10 @@ public interface OudApi {
     @GET("/users/{user_id}/followers")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
+    @GET("/users/{user_id}/following")//todo add when back end finished
+    Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
+
+
 
 
 
