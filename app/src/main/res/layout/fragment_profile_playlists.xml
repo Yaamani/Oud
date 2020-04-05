@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+<androidx.recyclerview.widget.RecyclerView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_view_profile_playlists"
+        android:nestedScrollingEnabled="true"/>
+
+ <Button
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_gravity="center_horizontal"
+     android:text="load more"
+     android:id="@+id/btn_profile_playlist_load_more"
+     android:visibility="gone"
+     />
+</LinearLayout>
+

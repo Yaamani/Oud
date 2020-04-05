@@ -15,6 +15,7 @@ import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
+import com.example.oud.api.UserOrArtistPreview;
 import com.example.oud.api.UserPlaylistsResponse;
 
 import java.io.ByteArrayOutputStream;
@@ -40,10 +41,6 @@ public class ProfileRepository  {
     private ConnectionStatusListener listener;
     private OudApi oudApi;
 
-
-    private MutableLiveData<ProfilePreview> profile;
-
-    private MutableLiveData<List<PlaylistPreview>> playlists;
 
 
     public ProfileRepository(ConnectionStatusListener listener) {
@@ -79,8 +76,9 @@ public class ProfileRepository  {
     }
 
 
-    public MutableLiveData<List<PlaylistPreview>> loadUserPlaylists(String userId){
+    public  MutablePlaylistWithTotal loadUserPlaylists(String userId){
         MutableLiveData<List<PlaylistPreview>> mutablePlaylists = new MutableLiveData<>();
+        MutableLiveData<Integer> total= new MutableLiveData<>();
 
         Call<UserPlaylistsResponse> call = oudApi.getUserPlaylists(userId);
 
@@ -89,15 +87,40 @@ public class ProfileRepository  {
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
                 if(response.isSuccessful()){
-                PlaylistPreview[] arrayPlaylists = ((UserPlaylistsResponse) response.body()).getPlaylists();
-                mutablePlaylists.setValue(Arrays.asList(arrayPlaylists));
+                    total.setValue(((UserPlaylistsResponse) response.body()).getTotal());
+                    mutablePlaylists.setValue(((UserPlaylistsResponse) response.body()).getPlaylists());
                 }
             }
 
 
         });
-        return mutablePlaylists;
+        return new MutablePlaylistWithTotal(mutablePlaylists,total);
     }
+
+
+
+    public void loadMoreUserPlaylists(String userId,int offset,MutableLiveData<List<PlaylistPreview>> mutablePlaylists){
+
+
+        Call<UserPlaylistsResponse> call = oudApi.getMoreUserPlaylists(userId,offset);
+
+        call.enqueue(new FailureSuccessHandledCallback<UserPlaylistsResponse>(listener){
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if(response.isSuccessful()){
+                    UserPlaylistsResponse userPlaylistsResponse = ((UserPlaylistsResponse) response.body());
+                    List<PlaylistPreview>  previouslyLoadedList = mutablePlaylists.getValue();
+                    List<PlaylistPreview>  newLoadedPlaylists =userPlaylistsResponse.getPlaylists();
+                    previouslyLoadedList.addAll(newLoadedPlaylists);
+                    mutablePlaylists.setValue(previouslyLoadedList);
+                }
+            }
+
+
+        });
+    }
+
 
     public void setProfileImage(String token , Uri newImage){
 

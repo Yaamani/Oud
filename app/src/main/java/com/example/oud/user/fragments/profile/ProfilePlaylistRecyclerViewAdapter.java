@@ -18,6 +18,18 @@ import java.util.ArrayList;
 
 public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<ProfilePlaylistRecyclerViewAdapter.PlaylistViewHolder> {
 
+    public void setPlaylistNames(ArrayList<String> playlistNames) {
+        this.playlistNames = playlistNames;
+    }
+
+    public void setPlayListImagesUrls(ArrayList<String> playListImagesUrls) {
+        this.playListImagesUrls = playListImagesUrls;
+    }
+
+    public void setPlaylistId(ArrayList<String> playlistId) {
+        this.playlistId = playlistId;
+    }
+
     private ArrayList<String> playlistNames = new ArrayList<>();
     private ArrayList<String> playListImagesUrls = new ArrayList<>();
     private ArrayList<String> playlistId = new ArrayList<>();

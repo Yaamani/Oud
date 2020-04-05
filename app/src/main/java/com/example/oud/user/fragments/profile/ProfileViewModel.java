@@ -11,6 +11,7 @@ import com.example.oud.api.ProfilePreview;
 import com.example.oud.api.UserPlaylistsResponse;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProfileViewModel extends ViewModel implements ConnectionStatusListener {
@@ -26,12 +27,7 @@ public class ProfileViewModel extends ViewModel implements ConnectionStatusListe
         return  profile;
     }
 
-    public MutableLiveData<List<PlaylistPreview>> getUserPlaylists(String userId){
-        if(playlists == null)
-            playlists = repository.loadUserPlaylists(userId);
 
-        return playlists;
-    }
     public void updateProfileImage(String token, Uri image){
         repository.setProfileImage(token,image);
     }

@@ -87,6 +87,10 @@ public interface OudApi {
     @GET("/users/{user_id}/playlists")
     Call<UserPlaylistsResponse> getUserPlaylists(@Path("user_id") String userId);
 
+    @GET("/users/{user_id}/playlists")
+    Call<UserPlaylistsResponse> getMoreUserPlaylists(@Path("user_id") String userId,@Query("offset") int offset);
+
+
     @GET("/users/{user_id}")
     Call<ProfilePreview> getUserById(@Path("user_id") String userId);
 
@@ -94,6 +98,10 @@ public interface OudApi {
     @Multipart
     @PATCH("me/profilePicure")
     Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
+
+
+    @GET//todo add when back end finished
+    Call<FollowingOrFollowersResponse> getFollowers(@Query("type") String type);
 
 
 }

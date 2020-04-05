@@ -90,7 +90,7 @@
         
         
         
-    "user1": {"_id": "1", "displayName": "user11234567890123456789234567812345678123456", "followersCount": 0,"images": ["https://images.unsplash.com/photo-1497316730643-415fac54a2af"],"verified": false,"type": "string"},
+    "user1": {"_id": "1", "displayName": "user1", "followersCount": 0,"images": ["https://images.unsplash.com/photo-1497316730643-415fac54a2af"],"verified": false,"type": "string"},
 
     "playlistsUser1":{"items": [
         {"_id": "playlist1","name": "playlist1","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x600","type": "string"},
@@ -101,7 +101,7 @@
         {"_id": "playlist6","name": "playlist6","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x604","type": "string"}],
         "limit": 0,
         "offset": 0,
-        "total": 0
+        "total": 20
       }
 }
 

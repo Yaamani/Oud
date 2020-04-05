@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.example.oud.R;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -42,14 +45,14 @@ public class ProfileFragment extends Fragment {
 
     private ImageView profileImageView;
     private TextView profileDisplaynameTextView;
-    RecyclerView recyclerView;
+    private BottomNavigationView navigationView;
 
 
     private ProfileViewModel mViewModel;
     private String userId;
-    private ArrayList<String> playlistNames = new ArrayList<>();
-    private ArrayList<String> playlistImageUrls = new ArrayList<>();
-    private ArrayList<String> playlistIds = new ArrayList<>();
+
+    ProfilePlaylistsFragment profilePlaylistsFragment;
+
 
 
 
@@ -87,17 +90,7 @@ public class ProfileFragment extends Fragment {
                         Glide.with(getContext()).asBitmap().load(profilePreview.getImages()[0]).into(profileImageView);
                 }}
             });
-            mViewModel.getUserPlaylists(userId).observe(getViewLifecycleOwner(), new Observer<List<PlaylistPreview>>() {
-                @Override
-                public void onChanged(List<PlaylistPreview> playlistPreviews) {
-                    for(int position=0 ;position < playlistPreviews.size();position++){
-                        playlistNames.add(playlistPreviews.get(position).getName());
-                        playlistImageUrls.add(playlistPreviews.get(position).getImageUrl());
-                        playlistIds.add(playlistPreviews.get(position).getId());
-                    }
-                    initRecyclerView();
-                }
-            });
+
         }
 
         // TODO: Use the ViewModel
@@ -132,7 +125,7 @@ public class ProfileFragment extends Fragment {
     private void initializeViews(View v){
         profileImageView = v.findViewById(R.id.image_profile_fragment);
         profileDisplaynameTextView = v.findViewById(R.id.text_profile_fragment_display_name);
-        recyclerView = v.findViewById(R.id.recycler_view_profile);
+        navigationView = v.findViewById(R.id.navigation_bar_profile);
     }
 
     private void setButtonsOnClickListener(){
@@ -145,21 +138,33 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.navigation_profile_playlists:
+                        openFragment(ProfilePlaylistsFragment.newInstance(userId));
+                        return true;
+                }
+
+                return false;
+            }
+        });
+
+
     }
 
-    private void initRecyclerView(){
-        Log.d("TAG", "initRecyclerView: init recyclerview.");
 
-        ProfilePlaylistRecyclerViewAdapter adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
 
     public void setUserId(String userId) {
         this.userId = userId;
     }
     private void uploadProfileImage(Bitmap newImage){
 
+    }
+
+    private void openFragment(Fragment fragment){
+        getChildFragmentManager().beginTransaction().add(R.id.fragment_host_profile,fragment).commit();
     }
 
 

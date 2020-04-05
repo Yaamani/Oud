@@ -73,6 +73,17 @@
 
     "/users/1":"/user1",
 
-    "/users/1/playlists":"/playlistsUser1"
+    "/users/1/playlists":"/playlistsUser1",
+
+    "/users/1/playlists?offset=5":"/playlistsUser1",
+
+    "/users/1/playlists?offset=11":"/playlistsUser1",
+
+    "/users/1/playlists?offset=17":"/playlistsUser1",
+
+    "/users/1/playlists?offset=23":"/playlistsUser1"
+
+
+
 
 }
