@@ -110,10 +110,11 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
 
         // 1 not 0 because there's a dummy section at the top
-        if (recyclerViewHelper.getSectionCount() == 1) {
+        //if (recyclerViewHelper.getSectionCount() == 1) {
             handleRecentlyPlayed();
             handleCategories();
-        } /*else {
+        //}
+        /*else {
             for (int i = 0;i < recyclerViewHelper.getSectionCount(); i++) {
                 for (int j = 0; j < recyclerViewHelper.getSection(i).getItemCount(); j++) {
                     if ()
@@ -136,9 +137,9 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
         areThereRecentlyPlayedTracks.observe(getViewLifecycleOwner(), b -> {
             if (b) {
 
-                if (recyclerViewHelper.getSectionCount() > 0)
-                    if (recyclerViewHelper.getSection(0).getTitle() != null)
-                        if (recyclerViewHelper.getSection(0).getTitle().equals("Recently played")) return; //already loaded
+                /*if (recyclerViewHelper.getSectionCount() > 1)
+                    if (recyclerViewHelper.getSection(1).getTitle() != null)
+                        if (recyclerViewHelper.getSection(1).getTitle().equals("Recently played")) return; //already loaded*/
 
                 // at position 1 not 0 because there's a dummy section at 0.
                 handleRecentlyPlayedSection(1, mViewModel.getRecentlyPlayedLiveData());
@@ -149,46 +150,67 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
     private void handleCategories() {
         for (int i = 0; i < Constants.USER_HOME_CATEGORIES_COUNT; i++) {
             HomeViewModel.OuterItemLiveData categoryData = mViewModel.getCategoryLiveData(i);
-            handleCategorySection(recyclerViewHelper.getSectionCount(), categoryData);
+            handleCategorySection(i+1, categoryData);
         }
     }
 
     private void handleRecentlyPlayedSection(int position, HomeViewModel.OuterItemLiveData outerItemLiveData) {
-        NestedRecyclerViewHelper.Section section = new NestedRecyclerViewHelper.Section();
+        NestedRecyclerViewHelper.Section section = null;
+
+
+        NestedRecyclerViewHelper.Section sec1 = recyclerViewHelper.getSection(1);
+        if (sec1.getTitle() != null) {
+            if (sec1.getTitle().equals(outerItemLiveData.getTitle().getValue())) {  // already loaded
+                section = sec1;
+            }
+        }
+
+        if (section == null) {
+            section = new NestedRecyclerViewHelper.Section();
+            recyclerViewHelper.addSection(position, section);
+        }
+
+        NestedRecyclerViewHelper.Section _section = section;
 
         outerItemLiveData.getIcon().observe(getViewLifecycleOwner(), section::setIcon);
         outerItemLiveData.getTitle().observe(getViewLifecycleOwner(), section::setTitle);
+
+        int start = 0;
         for (HomeViewModel.InnerItemLiveData itemData : outerItemLiveData.getInnerItems().getValue()) {
 
-            NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
-            section.addItem(item);
+            NestedRecyclerViewHelper.Item item = null;
 
-            itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> {
-                item.setImageUrl(imageUrl);
+            for (int i = start; i < _section.getItemCount(); i++) {
+                NestedRecyclerViewHelper.Item current = _section.getItem(i);
 
-                /*Log.i(TAG, "handleRecentlyPlayedSection: "
-                        + recyclerView.computeVerticalScrollExtent() + ", " +
-                        + recyclerView.computeVerticalScrollOffset() + ", " +
-                        + recyclerView.computeVerticalScrollRange());
+                if (current.getTitle() != null) {
+                    if (current.getTitle().equals(itemData.getTitle().getValue())) {
+                        item = current;
+                    }
+                } else {
+                    _section.removeItem(i);
+                    i--;
+                }
+            }
 
-                if (recyclerView.computeVerticalScrollOffset() == 0) {
+            start++;
 
-                    RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext());
-                    smoothScroller.setTargetPosition(0);
-                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+            if (item == null) {
+                item = new NestedRecyclerViewHelper.Item();
+                itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+                itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+                _section.addItem(item);
+            }
 
-                }*/
-
-
-
-            });
+            itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
 
+            NestedRecyclerViewHelper.Item _item = item;
             itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                 String trackId = (String) map.get(Constants.TRACK_ID_KEY);
-                item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
-                item.setClickListener(v -> {
+                _item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
+                _item.setClickListener(v -> {
                     /*Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();*/
                     talkToPlayer.configurePlayer(trackId,true);
 
@@ -197,34 +219,75 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
         }
 
         //recyclerViewHelper.addSection(0, new NestedRecyclerViewHelper.Section());
-        recyclerViewHelper.addSection(position, section);
     }
 
     private void handleCategorySection(int position, HomeViewModel.OuterItemLiveData outerItemLiveData) {
-        NestedRecyclerViewHelper.Section section = new NestedRecyclerViewHelper.Section();
 
+        NestedRecyclerViewHelper.Section section = null;
+
+        for (int i = position; i < recyclerViewHelper.getSectionCount(); i++) {
+            NestedRecyclerViewHelper.Section current = recyclerViewHelper.getSection(i);
+            if (current.getTitle() != null) {
+                if (current.getTitle().equals(outerItemLiveData.getTitle().getValue())) {  // already loaded
+                    section = current;
+                    break;
+                }
+            } else {
+                recyclerViewHelper.removeSection(i);
+                i--;
+            }
+        }
+
+        if (section == null) {
+            section = new NestedRecyclerViewHelper.Section();
+            recyclerViewHelper.addSection(/*position,*/ section);
+        }
+
+
+        NestedRecyclerViewHelper.Section _section = section;
         outerItemLiveData.getInnerItems().observe(getViewLifecycleOwner(), innerItemLiveData -> {
-            outerItemLiveData.getIcon().observe(getViewLifecycleOwner(), section::setIcon);
-            outerItemLiveData.getTitle().observe(getViewLifecycleOwner(), section::setTitle);
+            outerItemLiveData.getIcon().observe(getViewLifecycleOwner(), _section::setIcon);
+            outerItemLiveData.getTitle().observe(getViewLifecycleOwner(), _section::setTitle);
 
+
+            int start = 0;
             for (HomeViewModel.InnerItemLiveData itemData : innerItemLiveData) {
-                NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item();
-                section.addItem(item);
+                NestedRecyclerViewHelper.Item item = null;
 
-                itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
-                itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+                for (int i = start; i < _section.getItemCount(); i++) {
+                    NestedRecyclerViewHelper.Item current = _section.getItem(i);
+
+                    if (current.getTitle() != null) {
+                        if (current.getTitle().equals(itemData.getTitle().getValue())) {
+                            item = current;
+                        }
+                    } else {
+                        _section.removeItem(i);
+                        i--;
+                    }
+                }
+
+                start++;
+
+                if (item == null) {
+                    item = new NestedRecyclerViewHelper.Item();
+                    itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+                    itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
+                    _section.addItem(item);
+                }
+
+
                 itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
 
+                NestedRecyclerViewHelper.Item _item = item;
                 itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                     String playlistId = (String) map.get(Constants.PLAYLIST_ID_KEY);
-                    item.getRelatedInfo().put(Constants.PLAYLIST_ID_KEY, playlistId);
-                    item.setClickListener(v -> openPlaylistFragment(Constants.PlaylistFragmentType.PLAYLIST, playlistId));
+                    _item.getRelatedInfo().put(Constants.PLAYLIST_ID_KEY, playlistId);
+                    _item.setClickListener(v -> openPlaylistFragment(Constants.PlaylistFragmentType.PLAYLIST, playlistId));
                 });
             }
         });
 
-
-        recyclerViewHelper.addSection(/*position,*/ section);
     }
 
     private void openPlaylistFragment(Constants.PlaylistFragmentType type, String id) {
