@@ -20,6 +20,7 @@ import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
@@ -34,6 +35,7 @@ import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.List;
 import java.util.Stack;
 
 import androidx.annotation.NonNull;
@@ -194,6 +196,34 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         NavigationUI.setupWithNavController(navView, navController);*/
     }
 
+    /*private boolean artistFragPaused = false;
+    private String artistFragPausedArtistId;
+
+    public void setArtistFragPaused(boolean artistFragPaused) {
+        this.artistFragPaused = artistFragPaused;
+    }
+
+    public void setArtistFragPausedArtistId(String id) {
+        artistFragPausedArtistId = id;
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+
+        // Motion layout bug fix.
+
+        if (artistFragPaused) {
+
+            String artistId = artistFragPausedArtistId;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.nav_host_fragment, ArtistFragment.newInstance(artistId), Constants.ARTIST_FRAGMENT_TAG)
+                    .commit();
+        }
+
+    }*/
+
     private void handleBottomNavViewBackStack(BottomNavigationView navView) {
         if (backButtonPressed & !bottomNavViewBackStack.isEmpty()) { // pop & peak
 
@@ -301,6 +331,9 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         Log.i(TAG, "Back stack : " + "Back button pressed.");
 
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        Log.i(TAG, "onBackPressed: " + fragments.get(fragments.size()-1));
+
 
 
         if (RenameFragment.doesRenameFragmentExist(this, R.id.nav_host_fragment)) {
@@ -382,35 +415,51 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         //hideOfflineFragment();
 
-        Fragment fragment = null;
-
-        String[] fragmentTags = {Constants.HOME_FRAGMENT_TAG,
-                Constants.LIBRARY_FRAGMENT_TAG,
-                Constants.SEARCH_FRAGMENT_TAG,
-                Constants.PREMIUM_FRAGMENT_TAG,
-                Constants.SETTINGS_FRAGMENT_TAG};
-
-        for (String tag : fragmentTags) {
-            fragment = getSupportFragmentManager().findFragmentByTag(tag);
-            if (fragment != null) break;
-        }
-
-        if (fragment != null) {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment fragment : fragments) {
+            //Fragment fragment = fragments.get(fragments.size() - 2);
+        //Fragment fragment = null;
 
 
-            if (fragment instanceof ReconnectingListener) {
-                ((ReconnectingListener) fragment).onTryingToReconnect();
-            } else {
-                throw new RuntimeException("onRetryToConnect: " + fragment.toString()
-                        + " must implement " + ReconnectingListener.class.getSimpleName());
+
+            /*String[] fragmentTags = {Constants.HOME_FRAGMENT_TAG,
+                    Constants.SEARCH_FRAGMENT_TAG,
+                    Constants.LIBRARY_FRAGMENT_TAG,
+                    Constants.PREMIUM_FRAGMENT_TAG,
+                    Constants.SETTINGS_FRAGMENT_TAG};*/
+
+            /*for (String tag : fragmentTags) {
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment != null) break;
             }
 
+                Log.i(TAG, "onTryingToReconnect: " + fragment);
 
-        } else {
-            BottomNavigationView navView = findViewById(R.id.nav_view);
+                if (fragment != null) {*/
 
-            inflateFragmentBasedOnMenuItem(navView.getSelectedItemId());
+                    /*for (Class fragClass : fragmentClasses) {
+                        try {
+                            ((fragClass) fragment)
+                        }
+                    }*/
+
+                    if (fragment instanceof ReconnectingListener) {
+                        ((ReconnectingListener) fragment).onTryingToReconnect();
+                        Log.i(TAG, "onTryingToReconnect: " + fragment);
+                        //break;
+                    } /*else {
+                        //continue;
+                        throw new RuntimeException("onRetryToConnect: " + fragment.getClass().getSimpleName() + " must implement " + ReconnectingListener.class.getSimpleName());
+                    }*/
+
+
+                /*} else {
+                    BottomNavigationView navView = findViewById(R.id.nav_view);
+
+                    inflateFragmentBasedOnMenuItem(navView.getSelectedItemId());
+                }*/
         }
+
 
     }
 
