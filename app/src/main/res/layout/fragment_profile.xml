@@ -25,7 +25,7 @@
             android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/playlist_image_test"
+
             android:id="@+id/image_profile_fragment"
             android:clickable="true"
             />

@@ -34,6 +34,13 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
     private ArrayList<String> followedArtistsTypes = new ArrayList<>();
 
 
+    private ArrayList<String> followedUsersNames = new ArrayList<>();
+    private ArrayList<String> followedUsersImageUrls = new ArrayList<>();
+    private ArrayList<String> followedUsersIds = new ArrayList<>();
+    private ArrayList<String> followedUsersTypes = new ArrayList<>();
+
+
+
     public static ProfileFollowingFragment newInstance(String id) {
         ProfileFollowingFragment fragment = new ProfileFollowingFragment();
         fragment.setUserId(id);
@@ -60,12 +67,15 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
         loadMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(followedArtistsIds.size()==mViewModel.getTotalNumberOfFollowedArtists().getValue())
+                    mViewModel.loadMoreFollowedUsers(userId);
                 mViewModel.loadMoreFollowedArtists(userId);
             }
         });
         mViewModel.getUserFollowedArtists(userId).observe(getViewLifecycleOwner(), new Observer<List<UserOrArtistPreview>>() {
             @Override
             public void onChanged(List<UserOrArtistPreview> userOrArtistPreviews) {
+
                 followedArtistsIds.clear();
                 followedArtistsImageUrls.clear();
                 followedArtistsNames.clear();
@@ -77,6 +87,10 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
                     followedArtistsTypes.add(userOrArtistPreviews.get(position).getType());
                 }
                 setRecyclerView();
+
+                if(mViewModel.getTotalNumberOfFollowedArtists().getValue()==userOrArtistPreviews.size())
+                    loadUserFollowedUsers();
+
                 if(mViewModel.getTotalNumberOfFollowedArtists().getValue()>userOrArtistPreviews.size() && userOrArtistPreviews.size()>5){
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -97,11 +111,49 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
             }
         });
 
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+    }
+
+    private void loadUserFollowedUsers(){
+        mViewModel.getUserFollowedUsers(userId).observe(getViewLifecycleOwner(), new Observer<List<UserOrArtistPreview>>() {
+            @Override
+            public void onChanged(List<UserOrArtistPreview> userOrArtistPreviews) {
+                followedUsersIds.clear();
+                followedUsersImageUrls.clear();
+                followedUsersNames.clear();
+                followedUsersTypes.clear();
+                for(int position =0 ;position<userOrArtistPreviews.size();position++){
+                    followedUsersIds.add(userOrArtistPreviews.get(position).getId());
+                    followedUsersNames.add(userOrArtistPreviews.get(position).getName());
+                    followedUsersImageUrls.add(userOrArtistPreviews.get(position).getImageUrl());
+                    followedUsersTypes.add(userOrArtistPreviews.get(position).getType());
+                }
+                setRecyclerView();
+                if(mViewModel.getTotalNumberOfFollowedUsers().getValue()>userOrArtistPreviews.size() && userOrArtistPreviews.size()>5){
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadMoreButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                }else
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadMoreButton.setVisibility(View.GONE);
+                        }
+                    });
+
+
+            }
+        });
 
     }
 

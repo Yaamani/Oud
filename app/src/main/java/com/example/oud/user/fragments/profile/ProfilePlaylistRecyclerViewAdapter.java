@@ -63,11 +63,7 @@ public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<Pro
         holder.playlistParentRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PlaylistFragment fragment = PlaylistFragment.newInstance(userId, Constants.PlaylistFragmentType.PLAYLIST,playlistId.get(position));
-                ((FragmentActivity)context).getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.nav_host_fragment,fragment)
-                        .commit();
+                PlaylistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,userId, Constants.PlaylistFragmentType.PLAYLIST,playlistId.get(position));
             }
         });
 

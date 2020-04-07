@@ -1,5 +1,9 @@
 package com.example.oud.user.fragments.profile;
 
+import androidx.annotation.IdRes;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -30,11 +34,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
@@ -72,6 +78,21 @@ public class ProfileFragment extends Fragment {
         return profileFragment;
     }
 
+    public static void show(FragmentActivity activity,
+                            @IdRes int containerId,
+                            String userId) {
+
+        FragmentManager manager = activity.getSupportFragmentManager();
+        ProfileFragment profileFragment = ProfileFragment.newInstance(userId);
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(containerId, profileFragment)
+                .addToBackStack(null)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -91,7 +112,9 @@ public class ProfileFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
         if(userId!=null) {
-            mViewModel.getProfile(userId).observe(getViewLifecycleOwner(), new Observer<ProfilePreview>() {
+            SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+            String token = prefs.getString("token","000000");
+            mViewModel.getProfile(userId,token).observe(getViewLifecycleOwner(), new Observer<ProfilePreview>() {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
@@ -113,6 +136,7 @@ public class ProfileFragment extends Fragment {
         if (resultCode == RESULT_OK) {
             try {
                 final Uri imageUri = data.getData();
+                Log.e("Profile Fragment",imageUri.getPath());
 
                 final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
@@ -122,6 +146,7 @@ public class ProfileFragment extends Fragment {
                 mViewModel.updateProfileImage(token,imageUri);
 
             } catch (FileNotFoundException e) {
+                Log.e("Profile Fragment",e.getMessage());
                 e.printStackTrace();
 
             }

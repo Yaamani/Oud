@@ -21,9 +21,12 @@ public class ProfileViewModel extends ViewModel implements ConnectionStatusListe
     private MutableLiveData<ProfilePreview> profile;
     private MutableLiveData<List<PlaylistPreview>> playlists;
 
-    public MutableLiveData<ProfilePreview> getProfile(String userId){
-        if(profile ==null)
-            profile = repository.loadProfile(userId);
+    public MutableLiveData<ProfilePreview> getProfile(String userId,String token){
+        if(profile ==null){
+
+            profile = repository.loadProfile(userId, token);
+
+        }
         return  profile;
     }
 

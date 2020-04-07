@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.oud.R;
+import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.profile.ProfileFragment;
 
 public class SettingsFragment extends Fragment {
@@ -32,7 +33,7 @@ public class SettingsFragment extends Fragment {
         viewProfileTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ProfileFragment profileFragment = ProfileFragment.newInstance("1");
+                ProfileFragment profileFragment = ProfileFragment.newInstance(((UserActivity)getActivity()).getUserId());
                 getParentFragmentManager().beginTransaction()
                         .addToBackStack(null)
                         .replace(R.id.nav_host_fragment,profileFragment)

@@ -47,7 +47,7 @@ public interface OudApi {
     Call<ResponseBody> authenticateWithGoogle(@Body AccessToken accessToken);
 
     @GET("me")
-    Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
+    Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATION")String token);
 
     @PATCH("me/auth/facebook")
     Call<LoginResponse> getLoginResponseFromFacebookAccessToken(@Body AccessToken accessToken);
@@ -55,29 +55,29 @@ public interface OudApi {
     @PATCH("me/auth/google")
     Call<LoginResponse> getLoginResponseFromGoogleAccessToken(@Body AccessToken accessToken);
 
-    @GET("/users/{user_id}/playlists")
+    @GET("users/{user_id}/playlists")
     Call<UserPlaylistsResponse> getUserPlaylists(@Path("user_id") String userId);
 
-    @GET("/users/{user_id}/playlists")
+    @GET("users/{user_id}/playlists")
     Call<UserPlaylistsResponse> getMoreUserPlaylists(@Path("user_id") String userId,@Query("offset") int offset);
 
 
-    @GET("/users/{user_id}")
-    Call<ProfilePreview> getUserById(@Path("user_id") String userId);
+    @GET("users/{user_id}")
+    Call<ProfilePreview> getUserById(@Header("AUTHORIZATION") String token,@Path("user_id") String userId);
 
 
     @Multipart
     @PATCH("me/profilePicure")
-    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
+    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATION") String token,@Part MultipartBody.Part image);
 
-    @GET("/users/{user_id}/followers")//todo add when back end finished
+    @GET("users/{user_id}/followers")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
-    @GET("/users/{user_id}/following")//todo add when back end finished
+    @GET("users/{user_id}/following")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
     @PATCH("me/update/display")//todo add when back end finished
-    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATIONS") String token,@Body String displayName);
+    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATION") String token,@Body String displayName);
 
 
 
@@ -85,49 +85,49 @@ public interface OudApi {
     // Home
 
     @Deprecated
-    @GET("/me/player/recently-played")
+    @GET("me/player/recently-played")
     Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("/me/player/recently-played")
+    @GET("me/player/recently-played")
     Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("/browse/categories")
+    @GET("browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("browse/categories/{categoryId}")
     Call<Category> category(@Path("categoryId") String categoryId);
 
-    @GET("/browse/categories")
+    @GET("browse/categories")
     Call<OudList<Category2>> listOfCategories2(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/browse/categories/{categoryId}")
+    @GET("browse/categories/{categoryId}")
     Call<Category2> category2(@Path("categoryId") String categoryId);
 
-    @GET("/browse/categories/{categoryId}/playlists")
+    @GET("browse/categories/{categoryId}/playlists")
     Call<OudList<Playlist>> categoryPlaylist(@Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/albums/{albumId}")
+    @GET("albums/{albumId}")
     Call<Album> album(@Path("albumId") String albumId);
 
-    @GET("/playlists/{playlistId}")
+    @GET("playlists/{playlistId}")
     Call<Playlist> playlist(@Path("playlistId") String playlistId);
 
     /*@HTTP(method = "DELETE", path = "/playlists/{playlistId}", hasBody = true)
     Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
 
-    @PUT("/playlists/{playlistId}")
+    @PUT("playlists/{playlistId}")
     //@PATCH("/playlists/{playlistId}")
     Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     /*@PUT("/playlists/{playlistId}")
     Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
 
-    @GET("/artists/{artistId}")
+    @GET("artists/{artistId}")
     Call<Artist> artist(@Path("artistId") String artistId);
 
-    @GET("/artists/{artistId}/albums")
+    @GET("artists/{artistId}/albums")
     Call<OudList<Album>> artistAlbums(@Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/artists/{artistId}/related-artists")
+    @GET("artists/{artistId}/related-artists")
     Call<RelatedArtists> similarArtists(@Path("artistId") String artistId);
 }

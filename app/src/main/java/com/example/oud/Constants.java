@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes;
 public class Constants {
 
     public static String BASE_URL = "http://oud-zerobase.me/api/v1/";
-    public static final boolean MOCK = true;
+    public static final boolean MOCK = false;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
 
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";
@@ -27,6 +27,8 @@ public class Constants {
     public static final String ARTIST_FRAGMENT_TAG = "ARTIST";
     public static final String RENAME_FRAGMENT_TAG = "RENAME";
     public static final String OPTIONS_FRAGMENT_TAG = "OPTIONS";
+    public static final String PROFILE_FRAGMENT_TAG = "PROFILE";
+
 
     public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";
     public static final String BIG_PLAYER_FRAGMENT_TAG = "BIG_PLAYER";

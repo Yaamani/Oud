@@ -123,9 +123,10 @@ public class ActualLoginFragment extends Fragment {
                 //errorTextView.setText("test");
 
                 if (response.isSuccessful()) {
-                    errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
+                    //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
                     saveToken(view,token);
+                    Log.e("ActualLoginFragment",token);
                     Intent i = new Intent(getActivity(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
                     startActivity(i);
