@@ -17,6 +17,7 @@ import com.example.oud.R;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRecyclerViewAdapter.TrackItemViewHolder> {
@@ -25,13 +26,15 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
     private Context mContext;
 
+    private ArrayList<View.OnClickListener> mClickListeners;
     private ArrayList<String> mTrackImages;
     private ArrayList<String> mTrackNames;
     
     private ArrayList<View> reorderingSeparators;
 
-    public PlaylistRecyclerViewAdapter(Context mContext, ArrayList<String> mTrackImages, ArrayList<String> mTrackNames) {
+    public PlaylistRecyclerViewAdapter(Context mContext, ArrayList<View.OnClickListener> clickListeners, ArrayList<String> mTrackImages, ArrayList<String> mTrackNames) {
         this.mContext = mContext;
+        this.mClickListeners = clickListeners;
         this.mTrackImages = mTrackImages;
         this.mTrackNames = mTrackNames;
         
@@ -54,6 +57,8 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
         DrawableCrossFadeFactory factory =
                 new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
+        holder.mLayout.setOnClickListener(mClickListeners.get(position));
 
         Glide.with(mContext)
                 .load(mTrackImages.get(position))
@@ -90,12 +95,14 @@ public class PlaylistRecyclerViewAdapter extends RecyclerView.Adapter<PlaylistRe
 
     static class TrackItemViewHolder extends RecyclerView.ViewHolder {
 
+        private ConstraintLayout mLayout;
         private ImageView mTrackImage;
         private TextView mTrackName;
 
         TrackItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mLayout = itemView.findViewById(R.id.layout_playlist_track);
             mTrackImage = itemView.findViewById(R.id.img_track_playlist);
             mTrackName = itemView.findViewById(R.id.txt_track_playlist);
             mTrackName.setSelected(true);

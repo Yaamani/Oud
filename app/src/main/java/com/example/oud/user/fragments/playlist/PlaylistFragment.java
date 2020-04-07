@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.playlist;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -29,14 +30,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
-import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
-import com.example.oud.user.fragments.artist.ArtistFragment;
+import com.example.oud.user.player.PlayerInterface;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -63,6 +63,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private ImageButton mImageButtonOptions;
 
 
+
+    private PlayerInterface talkToPlayer;
 
 
 
@@ -190,6 +192,16 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof PlayerInterface) {
+            talkToPlayer = (PlayerInterface) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement" + PlayerInterface.class.getSimpleName() + ".");
+        }
+    }
+
+    @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
@@ -235,25 +247,29 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             mTextViewPlaylistName.setText(playlist.getName());
 
+            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
             ArrayList<Track> tracks = playlist.getTracks();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
 
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), trackImages, trackNames);
+            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
 
 
             for (int i = 0; i < tracks.size(); i++) {
 
                 Track current = tracks.get(i);
 
-                trackImages.add("");
+                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
-                int _i = i;
-                mViewModel.getTrackAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
+                trackImages.add(current.getAlbum().getImage());
+
+                //trackImages.add("");
+                //int _i = i;
+                /*mViewModel.getTrackAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
                         album -> {
                             trackImages.set(_i, album.getImage());
                             adapter.notifyItemChanged(_i);
-                        });
+                        });*/
 
                 trackNames.add(current.getName());
             }
@@ -277,15 +293,18 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             OudList<TrackPreview> tracksOudList = album.getTracks();
             ArrayList<TrackPreview> tracks = tracksOudList.getItems();
+            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
 
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), trackImages, trackNames);
+            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
 
 
             for (int i = 0; i < tracks.size(); i++) {
 
                 TrackPreview current = tracks.get(i);
+
+                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
                 trackImages.add(album.getImage());
 

@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.artist;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -11,12 +12,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,11 +25,10 @@ import com.example.oud.R;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
-import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.PlaylistRecyclerViewAdapter;
+import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
@@ -60,6 +57,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private TextView mTextViewNoArtistsToShow;
 
     private TextView mTextViewBio;
+
+
+    private PlayerInterface talkToPlayer;
+
 
 
     public ArtistFragment() {
@@ -158,6 +159,16 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof PlayerInterface) {
+            talkToPlayer = (PlayerInterface) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement" + PlayerInterface.class.getSimpleName() + ".");
+        }
+    }
+
     /*private ViewGroup container;
 
     @Nullable
@@ -207,6 +218,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     }
 
+
+
     private void handleArgs() {
         Bundle args = getArguments();
         if (args != null) {
@@ -231,27 +244,29 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
-            Glide.with(getContext())
+            /*Glide.with(getContext())
                     .load(artist.getImages().get(0))
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
-                    .into(mImageViewArtistBlurred);
+                    .into(mImageViewArtistBlurred);*/
 
 
 
             ArrayList<Track> tracks = artist.getPopularSongs();
             if (!tracks.isEmpty()) {
+                ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
                 ArrayList<String> trackImages = new ArrayList<>();
                 ArrayList<String> trackNames = new ArrayList<>();
                 int i = 0;
                 for (Track track : tracks) {
                     if (i >= Constants.USER_ARTIST_POPULAR_SONGS_COUNT) break;
+                    clickListeners.add(v -> talkToPlayer.configurePlayer(track.get_id(), true));
                     trackImages.add(track.getAlbum().getImage());
                     trackNames.add(track.getName());
                     i++;
                 }
 
-                mPopularSongsAdapter = new PlaylistRecyclerViewAdapter(getContext(), trackImages, trackNames);
+                mPopularSongsAdapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
                 mRecyclerViewPopularSongs.setAdapter(mPopularSongsAdapter);
             } else {
                 mRecyclerViewPopularSongs.setVisibility(View.GONE);
