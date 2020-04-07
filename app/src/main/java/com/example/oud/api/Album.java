@@ -2,9 +2,7 @@ package com.example.oud.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Album {
 
@@ -24,7 +22,7 @@ public class Album {
     @SerializedName("release_name")
     private Date releaseDate;
 
-    private OudList<Track> tracks;
+    private OudList<TrackPreview> tracks;
 
     private String type;
 
@@ -35,7 +33,7 @@ public class Album {
                  String image,
                  String name,
                  Date releaseDate,
-                 OudList<Track> tracks,
+                 OudList<TrackPreview> tracks,
                  String type) {
         this._id = _id;
         this.albumType = albumType;
@@ -76,7 +74,7 @@ public class Album {
         return releaseDate;
     }
 
-    public OudList<Track> getTracks() {
+    public OudList<TrackPreview> getTracks() {
         return tracks;
     }
 

@@ -110,6 +110,8 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.reorderTrack(id, fromPosition, toPosition);
     }
 
+
+
     private void updateLiveDataUponReordering() {
         //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
         Track track = playlistLiveData.getValue().getTracks().remove(reorderingFromPosition);

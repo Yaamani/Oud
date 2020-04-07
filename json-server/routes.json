@@ -1,69 +1,15 @@
 {
     "/me/player/recently-played": "/recently-played", 
-    "/me/player/recently-played?limit=6": "/recently-played", 
+    "/me/player/recently-played?limit=:limit": "/recently-played", 
 
-    "/browse/categories": "/categories", 
-    "/browse/categories?limit=7": "/categories_list",
+    "/browse/categories/:category_id/playlists": "/category_list_:category_id", 
+    "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
+    "/browse/categories?limit=:limit": "/categories_list", 
 
-    "/browse/categories/category0": "/category0", 
-    "/browse/categories/category1": "/category1", 
-    "/browse/categories/category2": "/category2", 
-    "/browse/categories/category3": "/category3", 
-    "/browse/categories/category4": "/category4", 
-    "/browse/categories/category5": "/category5", 
-    "/browse/categories/category6": "/category6", 
+    "/artists/:id/related-artists": "/related_artists", 
 
-    "/playlists/playlist0": "/playlist0", 
-    "/playlists/playlist1": "/playlist1", 
-    "/playlists/playlist2": "/playlist2", 
-    "/playlists/playlist3": "/playlist3", 
-    "/playlists/playlist4": "/playlist4", 
-    "/playlists/playlist5": "/playlist5", 
-    "/playlists/playlist6": "/playlist6", 
-    "/playlists/playlist7": "/playlist7", 
-    "/playlists/playlist8": "/playlist8", 
-    "/playlists/playlist9": "/playlist9", 
-    "/playlists/playlist10": "/playlist10", 
-    "/playlists/playlist11": "/playlist11", 
-    "/playlists/playlist12": "/playlist12", 
-    "/playlists/playlist13": "/playlist13", 
-    "/playlists/playlist14": "/playlist14", 
-    "/playlists/playlist15": "/playlist15", 
-    "/playlists/playlist16": "/playlist16", 
-    "/playlists/playlist17": "/playlist17", 
-    "/playlists/playlist18": "/playlist18", 
-    "/playlists/playlist19": "/playlist19", 
-    "/playlists/playlist20": "/playlist20", 
-    "/playlists/playlist21": "/playlist21", 
-    "/playlists/playlist22": "/playlist22", 
-    "/playlists/playlist23": "/playlist23", 
-    "/playlists/playlist24": "/playlist24", 
-    "/playlists/playlist25": "/playlist25", 
-    "/playlists/playlist26": "/playlist26", 
-    "/playlists/playlist27": "/playlist27", 
-    "/playlists/playlist28": "/playlist28", 
-    "/playlists/playlist29": "/playlist29", 
-    "/playlists/playlist30": "/playlist30", 
-    "/playlists/playlist31": "/playlist31", 
-    "/playlists/playlist32": "/playlist32", 
-    "/playlists/playlist33": "/playlist33", 
-    "/playlists/playlist34": "/playlist34", 
-    "/playlists/playlist35": "/playlist35", 
-    "/playlists/playlist36": "/playlist36", 
-    "/playlists/playlist37": "/playlist37", 
-    "/playlists/playlist38": "/playlist38", 
-    "/playlists/playlist39": "/playlist39", 
-    "/playlists/playlist40": "/playlist40", 
-    "/playlists/playlist41": "/playlist41", 
-    "/playlists/playlist42": "/playlist42", 
-    "/playlists/playlist43": "/playlist43", 
-    "/playlists/playlist44": "/playlist44", 
-    "/playlists/playlist45": "/playlist45", 
-    "/playlists/playlist46": "/playlist46", 
-    "/playlists/playlist47": "/playlist47", 
-    "/playlists/playlist48": "/playlist48", 
-    "/playlists/playlist49": "/playlist49",
 
+    
 
     "/users/1":"/user1",
 
@@ -83,14 +29,5 @@
     "/users/1/followers?type=user&offset=11":"/followersUser1",
     
     "/users/1/following?type=artist&offset=0":"/followingUser1"
-
-    
-
-    
-
-
-
-
-
 
 }

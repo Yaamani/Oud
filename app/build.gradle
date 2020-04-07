@@ -110,5 +110,6 @@ dependencies {
     // Recyclerview swipe item decorator
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.2'
 
-
+    // Glide Transformations
+    implementation 'jp.wasabeef:glide-transformations:4.1.0'
 }

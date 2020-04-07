@@ -74,7 +74,7 @@ public class NestedRecyclerViewHelper {
             titles.add(item.title);
             subtitles.add(item.subtitle);
         }
-        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, titles, subtitles);
+        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, titles, subtitles, false);
         mVerticalAdapter.getInnerItemAdapters().add(position, hAdapter);
 
         mVerticalAdapter.notifyItemInserted(position);
