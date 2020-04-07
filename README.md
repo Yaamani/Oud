@@ -11,6 +11,9 @@
 4) Open `json-server` folder (exits in `develop` branch) in the terminal & copy paste the command found in `terminal_command.txt` file (exits in `json-server` folder) in your terminal window to run the server.
 - make sure that private networks is allowed. (This depends on your os)
 
+## How to run the app using the real server ?
+- Simply change a constant named `MOCK` (inside `Constants` class) to `false`.
+
 ## How to run unit tests ?
 1) Write click on `oud.example.oud (test)` and choose `Run tests in Oud` or `Run test in Oud with coverage`.
 ![](images/how_to_run_unit_tests.png)
