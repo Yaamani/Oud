@@ -84,7 +84,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         mRecyclerViewHelper.setRecyclerView(mRecyclerView);
 
 
-        //handleRecentlyPlayed();
+        handleRecentlyPlayed();
         handleCategories();
 
     }
