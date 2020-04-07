@@ -105,6 +105,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
 
+
+
+
+
     implementation project(':tryingstuff')
 
     // Recyclerview swipe item decorator

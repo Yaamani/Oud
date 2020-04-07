@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,9 +142,8 @@ public class MainLoginFragment extends Fragment {
 
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         if(prefs.contains("token")){
-            //there is a stored token in the shared preferences
             String token = prefs.getString("token","000000");
-            Call<LoggedInUser> call = oudApi.getUserProfile(token);
+            Call<LoggedInUser> call = oudApi.getUserProfile("Bearer "+token);
             call.enqueue(new Callback<LoggedInUser>() {
                 @Override
                 public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
@@ -152,6 +152,8 @@ public class MainLoginFragment extends Fragment {
                         i.putExtra(Constants.USER_ID_KEY, response.body().get_id());
                         startActivity(i);
                     }
+                    else
+                        Log.e("MainLoginFragment",response.message());
 
                 }
 

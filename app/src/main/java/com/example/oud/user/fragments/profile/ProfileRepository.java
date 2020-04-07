@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.profile;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.Arrays;
@@ -57,16 +59,20 @@ public class ProfileRepository  {
         oudApi = retrofit.create(OudApi.class);
     }
 
-    public MutableLiveData<ProfilePreview> loadProfile(String userId){
+    public MutableLiveData<ProfilePreview> loadProfile(String userId,String token){
         MutableLiveData<ProfilePreview> mutableProfile = new MutableLiveData<>();
 
-        Call<ProfilePreview> call = oudApi.getUserById(userId);
+        Log.e("ProfileRepository",token);
+        Call<ProfilePreview> call = oudApi.getUserById("Bearer "+token,userId);
 
         call.enqueue(new FailureSuccessHandledCallback<ProfilePreview>(listener){
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
-                mutableProfile.setValue((ProfilePreview) response.body());
+                if (response.isSuccessful())
+                    mutableProfile.setValue((ProfilePreview) response.body());
+                else
+                    Log.e("tag",response.toString());
             }
 
 
@@ -80,23 +86,29 @@ public class ProfileRepository  {
 
 
     public void setProfileImage(String token , Uri newImage){
-
+        Log.e("profile Repository","image ");
         File file = new File(newImage.getPath());
+        Log.e("profile Repository",file.getName());
+
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        Call<LoggedInUser> call = oudApi.updateUserPicture(token,body);
+        Call<LoggedInUser> call = oudApi.updateUserPicture("Bearer "+token,body);
         call.enqueue(new FailureSuccessHandledCallback<LoggedInUser>(listener) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
-                Log.i("profile Repository","image uploaded");
                 if(response.isSuccessful())
-                    Log.i("profile Repository","image uploaded");
+                    Log.e("profile Repository","image uploaded");
+                else
+                    Log.e("profile Repository",response.toString());
+
             }
 
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
+                Log.e("profile Repository",t.getMessage());
+
 
             }
         });

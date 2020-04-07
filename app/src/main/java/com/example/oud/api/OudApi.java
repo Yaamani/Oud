@@ -47,7 +47,7 @@ public interface OudApi {
     Call<ResponseBody> authenticateWithGoogle(@Body AccessToken accessToken);
 
     @GET("me")
-    Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
+    Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATION")String token);
 
     @PATCH("me/auth/facebook")
     Call<LoginResponse> getLoginResponseFromFacebookAccessToken(@Body AccessToken accessToken);
@@ -63,12 +63,12 @@ public interface OudApi {
 
 
     @GET("users/{user_id}")
-    Call<ProfilePreview> getUserById(@Path("user_id") String userId);
+    Call<ProfilePreview> getUserById(@Header("AUTHORIZATION") String token,@Path("user_id") String userId);
 
 
     @Multipart
     @PATCH("me/profilePicure")
-    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
+    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATION") String token,@Part MultipartBody.Part image);
 
     @GET("users/{user_id}/followers")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
@@ -77,7 +77,7 @@ public interface OudApi {
     Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
     @PATCH("me/update/display")//todo add when back end finished
-    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATIONS") String token,@Body String displayName);
+    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATION") String token,@Body String displayName);
 
 
 

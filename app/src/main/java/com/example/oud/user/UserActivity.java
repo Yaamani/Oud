@@ -50,8 +50,12 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
-
     private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
 
 
     private Toast mConnectionFailedToast;

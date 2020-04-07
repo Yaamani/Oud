@@ -9,10 +9,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oud.R;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 
 import java.util.ArrayList;
 
@@ -47,6 +49,16 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     public void onBindViewHolder(@NonNull ProfileFollowersRecyclerViewAdapter.FollowersViewHolder holder, int position) {
         Glide.with(context).asBitmap().load(followerImagesUrls.get(position)).into(holder.followerItemImageView);
         holder.followerItemTextView.setText(followerNames.get(position));
+        holder.followerParentRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(followerTypes.get(position)=="user"){
+                    ProfileFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position));
+                }
+                else
+                    ArtistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position));
+            }
+        });
 
     }
 
