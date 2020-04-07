@@ -5,9 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +33,7 @@ import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
+import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
 import com.example.oud.user.fragments.artist.ArtistFragment;
@@ -97,6 +102,28 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         return playlistFragment;
     }
 
+    public static void show(FragmentActivity activity,
+                            @IdRes int containerId,
+                            String userId,
+                            Constants.PlaylistFragmentType type,
+                            String playlistOrAlbumId) {
+
+        FragmentManager manager = activity.getSupportFragmentManager();
+        PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
+        if (playlistFragment == null)
+            playlistFragment = PlaylistFragment.newInstance(userId, type, playlistOrAlbumId);
+        else {
+            playlistFragment.setArguments(PlaylistFragment.myArgs(userId, type, playlistOrAlbumId));
+        }
+
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(containerId, playlistFragment, Constants.PLAYLIST_FRAGMENT_TAG)
+            .addToBackStack(null)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .commit();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -118,6 +145,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                         ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
                         getActivity().getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                                 .addToBackStack(null)
                                 .commit();
                     })
@@ -248,8 +276,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             mTextViewPlaylistName.setText(album.getName());
 
-            OudList<Track> tracksOudList = album.getTracks();
-            ArrayList<Track> tracks = tracksOudList.getItems();
+            OudList<TrackPreview> tracksOudList = album.getTracks();
+            ArrayList<TrackPreview> tracks = tracksOudList.getItems();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
 
@@ -258,7 +286,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             for (int i = 0; i < tracks.size(); i++) {
 
-                Track current = tracks.get(i);
+                TrackPreview current = tracks.get(i);
 
                 trackImages.add(album.getImage());
 
@@ -467,15 +495,16 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         // Undo the current operation
 
-        switch (mViewModel.getCurrentOperation()) {
-            case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
-                break;
-            case RENAME: undoRenaming(playlistNameBeforeRenaming);
-                break;
-            case REORDER: undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
-                break;
-            case UPLOAD_IMAGE:
-                break;
+        if (mViewModel.getCurrentOperation() != null)
+            switch (mViewModel.getCurrentOperation()) {
+                case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                    break;
+                case RENAME: undoRenaming(playlistNameBeforeRenaming);
+                    break;
+                case REORDER: undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
+                    break;
+                case UPLOAD_IMAGE:
+                    break;
 
         }
 
@@ -487,4 +516,5 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     public void onTryingToReconnect() {
         super.onTryingToReconnect();
     }
+
 }
