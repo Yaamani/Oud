@@ -55,6 +55,31 @@ public interface OudApi {
     @PATCH("me/auth/google")
     Call<LoginResponse> getLoginResponseFromGoogleAccessToken(@Body AccessToken accessToken);
 
+    @GET("/users/{user_id}/playlists")
+    Call<UserPlaylistsResponse> getUserPlaylists(@Path("user_id") String userId);
+
+    @GET("/users/{user_id}/playlists")
+    Call<UserPlaylistsResponse> getMoreUserPlaylists(@Path("user_id") String userId,@Query("offset") int offset);
+
+
+    @GET("/users/{user_id}")
+    Call<ProfilePreview> getUserById(@Path("user_id") String userId);
+
+
+    @Multipart
+    @PATCH("me/profilePicure")
+    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
+
+    @GET("/users/{user_id}/followers")//todo add when back end finished
+    Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
+
+    @GET("/users/{user_id}/following")//todo add when back end finished
+    Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
+
+    @PATCH("me/update/display")//todo add when back end finished
+    Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATIONS") String token,@Body String displayName);
+
+
 
 
     // Home
