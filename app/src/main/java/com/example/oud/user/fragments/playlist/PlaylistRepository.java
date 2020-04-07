@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.playlist;
 
 import android.util.Log;
 
+import com.example.oud.api.ChangePlaylistDetailsPayload;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.OudApi;
@@ -25,12 +26,12 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     }
 
 
-    public MutableLiveData<Playlist> fetchPlaylist(String playlistId) {
+    public MutableLiveData<Playlist> fetchPlaylist(String token, String playlistId) {
         MutableLiveData<Playlist> playlistMutableLiveData = new MutableLiveData<>();
 
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Playlist> playlistCall = oudApi.playlist(playlistId);
+        Call<Playlist> playlistCall = oudApi.playlist(token, playlistId);
 
         addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
@@ -51,11 +52,11 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         return playlistMutableLiveData;
     }
 
-    public MutableLiveData<Album> fetchAlbum(String albumId) {
+    public MutableLiveData<Album> fetchAlbum(String token, String albumId) {
         MutableLiveData<Album> albumMutableLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Album> albumCall = oudApi.album(albumId);
+        Call<Album> albumCall = oudApi.album(token, albumId);
 
         addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
 
@@ -77,15 +78,44 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         return albumMutableLiveData;
     }
 
-    public void reorderTrack(String playlistId, int fromPosition, int toPosition) {
+    public void reorderTrack(String token, String playlistId, int fromPosition, int toPosition) {
         OudApi oudApi = instantiateRetrofitOudApi();
 
         ReorderPlaylistPayload reorderPlaylistPayload = new ReorderPlaylistPayload(fromPosition, 1, toPosition);
 
-        Call reorderCall = oudApi.reorderPlaylistTracks(playlistId, reorderPlaylistPayload);
+        Call reorderCall = oudApi.reorderPlaylistTracks(token, playlistId, reorderPlaylistPayload);
 
-        addCall(reorderCall).enqueue(new FailureSuccessHandledCallback(this));
+        addCall(reorderCall).enqueue(new FailureSuccessHandledCallback(this) {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
 
-
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
     }
+
+    public void renamePlaylist(String token, String playlistId, String newName) {
+        OudApi oudApi = instantiateRetrofitOudApi();
+
+        ChangePlaylistDetailsPayload changePlaylistDetailsPayload = new ChangePlaylistDetailsPayload(newName, null, null, null, null);
+
+        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, changePlaylistDetailsPayload);
+
+        addCall(changeDetailsCall).enqueue(new FailureSuccessHandledCallback(this) {
+            @Override
+            public void onResponse(Call call, Response response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
+    }
+
+
 }

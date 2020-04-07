@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.playlist;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -43,10 +44,13 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> {
 
     private static final String TAG = PlaylistFragment.class.getSimpleName();
 
+    private String token;
     private String userId;
     private Constants.PlaylistFragmentType type;
     private String playlistOrAlbumId;
@@ -77,6 +81,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private int reorderingFromPosition;
     private int reorderingToPosition;
+
+    private boolean renamePressed;
 
 
 
@@ -133,6 +139,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
         handleArgs();
+        handleToken();
 
 
 
@@ -226,8 +233,13 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     " to pass the arguments to the fragment. Or you can use playlistFragment.setArguments(" + PlaylistFragment.class.getSimpleName() + ".myArgs()).");
     }
 
+    private void handleToken() {
+        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        token = prefs.getString("token","000000");
+    }
+
     private void handlePlaylistData(PlaylistViewModel mViewModel, View view) {
-        mViewModel.getPlaylistLiveData(playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
+        mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
 
 
 
@@ -279,7 +291,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private void handleAlbumData(PlaylistViewModel mViewMode, View view) {
-        mViewModel.getAlbumLiveData(playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
+        mViewModel.getAlbumLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
             DrawableCrossFadeFactory factory =
                     new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
@@ -348,7 +360,6 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
             adapter.notifyItemMoved(fromPosition, toPosition);
 
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
             reorderingToPosition = toPosition;
 
 
@@ -413,8 +424,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
                 // Server stuff
-                if (reorderingToPosition != reorderingFromPosition)
-                    mViewModel.reorderTrack(reorderingFromPosition, reorderingToPosition);
+                if (reorderingToPosition != reorderingFromPosition) {
+                    mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
+                    mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
+
+                }
 
 
 
@@ -475,8 +489,12 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             Log.i(TAG, "onTextChanged: ");
             // Server stuff
             // Current operation has been set in onClickListener
+            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
+            String newName = s.toString();
 
+            if (s.equals(playlistNameBeforeRenaming)) return;
 
+            mViewModel.renamePlaylist(token, newName);
         }
 
         @Override

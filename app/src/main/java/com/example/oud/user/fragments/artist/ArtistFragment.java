@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.artist;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -12,6 +13,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import android.util.Log;
 import android.view.View;
@@ -32,10 +34,13 @@ import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     private static final String TAG = ArtistFragment.class.getSimpleName();
 
+    private String token;
     private String artistId;
 
     private MotionLayout mMotionLayout;
@@ -106,6 +111,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         Log.i(TAG, "onViewCreated: ");
 
         handleArgs();
+        handleToken();
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageViewArtist = view.findViewById(R.id.img_artist);
@@ -232,8 +238,13 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         }
     }
 
+    private void handleToken() {
+        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        token = prefs.getString("token","000000");
+    }
+
     private void handleData() {
-        mViewModel.getArtistMutableLiveData(artistId).observe(getViewLifecycleOwner(), artist -> {
+        mViewModel.getArtistMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artist -> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
@@ -244,11 +255,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
-            /*Glide.with(getContext())
+            Glide.with(getContext())
                     .load(artist.getImages().get(0))
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
-                    .into(mImageViewArtistBlurred);*/
+                    .into(mImageViewArtistBlurred);
 
 
 
@@ -285,7 +296,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         // TODO: Observe last set of loaded albums and add the newly fetched ones to the loaded albums if they weren't already added.
 
 
-        mViewModel.getSimilarArtistsMutableLiveData(artistId).observe(getViewLifecycleOwner(), artists -> {
+        mViewModel.getSimilarArtistsMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artists -> {
 
             if (!artists.getArtists().isEmpty()) {
 

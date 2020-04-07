@@ -31,12 +31,12 @@ public class HomeRepository2 extends ConnectionAwareRepository {
 
     }
 
-    public MutableLiveData<RecentlyPlayedTracks2> fetchRecentlyPlayedTracks() {
+    public MutableLiveData<RecentlyPlayedTracks2> fetchRecentlyPlayedTracks(String token) {
         MutableLiveData<RecentlyPlayedTracks2> recentlyPlayedLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
         Call<RecentlyPlayedTracks2> recentlyPlayedCall =
-                oudApi.recentlyPlayedTracks2(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
+                oudApi.recentlyPlayedTracks2(token, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
 
         addCall(recentlyPlayedCall).enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks2>(this) {
             @Override
@@ -61,11 +61,11 @@ public class HomeRepository2 extends ConnectionAwareRepository {
         return recentlyPlayedLiveData;
     }
 
-    public MutableLiveData<Album> fetchAlbum(String albumId) {
+    public MutableLiveData<Album> fetchAlbum(String token, String albumId) {
         MutableLiveData<Album> albumMutableLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Album> albumCall = oudApi.album(albumId);
+        Call<Album> albumCall = oudApi.album(token, albumId);
 
         addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
             @Override
@@ -84,11 +84,11 @@ public class HomeRepository2 extends ConnectionAwareRepository {
         return albumMutableLiveData;
     }
 
-    public MutableLiveData<Artist> fetchArtist(String artistId) {
+    public MutableLiveData<Artist> fetchArtist(String token, String artistId) {
         MutableLiveData<Artist> artistMutableLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Artist> artistCall = oudApi.artist(artistId);
+        Call<Artist> artistCall = oudApi.artist(token, artistId);
 
         addCall(artistCall).enqueue(new FailureSuccessHandledCallback<Artist>(this) {
             @Override
@@ -107,11 +107,11 @@ public class HomeRepository2 extends ConnectionAwareRepository {
         return artistMutableLiveData;
     }
 
-    public MutableLiveData<Playlist> fetchPlaylist(String playlistId) {
+    public MutableLiveData<Playlist> fetchPlaylist(String token, String playlistId) {
         MutableLiveData<Playlist> playlistMutableLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Playlist> playlistCall = oudApi.playlist(playlistId);
+        Call<Playlist> playlistCall = oudApi.playlist(token, playlistId);
 
         addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
@@ -153,11 +153,11 @@ public class HomeRepository2 extends ConnectionAwareRepository {
         return categoryListLiveData;
     }
 
-    public MutableLiveData<OudList<Playlist>> fetchCategoryPlaylists(String categoryId) {
+    public MutableLiveData<OudList<Playlist>> fetchCategoryPlaylists(String token, String categoryId) {
         MutableLiveData<OudList<Playlist>> categoryPlaylistsLiveData = new MutableLiveData<>();
 
         OudApi oudApi = instantiateRetrofitOudApi();
-        Call<OudList<Playlist>> playlistsCall = oudApi.categoryPlaylist(categoryId, null, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
+        Call<OudList<Playlist>> playlistsCall = oudApi.categoryPlaylist(token, categoryId, null, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
 
         addCall(playlistsCall).enqueue(new FailureSuccessHandledCallback<OudList<Playlist>>(this) {
             @Override

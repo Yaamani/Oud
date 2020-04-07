@@ -141,7 +141,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
 
     private void fetchPlaylist(OudApi oudApi, String playlistId, HomeViewModel.InnerItemLiveData innerItem) {
 
-        Call<Playlist> playlistCall = oudApi.playlist(playlistId);
+        Call<Playlist> playlistCall = oudApi.playlist("token", playlistId);
         /*playlistCall.enqueue(new Callback<Playlist>() {
             @Override
             public void onResponse(Call<Playlist> call, Response<Playlist> response) {
@@ -251,7 +251,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
 
     private void fetchRecentlyPlayedTracks(OudApi oudApi, MutableLiveData<Boolean> areThereRecentlyPlayedTracks) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
-                oudApi.recentlyPlayedTracks(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
+                oudApi.recentlyPlayedTracks("token", Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
         /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
@@ -318,7 +318,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
     @Deprecated
     private void fetchRecentlyPlayedTracks(OudApi oudApi, int itemsCount, ArrayList<HomeViewModel.InnerItemLiveData> innerItems) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
-                oudApi.recentlyPlayedTracks(itemsCount, null, null);
+                oudApi.recentlyPlayedTracks("token", itemsCount, null, null);
         /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
@@ -383,7 +383,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
     }
 
     private void fetchAlbumData(OudApi oudApi, String albumId, HomeViewModel.InnerItemLiveData innerItem) {
-        Call<Album> albumCall = oudApi.album(albumId);
+        Call<Album> albumCall = oudApi.album("token", albumId);
 
        /* albumCall.enqueue(new Callback<Album>() {
             @Override

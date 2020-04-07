@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes;
 public class Constants {
 
     public static String BASE_URL = "http://oud-zerobase.me/api/v1/";
-    public static final boolean MOCK = true;
+    public static final boolean MOCK = false;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
 
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";

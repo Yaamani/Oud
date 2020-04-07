@@ -55,14 +55,14 @@ public interface OudApi {
     @PATCH("me/auth/google")
     Call<LoginResponse> getLoginResponseFromGoogleAccessToken(@Body AccessToken accessToken);
 
-    @GET("/users/{user_id}/playlists")
+    @GET("users/{user_id}/playlists")
     Call<UserPlaylistsResponse> getUserPlaylists(@Path("user_id") String userId);
 
-    @GET("/users/{user_id}/playlists")
+    @GET("users/{user_id}/playlists")
     Call<UserPlaylistsResponse> getMoreUserPlaylists(@Path("user_id") String userId,@Query("offset") int offset);
 
 
-    @GET("/users/{user_id}")
+    @GET("users/{user_id}")
     Call<ProfilePreview> getUserById(@Path("user_id") String userId);
 
 
@@ -70,10 +70,10 @@ public interface OudApi {
     @PATCH("me/profilePicure")
     Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATIONS") String token,@Part MultipartBody.Part image);
 
-    @GET("/users/{user_id}/followers")//todo add when back end finished
+    @GET("users/{user_id}/followers")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
-    @GET("/users/{user_id}/following")//todo add when back end finished
+    @GET("users/{user_id}/following")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
 
     @PATCH("me/update/display")//todo add when back end finished
@@ -85,49 +85,49 @@ public interface OudApi {
     // Home
 
     @Deprecated
-    @GET("/me/player/recently-played")
-    Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
+    @GET("me/player/recently-played")
+    Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Header("AUTHORIZATIONS") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("/me/player/recently-played")
-    Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
+    @GET("me/player/recently-played")
+    Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Header("AUTHORIZATIONS") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
-    @GET("/browse/categories")
+    @GET("browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("browse/categories/{categoryId}")
-    Call<Category> category(@Path("categoryId") String categoryId);
+    Call<Category> category(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId);
 
-    @GET("/browse/categories")
+    @GET("browse/categories")
     Call<OudList<Category2>> listOfCategories2(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/browse/categories/{categoryId}")
-    Call<Category2> category2(@Path("categoryId") String categoryId);
+    @GET("browse/categories/{categoryId}")
+    Call<Category2> category2(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId);
 
-    @GET("/browse/categories/{categoryId}/playlists")
-    Call<OudList<Playlist>> categoryPlaylist(@Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+    @GET("browse/categories/{categoryId}/playlists")
+    Call<OudList<Playlist>> categoryPlaylist(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/albums/{albumId}")
-    Call<Album> album(@Path("albumId") String albumId);
+    @GET("albums/{albumId}")
+    Call<Album> album(@Header("AUTHORIZATIONS") String token, @Path("albumId") String albumId);
 
-    @GET("/playlists/{playlistId}")
-    Call<Playlist> playlist(@Path("playlistId") String playlistId);
+    @GET("playlists/{playlistId}")
+    Call<Playlist> playlist(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId);
 
-    /*@HTTP(method = "DELETE", path = "/playlists/{playlistId}", hasBody = true)
+    /*@HTTP(method = "DELETE", path = "playlists/{playlistId}", hasBody = true)
     Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
 
-    @PUT("/playlists/{playlistId}")
-    //@PATCH("/playlists/{playlistId}")
-    Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
+    @PUT("playlists/{playlistId}")
+    //@PATCH("playlists/{playlistId}")
+    Call<ResponseBody> reorderPlaylistTracks(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
-    /*@PUT("/playlists/{playlistId}")
-    Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
+    @PUT("playlists/{playlistId}")
+    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
 
-    @GET("/artists/{artistId}")
-    Call<Artist> artist(@Path("artistId") String artistId);
+    @GET("artists/{artistId}")
+    Call<Artist> artist(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId);
 
-    @GET("/artists/{artistId}/albums")
-    Call<OudList<Album>> artistAlbums(@Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+    @GET("artists/{artistId}/albums")
+    Call<OudList<Album>> artistAlbums(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/artists/{artistId}/related-artists")
-    Call<RelatedArtists> similarArtists(@Path("artistId") String artistId);
+    @GET("artists/{artistId}/related-artists")
+    Call<RelatedArtists> similarArtists(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId);
 }
