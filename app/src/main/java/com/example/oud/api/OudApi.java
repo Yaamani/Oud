@@ -46,14 +46,27 @@ public interface OudApi {
 
 
 
+    @Deprecated
     @GET("/me/player/recently-played")
     Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
+
+    @GET("/me/player/recently-played")
+    Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
     @GET("/browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("/browse/categories/{categoryId}")
     Call<Category> category(@Path("categoryId") String categoryId);
+
+    @GET("/browse/categories")
+    Call<OudList<Category2>> listOfCategories2(@Query("offset") Integer offset, @Query("limit") Integer limit);
+
+    @GET("/browse/categories/{categoryId}")
+    Call<Category2> category2(@Path("categoryId") String categoryId);
+
+    @GET("/browse/categories/{categoryId}/playlists")
+    Call<OudList<Playlist>> categoryPlaylist(@Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("/albums/{albumId}")
     Call<Album> album(@Path("albumId") String albumId);
@@ -64,8 +77,8 @@ public interface OudApi {
     /*@HTTP(method = "DELETE", path = "/playlists/{playlistId}", hasBody = true)
     Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
 
-    //@PUP("/playlists/{playlistId}")
-    @PATCH("/playlists/{playlistId}")
+    @PUT("/playlists/{playlistId}")
+    //@PATCH("/playlists/{playlistId}")
     Call<ResponseBody> reorderPlaylistTracks(@Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     /*@PUT("/playlists/{playlistId}")
@@ -73,4 +86,10 @@ public interface OudApi {
 
     @GET("/artists/{artistId}")
     Call<Artist> artist(@Path("artistId") String artistId);
+
+    @GET("/artists/{artistId}/albums")
+    Call<OudList<Album>> artistAlbums(@Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+
+    @GET("/artists/{artistId}/related-artists")
+    Call<RelatedArtists> similarArtists(@Path("artistId") String artistId);
 }

@@ -23,6 +23,7 @@ import retrofit2.Response;
 
 // Wow it really needs to be refactored :(
 
+@Deprecated
 public class HomeRepository extends ConnectionAwareRepository implements NestedRecyclerViewOuterItemSupplier {
 
     private static final String TAG = HomeRepository.class.getSimpleName();

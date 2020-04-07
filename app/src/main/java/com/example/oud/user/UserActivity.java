@@ -21,7 +21,7 @@ import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.RenameFragment;
 import com.example.oud.user.fragments.artist.ArtistFragment;
-import com.example.oud.user.fragments.home.HomeFragment;
+import com.example.oud.user.fragments.home.HomeFragment2;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
@@ -141,7 +141,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         });
 
         FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
-        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment(), Constants.HOME_FRAGMENT_TAG);
+        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment2(), Constants.HOME_FRAGMENT_TAG);
         //homeTransaction.addToBackStack(null);
         bottomNavViewBackStack.push(R.id.navigation_home);
         homeTransaction.commit();
@@ -244,7 +244,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
-        if (f instanceof HomeFragment) return;
+        if (f instanceof HomeFragment2) return;
         else if (f instanceof SearchFragment) return;
         else if (f instanceof LibraryFragment) return;
         else if (f instanceof PremiumFragment) return;
@@ -263,10 +263,10 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         switch (itemId) {
             case R.id.navigation_home:
-                //selected = new HomeFragment();
-                HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
+                //selected = new HomeFragment2();
+                HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
                 if (homeFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new HomeFragment(), Constants.HOME_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new HomeFragment2(), Constants.HOME_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, homeFragment, Constants.HOME_FRAGMENT_TAG);
 
@@ -362,7 +362,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         /*BottomNavigationView navView = findViewById(R.id.nav_view);
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (f instanceof HomeFragment)
+        if (f instanceof HomeFragment2)
             navView.getMenu().getItem(0).setChecked(true);
         else if (f instanceof SearchFragment)
             navView.getMenu().getItem(1).setChecked(true);

@@ -1,9 +1,11 @@
 {
     "/me/player/recently-played": "/recently-played", 
-    "/me/player/recently-played?limit=6": "/recently-played", 
+    "/me/player/recently-played?limit=:limit": "/recently-played", 
 
-    "/browse/categories": "/categories", 
-    "/browse/categories?limit=7": "/categories_list"
+    "/browse/categories/:category_id/playlists": "/category_list_:category_id", 
+    "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
+    "/browse/categories?limit=:limit": "/categories_list", 
 
+    "/artists/:id/related-artists": "/related_artists"
 
 }

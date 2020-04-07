@@ -1,20 +1,15 @@
 package com.example.oud.api;
 
-import java.util.ArrayList;
-
-@Deprecated
-public class Category {
+public class Category2 {
 
     private String _id;
     private String name;
     private String icon;
-    private ArrayList<String> playlists;
 
-    public Category(String _id, String name, String icon, ArrayList<String> playlists) {
+    public Category2(String _id, String name, String icon) {
         this._id = _id;
         this.name = name;
         this.icon = icon;
-        this.playlists = playlists;
     }
 
     public String get_id() {
@@ -29,7 +24,4 @@ public class Category {
         return icon;
     }
 
-    public ArrayList<String> getPlaylists() {
-        return playlists;
-    }
 }

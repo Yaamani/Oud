@@ -29,6 +29,7 @@ import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerView
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.player.PlayerInterface;
 
+@Deprecated
 public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
@@ -39,7 +40,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
     private NestedRecyclerViewHelper recyclerViewHelper;
 
 
-    private PlayerInterface talkToPlayer ;
+    private PlayerInterface talkToPlayer;
 
     private RecyclerView recyclerView;
 

@@ -2,6 +2,7 @@ package com.example.oud.api;
 
 import java.util.Date;
 
+@Deprecated
 public class RecentlyPlayedTrack {
 
     private Track track;
