@@ -140,7 +140,13 @@ public class ProfileFragment extends Fragment {
 
                 final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
                 profileImageView.setImageBitmap(selectedImage);
+
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(imageUri)
+                        .into(profileImageView);
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
                 mViewModel.updateProfileImage(token,imageUri);
