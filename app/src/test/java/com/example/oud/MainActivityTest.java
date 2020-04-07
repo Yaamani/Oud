@@ -36,7 +36,7 @@ import static android.os.Looper.getMainLooper;
 import static org.junit.Assert.assertEquals;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(sdk = 25,manifest=Config.NONE)
+@Config(sdk = 23,manifest=Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
     MainActivity mainActivity;

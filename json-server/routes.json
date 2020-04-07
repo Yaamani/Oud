@@ -6,6 +6,28 @@
     "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
     "/browse/categories?limit=:limit": "/categories_list", 
 
-    "/artists/:id/related-artists": "/related_artists"
+    "/artists/:id/related-artists": "/related_artists", 
+
+
+    
+
+    "/users/1":"/user1",
+
+    "/users/1/playlists":"/playlistsUser1",
+
+    "/users/1/playlists?offset=5":"/playlistsUser1",
+
+    "/users/1/playlists?offset=11":"/playlistsUser1",
+
+    "/users/1/playlists?offset=17":"/playlistsUser1",
+    
+
+    "/users/1/followers?type=user&offset=0":"/followersUser1",
+
+    "/users/1/followers?type=user&offset=5":"/followersUser1",
+
+    "/users/1/followers?type=user&offset=11":"/followersUser1",
+    
+    "/users/1/following?type=artist&offset=0":"/followingUser1"
 
 }

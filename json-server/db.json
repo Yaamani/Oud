@@ -1,4 +1,50 @@
 {
+  "user1": {"_id": "1", "displayName": "user1", "followersCount": 0,"images": ["https://source.unsplash.com/random/801x600"],"verified": false,"type": "string"},
+
+    "playlistsUser1":{"items": [
+        {"_id": "playlist1","name": "playlist1","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x600","type": "string"},
+        {"_id": "playlist2","name": "playlist2","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/1200x800","type": "string"},
+        {"_id": "playlist3","name": "playlist3","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x601","type": "string"},
+        {"_id": "playlist4","name": "playlist4","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x602","type": "string"},
+        {"_id": "playlist5","name": "playlist5","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x603","type": "string"},
+        {"_id": "playlist6","name": "playlist6","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x604","type": "string"}],
+        "limit": 0,
+        "offset": 0,
+        "total": 20
+      },
+
+      "followersUser1":{
+        "items": [
+          {"_id": "2", "name": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
+          {"_id": "3", "name": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
+          {"_id": "4", "name": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
+          {"_id": "5", "name": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
+          {"_id": "6", "name": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
+          {"_id": "7", "name": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
+          
+          
+        ],
+        "limit": 0,
+        "offset": 0,
+        "total": 20
+      },
+
+      "followingUser1":{
+        "items": [
+          {"_id": "1", "name": "artist1","type": "artist","image": "https://source.unsplash.com/random/812x601"},
+          {"_id": "2", "name": "artist2","type": "artist","image": "https://source.unsplash.com/random/823x602"},
+          {"_id": "3", "name": "artist3","type": "artist","image": "https://source.unsplash.com/random/833x603"},
+          {"_id": "4", "name": "artist4","type": "artist","image": "https://source.unsplash.com/random/845x604"}
+          
+          
+          
+        ],
+        "limit": 0,
+        "offset": 0,
+        "total": 4
+      },
+
+
   "recently-played": {
     "items": [ 
       {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist0"}    }, 

@@ -33,7 +33,6 @@ import static android.content.Context.MODE_PRIVATE;
  * create an instance of this fragment.
  */
 public class MainLoginFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     //private static final String ARG_PARAM1 = "param1";
@@ -41,7 +40,6 @@ public class MainLoginFragment extends Fragment {
     private Button toLoginBtn;
     private Button toSignupBtn;
     private Button connectWithFacebookBtn;
-    private final String BASE_URL = "http://example.com";
     OudApi oudApi;
 
     // TODO: Rename and change types of parameters
@@ -124,7 +122,7 @@ public class MainLoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ConnectWithOtherServicesDialogFragment dialog = new ConnectWithOtherServicesDialogFragment() ;
-                dialog.show(getParentFragmentManager(),"a tag");
+                dialog.show(getParentFragmentManager(),"tag");
             }
         });
 
@@ -135,7 +133,7 @@ public class MainLoginFragment extends Fragment {
     private void checkSavedToken(){
         //checks if there is a saved token and if it gets the user's profile
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         oudApi = retrofit.create(OudApi.class);
@@ -150,7 +148,9 @@ public class MainLoginFragment extends Fragment {
                 @Override
                 public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                     if(response.isSuccessful()){
-                        //todo go to homepage
+                        Intent i = new Intent(getActivity(), UserActivity.class);
+                        i.putExtra(Constants.USER_ID_KEY, response.body().get_id());
+                        startActivity(i);
                     }
 
                 }
@@ -160,6 +160,7 @@ public class MainLoginFragment extends Fragment {
                     // internet issue
                 }
             });
+
         }
 
 

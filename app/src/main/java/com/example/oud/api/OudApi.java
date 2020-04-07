@@ -1,17 +1,23 @@
 package com.example.oud.api;
 
+import com.google.gson.JsonObject;
+
+import okhttp3.MultipartBody;
 import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -19,32 +25,39 @@ public interface OudApi {
 
     // Authentication
 
-    @POST("/users/signUp")
+    @POST("users/signUp")
     Call<LoginResponse> signup(@Body SignupUser signupUser);
 
-    @POST("/users/login")
+    @POST("users/login")
     Call<LoginResponse> login(@Body LoginUserInfo loginUserInfo);
 
-    @POST("/users/forgotPassword")
+    @POST("users/forgotPassword")
     Call<StatusMessageResponse> forgetPasswordRequest(@Body ForgetPasswordRequestBody forgetPasswordRequestBody);
 
-    @PATCH("/users/resetPassword/{token}")
+    @PATCH("users/resetPassword/{token}")
     Call<LoginResponse> resetPassword(@Path("token") String token, @Body ResetPasswordBody resetPasswordBody);
 
-    @PATCH("/users/verify/{token}")
+    @PATCH("users/verify/{token}")
     Call<LoginResponse> verifyEmail(@Path("token") String token);
 
-    @POST("/auth/facebook")
-    Call<LoginResponse> authenticateWithFacebook(@Body AccessToken accessToken);
+    @POST("auth/facebook")
+    Call<ResponseBody> authenticateWithFacebook(@Body AccessToken accessToken);
 
-    @POST("/auth/google")
-    Call<LoginResponse> authenticateWithGoogle(@Body AccessToken accessToken);
+    @POST("auth/google")
+    Call<ResponseBody> authenticateWithGoogle(@Body AccessToken accessToken);
 
-    @GET("/me")
+    @GET("me")
     Call<LoggedInUser> getUserProfile(@Header("AUTHORIZATIONS")String token);
 
+    @PATCH("me/auth/facebook")
+    Call<LoginResponse> getLoginResponseFromFacebookAccessToken(@Body AccessToken accessToken);
+
+    @PATCH("me/auth/google")
+    Call<LoginResponse> getLoginResponseFromGoogleAccessToken(@Body AccessToken accessToken);
 
 
+
+    // Home
 
     @Deprecated
     @GET("/me/player/recently-played")
@@ -56,7 +69,7 @@ public interface OudApi {
     @GET("/browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
-    @GET("/browse/categories/{categoryId}")
+    @GET("browse/categories/{categoryId}")
     Call<Category> category(@Path("categoryId") String categoryId);
 
     @GET("/browse/categories")

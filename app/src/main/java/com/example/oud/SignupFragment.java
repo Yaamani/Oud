@@ -1,9 +1,14 @@
 package com.example.oud;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.util.Patterns;
@@ -25,8 +30,12 @@ import com.example.oud.api.LoginUserInfo;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.SignupUser;
 import com.example.oud.api.StatusMessageResponse;
+import com.example.oud.user.UserActivity;
+import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -56,6 +65,7 @@ public class SignupFragment extends Fragment {
     private SignupUser signupUser;
     private OudApi oudApi;
 
+    MyViewModel myViewModel;
 
 
 
@@ -81,6 +91,8 @@ public class SignupFragment extends Fragment {
         initialize(v);
         setCountriesSpinner(v);
         setButtonsOnClickListener();
+        fillDataFromFacebookIfAvailable();
+        fillDataFromGoogleIfAvailable();
 
 
 
@@ -97,13 +109,16 @@ public class SignupFragment extends Fragment {
         genderRadioGroup =v.findViewById(R.id.radio_group_signup_gender);
         signupButton = v.findViewById(R.id.btn_signup);
         errorTextView = v.findViewById(R.id.text_view_signup_error_message);
+        myViewModel = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
     }
     private void setButtonsOnClickListener(){
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(dataIsAccurate()){
                     makeSignupRequest(view);
+
                 }
             }
         });
@@ -172,11 +187,20 @@ public class SignupFragment extends Fragment {
         String gender;
 
         if(genderRadioGroup.getCheckedRadioButtonId()==1)
-           gender= "m";
+           gender= "M";
         else
-           gender="f";
+           gender="F";
 
-        String dateOfBirth = dateOfBirthDatePicker.getYear()+"-"+dateOfBirthDatePicker.getMonth()+"-"+dateOfBirthDatePicker.getDayOfMonth();
+
+        String month =dateOfBirthDatePicker.getMonth()+"";
+        if(month.length()==1)
+            month= "0"+month;
+
+        String day =dateOfBirthDatePicker.getDayOfMonth()+"";
+        if(day.length()==1)
+            day= "0"+day;
+        String dateOfBirth = dateOfBirthDatePicker.getYear()+"-"+month+"-"+day;
+        Toast.makeText(getContext(),dateOfBirth,Toast.LENGTH_LONG).show();
         String country = countrySpinner.getSelectedItem().toString();
         country = country.substring(country.indexOf("(") + 1);
         country = country.substring(0, country.indexOf(")"));
@@ -195,10 +219,12 @@ public class SignupFragment extends Fragment {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
-                    //todo go to choose artists page
-                    errorTextView.setText(response.body().getUser().getEmail());//remove after select artists page is done & change test
+
                     String token = response.body().getToken();
                     saveToken(v,token);
+                    Intent i = new Intent(getActivity(), UserActivity.class);
+                    i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
+                    startActivity(i);
                 } else if (response.errorBody() != null) {
                     Gson gson = new Gson();
                     try{
@@ -228,6 +254,77 @@ public class SignupFragment extends Fragment {
         prefsEditor.apply();    //token saved in shared preferences
 
     }
+
+    private void fillDataFromFacebookIfAvailable(){
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(!mainActivity.isSignupWithFacebook())
+            return;
+
+        String email = mainActivity.getEmail();
+        String displayName =mainActivity.getDisplayname();
+        String  birthDate =mainActivity.getBirthDate();
+        String gender= mainActivity.getGender();
+
+        if(email!=null)
+            emailEditText.setText(email);
+        if(displayName!=null)
+            displayNameEditText.setText(displayName);
+        if(gender!=null){
+            if(gender=="M")
+                getActivity().findViewById(R.id.radio_button_signup_male).performLongClick();
+            else
+                getActivity().findViewById(R.id.radio_button_signup_female).performLongClick();
+        }
+        if(birthDate != null){
+            try {
+                Date date=  new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
+                dateOfBirthDatePicker.init(date.getYear(),date.getMonth(),date.getDay(),null);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private void fillDataFromGoogleIfAvailable(){
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(!mainActivity.getGoogleSignup())
+            return;
+
+        String email = mainActivity.getEmail();
+        String displayName =mainActivity.getDisplayname();
+        String  birthDate =mainActivity.getBirthDate();
+        String gender= mainActivity.getGender();
+
+        if(email!=null)
+            emailEditText.setText(email);
+
+        if(displayName!=null)
+            displayNameEditText.setText(displayName);
+
+        if(gender!=null){
+            if(gender=="M")
+                getActivity().findViewById(R.id.radio_button_signup_male).performLongClick();
+            else
+                getActivity().findViewById(R.id.radio_button_signup_female).performLongClick();
+        }
+        if(birthDate != null){
+        try {
+            Date date=  new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
+            dateOfBirthDatePicker.init(date.getYear(),date.getMonth(),date.getDay(),null);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+}
+
+
+
+
 
 
 
