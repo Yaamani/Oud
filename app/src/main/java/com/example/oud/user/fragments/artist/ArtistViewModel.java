@@ -1,16 +1,25 @@
 package com.example.oud.user.fragments.artist;
 
 import com.example.oud.Constants;
+import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
+import com.example.oud.api.OudList;
+import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
+import java.util.ArrayList;
+
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> {
 
 
     private MutableLiveData<Artist> artistMutableLiveData;
+
+    private MutableLiveData<OudList<Album>> lastSetOfLoadedAlbums;
+    private ArrayList<MutableLiveData<Album>> loadedAlbums = new ArrayList<>();
+
+    private MutableLiveData<RelatedArtists> similarArtistsMutableLiveData;
 
 
 
@@ -30,6 +39,30 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
             }
         }
         return artistMutableLiveData;
+    }
+
+
+    public MutableLiveData<OudList<Album>> getLastSetOfLoadedAlbums(String artistId) {
+        if (lastSetOfLoadedAlbums == null) {
+            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+        }
+
+        return lastSetOfLoadedAlbums;
+    }
+
+    public void loadMoreAlbums(String artistId) {
+        lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(artistId, lastSetOfLoadedAlbums.getValue().getLimit(), Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+    }
+
+    public ArrayList<MutableLiveData<Album>> getLoadedAlbums() {
+        return loadedAlbums;
+    }
+
+    public MutableLiveData<RelatedArtists> getSimilarArtistsMutableLiveData(String artistId) {
+        if (similarArtistsMutableLiveData == null) {
+            similarArtistsMutableLiveData = mRepo.fetchSimilarArtists(artistId);
+        }
+        return similarArtistsMutableLiveData;
     }
 
     @Override

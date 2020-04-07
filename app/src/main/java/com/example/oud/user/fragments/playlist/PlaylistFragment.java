@@ -140,7 +140,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
         mImageButtonOptions.setOnClickListener(v -> {
-            OptionsFragment.builder(getActivity())
+            /*OptionsFragment.builder(getActivity())
                     .addItem(null, "Go To Artist", v1 -> {
                         ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
                         getActivity().getSupportFragmentManager().beginTransaction()
@@ -148,8 +148,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                                 .addToBackStack(null)
                                 .commit();
-                    })
-                    .show();
+                    }).show();*/
         });
 
         mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
@@ -515,6 +514,13 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     @Override
     public void onTryingToReconnect() {
         super.onTryingToReconnect();
+
+        if (type == Constants.PlaylistFragmentType.ALBUM) {
+            disableEditing(getView());
+            handleAlbumData(mViewModel, getView());
+        } else {
+            handlePlaylistData(mViewModel, getView());
+        }
     }
 
 }

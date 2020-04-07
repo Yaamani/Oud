@@ -141,7 +141,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         });
 
         FragmentTransaction homeTransaction = getSupportFragmentManager().beginTransaction();
-        homeTransaction.replace(R.id.nav_host_fragment, new HomeFragment2(), Constants.HOME_FRAGMENT_TAG);
+        homeTransaction.replace(R.id.nav_host_fragment, HomeFragment2.newInstance(userId), Constants.HOME_FRAGMENT_TAG);
         //homeTransaction.addToBackStack(null);
         bottomNavViewBackStack.push(R.id.navigation_home);
         homeTransaction.commit();
@@ -266,7 +266,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 //selected = new HomeFragment2();
                 HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
                 if (homeFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new HomeFragment2(), Constants.HOME_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, HomeFragment2.newInstance(userId), Constants.HOME_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, homeFragment, Constants.HOME_FRAGMENT_TAG);
 

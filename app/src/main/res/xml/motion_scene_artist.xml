@@ -6,13 +6,25 @@
     <Transition
         android:id="@+id/transition_artist"
         app:constraintSetStart="@id/fragment_artist_start"
-        app:constraintSetEnd="@id/fragment_artist_end">
+        app:constraintSetEnd="@id/fragment_artist_end"
+        app:motionInterpolator="linear">
+
 
         <OnSwipe
             app:touchAnchorId="@+id/scroll_view_artist"
             app:touchAnchorSide="top"
             app:dragDirection="dragUp"
-            app:onTouchUp="autoComplete" />
+            app:onTouchUp="stop"/>
+
+        <KeyFrameSet>
+
+            <KeyAttribute
+                android:alpha="1"
+                app:framePosition="50"
+                app:motionTarget="@id/img_artist_blurred"
+                />
+
+        </KeyFrameSet>
 
     </Transition>
 
@@ -22,11 +34,17 @@
         android:id="@+id/fragment_artist_start">
 
         <Constraint
-            android:id="@+id/btn_artist_options"
+            android:id="@+id/btn_artist_follow"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_options" />
+            android:src="@drawable/ic_follow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <Constraint
             android:id="@+id/img_artist"
@@ -36,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
             app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
             app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-            app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/img_artist_blurred"
@@ -47,7 +65,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
             app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
             app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-            app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/txt_artist_name"
@@ -72,21 +90,20 @@
         <Constraint
             android:id="@+id/view_artist_img_tint"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="200dp"
             android:background="@drawable/gradient_artist_image_tint"
-            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist" />
 
         <Constraint
             android:id="@+id/scroll_view_artist"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="400dp"
             android:background="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_artist_img_tint"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <Constraint
             android:id="@+id/progress_artist"
@@ -110,11 +127,17 @@
         android:id="@+id/fragment_artist_end">
 
         <Constraint
-            android:id="@+id/btn_artist_options"
+            android:id="@+id/btn_artist_follow"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_options" />
+            android:src="@drawable/ic_follow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <Constraint
             android:id="@+id/img_artist"
@@ -124,7 +147,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
             app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
             app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-            app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/img_artist_blurred"
@@ -135,7 +158,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
             app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
             app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-            app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/txt_artist_name"
@@ -160,21 +183,20 @@
         <Constraint
             android:id="@+id/view_artist_img_tint"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="200dp"
             android:background="@drawable/gradient_artist_image_tint"
-            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist" />
 
         <Constraint
             android:id="@+id/scroll_view_artist"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="72dp"
             android:background="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_artist_img_tint"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <Constraint
             android:id="@+id/progress_artist"

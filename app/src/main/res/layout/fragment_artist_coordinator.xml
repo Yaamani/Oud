@@ -1,94 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:applyMotionScene="true"
-    app:layoutDescription="@xml/motion_scene_artist"
-    app:motionProgress="0"
-    android:id="@+id/motion_layout_artist"
-    tools:context=".user.fragments.playlist.PlaylistFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true">
 
 
-
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_artist"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
-        app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
-        app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-        app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_artist_blurred"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/view_artist_img_tint"
-        app:layout_constraintEnd_toEndOf="@+id/view_artist_img_tint"
-        app:layout_constraintStart_toStartOf="@+id/view_artist_img_tint"
-        app:layout_constraintTop_toTopOf="@+id/view_artist_img_tint" />
-
-
-    <View
-        android:id="@+id/view_artist_img_tint"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:background="@drawable/gradient_artist_image_tint"
-        app:layout_constraintBottom_toTopOf="@+id/scroll_view_artist"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
-
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_artist_name"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_margin="4dp"
-        android:background="@android:color/transparent"
-        android:ellipsize="none"
-        android:fadingEdgeLength="40dp"
-        android:gravity="center"
-        android:maxWidth="300dp"
-        android:requiresFadingEdge="horizontal"
-        android:singleLine="true"
-        android:text="Artist Name"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/img_artist"
-        app:layout_constraintEnd_toEndOf="@+id/img_artist"
-        app:layout_constraintStart_toStartOf="@+id/img_artist"
-        app:layout_constraintTop_toTopOf="@+id/img_artist" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_artist_follow"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:background="#00FFFFFF"
-        android:src="@drawable/ic_follow" />
-
+        android:layout_height="100dp"
+        android:background="@drawable/ic_oud"
+        android:scaleType="centerCrop"
+        app:layout_anchor="@id/scroll_view_artist"
+        app:layout_anchorGravity="top"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_view_artist"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/colorPrimaryDark"
-        android:overScrollMode="never"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_artist_img_tint">
+        android:layout_height="match_parent"
+        android:layout_marginTop="400dp"
+        android:background="@color/colorPrimaryDark" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp">
 
 
             <TextView
@@ -97,10 +38,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 android:text="@string/popular_songs"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -126,12 +63,8 @@
                 android:id="@+id/txt_artist_albums"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 android:text="@string/albums"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -157,12 +90,8 @@
                 android:id="@+id/txt_artist_similar_artists"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 android:text="@string/similar_artists"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -176,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:text="@string/no_artists_to_show"
+                android:text="@string/no_albums_to_show"
                 android:textSize="24sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/txt_artist_about"
@@ -188,12 +117,8 @@
                 android:id="@+id/txt_artist_about"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 android:text="@string/about"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -208,10 +133,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/artist_layout_margin"
                 android:layout_marginBottom="@dimen/artist_layout_margin"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -256,16 +177,12 @@
 
     </androidx.core.widget.NestedScrollView>
 
+
     <ProgressBar
         android:id="@+id/progress_artist"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content" />
 
 
-
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

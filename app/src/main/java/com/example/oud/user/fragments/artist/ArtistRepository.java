@@ -2,10 +2,15 @@ package com.example.oud.user.fragments.artist;
 
 import android.util.Log;
 
+import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.OudApi;
+import com.example.oud.api.OudList;
+import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
+
+import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
@@ -48,6 +53,46 @@ public class ArtistRepository extends ConnectionAwareRepository {
         return artistMutableLiveData;
     }
 
+    public MutableLiveData<OudList<Album>> fetchSomeAlbums(String artistId, Integer offset, Integer limit) {
+        MutableLiveData<OudList<Album>> albumsMutableLiveData = new MutableLiveData<>();
 
+        OudApi oudApi = instantiateRetrofitOudApi();
+        Call<OudList<Album>> albumsCall = oudApi.artistAlbums(artistId, offset, limit);
+
+        addCall(albumsCall).enqueue(new FailureSuccessHandledCallback<OudList<Album>>(this) {
+            @Override
+            public void onResponse(Call<OudList<Album>> call, Response<OudList<Album>> response) {
+                super.onResponse(call, response);
+                albumsMutableLiveData.setValue(response.body());
+            }
+        });
+
+        return albumsMutableLiveData;
+    }
+
+    public MutableLiveData<RelatedArtists> fetchSimilarArtists(String artistId) {
+        MutableLiveData<RelatedArtists> similarArtistsLiveData = new MutableLiveData<>();
+
+
+        OudApi oudApi = instantiateRetrofitOudApi();
+        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists(artistId);
+
+        addCall(similarArtistsCall).enqueue(new FailureSuccessHandledCallback<RelatedArtists>(this) {
+            @Override
+            public void onResponse(Call<RelatedArtists> call, Response<RelatedArtists> response) {
+                super.onResponse(call, response);
+
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                similarArtistsLiveData.setValue(response.body());
+            }
+        });
+
+
+        return similarArtistsLiveData;
+    }
 
 }

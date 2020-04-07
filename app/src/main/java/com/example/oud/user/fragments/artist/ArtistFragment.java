@@ -77,12 +77,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     public static void show(FragmentActivity activity, @IdRes int containerId, String artistId) {
         FragmentManager manager = activity.getSupportFragmentManager();
-        ArtistFragment artistFragment = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG);
-        if (artistFragment == null)
+        ArtistFragment artistFragment/* = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG)*/;
+        //if (artistFragment == null)
             artistFragment = ArtistFragment.newInstance(artistId);
-        else {
-            artistFragment.setArguments(ArtistFragment.myArgs(artistId));
-        }
+        //else {
+            //artistFragment.setArguments(ArtistFragment.myArgs(artistId));
+        //}
 
 
         FragmentTransaction transaction = manager.beginTransaction();
@@ -129,6 +129,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         mTextViewBio = view.findViewById(R.id.txt_artist_about_bio);
 
         mMotionLayout = view.findViewById(R.id.motion_layout_artist);
+        //mMotionLayout.getTransition(R.id.transition_artist).setEnable(false);
 
 
         /*motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
@@ -221,13 +222,15 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private void handleData() {
         mViewModel.getArtistMutableLiveData(artistId).observe(getViewLifecycleOwner(), artist -> {
 
+            //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
             mTextViewArtistName.setText(artist.getName());
             Glide.with(getContext())
                     .load(artist.getImages().get(0))
+                    .apply(RequestOptions.fitCenterTransform())
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
-            new RequestOptions();
+            //new RequestOptions();
             Glide.with(getContext())
                     .load(artist.getImages().get(0))
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
@@ -276,8 +279,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 ArrayList<String> titles = new ArrayList<>();
                 ArrayList<String> subtitles = new ArrayList<>();
 
+
                 for (Artist artist : artists.getArtists()) {
-                    clickListeners.add(v -> Log.i(TAG, "Artist id" + artist.get_id()));
+                    clickListeners.add(v -> ArtistFragment.show(getActivity(),
+                            R.id.nav_host_fragment,
+                            artist.get_id()));
                     images.add(artist.getImages().get(0));
                     titles.add(artist.getName());
                     subtitles.add("");
@@ -293,5 +299,13 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             }
 
         });
+    }
+
+    @Override
+    public void onTryingToReconnect() {
+        super.onTryingToReconnect();
+
+        handleData();
+
     }
 }

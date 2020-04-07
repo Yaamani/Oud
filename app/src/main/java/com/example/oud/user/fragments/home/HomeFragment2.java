@@ -14,7 +14,9 @@ import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTrack2;
 import com.example.oud.api.RecentlyPlayedTracks2;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.player.PlayerInterface;
 
@@ -33,7 +35,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
-    private PlaylistFragmentOpeningListener playlistFragmentOpeningListener;
+    //private PlaylistFragmentOpeningListener playlistFragmentOpeningListener;
+
+    private String userId;
 
     private NestedRecyclerViewHelper mRecyclerViewHelper;
 
@@ -48,6 +52,14 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                 R.id.swipe_refresh_home);
     }
 
+    public static HomeFragment2 newInstance(String userId) {
+        HomeFragment2 homeFragment2 = new HomeFragment2();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.USER_ID_KEY, userId);
+        homeFragment2.setArguments(bundle);
+        return homeFragment2;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +71,10 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        handleArgs();
+
+        userId = getArguments().getString(Constants.USER_ID_KEY);
+
         mRecyclerView = view.findViewById(R.id.recycler_view_home);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerViewHelper.setRecyclerView(mRecyclerView);
@@ -67,6 +83,17 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         handleRecentlyPlayed();
         handleCategories();
 
+    }
+
+    private void handleArgs() {
+        Bundle args = getArguments();
+        if (args != null) {
+            userId = args.getString(Constants.USER_ID_KEY);
+        } else {
+            throw new RuntimeException("Instead of calling new " + HomeFragment2.class.getSimpleName() + "()" +
+                    ", call " + HomeFragment2.class.getSimpleName() + ".newInstance()" +
+                    " to pass the arguments to the fragment. Or you can use " + HomeFragment2.class.getSimpleName() + ".setArguments().");
+        }
     }
 
     private void handleRecentlyPlayed() {
@@ -130,18 +157,34 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                     if (o instanceof Album) {
                         title = ((Album) o).getName();
                         image = ((Album) o).getImage();
+                        _item.setClickListener(v ->
+                                PlaylistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        userId,
+                                        Constants.PlaylistFragmentType.ALBUM,
+                                        ((Album) o).get_id()));
                     }
                     else if (o instanceof Playlist) {
                         title = ((Playlist) o).getName();
                         image = ((Playlist) o).getImage();
+                        _item.setClickListener(v ->
+                                PlaylistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        userId,
+                                        Constants.PlaylistFragmentType.PLAYLIST,
+                                        ((Playlist) o).getId()));
                     }
                     else if (o instanceof Artist) {
                         title = ((Artist) o).getName();
                         image = ((Artist) o).getImages().get(0);
+                        _item.setClickListener(v ->
+                                ArtistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        ((Artist) o).get_id()));
                     }
 
-                    _item.setImageUrl(image);
                     _item.setTitle(title);
+                    _item.setImageUrl(image);
 
                 });
 
@@ -240,10 +283,11 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         if (mRecyclerViewHelper.getSectionCount() > 1) {
             for (int i = 1; i < mRecyclerViewHelper.getSectionCount(); i++) {
                 NestedRecyclerViewHelper.Section sec = mRecyclerViewHelper.getSection(i);
-                if (sec.getTitle().equals(category.getName())) {  // already exists
-                    section = sec;
-                    break;
-                }
+                if (sec.getTitle() != null)
+                    if (sec.getTitle().equals(category.getName())) {  // already exists
+                        section = sec;
+                        break;
+                    }
             }
 
         }
@@ -291,8 +335,15 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
                 }
 
+
                 item.setImageUrl(playlist.getImage());
                 item.setTitle(playlist.getName());
+                item.setClickListener(v ->
+                        PlaylistFragment.show(getActivity(),
+                                R.id.nav_host_fragment,
+                                userId,
+                                Constants.PlaylistFragmentType.PLAYLIST,
+                                playlist.getId()));
 
                 i++;
             }
@@ -308,7 +359,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         else return false;
     }
 
-    @Override
+    /*@Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
@@ -318,7 +369,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
             throw new RuntimeException(getContext().toString()
                     + " must implement " + PlaylistFragmentOpeningListener.class.getSimpleName());
         }
-    }
+    }*/
 
     @Override
     public void onTryingToReconnect() {

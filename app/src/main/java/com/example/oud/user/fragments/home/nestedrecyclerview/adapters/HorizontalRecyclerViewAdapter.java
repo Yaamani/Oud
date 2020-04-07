@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.home.nestedrecyclerview.adapters;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.R;
 
 import java.util.ArrayList;
@@ -26,20 +28,26 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     private ArrayList<View.OnClickListener> clickListeners;
 
     private ArrayList<String> images;
+    //private ArrayList<Boolean> circularImages;
     private ArrayList<String> titles;
     private ArrayList<String> subtitles;
+
+    private boolean circularImages;
 
     public HorizontalRecyclerViewAdapter(Context mContext,
                                          ArrayList<View.OnClickListener> clickListeners,
                                          ArrayList<String> images,
                                          ArrayList<String> titles,
-                                         ArrayList<String> subtitles) {
+                                         ArrayList<String> subtitles,
+                                         boolean circularImages) {
         this.mContext = mContext;
 
         this.clickListeners = clickListeners;
         this.images = images;
         this.titles = titles;
         this.subtitles = subtitles;
+
+        this.circularImages = circularImages;
     }
 
     @NonNull
@@ -60,16 +68,28 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
-        Glide.with(mContext)
-                .load(images.get(position))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.ic_oud_loading)
-                //.error(R.drawable.ic_warning)
-                .into(holder.mImage);
+        if (!circularImages)
+            Glide.with(mContext)
+                    .load(images.get(position))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.ic_oud_loading)
+                    //.error(R.drawable.ic_warning)
+                    .into(holder.mImage);
+        else
+            Glide.with(mContext)
+                    .load(images.get(position))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.ic_oud_loading_circular)
+                    //.error(R.drawable.ic_warning)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.mImage);
 
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_title);
         holder.mTitle.setTag(titleTagPrefix + position);
         holder.mTitle.setText(titles.get(position));
+        if (circularImages) {
+            holder.mTitle.setGravity(Gravity.CENTER);
+        }
 
         String subtitleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_subtitle);
         holder.mSubTitle.setTag(subtitleTagPrefix + position);
@@ -107,7 +127,25 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             mTitle = itemView.findViewById(R.id.txt_item_inner_title);
             mSubTitle = itemView.findViewById(R.id.txt_item_inner_sub_title);
         }
+
+        public RelativeLayout getmLayout() {
+            return mLayout;
+        }
+
+        public ImageView getmImage() {
+            return mImage;
+        }
+
+        public TextView getmTitle() {
+            return mTitle;
+        }
+
+        public TextView getmSubTitle() {
+            return mSubTitle;
+        }
     }
+
+
 
     public ArrayList<View.OnClickListener> getClickListeners() {
         return clickListeners;
