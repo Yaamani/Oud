@@ -1,6 +1,7 @@
 package com.example.oud.connectionaware;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
 
@@ -39,14 +40,19 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
 
     @Override
     public void onFailure(Call<T> call, Throwable t) {
-        Log.i(TAG, "onFailure: ");
+        Log.e(TAG, "onFailure: request: " + call.request());
+
         t.printStackTrace();
+        //Log.e(TAG, "onFailure: " + t.getMessage());
+
+
 
         if (!call.isCanceled()) {
             cancelAllRequests();
 
             connectionStatusListener.onConnectionFailure();
         }
+
         counter++;
 
         clear();

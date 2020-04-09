@@ -31,8 +31,8 @@ public class ArtistRepository extends ConnectionAwareRepository {
         MutableLiveData<Artist> artistMutableLiveData = new MutableLiveData<>();
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Artist> artistCall = oudApi.artist(token, artistId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<Artist> artistCall = oudApi.artist("Bearer "+ token, artistId);
 
         addCall(artistCall).enqueue(new FailureSuccessHandledCallback<Artist>(this) {
             @Override
@@ -56,8 +56,8 @@ public class ArtistRepository extends ConnectionAwareRepository {
     public MutableLiveData<OudList<Album>> fetchSomeAlbums(String token, String artistId, Integer offset, Integer limit) {
         MutableLiveData<OudList<Album>> albumsMutableLiveData = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<OudList<Album>> albumsCall = oudApi.artistAlbums(token, artistId, offset, limit);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<OudList<Album>> albumsCall = oudApi.artistAlbums("Bearer "+ token, artistId, offset, limit);
 
         addCall(albumsCall).enqueue(new FailureSuccessHandledCallback<OudList<Album>>(this) {
             @Override
@@ -74,8 +74,8 @@ public class ArtistRepository extends ConnectionAwareRepository {
         MutableLiveData<RelatedArtists> similarArtistsLiveData = new MutableLiveData<>();
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists(token, artistId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists("Bearer "+ token, artistId);
 
         addCall(similarArtistsCall).enqueue(new FailureSuccessHandledCallback<RelatedArtists>(this) {
             @Override

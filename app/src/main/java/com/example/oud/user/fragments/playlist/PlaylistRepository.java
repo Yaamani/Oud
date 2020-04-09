@@ -30,8 +30,8 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         MutableLiveData<Playlist> playlistMutableLiveData = new MutableLiveData<>();
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Playlist> playlistCall = oudApi.playlist(token, playlistId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<Playlist> playlistCall = oudApi.playlist("Bearer "+ token, playlistId);
 
         addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
@@ -55,8 +55,8 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public MutableLiveData<Album> fetchAlbum(String token, String albumId) {
         MutableLiveData<Album> albumMutableLiveData = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Album> albumCall = oudApi.album(token, albumId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<Album> albumCall = oudApi.album("Bearer "+ token, albumId);
 
         addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
 
@@ -79,11 +79,11 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     }
 
     public void reorderTrack(String token, String playlistId, int fromPosition, int toPosition) {
-        OudApi oudApi = instantiateRetrofitOudApi();
+        //OudApi oudApi = instantiateRetrofitOudApi();
 
         ReorderPlaylistPayload reorderPlaylistPayload = new ReorderPlaylistPayload(fromPosition, 1, toPosition);
 
-        Call reorderCall = oudApi.reorderPlaylistTracks(token, playlistId, reorderPlaylistPayload);
+        Call reorderCall = oudApi.reorderPlaylistTracks("Bearer "+ token, playlistId, reorderPlaylistPayload);
 
         addCall(reorderCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -99,11 +99,11 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     }
 
     public void renamePlaylist(String token, String playlistId, String newName) {
-        OudApi oudApi = instantiateRetrofitOudApi();
+        //OudApi oudApi = instantiateRetrofitOudApi();
 
         ChangePlaylistDetailsPayload changePlaylistDetailsPayload = new ChangePlaylistDetailsPayload(newName, null, null, null, null);
 
-        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, changePlaylistDetailsPayload);
+        Call changeDetailsCall = oudApi.changePlaylistDetails("Bearer "+ token, playlistId, changePlaylistDetailsPayload);
 
         addCall(changeDetailsCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
