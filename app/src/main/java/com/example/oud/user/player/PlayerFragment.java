@@ -11,13 +11,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.oud.R;
 
+import com.example.oud.api.Album;
+import com.example.oud.api.Track;
 import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -32,6 +38,7 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
    /* private SpotifyApi spotifyApi;*/
     private PlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
+    private PlayerHelper mPlayerHelper;
 
 
     private final String TAG = "PlayerFragment";
@@ -39,8 +46,8 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
 
     private View v;
     private PlayerInterface mPlayerInterface;
-
-
+    private Track mTrack;
+    private Album mAlbum;
 
     public PlayerFragment() {
         // Required empty public constructor
@@ -56,6 +63,10 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
                              Bundle savedInstanceState) {
 
         v = inflater.inflate(R.layout.fragment_player, container, false);
+
+        mPlayerHelper = mPlayerInterface.getPlayerHelper();
+        mTrack = mPlayerHelper.getTrack();
+        mAlbum = mPlayerHelper.getAlbum();
 
         initializeViews();
         initializePlayerView();
@@ -82,7 +93,23 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
 
     private void initializePlayerView() {
 
-        mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.bach1));
+        TextView playerName = v.findViewById(R.id.text_player_name);
+        TextView artistName = v.findViewById(R.id.text_artist_name);
+        TextView albumName = v.findViewById(R.id.text_album_name);
+        ImageView imageView = v.findViewById(R.id.exo_artwork);
+
+        playerName.setText(mTrack.getName());
+        albumName.setText(mAlbum.getName());
+        artistName.setText(mPlayerHelper.getArtistsNames());
+
+        Glide.with(v.getContext())
+                .load(mAlbum.getImage())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .placeholder(R.drawable.ic_oud_loading)
+                .into(imageView);
+
+
+        /*mPlayerView.setDefaultArtwork(getResources().getDrawable(R.drawable.bach1));*/
         mPlayerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE | RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL);
         mPlayerView.setControllerAutoShow(false);
         mPlayerView.showController();
@@ -92,6 +119,12 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
 
 
     }
+
+    /*private void handleArtistsName(){
+
+        *//*String*//*
+
+    }*/
 
     public void onDestroy() {
         super.onDestroy();

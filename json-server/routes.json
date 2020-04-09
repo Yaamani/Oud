@@ -1,6 +1,9 @@
 {
     "/me/player/recently-played": "/recently-played", 
     
+    "/tracks/track0": "/track0",
+    "/tracks/track1": "/track1", 
+
     "/albums/album0": "/album0", 
     "/albums/album1": "/album1", 
     "/albums/album2": "/album2", 

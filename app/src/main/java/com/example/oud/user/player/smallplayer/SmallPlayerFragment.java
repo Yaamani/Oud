@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
 import com.example.oud.R;
+import com.example.oud.api.Album;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.player.PlayerHelper;
@@ -45,8 +47,11 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     private boolean restPlayer = false;
     private PlayerHelper mPlayerHelper;
     private DefaultTimeBar defaultTimeBar;
-    private Track track;
-    private String trackID ="track";
+    private Track mTrack;
+    private String trackId ="track";
+    private boolean isLoadingTrack;
+    private TextView loadingFailed;
+    private Album mAlbum;
 
     public SmallPlayerFragment() {
         super(SmallPlayerViewModel.class, R.layout.small_player_fragment, R.id.loading_track, null);
@@ -59,32 +64,65 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
 
         mPlayerHelper = mPlayerInterface.getPlayerHelper();
 
-        trackID = mPlayerHelper.getTrackId();
-        Toast.makeText(getContext(), trackID, Toast.LENGTH_SHORT).show();
+        /*trackId = mPlayerHelper.getTrackId();
+        Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();*/
 
-        restPlayer = mPlayerHelper.isResetPlay();
+        /*restPlayer = mPlayerHelper.isResetPlay();*/
 
         v = view;
 
         initializeViews();
 
-        mViewModel.getTrackMutableLiveData(trackID).observe(getViewLifecycleOwner(), track -> {
+        /*mViewModel.getTrackMutableLiveData(trackId).observe(getViewLifecycleOwner(), track -> {
 
-            this.track = track;
+            mTrack = track;
+            if(restPlayer) {
+
+                if(isLoadingTrack) {
+
+                    mViewModel.getAlbumImageMutableLiveData(mTrack.getAlbumId()).observe(getViewLifecycleOwner(),
+                            album -> {
+                                mAlbum = album;
+                                mPlayerHelper.setAlbum(mAlbum);
+
+                                mPlayerHelper.setTrack(mTrack);
+                                mPlayerHelper.initializePlayer(Uri.parse(mTrack.getAudioUrl()));
+                                initializePlayerControlView();
+
+                                mExoPlayer.seekTo(0);
+                                mExoPlayer.setPlayWhenReady(true);
+                            });
+
+
+                }
+                else{
+
+                    mPlayerControlView.setVisibility(View.GONE);
+                    loadingFailed.setVisibility(View.VISIBLE);
+                }
+
+            }
+            else{
+                mPlayerHelper.getPlayerback(Uri.parse(trackId));
+                mExoPlayer = mPlayerHelper.getExoPlayer();
+                defaultTimeBar.setEnabled(false);
+                mPlayerControlView.setPlayer(mExoPlayer);
+                mExoPlayer.setPlayWhenReady(true);
+            }
 
         });
 
+        mViewModel.checkIsLoadingTrack().observe(getViewLifecycleOwner(), aBoolean -> {
+            isLoadingTrack = aBoolean;
+        });*/
 
-        if(restPlayer) {
+        mPlayerHelper.getPlayerback(Uri.parse(trackId));
+        mExoPlayer = mPlayerHelper.getExoPlayer();
+        /*defaultTimeBar.setEnabled(false);*/
+        mPlayerControlView.setPlayer(mExoPlayer);
+        mExoPlayer.setPlayWhenReady(true);
 
-            mPlayerHelper.initializePlayer(Uri.parse(trackID/*track.getAudioUrl()*/));
 
-            initializePlayerControlView();
-
-            mExoPlayer.seekTo(0);
-            mExoPlayer.setPlayWhenReady(true);
-
-        }
 
     }
 
@@ -105,12 +143,22 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     private void initializeViews() {
 
         mPlayerControlView = v.findViewById(R.id.player_control_view);
+        mPlayerControlView.setVisibility(View.VISIBLE);
+
         defaultTimeBar = v.findViewById(R.id.exo_progress);
+
+        loadingFailed = v.findViewById(R.id.text_loading_failed);
+        loadingFailed.setVisibility(View.GONE);
     }
 
     private void initializePlayerControlView() {
 
-        /*mExoPlayer = mPlayerInterface.getSimpleExoPlayer();*/
+        TextView playerName = v.findViewById(R.id.text_player_name);
+        TextView artistName = v.findViewById(R.id.text_artist_name);
+
+        playerName.setText(mTrack.getName());
+        artistName.setText(mPlayerHelper.getArtistsNames());
+
         mExoPlayer = mPlayerHelper.getExoPlayer();
 
         defaultTimeBar.setEnabled(false);
@@ -125,11 +173,5 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
         restPlayer = false;
     }
 
-   /* @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(SmallPlayerViewModel.class);
-        // TODO: Use the ViewModel
-    }*/
 
 }
