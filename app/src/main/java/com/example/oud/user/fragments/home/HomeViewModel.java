@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import androidx.lifecycle.MutableLiveData;
 
+@Deprecated
 public class HomeViewModel extends ConnectionAwareViewModel<HomeRepository> implements ConnectionStatusListener {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();

@@ -2,6 +2,7 @@ package com.example.oud;
 
 import com.example.oud.api.Album;
 import com.example.oud.api.Category;
+import com.example.oud.api.Category2;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
@@ -9,7 +10,9 @@ import com.example.oud.api.RecentlyPlayedTracks;
 import com.example.oud.api.Track;
 import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.home.HomeFragment;
+import com.example.oud.user.fragments.home.HomeFragment2;
 import com.example.oud.user.fragments.home.HomeRepository;
+import com.example.oud.user.fragments.home.HomeRepository2;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
@@ -66,7 +69,7 @@ public class HomeFragmentTest {
 
         ActivityScenario<UserActivity> activityScenario = ActivityScenario.launch(UserActivity.class);
 
-        HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+        HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
 
         activityScenario.onActivity(activity -> {
 
@@ -192,10 +195,10 @@ public class HomeFragmentTest {
         }
     }
 
-    private void testCategory(int position, OudList<Category> categories) {
+    private void testCategory(int position, OudList<Category2> categories) {
         System.out.println("Category : position = " + position);
 
-        Category currentCategory = categories.getItems().get(position-1);
+        Category2 currentCategory = categories.getItems().get(position-1);
 
         onView(withId(R.id.recycler_view_home))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(position, ViewActions.scrollTo()));
@@ -300,7 +303,7 @@ public class HomeFragmentTest {
     public void openPlaylistFragmentTest() {
         ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
 
-        HomeRepository.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+        HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
 
         scenario.onActivity(activity -> {
 
@@ -327,7 +330,7 @@ public class HomeFragmentTest {
             // then
             FragmentManager manager = activity.getSupportFragmentManager();
             PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
-            HomeFragment homeFragment = (HomeFragment) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
+            HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
 
             assertThat(playlistFragment).isNotNull();
             assertThat(homeFragment).isNull();

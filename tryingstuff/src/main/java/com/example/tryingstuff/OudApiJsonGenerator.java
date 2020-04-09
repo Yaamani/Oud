@@ -2,6 +2,7 @@ package com.example.tryingstuff;
 
 import java.util.Random;
 
+
 public class OudApiJsonGenerator {
 
     public static final String[] PORTRAITS = {
@@ -58,7 +59,13 @@ public class OudApiJsonGenerator {
             "https://i.pinimg.com/564x/42/b7/24/42b724475f83ff2228623263de4bba4c.jpg"
     };
 
+    public static final String[] AUDIO_URLS = {
+            "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "https://server10.mp3quran.net/ajm/128/114.mp3"
+    };
+
     public static final int JSON_GENERATION_ALBUM_TRACK_COUNT = 10;
+    public static final int JSON_GENERATION_ARTIST_TRACK_COUNT = 10;
 
 
 
@@ -83,19 +90,31 @@ public class OudApiJsonGenerator {
 
     public static String getJsonRecentlyPlayedTrack(int i) {
         String s = "{" +
-                "    \"track\":" +
-                getJsonTrack(i) +
-                "    ," +
                 "      \"playedAt\": \"2020-03-26T16:23:02Z\"," +
-                "      \"context\": {" +
-                "        \"type\": \"context_type" + i + "\"," +
-                "        \"id\": \"context" + i + "\"" +
-                "      }" +
+                "      \"context\": " +
+                getJsonContext(null, i) +
                 "    }";
 
         return s;
     }
 
+    /**
+     * if type equals null, a random type will be generated.
+     * @return
+     */
+    public static String getJsonContext(String type, int i) {
+        String[] types = {"unknown", "artist", "album", "playlist"};
+        Random random = new Random();
+        if (type == null) {
+            type = types[random.nextInt(types.length)];
+        }
+
+        return "{" +
+                "\"type\": \"" + type + "\"," +
+                "\"id\": \"" + type + i + "\"" +
+                "}";
+
+    }
 
     public static String getJsonAlbum(int i) {
         String s = "{" +
@@ -108,13 +127,13 @@ public class OudApiJsonGenerator {
                 "    \"genre" + i / 2 + "\", " +
                 "    \"genre" + i + "\"" +
                 "  ]," +
-                "  \"image\": \"" + VECTOR_ART[i] + "\"," +
+                "  \"image\": \"" + VECTOR_ART[i%VECTOR_ART.length] + "\"," +
                 "  \"name\": \"album" + i + "\"," +
                 "  \"release_date\": \"2020-03-21\"," +
                 "  \"tracks\": {" +
                 "    \"items\": [";
         for (int _i = 0; _i < JSON_GENERATION_ALBUM_TRACK_COUNT; _i++) {
-            s += getJsonTrack(_i + i * JSON_GENERATION_ALBUM_TRACK_COUNT);
+            s += getJsonTrackPreview(_i + i * JSON_GENERATION_ALBUM_TRACK_COUNT);
             if (_i < JSON_GENERATION_ALBUM_TRACK_COUNT - 1)
                 s+= ", ";
         }
@@ -131,9 +150,45 @@ public class OudApiJsonGenerator {
 
     }
 
+    public static String getJsonTrackPreview(int i) {
+        int artistIndex = i % JSON_GENERATION_ALBUM_TRACK_COUNT;
+
+        return "{" +
+                "  \"_id\": \"track" + i + "\"," +
+                "  \"name\": \"track" + i + "\"," +
+                "  \"artists\": [" +
+                getJsonArtistPreview(artistIndex) +
+                "  ]," +
+                "  \"type\": \"string\"," +
+                "  \"duartion\": 100" + i + "," +
+                "  \"views\": 100" + i + "" +
+                "}";
+    }
+
+    public static String getJsonAlbumPreview(int i) {
+        String s = "";
+
+        s += "{" +
+                "\"_id\": \"album" + i + "\"," +
+                "\"album_type\": \"album_type" + i + "\"," +
+                "\"album_group\": \"album_group" + i + "\"," +
+                "\"artists\": [" +
+                getJsonArtistPreview(i) +
+                "]," +
+                "\"image\": \"" + VECTOR_ART[i%VECTOR_ART.length] + "\"," +
+                "\"name\": \"album" + i + "\"," +
+                "\"type\": \"album_type" + i + "\"" +
+                "}";
+
+
+
+        return s;
+    }
+
     public static String getJsonTrack(int i) {
         int artistIndex = i % JSON_GENERATION_ALBUM_TRACK_COUNT;
         int albumIndex = i % JSON_GENERATION_ALBUM_TRACK_COUNT;
+        int urlIndex = i % AUDIO_URLS.length;
         return "{" +
                 "  \"_id\": \"track" + i + "\"," +
                 "  \"name\": \"track" + i + "\"," +
@@ -141,8 +196,10 @@ public class OudApiJsonGenerator {
                 getJsonArtistPreview(artistIndex) +
                 "  ]," +
                 "  \"albumId\": \"album" + albumIndex + "\"," +
+                "\"album\":" +
+                getJsonAlbumPreview(albumIndex) + ", " +
                 "  \"type\": \"string\"," +
-                "  \"audioUrl\": \"string\"," +
+                "  \"audioUrl\": \"" + AUDIO_URLS[urlIndex] + "\"," +
                 "  \"duartion\": 100" + i + "," +
                 "  \"views\": 100" + i + "" +
                 "}";
@@ -158,17 +215,38 @@ public class OudApiJsonGenerator {
                 "}";
     }
 
-    /**
-     *
-     * @param categoryCount
-     * @param categoryPlaylistCount if categoryPlaylistCount == -1, then the number of the generated playlists will be random between 1 (inclusive) & 8 (inclusive).
-     * @return
-     */
-    public static String getJsonListOfCategories(int categoryCount, int categoryPlaylistCount) {
+    public static String getJsonArtist(int i) {
+        String s = "";
+        s += "{" +
+                "  \"_id\": \"artist" + i + "\"," +
+                "  \"followersCount\": 10000" + i + "," +
+                "  \"genres\": [" +
+                "    \"genre" + i / 2 + "\", " +
+                "    \"genre" + i + "\"" +
+                "  ]," +
+                "  \"images\": [" +
+                "\"" + PORTRAITS[i % PORTRAITS.length] + "\"" +
+                "  ]," +
+                "  \"name\": \"artist" + i + "\"," +
+                "  \"bio\": \"I'm artist" + i + "\"," +
+                "  \"popularSongs\": [";
+        for (int _i = 0; _i < JSON_GENERATION_ARTIST_TRACK_COUNT; _i++) {
+            s += getJsonTrack(_i);
+            if (_i < JSON_GENERATION_ARTIST_TRACK_COUNT - 1)
+                s += ", ";
+        }
+                s += "  ]," +
+                "  \"type\": \"type" + i + "\"" +
+                "}";
+        return s;
+    }
+
+
+    public static String getJsonListOfCategories(int categoryCount) {
         String s = "{\n" +
                 "  \"items\": [\n";
                 for (int _i = 0; _i < categoryCount; _i++) {
-                    s += getJsonCategory(_i, categoryPlaylistCount);
+                    s += getJsonCategory(_i);
                     if (_i < categoryCount - 1)
                         s += ", ";
                     s += '\n';
@@ -182,32 +260,47 @@ public class OudApiJsonGenerator {
         return s;
     }
 
+
+    public static String getJsonCategory(int i) {
+
+
+        String s = "{" +
+                "  \"_id\": \"category" + i + "\"," +
+                "  \"name\": \"category" + i + "\"," +
+                "  \"icon\": \"string\"" +
+                "}";
+        return s;
+    }
+
     /**
      *
-     * @param i
      * @param playlistCount if playlistCount == -1, then the number of the generated playlists will be random between 1 (inclusive) & 8 (inclusive).
      * @return
      */
-    public static String getJsonCategory(int i, int playlistCount) {
+    public static String getJsonCategoryPlaylists(int playlistCount) {
         if (playlistCount == -1) {
             Random random = new Random();
             playlistCount = 1+random.nextInt(8);
         }
 
-        String s = "{" +
-                "  \"_id\": \"category" + i + "\"," +
-                "  \"name\": \"category" + i + "\"," +
-                "  \"icon\": \"string\"," +
-                "  \"playlists\": [";
-                for (int _i = 0; _i < playlistCount; _i++) {
-                    s += "\"playlist" + (_i+i*playlistCount) + '\"';
-                    if (_i < playlistCount - 1)
-                        s += ", ";
-                }
-        s+=     "  ]" +
+        String s = "{\n" +
+                "  \"items\": [\n";
+        for (int _i = 0; _i < playlistCount; _i++) {
+            s += getJsonPlaylist(_i, -1);
+            if (_i < playlistCount - 1)
+                s += ", ";
+            s += '\n';
+        }
+        s +=    "  ],\n" +
+                "  \"limit\": " + playlistCount + "," +
+                "  \"offset\": 0," +
+                "  \"total\": " + playlistCount + "\n" +
                 "}";
+
         return s;
     }
+
+    public static int playlistCounter = 0;
 
     /**
      *
@@ -221,7 +314,7 @@ public class OudApiJsonGenerator {
             trackCount = random.nextInt(5);
         }
 
-        int coverIndex = i%PLAYLIST_COVER.length;
+        int coverIndex = playlistCounter%PLAYLIST_COVER.length;
 
         String s = "{" +
                 "  \"_id\": \"playlist" + i + "\"," +
@@ -241,6 +334,8 @@ public class OudApiJsonGenerator {
                 "  \"public\": true," +
                 "  \"type\": \"string\"" +
                 "}";
+
+                playlistCounter++;
         return s;
     }
 

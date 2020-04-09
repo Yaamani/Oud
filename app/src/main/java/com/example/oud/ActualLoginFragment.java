@@ -40,7 +40,6 @@ public class ActualLoginFragment extends Fragment {
     private Button toForgetPasswordBtn;
     private EditText usernameEditText;
     private EditText passwordEditText;
-    TelephonyManager telephonyManager;
     OudApi oudApi;
     TextView errorTextView;
 
@@ -121,13 +120,16 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
-                errorTextView.setText("test");
+                //errorTextView.setText("test");
 
                 if (response.isSuccessful()) {
-                    //TODO: go to homepage and forward the user data & token
-                    errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
+                    //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
                     saveToken(view,token);
+                    Log.e("ActualLoginFragment",token);
+                    Intent i = new Intent(getActivity(), UserActivity.class);
+                    i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
+                    startActivity(i);
 
                 } else if (response.errorBody() != null) {
                     Gson gson = new Gson();
@@ -142,7 +144,8 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 //TODO: make an internet connection error toast or something
-                errorTextView.setText("internet connection error");
+
+                errorTextView.setText(t.getMessage());
             }
         });
 

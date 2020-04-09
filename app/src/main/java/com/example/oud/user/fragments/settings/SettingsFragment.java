@@ -11,8 +11,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.oud.R;
+import com.example.oud.user.UserActivity;
+import com.example.oud.user.fragments.profile.ProfileFragment;
 
 public class SettingsFragment extends Fragment {
 
@@ -25,7 +28,21 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View v = inflater.inflate(R.layout.fragment_settings, container, false);
+        Button viewProfileTest =v.findViewById(R.id.btn_view_profile_test);
+        viewProfileTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProfileFragment profileFragment = ProfileFragment.newInstance(((UserActivity)getActivity()).getUserId());
+                getParentFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.nav_host_fragment,profileFragment)
+                        .commit();
+
+            }
+        });
+        return v;
+
     }
 
     @Override

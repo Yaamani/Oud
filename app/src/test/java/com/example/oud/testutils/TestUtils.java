@@ -68,7 +68,7 @@ public class TestUtils {
                     case "/browse/categories":
                         return new MockResponse()
                                 .setResponseCode(200)
-                                .setBody(OudApiJsonGenerator.getJsonListOfCategories(Constants.USER_HOME_CATEGORIES_COUNT, 7));
+                                .setBody(OudApiJsonGenerator.getJsonListOfCategories(Constants.USER_HOME_CATEGORIES_COUNT));
                 }
 
                 // paths with integer at the end
@@ -95,24 +95,24 @@ public class TestUtils {
                                 .setBody(OudApiJsonGenerator.getJsonAlbum(i));*/
                         
                     case "/browse/categories/category0":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(0, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(0));
                     case "/browse/categories/category1":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(1, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(1));
                     case "/browse/categories/category2":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(2, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(2));
                     case "/browse/categories/category3":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(3, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(3));
                     case "/browse/categories/category4":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(4, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(4));
                     case "/browse/categories/category5":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(5, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(5));
                     case "/browse/categories/category6":
-                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(6, categoryPlaylistCount));
+                        return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonCategory(6));
 
                     /*case "/browse/categories/category":
                         return new MockResponse()
                                 .setResponseCode(200)
-                                .setBody(OudApiJsonGenerator.getJsonCategory(i, categoryPlaylistCount));*/
+                                .setBody(OudApiJsonGenerator.getJsonCategory(i));*/
                         
                     case "/playlists/playlist0":
                         return new MockResponse().setResponseCode(200).setBody(OudApiJsonGenerator.getJsonPlaylist(0, playlistTrackCount));

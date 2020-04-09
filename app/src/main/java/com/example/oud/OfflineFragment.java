@@ -54,7 +54,6 @@ public class OfflineFragment extends Fragment {
         });*/
 
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(-getResources().getDimension(R.dimen.offline_layout_size), 0).setDuration(400);
-        //valueAnimator.setStartDelay(2000);
         valueAnimator.addUpdateListener(animation -> container.setY((Float) animation.getAnimatedValue()));
         valueAnimator.start();
 

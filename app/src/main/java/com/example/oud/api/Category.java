@@ -2,6 +2,7 @@ package com.example.oud.api;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class Category {
 
     private String _id;

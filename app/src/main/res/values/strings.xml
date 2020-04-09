@@ -12,7 +12,7 @@
 
     <string name="offline">"You're offline !!"</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">login</string>
     <string name="sign_up">sign up</string>
@@ -21,10 +21,24 @@
     <string name="facebook_app_id">2977054005685077</string>
     <string name="fb_login_protocol_scheme">fb2977054005685077</string>
 
+    <!--other facebook app  3359308630752975 -->
     <string name="rename">Rename</string>
+
     <string name="track_loading">There is problem to load data</string>
+
+
+
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
+
+
+    <string name="popular_songs">Popular songs</string>
+    <string name="albums">Albums</string>
+    <string name="similar_artists">Similar artists</string>
+    <string name="about">About</string>
+    <string name="no_songs_to_show">No songs to show</string>
+    <string name="no_albums_to_show">No albums to show</string>
+    <string name="no_artists_to_show">No artists to show</string>
 
 </resources>

@@ -2,10 +2,9 @@ package com.example.oud.user.fragments.home;
 
 import android.util.Log;
 
-import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.EventListener;
-import com.example.oud.FailureSuccessHandledCallback;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.Category;
 import com.example.oud.api.OudApi;
@@ -21,9 +20,10 @@ import java.util.HashMap;
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
+// Wow it really needs to be refactored :(
+
+@Deprecated
 public class HomeRepository extends ConnectionAwareRepository implements NestedRecyclerViewOuterItemSupplier {
 
     private static final String TAG = HomeRepository.class.getSimpleName();
@@ -141,7 +141,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
 
     private void fetchPlaylist(OudApi oudApi, String playlistId, HomeViewModel.InnerItemLiveData innerItem) {
 
-        Call<Playlist> playlistCall = oudApi.playlist(playlistId);
+        Call<Playlist> playlistCall = oudApi.playlist("token", playlistId);
         /*playlistCall.enqueue(new Callback<Playlist>() {
             @Override
             public void onResponse(Call<Playlist> call, Response<Playlist> response) {
@@ -163,7 +163,9 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
             }
         });*/
 
-        playlistCall.enqueue(new FailureSuccessHandledCallback<Playlist>(connectionStatusListener) {
+
+
+        addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
             public void onResponse(Call<Playlist> call, Response<Playlist> response) {
                 super.onResponse(call, response);
@@ -220,7 +222,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
             }
         });*/
 
-        categoryCall.enqueue(new FailureSuccessHandledCallback<OudList<Category>>(connectionStatusListener) {
+        addCall(categoryCall).enqueue(new FailureSuccessHandledCallback<OudList<Category>>(this) {
             @Override
             public void onResponse(Call<OudList<Category>> call, Response<OudList<Category>> response) {
                 super.onResponse(call, response);
@@ -249,7 +251,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
 
     private void fetchRecentlyPlayedTracks(OudApi oudApi, MutableLiveData<Boolean> areThereRecentlyPlayedTracks) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
-                oudApi.recentlyPlayedTracks(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
+                oudApi.recentlyPlayedTracks("token", Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, null, null);
         /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
@@ -284,7 +286,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
             }
         });*/
 
-        recentlyPlayedTracksCall.enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(connectionStatusListener) {
+        addCall(recentlyPlayedTracksCall).enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(this) {
             @Override
             public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
                 super.onResponse(call, response);
@@ -316,7 +318,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
     @Deprecated
     private void fetchRecentlyPlayedTracks(OudApi oudApi, int itemsCount, ArrayList<HomeViewModel.InnerItemLiveData> innerItems) {
         Call<RecentlyPlayedTracks> recentlyPlayedTracksCall =
-                oudApi.recentlyPlayedTracks(itemsCount, null, null);
+                oudApi.recentlyPlayedTracks("token", itemsCount, null, null);
         /*recentlyPlayedTracksCall.enqueue(new Callback<RecentlyPlayedTracks>() {
 
             @Override
@@ -348,7 +350,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
             }
         });*/
 
-        recentlyPlayedTracksCall.enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(connectionStatusListener) {
+        addCall(recentlyPlayedTracksCall).enqueue(new FailureSuccessHandledCallback<RecentlyPlayedTracks>(this) {
             @Override
             public void onResponse(Call<RecentlyPlayedTracks> call, Response<RecentlyPlayedTracks> response) {
                 super.onResponse(call, response);
@@ -381,7 +383,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
     }
 
     private void fetchAlbumData(OudApi oudApi, String albumId, HomeViewModel.InnerItemLiveData innerItem) {
-        Call<Album> albumCall = oudApi.album(albumId);
+        Call<Album> albumCall = oudApi.album("token", albumId);
 
        /* albumCall.enqueue(new Callback<Album>() {
             @Override
@@ -406,7 +408,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
             }
         });*/
 
-       albumCall.enqueue(new FailureSuccessHandledCallback<Album>(connectionStatusListener) {
+       addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
            @Override
            public void onResponse(Call<Album> call, Response<Album> response) {
                super.onResponse(call, response);

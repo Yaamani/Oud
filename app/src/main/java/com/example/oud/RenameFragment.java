@@ -1,4 +1,4 @@
-package com.example.oud.user;
+package com.example.oud;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,9 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.example.oud.Constants;
-import com.example.oud.R;
 
 
 public class RenameFragment extends Fragment {
@@ -52,6 +49,8 @@ public class RenameFragment extends Fragment {
         mEditText = view.findViewById(R.id.edit_text_rename);
         mEditText.setText(mInitialString);
 
+
+
         mRenameButton = view.findViewById(R.id.btn_rename);
         mRenameButton.setOnClickListener(v -> {
 
@@ -66,7 +65,10 @@ public class RenameFragment extends Fragment {
         });
 
 
+
     }
+
+
 
     public static void showRenameFragment(FragmentActivity activity, @IdRes int fragmentContainerId, String initialString, TextView parentTextView) {
         FragmentManager manager = activity.getSupportFragmentManager();
@@ -75,6 +77,10 @@ public class RenameFragment extends Fragment {
         transaction.add(fragmentContainerId, renameFragment, Constants.RENAME_FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+    }
+
+    public static boolean doesRenameFragmentExist(FragmentActivity activity, @IdRes int containerId) {
+        return activity.getSupportFragmentManager().findFragmentById(containerId) instanceof RenameFragment;
     }
 
     public static void hideRenameFragment(FragmentActivity activity, @IdRes int fragmentContainerId) {

@@ -8,4 +8,6 @@
     <dimen name="item_outer_icon_size">40dp</dimen>
 
     <dimen name="offline_layout_size">35dp</dimen>
+
+    <dimen name="artist_layout_margin">8dp</dimen>
 </resources>
