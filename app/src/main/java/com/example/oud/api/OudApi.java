@@ -1,15 +1,11 @@
 package com.example.oud.api;
 
-import com.google.gson.JsonObject;
-
 import okhttp3.MultipartBody;
-import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -86,48 +82,49 @@ public interface OudApi {
 
     @Deprecated
     @GET("me/player/recently-played")
-    Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Header("AUTHORIZATIONS") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
+    Call<RecentlyPlayedTracks> recentlyPlayedTracks(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
     @GET("me/player/recently-played")
-    Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Header("AUTHORIZATIONS") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
+    Call<RecentlyPlayedTracks2> recentlyPlayedTracks2(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("after") Integer after, @Query("before") Integer before);
 
     @GET("browse/categories")
     Call<OudList<Category>> listOfCategories(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("browse/categories/{categoryId}")
-    Call<Category> category(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId);
+    Call<Category> category(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId);
 
     @GET("browse/categories")
     Call<OudList<Category2>> listOfCategories2(@Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("browse/categories/{categoryId}")
-    Call<Category2> category2(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId);
+    Call<Category2> category2(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId);
 
     @GET("browse/categories/{categoryId}/playlists")
-    Call<OudList<Playlist>> categoryPlaylist(@Header("AUTHORIZATIONS") String token, @Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+    Call<OudList<Playlist>> categoryPlaylist(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("albums/{albumId}")
-    Call<Album> album(@Header("AUTHORIZATIONS") String token, @Path("albumId") String albumId);
+    Call<Album> album(@Header("AUTHORIZATION") String token, @Path("albumId") String albumId);
 
     @GET("playlists/{playlistId}")
-    Call<Playlist> playlist(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId);
-
-    /*@HTTP(method = "DELETE", path = "playlists/{playlistId}", hasBody = true)
-    Call<ResponseBody> removeTracksFromPlaylist(@Path("playlistId") String playlistId, @Body ArrayList<String> ids);*/
+    Call<Playlist> playlist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
 
     @PUT("playlists/{playlistId}")
     //@PATCH("playlists/{playlistId}")
-    Call<ResponseBody> reorderPlaylistTracks(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
+    Call<ResponseBody> reorderPlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     @PUT("playlists/{playlistId}")
-    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATIONS") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
+    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
+
+    //@DELETE("playlists/{playlistId}/tracks")
+    @HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
+    Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
 
     @GET("artists/{artistId}")
-    Call<Artist> artist(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId);
+    Call<Artist> artist(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
 
     @GET("artists/{artistId}/albums")
-    Call<OudList<Album>> artistAlbums(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+    Call<OudList<Album>> artistAlbums(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("artists/{artistId}/related-artists")
-    Call<RelatedArtists> similarArtists(@Header("AUTHORIZATIONS") String token, @Path("artistId") String artistId);
+    Call<RelatedArtists> similarArtists(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
 }

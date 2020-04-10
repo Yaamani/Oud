@@ -87,6 +87,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         handleRecentlyPlayed();
         handleCategories();
 
+        //mViewModel.getCategoryListLiveData();
+
     }
 
     private void handleArgs() {
@@ -386,5 +388,6 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
     }
 }

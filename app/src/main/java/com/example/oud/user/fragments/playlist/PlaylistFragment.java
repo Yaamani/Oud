@@ -46,7 +46,7 @@ import java.util.Collections;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> {
+public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> implements RenameFragment.OnRenamingListener {
 
     private static final String TAG = PlaylistFragment.class.getSimpleName();
 
@@ -73,16 +73,17 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
 
-    private int positionBeforeDeletion;
+    private int deletionPosition;
     private String trackImageBeforeDeletion;
     private String trackNameBeforeDeletion;
+    private boolean undoDeletionClicked;
 
     private String playlistNameBeforeRenaming;
 
     private int reorderingFromPosition;
     private int reorderingToPosition;
 
-    private boolean renamePressed;
+    //private boolean renamePressed;
 
 
 
@@ -170,15 +171,15 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
         mTextViewPlaylistName.setSelected(true);
-        mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
+        //mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
 
 
         mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
         mImageButtonRename.setOnClickListener(v -> {
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
+            // mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
             playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
 
-            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, mTextViewPlaylistName);
+            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, this);
         });
 
 
@@ -282,7 +283,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                             trackImages.set(_i, album.getImage());
                             adapter.notifyItemChanged(_i);
                         });*/
-
+                playlistNameBeforeRenaming = current.getName();
                 trackNames.add(current.getName());
             }
 
@@ -297,7 +298,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             Glide.with(getContext())
                     .load(album.getImage())
-                    .placeholder(R.drawable.ic_loading)
+                    .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);
 
@@ -380,8 +381,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             String trackName = adapter.getTrackNames().remove(position);
             adapter.notifyItemRemoved(position);
 
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
-            positionBeforeDeletion = position;
+            //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
+            deletionPosition = position;
+            trackImageBeforeDeletion = trackImage;
+            trackNameBeforeDeletion = trackName;
 
             //mMotionLayout.refreshDrawableState();
             //mMotionLayout.jumpDrawablesToCurrentState();
@@ -425,8 +428,12 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 // Server stuff
                 if (reorderingToPosition != reorderingFromPosition) {
-                    mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
-                    mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
+                    //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
+
+                    if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+                        undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
+                    } else
+                        mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
 
                 }
 
@@ -463,45 +470,27 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private void snackbarUndoTrackRemoved(int position, String trackImage, String trackName) {
         Snackbar.make(mMotionLayout, "Track removed.", BaseTransientBottomBar.LENGTH_LONG)
-                .setAction("Undo", new View.OnClickListener() {
+
+                .setAction("Undo", v -> {
+                    undoDeletionRecyclerView(position, trackImage, trackName);
+                    undoDeletionClicked = true;
+                })
+
+                .addCallback(new Snackbar.Callback() {
                     @Override
-                    public void onClick(View v) {
-                        undoDeletionRecyclerView(position, trackImage, trackName);
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        if (!undoDeletionClicked) {
+                            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+                                undoDeletionRecyclerView(deletionPosition, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                            } else
+                                mViewModel.deleteTrack(token, position);
+                        }
+                        undoDeletionClicked = false;
                     }
-                }).addCallback(new Snackbar.Callback() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                // Server stuff
-                mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
-            }
-        }).show();
+                })
+                .show();
     }
-
-    private TextWatcher renameTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.i(TAG, "onTextChanged: ");
-            // Server stuff
-            // Current operation has been set in onClickListener
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
-            String newName = s.toString();
-
-            if (s.equals(playlistNameBeforeRenaming)) return;
-
-            mViewModel.renamePlaylist(token, newName);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
 
     private void undoDeletionRecyclerView(int position, String trackImage, String trackName) {
         adapter.getTrackImages().add(position, trackImage);
@@ -533,7 +522,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         if (mViewModel.getCurrentOperation() != null)
             switch (mViewModel.getCurrentOperation()) {
-                case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                case DELETE: undoDeletionRecyclerView(deletionPosition, trackImageBeforeDeletion, trackNameBeforeDeletion);
                     break;
                 case RENAME: undoRenaming(playlistNameBeforeRenaming);
                     break;
@@ -560,4 +549,21 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         }
     }
 
+    @Override
+    public void onRenamingListener(String s) {
+        if (type == Constants.PlaylistFragmentType.ALBUM) return;
+
+        String newName = s;
+
+        //if (s.equals(playlistNameBeforeRenaming)) return;
+
+        if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+            //if (playlistNameBeforeRenaming.equals(s))
+            undoRenaming(playlistNameBeforeRenaming);
+            playlistNameBeforeRenaming = newName;
+        } else {
+            mTextViewPlaylistName.setText(newName);
+            mViewModel.renamePlaylist(token, newName);
+        }
+    }
 }

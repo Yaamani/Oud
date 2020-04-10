@@ -36,6 +36,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
     private String newName;
 
+    private int deletionPosition;
 
 
 
@@ -104,6 +105,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
 
     public void reorderTrack(String token, int fromPosition, int toPosition) {
+        if (playlistLiveData == null) return;
+
+        setCurrentOperation(PlaylistOperation.REORDER);
+
         reorderingFromPosition = fromPosition;
         reorderingToPosition = toPosition;
         // Server
@@ -112,13 +117,27 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     public void renamePlaylist(String token, String newName) {
+        if (playlistLiveData == null) return;
+
         this.newName = newName;
         if (playlistLiveData.getValue().getName().equals(newName)) return;
+        setCurrentOperation(PlaylistOperation.RENAME);
         // Server
         String id = playlistLiveData.getValue().getId();
         mRepo.renamePlaylist(token, id, newName);
     }
 
+    public void deleteTrack(String token, int deletionPosition) {
+        if (playlistLiveData == null) return;
+
+        setCurrentOperation(PlaylistOperation.DELETE);
+
+        this.deletionPosition = deletionPosition;
+
+        String playlistId = playlistLiveData.getValue().getId();
+        String trackId = playlistLiveData.getValue().getTracks().get(deletionPosition).get_id();
+        mRepo.deleteTrack(token, playlistId, trackId);
+    }
 
 
     private void updateLiveDataUponReordering() {
@@ -131,14 +150,18 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistLiveData.getValue().setName(newName);
     }
 
+    private void updateLiveDataUponDeletion() {
+        playlistLiveData.getValue().getTracks().remove(deletionPosition);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
 
         if (currentOperation != null)
             switch (currentOperation) {
-                /*case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
-                    break;*/
+                case DELETE: updateLiveDataUponDeletion();
+                    break;
                 case RENAME: updateLiveDataUponRenaming();
                     break;
                 case REORDER: updateLiveDataUponReordering();
