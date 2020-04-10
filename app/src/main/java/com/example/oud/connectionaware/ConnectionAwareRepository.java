@@ -24,6 +24,10 @@ public class ConnectionAwareRepository {
 
     private static final String TAG = ConnectionAwareRepository.class.getSimpleName();
 
+    public static final int SENDING = 1;
+    public static final int RECEIVING = 1 << 1;
+    public static final int JSON_RESPONSE = 1 << 2;
+
     private String baseUrl;
     protected ConnectionStatusListener connectionStatusListener;
     LinkedList<Call> calls;
@@ -88,22 +92,28 @@ public class ConnectionAwareRepository {
     static class LoggingInterceptor implements Interceptor {
         @Override
         public Response intercept(Interceptor.Chain chain) throws IOException {
-            Request request = chain.request();
 
             long t1 = System.nanoTime();
-            Log.i(TAG, String.format("Sending request %s on %s%n%s",
-                    request.url(), chain.connection(), request.headers()));
+            Request request = chain.request();
 
-            Response response = chain.proceed(request);
+            if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & SENDING) == SENDING) {
+                Log.i(TAG, String.format("Sending request %s on %s%n%s",
+                        request.url(), chain.connection(), request.headers()));
+            }
 
             long t2 = System.nanoTime();
-            Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
-                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+            Response response = chain.proceed(request);
+
+            if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & RECEIVING) == RECEIVING) {
+                Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
+                        response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+            }
 
 
             final String responseString = new String(response.body().bytes());
-
-            Log.i(TAG, "Response: " + responseString);
+            if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & JSON_RESPONSE) == JSON_RESPONSE) {
+                Log.i(TAG, "Response for " + response.request().url()+ ": " + responseString);
+            }
 
             return  response.newBuilder()
                     .body(ResponseBody.create(response.body().contentType(), responseString))
