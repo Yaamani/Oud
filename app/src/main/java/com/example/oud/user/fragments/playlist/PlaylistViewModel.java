@@ -4,11 +4,10 @@ import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
+import com.example.oud.api.UserAreTracksLiked;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,7 +15,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     // TODO: Implement the ViewModel
 
 
-    public enum PlaylistOperation {RENAME, REORDER, DELETE, UPLOAD_IMAGE}
+    public enum PlaylistOperation {RENAME, REORDER, DELETE, UPLOAD_IMAGE, ADD_TRACK_TO_LIKED_TRACKS, REMOVE_TRACK_FROM_LIKED_TRACKS}
     private PlaylistOperation currentOperation = null;
 
 
@@ -28,6 +27,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     private MutableLiveData<Album> albumLiveData;
 
 
+    private MutableLiveData<UserAreTracksLiked> areTracksLikedLiveData;
 
 
 
@@ -37,6 +37,8 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     private String newName;
 
     private int deletionPosition;
+
+    private int trackLikePosition;
 
 
 
@@ -139,6 +141,36 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.deleteTrack(token, playlistId, trackId);
     }
 
+    public MutableLiveData<UserAreTracksLiked> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+        if (areTracksLikedLiveData == null)
+            areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
+        return areTracksLikedLiveData;
+    }
+
+    public void addTrackToLikedTracks(String token, String id, int position) {
+
+        setCurrentOperation(PlaylistOperation.ADD_TRACK_TO_LIKED_TRACKS);
+
+        trackLikePosition = position;
+
+        ArrayList<String> s = new ArrayList<>();
+        s.add(id);
+
+        mRepo.addTheseTracksToLikedTracks(token, s);
+    }
+
+    public void removeTrackFromLikedTracks(String token, String id, int position) {
+
+        setCurrentOperation(PlaylistOperation.REMOVE_TRACK_FROM_LIKED_TRACKS);
+
+        trackLikePosition = position;
+
+        ArrayList<String> s = new ArrayList<>();
+        s.add(id);
+
+        mRepo.removeTheseTracksFromLikedTracks(token, s);
+    }
+
 
     private void updateLiveDataUponReordering() {
         //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
@@ -154,6 +186,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistLiveData.getValue().getTracks().remove(deletionPosition);
     }
 
+    private void updateLiveDataUponAddingTrackToLikedTracks() {
+        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+    }
+
+    private void updateLiveDataUponRemovingTrackFromLikedTracks() {
+        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
@@ -167,6 +207,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                 case REORDER: updateLiveDataUponReordering();
                     break;
                 case UPLOAD_IMAGE:
+                    break;
+                case ADD_TRACK_TO_LIKED_TRACKS: updateLiveDataUponAddingTrackToLikedTracks();
+                    break;
+                case REMOVE_TRACK_FROM_LIKED_TRACKS: updateLiveDataUponRemovingTrackFromLikedTracks();
                     break;
 
         }

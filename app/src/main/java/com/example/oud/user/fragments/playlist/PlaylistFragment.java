@@ -19,20 +19,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
 import com.example.oud.R;
+import com.example.oud.api.Album;
 import com.example.oud.api.OudList;
+import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
@@ -42,7 +43,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -58,13 +58,15 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private MotionLayout mMotionLayout;
 
     private RecyclerView mRecyclerViewTracks;
-    private PlaylistRecyclerViewAdapter adapter;
+    private TrackListRecyclerViewAdapter trackListRecyclerViewAdapter;
     private ItemTouchHelper touchHelper;
 
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
     private ImageButton mImageButtonRename;
     private ImageButton mImageButtonOptions;
+
+    private View mViewBlockUi;
 
 
 
@@ -74,8 +76,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
     private int deletionPosition;
+    //private View.OnClickListener trackClickListenerBeforeDeletion;
     private String trackImageBeforeDeletion;
     private String trackNameBeforeDeletion;
+    private Boolean trackIsLikedBeforeDeletion;
+    //private View.OnClickListener heartClickListenerBeforeDeletion;
     private boolean undoDeletionClicked;
 
     private String playlistNameBeforeRenaming;
@@ -84,6 +89,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private int reorderingToPosition;
 
     //private boolean renamePressed;
+
+    private int trackLikePosition;
 
 
 
@@ -146,41 +153,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
-        mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
-
-        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
-        mImageButtonOptions.setOnClickListener(v -> {
-            /*OptionsFragment.builder(getActivity())
-                    .addItem(null, "Go To Artist", v1 -> {
-                        ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .addToBackStack(null)
-                                .commit();
-                    }).show();*/
-        });
-
-        mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
-        mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
-        touchHelper = new ItemTouchHelper(recyclerViewTouchCallback);
-        touchHelper.attachToRecyclerView(mRecyclerViewTracks);
-
-
-        mImageViewPlaylist = view.findViewById(R.id.img_playlist);
-
-        mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
-        mTextViewPlaylistName.setSelected(true);
-        //mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
-
-
-        mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
-        mImageButtonRename.setOnClickListener(v -> {
-            // mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
-            playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
-
-            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, this);
-        });
+        initializeUiStuff(view);
 
 
 
@@ -239,6 +212,46 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         token = prefs.getString("token","000000");
     }
 
+    private void initializeUiStuff(View view) {
+        mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
+
+        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
+        mImageButtonOptions.setOnClickListener(v -> {
+            /*OptionsFragment.builder(getActivity())
+                    .addItem(null, "Go To Artist", v1 -> {
+                        ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .addToBackStack(null)
+                                .commit();
+                    }).show();*/
+        });
+
+        mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
+        mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
+        touchHelper = new ItemTouchHelper(recyclerViewTouchCallback);
+        touchHelper.attachToRecyclerView(mRecyclerViewTracks);
+
+
+        mImageViewPlaylist = view.findViewById(R.id.img_playlist);
+
+        mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
+        mTextViewPlaylistName.setSelected(true);
+        //mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
+
+
+        mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
+        mImageButtonRename.setOnClickListener(v -> {
+            // mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
+            playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
+
+            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, this);
+        });
+
+        mViewBlockUi = view.findViewById(R.id.view_block_ui_input);
+    }
+
     private void handlePlaylistData(PlaylistViewModel mViewModel, View view) {
         mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
 
@@ -260,34 +273,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             mTextViewPlaylistName.setText(playlist.getName());
 
-            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
-            ArrayList<Track> tracks = playlist.getTracks();
-            ArrayList<String> trackImages = new ArrayList<>();
-            ArrayList<String> trackNames = new ArrayList<>();
-
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
-
-
-            for (int i = 0; i < tracks.size(); i++) {
-
-                Track current = tracks.get(i);
-
-                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
-
-                trackImages.add(current.getAlbum().getImage());
-
-                //trackImages.add("");
-                //int _i = i;
-                /*mViewModel.getTrackAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
-                        album -> {
-                            trackImages.set(_i, album.getImage());
-                            adapter.notifyItemChanged(_i);
-                        });*/
-                playlistNameBeforeRenaming = current.getName();
-                trackNames.add(current.getName());
-            }
-
-            mRecyclerViewTracks.setAdapter(adapter);
+            handlePlaylistTracks(playlist);
         });
     }
 
@@ -304,29 +290,133 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             mTextViewPlaylistName.setText(album.getName());
 
-            OudList<TrackPreview> tracksOudList = album.getTracks();
-            ArrayList<TrackPreview> tracks = tracksOudList.getItems();
-            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+            handleAlbumTracks(album);
+        });
+    }
+
+    private void handlePlaylistTracks(Playlist playlist) {
+
+        ArrayList<String> ids = new ArrayList<>();
+        for (Track track : playlist.getTracks()) {
+            ids.add(track.get_id());
+        }
+
+        mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
+            //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
+            ArrayList<Track> tracks = playlist.getTracks();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
 
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
+
+
+
+            trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                    ids,
+                    trackClickListener,
+                    trackImages,
+                    trackNames,
+                    userAreTracksLiked.getIsFound(),
+                    availableOfflineClickListener,
+                    heartClickListener);
+
+
+            for (int i = 0; i < tracks.size(); i++) {
+
+                Track current = tracks.get(i);
+
+                //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
+
+                trackImages.add(current.getAlbum().getImage());
+
+                //trackImages.add("");
+                //int _i = i;
+                /*mViewModel.getTrackAlbumLiveData(i, current.getAlbumId()).observe(getViewLifecycleOwner(),
+                        album -> {
+                            trackImages.set(_i, album.getImage());
+                            adapter.notifyItemChanged(_i);
+                        });*/
+                playlistNameBeforeRenaming = current.getName();
+                trackNames.add(current.getName());
+
+            }
+
+            mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
+        });
+
+    }
+
+    private void handleAlbumTracks(Album album) {
+        ArrayList<String> ids = new ArrayList<>();
+        for (TrackPreview track : album.getTracks().getItems()) {
+            ids.add(track.get_id());
+        }
+
+        mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
+            OudList<TrackPreview> tracksOudList = album.getTracks();
+            ArrayList<TrackPreview> tracks = tracksOudList.getItems();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
+            ArrayList<String> trackImages = new ArrayList<>();
+            ArrayList<String> trackNames = new ArrayList<>();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
+
+
+            trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                    ids,
+                    trackClickListener,
+                    trackImages,
+                    trackNames,
+                    userAreTracksLiked.getIsFound(),
+                    availableOfflineClickListener,
+                    heartClickListener);
 
 
             for (int i = 0; i < tracks.size(); i++) {
 
                 TrackPreview current = tracks.get(i);
 
-                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
+                //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
                 trackImages.add(album.getImage());
 
                 trackNames.add(current.getName());
+
+                //heartClickListeners.add(v -> Toast.makeText(getContext(), "Like !!", Toast.LENGTH_SHORT).show());
+
             }
 
-            mRecyclerViewTracks.setAdapter(adapter);
+            mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
         });
     }
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
+        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+    };
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
+        //Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
+
+        trackLikePosition = position;
+
+        String id = trackListRecyclerViewAdapter.getIds().get(position);
+        if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
+            mViewModel.removeTrackFromLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+        } else {
+            mViewModel.addTrackToLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+
+        }
+
+        blockUiAndWait();
+
+    };
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
+        Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+    };
 
     private ItemTouchHelper.SimpleCallback recyclerViewTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -357,9 +447,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             else if (toPosition < fromPosition)
                 target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);*/
 
-            Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
-            Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
+            trackListRecyclerViewAdapter.swapItems(fromPosition, toPosition);
+            trackListRecyclerViewAdapter.notifyItemMoved(fromPosition, toPosition);
 
             reorderingToPosition = toPosition;
 
@@ -377,14 +466,21 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             final int position = viewHolder.getAdapterPosition();
 
-            String trackImage = adapter.getTrackImages().remove(position);
-            String trackName = adapter.getTrackNames().remove(position);
-            adapter.notifyItemRemoved(position);
+            //View.OnClickListener trackClickListener = trackListRecyclerViewAdapter.getTrackClickListeners().get(position);
+            String trackImage = trackListRecyclerViewAdapter.getTrackImages().get(position);
+            String trackName = trackListRecyclerViewAdapter.getTrackNames().get(position);
+            Boolean isLiked = trackListRecyclerViewAdapter.getLikedTracks().get(position);
+            //View.OnClickListener heartClickListener = trackListRecyclerViewAdapter.getHeartClickListeners().get(position);
+            trackListRecyclerViewAdapter.removeItem(position);
+            trackListRecyclerViewAdapter.notifyItemRemoved(position);
 
             //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
             deletionPosition = position;
+            //trackClickListenerBeforeDeletion = trackClickListener;
             trackImageBeforeDeletion = trackImage;
             trackNameBeforeDeletion = trackName;
+            trackIsLikedBeforeDeletion = isLiked;
+            //heartClickListenerBeforeDeletion = heartClickListener;
 
             //mMotionLayout.refreshDrawableState();
             //mMotionLayout.jumpDrawablesToCurrentState();
@@ -392,7 +488,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             //Log.i(TAG, "onSwiped: " + );
                 //mMotionLayout.setProgress(mMotionLayout.getProgress() + 0.001f); // Little hack to refresh the recycler view,
 
-            snackbarUndoTrackRemoved(position, trackImage, trackName);
+            snackbarUndoTrackRemoved();
 
         }
 
@@ -432,8 +528,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                     if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
                         undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
-                    } else
+                    } else {
+                        blockUiAndWait();
                         mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
+                    }
 
                 }
 
@@ -468,11 +566,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         }
     };
 
-    private void snackbarUndoTrackRemoved(int position, String trackImage, String trackName) {
+    private void snackbarUndoTrackRemoved() {
         Snackbar.make(mMotionLayout, "Track removed.", BaseTransientBottomBar.LENGTH_LONG)
 
                 .setAction("Undo", v -> {
-                    undoDeletionRecyclerView(position, trackImage, trackName);
+                    undoDeletionRecyclerView();
                     undoDeletionClicked = true;
                 })
 
@@ -482,9 +580,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                         super.onDismissed(transientBottomBar, event);
                         if (!undoDeletionClicked) {
                             if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
-                                undoDeletionRecyclerView(deletionPosition, trackImageBeforeDeletion, trackNameBeforeDeletion);
-                            } else
-                                mViewModel.deleteTrack(token, position);
+                                undoDeletionRecyclerView();
+                            } else {
+                                mViewModel.deleteTrack(token, deletionPosition);
+                                blockUiAndWait();
+                            }
                         }
                         undoDeletionClicked = false;
                     }
@@ -492,26 +592,46 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 .show();
     }
 
-    private void undoDeletionRecyclerView(int position, String trackImage, String trackName) {
-        adapter.getTrackImages().add(position, trackImage);
-        adapter.getTrackNames().add(position, trackName);
-        adapter.notifyItemInserted(position);
+    private void undoDeletionRecyclerView() {
+        trackListRecyclerViewAdapter.addItem(deletionPosition,
+                trackImageBeforeDeletion,
+                trackNameBeforeDeletion,
+                trackIsLikedBeforeDeletion);
+
+        trackListRecyclerViewAdapter.notifyItemInserted(deletionPosition);
     }
 
     private void undoReorderingRecyclerView(int fromPosition, int toPosition) {
-        Collections.swap(adapter.getTrackImages(), toPosition, fromPosition); // swap fromPosition & toPosition params
-        Collections.swap(adapter.getTrackNames(), toPosition, fromPosition); // swap fromPosition & toPosition params
-        adapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
+        trackListRecyclerViewAdapter.swapItems(toPosition, fromPosition); // swap fromPosition & toPosition params
+        trackListRecyclerViewAdapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
     }
 
     private void undoRenaming(String previousName) {
         mTextViewPlaylistName.setText(previousName);
     }
 
+    private void undoLikingTrack() {
+        boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
+        trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
+        trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
+    }
+
+    private void blockUiAndWait() {
+        mViewBlockUi.setVisibility(View.VISIBLE);
+        showProgressBar();
+    }
+
+    private void unBlockUi() {
+        mViewBlockUi.setVisibility(View.GONE);
+        hideProgressBar();
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
         //mViewModel.setCurrentOperation(null);
+
+        unBlockUi();
     }
 
     @Override
@@ -522,7 +642,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         if (mViewModel.getCurrentOperation() != null)
             switch (mViewModel.getCurrentOperation()) {
-                case DELETE: undoDeletionRecyclerView(deletionPosition, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                case DELETE: undoDeletionRecyclerView();
                     break;
                 case RENAME: undoRenaming(playlistNameBeforeRenaming);
                     break;
@@ -530,9 +650,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     break;
                 case UPLOAD_IMAGE:
                     break;
+                case REMOVE_TRACK_FROM_LIKED_TRACKS:
+                case ADD_TRACK_TO_LIKED_TRACKS:
+                    undoLikingTrack();
+                    break;
 
-        }
+            }
 
+        unBlockUi();
 
         mViewModel.setCurrentOperation(null);
     }
@@ -564,6 +689,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         } else {
             mTextViewPlaylistName.setText(newName);
             mViewModel.renamePlaylist(token, newName);
+            blockUiAndWait();
         }
     }
 }

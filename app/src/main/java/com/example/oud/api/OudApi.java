@@ -1,11 +1,12 @@
 package com.example.oud.api;
 
+import java.util.ArrayList;
+
 import okhttp3.MultipartBody;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -118,6 +119,15 @@ public interface OudApi {
     //@DELETE("playlists/{playlistId}/tracks")
     @HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
     Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
+
+    @GET("me/tracks/contains")
+    Call<UserAreTracksLiked> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query("ids") ArrayList<String> ids);
+
+    @PUT("me/tracks")
+    Call<ResponseBody> addTheseTracksToLikedTracks(@Header("AUTHORIZATION") String token, @Query("IDs") ArrayList<String> ids);
+
+    @HTTP(method = "DELETE", path = "me/tracks", hasBody = true)
+    Call<ResponseBody> removeTheseTracksFromLikedTracks(@Header("AUTHORIZATION") String token, @Query("IDs") ArrayList<String> ids);
 
     @GET("artists/{artistId}")
     Call<Artist> artist(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);

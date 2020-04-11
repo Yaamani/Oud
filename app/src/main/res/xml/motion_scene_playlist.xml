@@ -123,6 +123,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:visibilityMode="ignore" />
 
+        <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
+
 
     </ConstraintSet>
 
@@ -236,8 +246,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginRight="100dp"
             android:layout_marginBottom="16dp"
             android:clickable="true"
             android:src="@drawable/ic_plus"
@@ -245,6 +255,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:visibilityMode="ignore" />
 
+        <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
 
     </ConstraintSet>
 
