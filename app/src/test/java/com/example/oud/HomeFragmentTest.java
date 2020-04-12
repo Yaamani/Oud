@@ -1,22 +1,21 @@
 package com.example.oud;
 
 import com.example.oud.api.Album;
-import com.example.oud.api.Category;
+import com.example.oud.api.Artist;
 import com.example.oud.api.Category2;
+import com.example.oud.api.Context;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
-import com.example.oud.api.RecentlyPlayedTracks;
-import com.example.oud.api.Track;
+import com.example.oud.api.RecentlyPlayedTracks2;
+import com.example.oud.testutils.TestUtils;
 import com.example.oud.user.UserActivity;
-import com.example.oud.user.fragments.home.HomeFragment;
 import com.example.oud.user.fragments.home.HomeFragment2;
-import com.example.oud.user.fragments.home.HomeRepository;
-import com.example.oud.user.fragments.home.HomeRepository2;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -40,7 +39,6 @@ import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.*;
-import static com.example.oud.testutils.TestUtils.*;
 import static com.google.common.truth.Truth.*;
 
 
@@ -55,12 +53,15 @@ public class HomeFragmentTest {
 
     @Before
     public void setUp() {
-        mockWebServer = getOudMockServer(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, 6, 7);
-        oudApi = new Retrofit.Builder()
+        //mockWebServer = getOudMockServer(Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT, 6, 7);
+        /*oudApi = new Retrofit.Builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(OudApi.class);
+                .create(OudApi.class);*/
+
+        oudApi = TestUtils.instantiateOudApi();
+
     }
 
     @Test
@@ -69,35 +70,23 @@ public class HomeFragmentTest {
 
         ActivityScenario<UserActivity> activityScenario = ActivityScenario.launch(UserActivity.class);
 
-        HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+        //HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
 
         activityScenario.onActivity(activity -> {
 
-
+            activity.setUserId("ID");
 
             //FragmentScenario scenario = FragmentScenario.launchInContainer(HomeFragment.class);
             //scenario.moveToState(Lifecycle.State.CREATED);
             //shadowOf(getMainLooper()).idle();
 
-            for (int i = 0; i < 2; i++) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                shadowOf(getMainLooper()).idle();
-            }
+            TestUtils.sleep(2, 200);
 
             testRecentlyPlayedTracksContent();
 
-            OudList<Category> categories = null;
+            OudList<Category2> categories = loadCategory2List();
 
-            try {
-                categories = oudApi.listOfCategories(null, 7).execute().body();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            TestUtils.sleep(2, 200);
 
             for (int i = 1; i < Constants.USER_HOME_CATEGORIES_COUNT + 1; i++) {
                 testCategory(i, categories);
@@ -111,12 +100,24 @@ public class HomeFragmentTest {
 
     }
 
+    private OudList<Category2> loadCategory2List() {
+        OudList<Category2> categories = null;
+
+        try {
+            categories = oudApi.listOfCategories2(null, 7).execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
     private void testRecentlyPlayedTracksContent() {
         System.out.println("Recently played : ");
 
 
         onView(withId(R.id.recycler_view_home))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.scrollTo()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, ViewActions.scrollTo()));
 
         /*onView(withRecyclerView(R.id.recycler_view_home)
                 .atPositionOnView(0, R.id.txt_item_outer_title))
@@ -125,8 +126,8 @@ public class HomeFragmentTest {
         String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_outer_item_title);
 
 
-        onView(withTagValue(is(titleTagPrefix + 0)))
-                .check(matches(withText("Recently played")));
+        onView(withTagValue(is(titleTagPrefix + 1)))
+                .check(matches(withText(Constants.USER_HOME_RECENTLY_PLAYED)));
 
 
         /*onView(withId(R.id.image_home_test))
@@ -136,25 +137,29 @@ public class HomeFragmentTest {
                 .atPositionOnView(0, R.id.image_item_outer_icon))
                 .check(matches(withDrawable(Constants.USER_HOME_RECENTLY_PLAYED_ICON)));*/
 
-        RecentlyPlayedTracks recentlyPlayedTracks = null;
+        RecentlyPlayedTracks2 recentlyPlayedTracks = null;
         try {
-            recentlyPlayedTracks = oudApi.recentlyPlayedTracks(6, null, null).execute().body();
+            recentlyPlayedTracks = oudApi.recentlyPlayedTracks2("0", 6, null, null).execute().body();
         } catch (IOException e) {
             e.printStackTrace();
 
 
         }
-        for (int i = 0; i < /*Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT*/1; i++) {
+        int offset = 0; // if Context.CONTEXT_UNKNOWN
+        for (int i = 0; i < Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT/*1*/; i++) {
 
-            Track currentTrack = recentlyPlayedTracks.getItems().get(i).getTrack();
+            Context current = recentlyPlayedTracks.getItems().get(i + offset).getContext();
 
-            Album currentAlbum = null;
+            String currentName = getCurrentContextName(current);
 
-            try {
-                currentAlbum = oudApi.album(currentTrack.getAlbumId()).execute().body();
-            } catch (IOException e) {
-                e.printStackTrace();
+            TestUtils.sleep(2, 200);
+
+            if (currentName == null) { // Context.CONTEXT_UNKNOWN
+                offset++;
+                i--;
+                continue;
             }
+
 
             /*onView(withId(R.id.recycler_view_item_outer))
                     .perform(RecyclerViewActions.actionOnItemAtPosition(i, ViewActions.scrollTo()));*/
@@ -163,19 +168,19 @@ public class HomeFragmentTest {
 
             String recyclerViewItemOuterTagPrefix =
                     InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_outer_item_recycler_view);
-            onView(withTagValue(is(recyclerViewItemOuterTagPrefix + 0)))
+            onView(withTagValue(is(recyclerViewItemOuterTagPrefix + 1)))
                     .perform(RecyclerViewActions.scrollToPosition(i));
 
             String innerTitleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_inner_item_title);
             String subtitleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_inner_item_subtitle);
 
-            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + 0))),
+            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + 1))),
                     withTagValue(is(innerTitleTagPrefix + i))))
-                    .check(matches(withText(currentTrack.getName())));
+                    .check(matches(withText(currentName)));
 
-            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + 0))),
+            /*onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + 0))),
                     withTagValue(is(subtitleTagPrefix + i))))
-                    .check(matches(withText(currentAlbum.getName())));
+                    .check(matches(withText(currentAlbum.getName())));*/
 
             /*onView(withRecyclerView(R.id.recycler_view_home)
                     .atPositionOnView(0, R.id.recycler_view_item_outer))
@@ -185,7 +190,7 @@ public class HomeFragmentTest {
                     isDescendantOfA(withRecyclerView(R.id.recycler_view_home).atPosition(0)),
                     isDescendantOfA(withRecyclerView(R.id.recycler_view_item_outer).atPosition(i)),
                     withId(R.id.txt_item_inner_title)))
-                    .check(matches(withText(currentTrack.getName())));
+                    .check(matches(withText(current.getName())));
 
             onView(allOf(
                     isDescendantOfA(withRecyclerView(R.id.recycler_view_home).atPosition(0)),
@@ -195,18 +200,50 @@ public class HomeFragmentTest {
         }
     }
 
+    private String getCurrentContextName(Context current) {
+        String currentName = null;
+
+        if (current.getType().equals(Context.CONTEXT_ALBUM)) {
+
+            try {
+                Album currentAlbum = oudApi.album("token", current.getId()).execute().body();
+                currentName = currentAlbum.getName();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else if (current.getType().equals(Context.CONTEXT_ARTIST)) {
+            try {
+                Artist currentArtist = oudApi.artist("token", current.getId()).execute().body();
+                currentName = currentArtist.getName();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (current.getType().equals(Context.CONTEXT_PLAYLIST)) {
+            try {
+                Playlist currentPlaylist = oudApi.playlist("token", current.getId()).execute().body();
+                currentName = currentPlaylist.getName();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return currentName;
+    }
+
     private void testCategory(int position, OudList<Category2> categories) {
         System.out.println("Category : position = " + position);
 
         Category2 currentCategory = categories.getItems().get(position-1);
 
         onView(withId(R.id.recycler_view_home))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(position, ViewActions.scrollTo()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(position+1, ViewActions.scrollTo()));
 
         String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_outer_item_title);
 
 
-        onView(withTagValue(is(titleTagPrefix + position)))
+        onView(withTagValue(is(titleTagPrefix + (position+1))))
                 .check(matches(withText(currentCategory.getName())));
 
         /*onView(withRecyclerView(R.id.recycler_view_home)
@@ -220,17 +257,21 @@ public class HomeFragmentTest {
                 .atPositionOnView(0, R.id.image_item_outer_icon))
                 .check(matches(withDrawable(Constants.USER_HOME_RECENTLY_PLAYED_ICON)));*/
 
-        for (int i = 0; i < Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT; i++) {
+        OudList<Playlist> categoryPlaylists = loadCategoryPlaylists(currentCategory.get_id());
+
+        TestUtils.sleep(2, 200);
+
+        for (int i = 0; i < categoryPlaylists.getItems().size(); i++) {
 
             System.out.println("Category : position = " + position + ", i = " + i);
 
-            Playlist currentPlaylist = null;
+            Playlist currentPlaylist = categoryPlaylists.getItems().get(i);
 
-            try {
+            /*try {
                 currentPlaylist = oudApi.playlist(currentCategory.getPlaylists().get(i)).execute().body();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             /*onView(withRecyclerView(R.id.recycler_view_home)
                     .atPositionOnView(position, R.id.recycler_view_item_outer))
@@ -238,7 +279,7 @@ public class HomeFragmentTest {
 
             String recyclerViewItemOuterTagPrefix =
                     InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_outer_item_recycler_view);
-            onView(withTagValue(is(recyclerViewItemOuterTagPrefix + position)))
+            onView(withTagValue(is(recyclerViewItemOuterTagPrefix + (position+1))))
                     .perform(RecyclerViewActions.scrollToPosition(i));
 
             /*onView(withId(R.id.recycler_view_home))
@@ -265,13 +306,13 @@ public class HomeFragmentTest {
             String innerTitleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_inner_item_title);
             String subtitleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_home_inner_item_subtitle);
 
-            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + position))),
+            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + (position+1)))),
                     withTagValue(is(innerTitleTagPrefix + i))))
                     .check(matches(withText(currentPlaylist.getName())));
 
-            onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + position))),
+            /*onView(allOf(isDescendantOfA(withTagValue(is(recyclerViewItemOuterTagPrefix + (position+1)))),
                     withTagValue(is(subtitleTagPrefix + i))))
-                    .check(matches(withText("")));
+                    .check(matches(withText("")));*/
 
             /*onView(allOf(withTagValue(is(recyclerViewItemOuterTagPrefix + position))))
                     .check(matches(isDisplayed()));*/
@@ -299,24 +340,30 @@ public class HomeFragmentTest {
         }
     }
 
+    private OudList<Playlist> loadCategoryPlaylists(String categoryId) {
+        OudList<Playlist> playlists = null;
+
+        try {
+            playlists = oudApi.categoryPlaylists("token", categoryId, null, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT).execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return playlists;
+    }
+
     @Test
+    @LooperMode(LooperMode.Mode.PAUSED)
     public void openPlaylistFragmentTest() {
         ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
 
-        HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
+        //HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
 
         scenario.onActivity(activity -> {
 
-            for (int i = 0; i < 2; i++) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            activity.setUserId("ID");
 
-                shadowOf(getMainLooper()).idle();
-            }
-
+            TestUtils.sleep(2, 200);
 
             // when
             String recyclerViewItemOuterTagPrefix =
@@ -333,18 +380,20 @@ public class HomeFragmentTest {
             HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
 
             assertThat(playlistFragment).isNotNull();
-            assertThat(homeFragment).isNull();
+            //assertThat(homeFragment).isNull();
 
         });
     }
 
+
+
     @After
     public void cleanup() {
-        try {
+        /*try {
             mockWebServer.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 
