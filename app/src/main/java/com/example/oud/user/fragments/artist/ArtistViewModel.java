@@ -27,14 +27,14 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
         super(ArtistRepository.getInstance(), Constants.YAMANI_MOCK_BASE_URL);
     }
 
-    public MutableLiveData<Artist> getArtistMutableLiveData(String artistId) {
+    public MutableLiveData<Artist> getArtistMutableLiveData(String token, String artistId) {
         if (artistMutableLiveData == null) {
-            artistMutableLiveData = mRepo.fetchArtist(artistId);
+            artistMutableLiveData = mRepo.fetchArtist(token, artistId);
         } else {
             Artist current = artistMutableLiveData.getValue();
             if (current != null) {
                 if (current.get_id().equals(artistId)) {
-                    artistMutableLiveData = mRepo.fetchArtist(artistId);
+                    artistMutableLiveData = mRepo.fetchArtist(token, artistId);
                 }
             }
         }
@@ -42,25 +42,25 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     }
 
 
-    public MutableLiveData<OudList<Album>> getLastSetOfLoadedAlbums(String artistId) {
+    public MutableLiveData<OudList<Album>> getLastSetOfLoadedAlbums(String token, String artistId) {
         if (lastSetOfLoadedAlbums == null) {
-            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
         }
 
         return lastSetOfLoadedAlbums;
     }
 
-    public void loadMoreAlbums(String artistId) {
-        lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(artistId, lastSetOfLoadedAlbums.getValue().getLimit(), Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+    public void loadMoreAlbums(String token, String artistId) {
+        lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, lastSetOfLoadedAlbums.getValue().getLimit(), Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
     }
 
     public ArrayList<MutableLiveData<Album>> getLoadedAlbums() {
         return loadedAlbums;
     }
 
-    public MutableLiveData<RelatedArtists> getSimilarArtistsMutableLiveData(String artistId) {
+    public MutableLiveData<RelatedArtists> getSimilarArtistsMutableLiveData(String token, String artistId) {
         if (similarArtistsMutableLiveData == null) {
-            similarArtistsMutableLiveData = mRepo.fetchSimilarArtists(artistId);
+            similarArtistsMutableLiveData = mRepo.fetchSimilarArtists(token, artistId);
         }
         return similarArtistsMutableLiveData;
     }

@@ -4,11 +4,10 @@ import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
+import com.example.oud.api.UserAreTracksLiked;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,7 +15,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     // TODO: Implement the ViewModel
 
 
-    public enum PlaylistOperation {RENAME, REORDER, DELETE, UPLOAD_IMAGE}
+    public enum PlaylistOperation {RENAME, REORDER, DELETE, UPLOAD_IMAGE, ADD_TRACK_TO_LIKED_TRACKS, REMOVE_TRACK_FROM_LIKED_TRACKS}
     private PlaylistOperation currentOperation = null;
 
 
@@ -28,13 +27,18 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     private MutableLiveData<Album> albumLiveData;
 
 
+    private MutableLiveData<UserAreTracksLiked> areTracksLikedLiveData;
 
 
 
     private int reorderingFromPosition;
     private int reorderingToPosition;
 
+    private String newName;
 
+    private int deletionPosition;
+
+    private int trackLikePosition;
 
 
 
@@ -44,10 +48,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
 
-    public MutableLiveData<Playlist> getPlaylistLiveData(String playlistId) {
+    public MutableLiveData<Playlist> getPlaylistLiveData(String token, String playlistId) {
         if (playlistLiveData == null) {
             // Fetch.
-            playlistLiveData = mRepo.fetchPlaylist(playlistId);
+            playlistLiveData = mRepo.fetchPlaylist(token, playlistId);
         } else {
 
             if (playlistLiveData.getValue() != null) {
@@ -56,7 +60,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return playlistLiveData;
                 } else {
                     // Fetch
-                    playlistLiveData = mRepo.fetchPlaylist(playlistId);
+                    playlistLiveData = mRepo.fetchPlaylist(token, playlistId);
                 }
             }
         }
@@ -64,7 +68,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return playlistLiveData;
     }
 
-    public MutableLiveData<Album> getTrackAlbumLiveData(int position, String albumId) {
+    public MutableLiveData<Album> getTrackAlbumLiveData(String token, int position, String albumId) {
         if (eachTrackAlbumLiveData == null)
             eachTrackAlbumLiveData = new ArrayList<>();
 
@@ -75,16 +79,16 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         }
 
         if (eachTrackAlbumLiveData.get(position) == null)
-            eachTrackAlbumLiveData.set(position, mRepo.fetchAlbum(albumId));
+            eachTrackAlbumLiveData.set(position, mRepo.fetchAlbum(token, albumId));
         else if (!eachTrackAlbumLiveData.get(position).getValue().get_id().equals(albumId))
-            eachTrackAlbumLiveData.set(position, mRepo.fetchAlbum(albumId));
+            eachTrackAlbumLiveData.set(position, mRepo.fetchAlbum(token, albumId));
 
         return eachTrackAlbumLiveData.get(position);
     }
 
-    public MutableLiveData<Album> getAlbumLiveData(String albumId) {
+    public MutableLiveData<Album> getAlbumLiveData(String token, String albumId) {
         if (albumLiveData == null)
-            albumLiveData = mRepo.fetchAlbum(albumId);
+            albumLiveData = mRepo.fetchAlbum(token, albumId);
         else {
             if (albumLiveData.getValue() != null) {
                 String currentId = albumLiveData.getValue().get_id();
@@ -92,7 +96,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return albumLiveData;
                 } else {
                     // Fetch
-                    albumLiveData = mRepo.fetchAlbum(albumId);
+                    albumLiveData = mRepo.fetchAlbum(token, albumId);
                 }
             }
         }
@@ -102,14 +106,70 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
 
 
-    public void reorderTrack(int fromPosition, int toPosition) {
+    public void reorderTrack(String token, int fromPosition, int toPosition) {
+        if (playlistLiveData == null) return;
+
+        setCurrentOperation(PlaylistOperation.REORDER);
+
         reorderingFromPosition = fromPosition;
         reorderingToPosition = toPosition;
         // Server
         String id = playlistLiveData.getValue().getId();
-        mRepo.reorderTrack(id, fromPosition, toPosition);
+        mRepo.reorderTrack(token, id, fromPosition, toPosition);
     }
 
+    public void renamePlaylist(String token, String newName) {
+        if (playlistLiveData == null) return;
+
+        this.newName = newName;
+        if (playlistLiveData.getValue().getName().equals(newName)) return;
+        setCurrentOperation(PlaylistOperation.RENAME);
+        // Server
+        String id = playlistLiveData.getValue().getId();
+        mRepo.renamePlaylist(token, id, newName);
+    }
+
+    public void deleteTrack(String token, int deletionPosition) {
+        if (playlistLiveData == null) return;
+
+        setCurrentOperation(PlaylistOperation.DELETE);
+
+        this.deletionPosition = deletionPosition;
+
+        String playlistId = playlistLiveData.getValue().getId();
+        String trackId = playlistLiveData.getValue().getTracks().get(deletionPosition).get_id();
+        mRepo.deleteTrack(token, playlistId, trackId);
+    }
+
+    public MutableLiveData<UserAreTracksLiked> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+        if (areTracksLikedLiveData == null)
+            areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
+        return areTracksLikedLiveData;
+    }
+
+    public void addTrackToLikedTracks(String token, String id, int position) {
+
+        setCurrentOperation(PlaylistOperation.ADD_TRACK_TO_LIKED_TRACKS);
+
+        trackLikePosition = position;
+
+        ArrayList<String> s = new ArrayList<>();
+        s.add(id);
+
+        mRepo.addTheseTracksToLikedTracks(token, s);
+    }
+
+    public void removeTrackFromLikedTracks(String token, String id, int position) {
+
+        setCurrentOperation(PlaylistOperation.REMOVE_TRACK_FROM_LIKED_TRACKS);
+
+        trackLikePosition = position;
+
+        ArrayList<String> s = new ArrayList<>();
+        s.add(id);
+
+        mRepo.removeTheseTracksFromLikedTracks(token, s);
+    }
 
 
     private void updateLiveDataUponReordering() {
@@ -118,19 +178,39 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistLiveData.getValue().getTracks().add(reorderingToPosition, track);
     }
 
+    private void updateLiveDataUponRenaming() {
+        playlistLiveData.getValue().setName(newName);
+    }
+
+    private void updateLiveDataUponDeletion() {
+        playlistLiveData.getValue().getTracks().remove(deletionPosition);
+    }
+
+    private void updateLiveDataUponAddingTrackToLikedTracks() {
+        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+    }
+
+    private void updateLiveDataUponRemovingTrackFromLikedTracks() {
+        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
 
         if (currentOperation != null)
             switch (currentOperation) {
-                /*case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                case DELETE: updateLiveDataUponDeletion();
                     break;
-                case RENAME: undoRenaming(playlistNameBeforeRenaming);
-                    break;*/
+                case RENAME: updateLiveDataUponRenaming();
+                    break;
                 case REORDER: updateLiveDataUponReordering();
                     break;
                 case UPLOAD_IMAGE:
+                    break;
+                case ADD_TRACK_TO_LIKED_TRACKS: updateLiveDataUponAddingTrackToLikedTracks();
+                    break;
+                case REMOVE_TRACK_FROM_LIKED_TRACKS: updateLiveDataUponRemovingTrackFromLikedTracks();
                     break;
 
         }

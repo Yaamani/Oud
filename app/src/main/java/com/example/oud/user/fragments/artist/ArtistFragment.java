@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.artist;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -12,11 +13,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -27,15 +30,18 @@ import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
-import com.example.oud.user.fragments.playlist.PlaylistRecyclerViewAdapter;
+import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     private static final String TAG = ArtistFragment.class.getSimpleName();
 
+    private String token;
     private String artistId;
 
     private MotionLayout mMotionLayout;
@@ -49,7 +55,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private RecyclerView mRecyclerViewAlbums;
     private RecyclerView mRecyclerViewSimilarArtists;
 
-    private PlaylistRecyclerViewAdapter mPopularSongsAdapter;
+    private TrackListRecyclerViewAdapter mPopularSongsAdapter;
     HorizontalRecyclerViewAdapter mSimilarArtistsAdapter;
 
     private TextView mTextViewNoSongsToShow;
@@ -106,6 +112,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         Log.i(TAG, "onViewCreated: ");
 
         handleArgs();
+        handleToken();
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageViewArtist = view.findViewById(R.id.img_artist);
@@ -232,8 +239,13 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         }
     }
 
+    private void handleToken() {
+        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        token = prefs.getString("token","000000");
+    }
+
     private void handleData() {
-        mViewModel.getArtistMutableLiveData(artistId).observe(getViewLifecycleOwner(), artist -> {
+        mViewModel.getArtistMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artist -> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
@@ -244,29 +256,55 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
-            /*Glide.with(getContext())
+            Glide.with(getContext())
                     .load(artist.getImages().get(0))
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
-                    .into(mImageViewArtistBlurred);*/
+                    .into(mImageViewArtistBlurred);
 
 
 
             ArrayList<Track> tracks = artist.getPopularSongs();
             if (!tracks.isEmpty()) {
-                ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+                ArrayList<String> ids = new ArrayList<>();
+                //TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListeners = new ArrayList<>();
                 ArrayList<String> trackImages = new ArrayList<>();
                 ArrayList<String> trackNames = new ArrayList<>();
+                ArrayList<Boolean> isLiked = new ArrayList<>();
+                //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
                 int i = 0;
                 for (Track track : tracks) {
                     if (i >= Constants.USER_ARTIST_POPULAR_SONGS_COUNT) break;
-                    clickListeners.add(v -> talkToPlayer.configurePlayer(track.get_id(), true));
+                    ids.add(track.get_id());
+                    //trackClickListeners.add(v -> talkToPlayer.configurePlayer(track.get_id(), true));
                     trackImages.add(track.getAlbum().getImage());
                     trackNames.add(track.getName());
+                    isLiked.add(true);
+                    //heartClickListeners.add(v -> Toast.makeText(getContext(), "track clicked !!", Toast.LENGTH_SHORT).show());
                     i++;
                 }
 
-                mPopularSongsAdapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
+                TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
+                    talkToPlayer.configurePlayer(mPopularSongsAdapter.getIds().get(position), true);
+                };
+
+                TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
+                    Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
+                };
+
+                TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
+                    Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+                };
+
+                mPopularSongsAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                        ids,
+                        trackClickListener,
+                        trackImages,
+                        trackNames,
+                        isLiked,
+                        availableOfflineClickListener,
+                        heartClickListener);
+
                 mRecyclerViewPopularSongs.setAdapter(mPopularSongsAdapter);
             } else {
                 mRecyclerViewPopularSongs.setVisibility(View.GONE);
@@ -285,7 +323,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         // TODO: Observe last set of loaded albums and add the newly fetched ones to the loaded albums if they weren't already added.
 
 
-        mViewModel.getSimilarArtistsMutableLiveData(artistId).observe(getViewLifecycleOwner(), artists -> {
+        mViewModel.getSimilarArtistsMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artists -> {
 
             if (!artists.getArtists().isEmpty()) {
 

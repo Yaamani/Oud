@@ -88,4 +88,44 @@ public class Playlist {
     public String getType() {
         return type;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public void setCollaborative(boolean collaborative) {
+        this.collaborative = collaborative;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public void setTracks(ArrayList<Track> tracks) {
+        this.tracks = tracks;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setPublicPlaylist(boolean publicPlaylist) {
+        this.publicPlaylist = publicPlaylist;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

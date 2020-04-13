@@ -4,7 +4,9 @@
 
     "/browse/categories/:category_id/playlists": "/category_list_:category_id", 
     "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
-    "/browse/categories?limit=:limit": "/categories_list", 
+    "/browse/categories?limit=:limit": "/categories_list",
+    
+    "/me/tracks/contains*": "/are_these_tracks_liked", 
 
     "/artists/:id/related-artists": "/related_artists", 
 

@@ -1,12 +1,14 @@
 package com.example.oud;
 
 
+import com.example.oud.testutils.TestUtils;
 import com.example.oud.user.UserActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.LooperMode;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewAction;
@@ -28,6 +30,7 @@ public class UserBottomNavigationViewBackStackTest {
 
 
     @Test
+    @LooperMode(LooperMode.Mode.PAUSED)
     public void noSubFragmentOpenedTest() {
         ActivityScenario<UserActivity> userActivityActivityScenario = ActivityScenario.launch(UserActivity.class);
 
@@ -48,22 +51,20 @@ public class UserBottomNavigationViewBackStackTest {
     }
 
     @Test
+    @LooperMode(LooperMode.Mode.PAUSED)
     public void subFragmentOpenedTest() {
         ActivityScenario<UserActivity> userActivityActivityScenario = ActivityScenario.launch(UserActivity.class);
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        shadowOf(getMainLooper()).idle();
+        TestUtils.sleep(1, 200);
 
         userActivityActivityScenario.onActivity(activity -> {
 
             // given
-            String tagPrefix = activity.getResources().getString(R.string.tag_home_inner_item_image);
-            onView(withTagValue(is(tagPrefix + "0"))).perform(click());
+            String outerTagPrefix = activity.getResources().getString(R.string.tag_home_outer_item_recycler_view);
+            String innerTagPrefix = activity.getResources().getString(R.string.tag_home_inner_item_image);
+            //onView(withTagValue(is(innerTagPrefix + "0"))).perform(click());
+            onView(allOf(isDescendantOfA(withTagValue(is(outerTagPrefix + 1))),
+                    withTagValue(is(innerTagPrefix + "0")))).perform(click());
 
             onView(withId(R.id.navigation_search)).perform(click());
 

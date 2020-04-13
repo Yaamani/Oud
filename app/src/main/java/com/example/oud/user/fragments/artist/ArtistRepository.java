@@ -27,12 +27,12 @@ public class ArtistRepository extends ConnectionAwareRepository {
         return ourInstance;
     }
 
-    public MutableLiveData<Artist> fetchArtist(String artistId) {
+    public MutableLiveData<Artist> fetchArtist(String token, String artistId) {
         MutableLiveData<Artist> artistMutableLiveData = new MutableLiveData<>();
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Artist> artistCall = oudApi.artist(artistId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<Artist> artistCall = oudApi.artist("Bearer "+ token, artistId);
 
         addCall(artistCall).enqueue(new FailureSuccessHandledCallback<Artist>(this) {
             @Override
@@ -53,11 +53,11 @@ public class ArtistRepository extends ConnectionAwareRepository {
         return artistMutableLiveData;
     }
 
-    public MutableLiveData<OudList<Album>> fetchSomeAlbums(String artistId, Integer offset, Integer limit) {
+    public MutableLiveData<OudList<Album>> fetchSomeAlbums(String token, String artistId, Integer offset, Integer limit) {
         MutableLiveData<OudList<Album>> albumsMutableLiveData = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<OudList<Album>> albumsCall = oudApi.artistAlbums(artistId, offset, limit);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<OudList<Album>> albumsCall = oudApi.artistAlbums("Bearer "+ token, artistId, offset, limit);
 
         addCall(albumsCall).enqueue(new FailureSuccessHandledCallback<OudList<Album>>(this) {
             @Override
@@ -70,12 +70,12 @@ public class ArtistRepository extends ConnectionAwareRepository {
         return albumsMutableLiveData;
     }
 
-    public MutableLiveData<RelatedArtists> fetchSimilarArtists(String artistId) {
+    public MutableLiveData<RelatedArtists> fetchSimilarArtists(String token, String artistId) {
         MutableLiveData<RelatedArtists> similarArtistsLiveData = new MutableLiveData<>();
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
-        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists(artistId);
+        //OudApi oudApi = instantiateRetrofitOudApi();
+        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists("Bearer "+ token, artistId);
 
         addCall(similarArtistsCall).enqueue(new FailureSuccessHandledCallback<RelatedArtists>(this) {
             @Override
