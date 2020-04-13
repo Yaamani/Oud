@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -149,7 +151,8 @@ public class ProfileFragment extends Fragment {
                         .into(profileImageView);
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
-                mViewModel.updateProfileImage(token,imageUri);
+                Context context = ((Activity)getActivity()).getApplicationContext();
+                mViewModel.updateProfileImage(token,imageUri,selectedImage,context);
 
             } catch (FileNotFoundException e) {
                 Log.e("Profile Fragment",e.getMessage());

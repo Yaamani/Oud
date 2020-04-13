@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -25,7 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -85,14 +88,46 @@ public class ProfileRepository  {
 
 
 
-    public void setProfileImage(String token , Uri newImage){
-        Log.e("profile Repository","image ");
-        File file = new File(newImage.getPath());
-        Log.e("profile Repository",file.getName());
+    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context){
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        Log.e("profile Repository","image  repo started");
 
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        File f = new File(context.getCacheDir(), "image.png");
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//Convert bitmap to byte array
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.write(bitmapdata);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        RequestBody requestFile = RequestBody.create(f,MediaType.parse("multipart/form-data"));
+
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", f.getName(), requestFile);
 
         Call<LoggedInUser> call = oudApi.updateUserPicture("Bearer "+token,body);
         call.enqueue(new FailureSuccessHandledCallback<LoggedInUser>(listener) {
@@ -107,11 +142,15 @@ public class ProfileRepository  {
 
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
+                Log.e("profile Repository","image not uploaded");
                 Log.e("profile Repository",t.getMessage());
+
 
 
             }
         });
+
+
 
     }
 

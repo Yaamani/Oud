@@ -149,6 +149,7 @@ public class MainLoginFragment extends Fragment {
                 public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                     if(response.isSuccessful()){
                         Intent i = new Intent(getActivity(), UserActivity.class);
+
                         i.putExtra(Constants.USER_ID_KEY, response.body().get_id());
                         startActivity(i);
                     }
