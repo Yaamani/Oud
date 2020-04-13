@@ -6,7 +6,6 @@ import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Category2;
-import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTracks2;
@@ -157,7 +156,7 @@ public class HomeRepository2 extends ConnectionAwareRepository {
         MutableLiveData<OudList<Playlist>> categoryPlaylistsLiveData = new MutableLiveData<>();
 
         /*OudApi oudApi = instantiateRetrofitOudApi();*/
-        Call<OudList<Playlist>> playlistsCall = oudApi.categoryPlaylist("Bearer "+ token, categoryId, null, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
+        Call<OudList<Playlist>> playlistsCall = oudApi.categoryPlaylists("Bearer "+ token, categoryId, null, Constants.USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT);
 
         addCall(playlistsCall).enqueue(new FailureSuccessHandledCallback<OudList<Playlist>>(this) {
             @Override

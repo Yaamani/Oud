@@ -41,7 +41,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_follow"
+            android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -134,7 +134,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_follow"
+            android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />

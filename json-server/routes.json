@@ -10,6 +10,9 @@
 
     "/artists/:id/related-artists": "/related_artists", 
 
+    "/playlists/playlist1/followers/contains*": "/user_doesn't_follow_playlist", 
+    "/playlists/*/followers/contains*": "/user_follows_playlist",
+
 
     
 

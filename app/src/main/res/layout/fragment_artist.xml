@@ -71,7 +71,7 @@
         android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
-        android:src="@drawable/ic_follow" />
+        android:src="@drawable/ic_follow_artist" />
 
 
     <androidx.core.widget.NestedScrollView

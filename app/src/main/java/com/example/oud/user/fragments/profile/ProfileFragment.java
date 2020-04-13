@@ -193,9 +193,11 @@ public class ProfileFragment extends Fragment {
         optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 OptionsFragment.builder(getActivity())
                         .addItem(R.drawable.ic_camera,"Update profile Picture",updateImageOnClickListener)
-                        .addItem(R.drawable.ic_rename, "Change displayName",renameOnClickListener).show();
+                        .addItem(R.drawable.ic_rename, "Change displayName",renameOnClickListener)
+                        .show();
             }
         });
 

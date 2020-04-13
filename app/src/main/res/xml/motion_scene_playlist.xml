@@ -33,7 +33,8 @@
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibilityMode="ignore"/>
 
 
         <Constraint
@@ -162,7 +163,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btn_rename_playlist"
-            app:layout_constraintTop_toTopOf="@+id/txt_playlist_name" />
+            app:layout_constraintTop_toTopOf="@+id/txt_playlist_name"
+            app:visibilityMode="ignore"/>
 
         <Constraint
             android:id="@+id/img_playlist"
@@ -246,8 +248,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="100dp"
-            android:layout_marginRight="100dp"
+            android:layout_marginEnd="95dp"
+            android:layout_marginRight="95dp"
             android:layout_marginBottom="16dp"
             android:clickable="true"
             android:src="@drawable/ic_plus"

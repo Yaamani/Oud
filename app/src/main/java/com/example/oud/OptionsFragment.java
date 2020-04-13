@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -111,7 +110,8 @@ public class OptionsFragment extends Fragment {
     public static class Builder {
 
         private FragmentActivity fragmentActivity;
-        private int containerId = R.id.container_options;
+        public static int DEFAULT_CONTAINER_ID = R.id.container_options;
+        private int containerId = DEFAULT_CONTAINER_ID;
 
         private ArrayList<Integer> icons;
         private ArrayList<String> titles;
@@ -124,11 +124,11 @@ public class OptionsFragment extends Fragment {
 
         /**
          *
-         * @param iconId
-         * @param title
-         * @param selected if true, the icon as well as the title will be tinted with the primary color of the app.
-         * @param onClickListener
-         * @return
+         * @param iconId Can be null if you want to test something.
+         * @param title Can be null if you want to test something.
+         * @param selected If true, the icon as well as the title will be tinted with the primary color of the app.
+         * @param onClickListener Can be null if you want to test something.
+         * @return The same builder object.
          */
         public Builder addItem(@Nullable @DrawableRes Integer iconId,
                                @Nullable String title,
@@ -156,17 +156,32 @@ public class OptionsFragment extends Fragment {
             return this;
         }
 
+        /**
+         *
+         * @param iconId Can be null if you want to test something.
+         * @param title Can be null if you want to test something.
+         * @param onClickListener Can be null if you want to test something.
+         * @return The same builder object.
+         */
         public Builder addItem(@Nullable @DrawableRes Integer iconId,
                                @Nullable String title,
                                @Nullable View.OnClickListener onClickListener) {
             return addItem(iconId, title, false, onClickListener);
         }
 
+        /**
+         *
+         * @param containerId The id of the fragment container to be placed inside. By default it's {@link Builder#DEFAULT_CONTAINER_ID}
+         * @return
+         */
         public Builder inContainer(@IdRes int containerId) {
             this.containerId = containerId;
             return this;
         }
 
+        /**
+         * Create a new instance of {@link OptionsFragment} and show it in the specified container.
+         */
         public void show() {
             FragmentManager manager = fragmentActivity.getSupportFragmentManager();
             OptionsFragment optionsFragment = newInstance(icons, titles, selectedItems, clickListeners);
