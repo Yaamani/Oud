@@ -47,13 +47,13 @@ public class NestedRecyclerViewHelperTest {
         // then
         VerticalRecyclerViewAdapter vAdapter = helper.getmVerticalAdapter();
 
-        assertThat(vAdapter.getIcons().get(0))
+        assertThat(vAdapter.getIcons().get(1))
                 .isEqualTo(Constants.USER_HOME_RECENTLY_PLAYED_ICON);
 
-        assertThat(vAdapter.getTitles().get(0))
+        assertThat(vAdapter.getTitles().get(1))
                 .isEqualTo("Untitled");
 
-        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(0);
+        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(1);
 
         assertThat(hAdapter.getImages().get(0))
                 .isEqualTo("+18");
@@ -76,18 +76,18 @@ public class NestedRecyclerViewHelperTest {
         NestedRecyclerViewHelper.Section section = dummySection1();
 
         // when
-        helper.addSection(0, section);
+        helper.addSection(1, section);
         
         // then
         VerticalRecyclerViewAdapter vAdapter = helper.getmVerticalAdapter();
 
-        assertThat(vAdapter.getIcons().get(1))
+        assertThat(vAdapter.getIcons().get(2))
                 .isEqualTo(Constants.USER_HOME_RECENTLY_PLAYED_ICON);
 
-        assertThat(vAdapter.getTitles().get(1))
+        assertThat(vAdapter.getTitles().get(2))
                 .isEqualTo("Untitled");
 
-        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(1);
+        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(2);
 
         assertThat(hAdapter.getImages().get(0))
                 .isEqualTo("+18");
@@ -99,13 +99,13 @@ public class NestedRecyclerViewHelperTest {
                 .isEqualTo("Are you sure ?");
 
 
-        assertThat(vAdapter.getIcons().get(0))
+        assertThat(vAdapter.getIcons().get(1))
                 .isEqualTo(Constants.USER_HOME_RECENTLY_PLAYED_ICON);
 
-        assertThat(vAdapter.getTitles().get(0))
+        assertThat(vAdapter.getTitles().get(1))
                 .isEqualTo("حضرتك جى تعزى ولا جى تهرج ؟");
 
-        hAdapter = vAdapter.getInnerItemAdapters().get(0);
+        hAdapter = vAdapter.getInnerItemAdapters().get(1);
 
         assertThat(hAdapter.getImages().get(0))
                 .isEqualTo("لا أنا جى أهرج.");
@@ -128,6 +128,7 @@ public class NestedRecyclerViewHelperTest {
         helper.addSection(section);
 
         // when
+        helper.removeSection(0);
         helper.removeSection(0);
 
         // then
@@ -160,10 +161,10 @@ public class NestedRecyclerViewHelperTest {
         // then
         VerticalRecyclerViewAdapter vAdapter = helper.getmVerticalAdapter();
 
-        assertThat(vAdapter.getIcons().get(0))
+        assertThat(vAdapter.getIcons().get(1))
                 .isEqualTo(Constants.USER_HOME_RECENTLY_CATEGORY_ICON);
 
-        assertThat(vAdapter.getTitles().get(0))
+        assertThat(vAdapter.getTitles().get(1))
                 .isEqualTo("New");
     }
 
@@ -179,7 +180,7 @@ public class NestedRecyclerViewHelperTest {
 
         // then
         VerticalRecyclerViewAdapter vAdapter = helper.getmVerticalAdapter();
-        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(0);
+        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(1);
 
         assertThat(hAdapter.getImages().get(1))
                 .isEqualTo("لا أنا جى أهرج.");
@@ -233,7 +234,7 @@ public class NestedRecyclerViewHelperTest {
 
         // then
         VerticalRecyclerViewAdapter vAdapter = helper.getmVerticalAdapter();
-        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(0);
+        HorizontalRecyclerViewAdapter hAdapter = vAdapter.getInnerItemAdapters().get(1);
 
         assertThat(hAdapter.getImages().get(0))
                 .isEqualTo("Url");

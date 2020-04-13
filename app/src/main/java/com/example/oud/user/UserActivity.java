@@ -558,14 +558,14 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
     // handle Hand Free problem
-    public class BecomingNoisyReceiver extends BroadcastReceiver {
+    public static class BecomingNoisyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
 
-                if(mPlayerHelper != null) {
+                /*if(mPlayerHelper != null) {
                     mPlayerHelper.getExoPlayer().setPlayWhenReady(false);
-                }
+                }*/
             }
         }
     }

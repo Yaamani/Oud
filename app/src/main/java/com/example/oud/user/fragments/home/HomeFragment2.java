@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.home;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -22,6 +23,7 @@ import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.oud.api.Context.CONTEXT_UNKNOWN ;
 import static com.example.oud.api.Context.CONTEXT_ALBUM   ;
 import static com.example.oud.api.Context.CONTEXT_ARTIST  ;
@@ -38,6 +40,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
     //private PlaylistFragmentOpeningListener playlistFragmentOpeningListener;
 
     private String userId;
+    private String token;
 
     private NestedRecyclerViewHelper mRecyclerViewHelper;
 
@@ -72,6 +75,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         super.onViewCreated(view, savedInstanceState);
 
         handleArgs();
+        handleToken();
 
         userId = getArguments().getString(Constants.USER_ID_KEY);
 
@@ -82,6 +86,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
+        //mViewModel.getCategoryListLiveData();
 
     }
 
@@ -96,8 +102,13 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         }
     }
 
+    private void handleToken() {
+        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        token = prefs.getString("token","000000");
+    }
+
     private void handleRecentlyPlayed() {
-        mViewModel.getRecentlyPlayedLiveData().observe(getViewLifecycleOwner(), recentlyPlayedTracks2 -> {
+        mViewModel.getRecentlyPlayedLiveData(token).observe(getViewLifecycleOwner(), recentlyPlayedTracks2 -> {
 
             NestedRecyclerViewHelper.Section section = handleRecentlyPlayedSection(recentlyPlayedTracks2);
             if (section == null) return;
@@ -114,13 +125,13 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                     // fetch
                     switch (context.getType()) {
                         case CONTEXT_ALBUM:
-                            mViewModel.addRecentlyPlayedAlbum(context.getId(), i);
+                            mViewModel.addRecentlyPlayedAlbum(token, context.getId(), i);
                             break;
                         case CONTEXT_ARTIST:
-                            mViewModel.addRecentlyPlayedArtist(context.getId(), i);
+                            mViewModel.addRecentlyPlayedArtist(token, context.getId(), i);
                             break;
                         case CONTEXT_PLAYLIST:
-                            mViewModel.addRecentlyPlayedPlaylist(context.getId(), i);
+                            mViewModel.addRecentlyPlayedPlaylist(token, context.getId(), i);
                             break;
                     }
 
@@ -305,7 +316,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
     private void handleSingleCategoryItems(Category2 category, NestedRecyclerViewHelper.Section section, int position) {
 
         //if (!hasAlreadyBeenFetchedCategoryPlaylists(position))
-            mViewModel.addCategoryPlaylists(category.get_id(), position);
+            mViewModel.addCategoryPlaylists(token, category.get_id(), position);
 
         mViewModel.getPlaylistsOfEachCategory().get(position).observe(getViewLifecycleOwner(), playlistOudList -> {
 
@@ -377,5 +388,6 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
     }
 }

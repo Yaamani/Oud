@@ -125,6 +125,14 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
     }
 
+    protected void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    protected void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+    }
+
     @Override
     public void onConnectionSuccess() {
         connectionStatusListenerWhoHandlesYouAreOffline.onConnectionSuccess();

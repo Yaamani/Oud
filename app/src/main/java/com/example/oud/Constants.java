@@ -2,11 +2,18 @@ package com.example.oud;
 
 import androidx.annotation.DrawableRes;
 
+import static com.example.oud.connectionaware.ConnectionAwareRepository.*;
+
+
 public class Constants {
 
     public static String BASE_URL = "http://oud-zerobase.me/api/v1/";
-    public static final boolean MOCK = false;
+    public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
+
+    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING | JSON_RESPONSE*/;
+
+
 
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";
     public static final int USER_HOME_CATEGORIES_COUNT = 7;

@@ -28,10 +28,24 @@ public class RenameFragment extends Fragment {
     private EditText mEditText;
     private Button mRenameButton;
 
+    private OnRenamingListener onRenamingListener;
+
+    @Deprecated
     public static RenameFragment newInstance(@NonNull String initialString, TextView parentTextView) {
         RenameFragment instance = new RenameFragment();
         instance.mInitialString = initialString;
         instance.mTextViewParent = parentTextView;
+
+        return instance;
+    }
+
+    public static RenameFragment newInstance(@NonNull String initialString, OnRenamingListener onRenamingListener) {
+        RenameFragment instance = new RenameFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("INITIAL_STRING", initialString);
+        instance.mInitialString = initialString;
+
+        instance.onRenamingListener = onRenamingListener;
 
         return instance;
     }
@@ -46,6 +60,15 @@ public class RenameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String initialStrnig = bundle.getString("INITIAL_STRING");
+            if (initialStrnig != null) {
+                mInitialString = initialStrnig;
+            }
+        }
+
+
         mEditText = view.findViewById(R.id.edit_text_rename);
         mEditText.setText(mInitialString);
 
@@ -57,7 +80,11 @@ public class RenameFragment extends Fragment {
             closeKeyboard();
 
             if (!mEditText.getText().equals(mInitialString)) {
-                mTextViewParent.setText(mEditText.getText());
+                if (onRenamingListener != null) {
+                    onRenamingListener.onRenamingListener(mEditText.getText().toString());
+                } else {
+                    mTextViewParent.setText(mEditText.getText());
+                }
             }
 
             hideRenameFragment(getActivity(), R.id.nav_host_fragment);
@@ -70,9 +97,19 @@ public class RenameFragment extends Fragment {
 
 
 
+    @Deprecated
     public static void showRenameFragment(FragmentActivity activity, @IdRes int fragmentContainerId, String initialString, TextView parentTextView) {
         FragmentManager manager = activity.getSupportFragmentManager();
         RenameFragment renameFragment = RenameFragment.newInstance(initialString, parentTextView);
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(fragmentContainerId, renameFragment, Constants.RENAME_FRAGMENT_TAG)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
+    public static void showRenameFragment(FragmentActivity activity, @IdRes int fragmentContainerId, String initialString, OnRenamingListener listener) {
+        FragmentManager manager = activity.getSupportFragmentManager();
+        RenameFragment renameFragment = RenameFragment.newInstance(initialString, listener);
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(fragmentContainerId, renameFragment, Constants.RENAME_FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -97,5 +134,9 @@ public class RenameFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public interface OnRenamingListener {
+        void onRenamingListener(String s);
     }
 }
