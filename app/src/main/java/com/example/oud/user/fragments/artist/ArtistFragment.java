@@ -55,7 +55,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private RecyclerView mRecyclerViewAlbums;
     private RecyclerView mRecyclerViewSimilarArtists;
 
-    private TrackListRecyclerViewAdapter mPopularSongsAdapter;
+    private TrackListRecyclerViewAdapter trackListRecyclerViewAdapter;
     HorizontalRecyclerViewAdapter mSimilarArtistsAdapter;
 
     private TextView mTextViewNoSongsToShow;
@@ -68,11 +68,14 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private PlayerInterface talkToPlayer;
 
 
+    private int trackLikePosition;
+
 
     public ArtistFragment() {
         super(ArtistViewModel.class,
                 R.layout.fragment_artist,
                 R.id.progress_artist,
+                R.id.view_block_ui_input,
                 null);
     }
 
@@ -264,52 +267,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
 
 
-            ArrayList<Track> tracks = artist.getPopularSongs();
-            if (!tracks.isEmpty()) {
-                ArrayList<String> ids = new ArrayList<>();
-                //TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListeners = new ArrayList<>();
-                ArrayList<String> trackImages = new ArrayList<>();
-                ArrayList<String> trackNames = new ArrayList<>();
-                ArrayList<Boolean> isLiked = new ArrayList<>();
-                //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
-                int i = 0;
-                for (Track track : tracks) {
-                    if (i >= Constants.USER_ARTIST_POPULAR_SONGS_COUNT) break;
-                    ids.add(track.get_id());
-                    //trackClickListeners.add(v -> talkToPlayer.configurePlayer(track.get_id(), true));
-                    trackImages.add(track.getAlbum().getImage());
-                    trackNames.add(track.getName());
-                    isLiked.add(true);
-                    //heartClickListeners.add(v -> Toast.makeText(getContext(), "track clicked !!", Toast.LENGTH_SHORT).show());
-                    i++;
-                }
-
-                TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-                    talkToPlayer.configurePlayer(mPopularSongsAdapter.getIds().get(position), true);
-                };
-
-                TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
-                    Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
-                };
-
-                TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
-                    Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
-                };
-
-                mPopularSongsAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                        ids,
-                        trackClickListener,
-                        trackImages,
-                        trackNames,
-                        isLiked,
-                        availableOfflineClickListener,
-                        heartClickListener);
-
-                mRecyclerViewPopularSongs.setAdapter(mPopularSongsAdapter);
-            } else {
-                mRecyclerViewPopularSongs.setVisibility(View.GONE);
-                mTextViewNoSongsToShow.setVisibility(View.VISIBLE);
-            }
+            handlePopularSongs(artist);
 
 
 
@@ -352,6 +310,107 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             }
 
         });
+    }
+
+    private void handlePopularSongs(Artist artist) {
+        ArrayList<Track> tracks = artist.getPopularSongs();
+
+        ArrayList<String> ids = new ArrayList<>();
+        for (Track track : tracks) {
+            ids.add(track.get_id());
+        }
+
+        mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
+
+            if (!tracks.isEmpty()) {
+                ArrayList<String> trackIds = new ArrayList<>();
+                //TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListeners = new ArrayList<>();
+                ArrayList<String> trackImages = new ArrayList<>();
+                ArrayList<String> trackNames = new ArrayList<>();
+                //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
+                int i = 0;
+                for (Track track : tracks) {
+                    if (i >= Constants.USER_ARTIST_POPULAR_SONGS_COUNT) break;
+                    trackIds.add(track.get_id());
+                    //trackClickListeners.add(v -> talkToPlayer.configurePlayer(track.get_id(), true));
+                    trackImages.add(track.getAlbum().getImage());
+                    trackNames.add(track.getName());
+                    //heartClickListeners.add(v -> Toast.makeText(getContext(), "track clicked !!", Toast.LENGTH_SHORT).show());
+                    i++;
+                }
+
+                TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
+                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+                };
+
+
+                TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
+                    Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+                };
+
+                trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                        trackIds,
+                        trackClickListener,
+                        trackImages,
+                        trackNames,
+                        userAreTracksLiked.getIsFound(),
+                        availableOfflineClickListener,
+                        heartClickListener);
+
+                mRecyclerViewPopularSongs.setAdapter(trackListRecyclerViewAdapter);
+            } else {
+                mRecyclerViewPopularSongs.setVisibility(View.GONE);
+                mTextViewNoSongsToShow.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
+        Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
+
+        trackLikePosition = position;
+
+        if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+            return;
+
+        String id = trackListRecyclerViewAdapter.getIds().get(position);
+        if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
+            mViewModel.removeTrackFromLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+        } else {
+            mViewModel.addTrackToLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+        }
+
+        blockUiAndWait();
+
+    };
+
+    private void undoLikingTrack() {
+        boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
+        trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
+        trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
+    }
+
+    @Override
+    public void onConnectionFailure() {
+        super.onConnectionFailure();
+
+        // Undo the current operation
+
+        if (mViewModel.getCurrentOperation() != null)
+            switch (mViewModel.getCurrentOperation()) {
+
+                case REMOVE_TRACK_FROM_LIKED_TRACKS:
+                case ADD_TRACK_TO_LIKED_TRACKS:
+                    undoLikingTrack();
+                    break;
+
+            }
+
+        mViewModel.setCurrentOperation(null);
     }
 
     @Override

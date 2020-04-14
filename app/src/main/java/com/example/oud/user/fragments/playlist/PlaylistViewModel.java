@@ -35,7 +35,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
     // Playlist
     private MutableLiveData<Playlist> playlistLiveData;
-    private ArrayList<MutableLiveData<Album>> eachTrackAlbumLiveData;
+    //private ArrayList<MutableLiveData<Album>> eachTrackAlbumLiveData;
     private MutableLiveData<ArrayList<Boolean>> doesUserFollowThisPlaylist;
 
     // Album
@@ -76,7 +76,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return playlistLiveData;
                 } else {
                     // Fetch
-                    doesUserFollowThisPlaylist = null;
+                    clearData();
                     playlistLiveData = mRepo.fetchPlaylist(token, playlistId);
                 }
             }
@@ -85,7 +85,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return playlistLiveData;
     }
 
-    public MutableLiveData<Album> getTrackAlbumLiveData(String token, int position, String albumId) {
+    /*public MutableLiveData<Album> getTrackAlbumLiveData(String token, int position, String albumId) {
         if (eachTrackAlbumLiveData == null)
             eachTrackAlbumLiveData = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
             eachTrackAlbumLiveData.set(position, mRepo.fetchAlbum(token, albumId));
 
         return eachTrackAlbumLiveData.get(position);
-    }
+    }*/
 
     public MutableLiveData<Album> getAlbumLiveData(String token, String albumId) {
         if (albumLiveData == null)
@@ -113,7 +113,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return albumLiveData;
                 } else {
                     // Fetch
-                    isThisAlbumSavedByUser = null;
+                    clearData();
                     albumLiveData = mRepo.fetchAlbum(token, albumId);
                 }
             }
@@ -393,7 +393,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     @Override
     public void clearData() {
         playlistLiveData = null;
-        eachTrackAlbumLiveData = null;
+        //eachTrackAlbumLiveData = null;
         doesUserFollowThisPlaylist = null;
 
         albumLiveData = null;

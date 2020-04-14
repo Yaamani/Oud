@@ -14,7 +14,7 @@
             app:touchAnchorId="@+id/scroll_view_artist"
             app:touchAnchorSide="top"
             app:dragDirection="dragUp"
-            app:onTouchUp="stop"/>
+            app:onTouchUp="autoComplete"/>
 
         <KeyFrameSet>
 
@@ -104,6 +104,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
 
         <Constraint
             android:id="@+id/progress_artist"
@@ -197,6 +206,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
 
         <Constraint
             android:id="@+id/progress_artist"
