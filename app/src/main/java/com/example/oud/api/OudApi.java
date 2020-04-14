@@ -122,7 +122,7 @@ public interface OudApi {
     Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
 
     @GET("me/tracks/contains")
-    Call<UserAreTracksLiked> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
+    Call<IsFoundResponse> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
 
     @PUT("me/tracks")
     Call<ResponseBody> addTheseTracksToLikedTracks(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
@@ -140,6 +140,14 @@ public interface OudApi {
     @DELETE("playlists/{playlistId}/followers")
     Call<ResponseBody> unfollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
 
+    @GET("me/albums/contains")
+    Call<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
+
+    @PUT("me/albums")
+    Call<ResponseBody> saveTheseAlbumsForTheCurrentUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
+
+    @DELETE("me/albums")
+    Call<ResponseBody> unsaveTheseAlbumsForTheCurrentUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
 
     @GET("artists/{artistId}")
     Call<Artist> artist(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);

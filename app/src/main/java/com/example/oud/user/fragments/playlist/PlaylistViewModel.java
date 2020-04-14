@@ -4,7 +4,7 @@ import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
-import com.example.oud.api.UserAreTracksLiked;
+import com.example.oud.api.IsFoundResponse;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.util.ArrayList;
@@ -26,7 +26,9 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         MAKE_PLAYLIST_PUBLIC,
         MAKE_PLAYLIST_PRIVATE,
         MAKE_PLAYLIST_COLLABORATIVE,
-        MAKE_PLAYLIST_NON_COLLABORATIVE}
+        MAKE_PLAYLIST_NON_COLLABORATIVE,
+        SAVE_ALBUM,
+        UNSAVE_ALBUM}
 
     private PlaylistOperation currentOperation = null;
 
@@ -38,9 +40,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
     // Album
     private MutableLiveData<Album> albumLiveData;
+    private MutableLiveData<IsFoundResponse> isThisAlbumSavedByUser;
 
 
-    private MutableLiveData<UserAreTracksLiked> areTracksLikedLiveData;
+    private MutableLiveData<IsFoundResponse> areTracksLikedLiveData;
 
 
 
@@ -73,6 +76,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return playlistLiveData;
                 } else {
                     // Fetch
+                    doesUserFollowThisPlaylist = null;
                     playlistLiveData = mRepo.fetchPlaylist(token, playlistId);
                 }
             }
@@ -109,6 +113,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     return albumLiveData;
                 } else {
                     // Fetch
+                    isThisAlbumSavedByUser = null;
                     albumLiveData = mRepo.fetchAlbum(token, albumId);
                 }
             }
@@ -124,6 +129,15 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
             doesUserFollowThisPlaylist = mRepo.checkIfUsersFollowPlaylist(token, playlistId, ids);
         }
         return doesUserFollowThisPlaylist;
+    }
+
+    public MutableLiveData<IsFoundResponse> getIsThisAlbumSavedByUser(String token) {
+        if (isThisAlbumSavedByUser == null) {
+            ArrayList<String> albumId = new ArrayList<>();
+            albumId.add(albumLiveData.getValue().get_id());
+            isThisAlbumSavedByUser = mRepo.checkIfTheseAlbumsAreSavedByUser(token, albumId);
+        }
+        return isThisAlbumSavedByUser;
     }
 
     public void reorderTrack(String token, int fromPosition, int toPosition) {
@@ -161,7 +175,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.deleteTrack(token, playlistId, trackId);
     }
 
-    public MutableLiveData<UserAreTracksLiked> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+    public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
         if (areTracksLikedLiveData == null)
             areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
         return areTracksLikedLiveData;
@@ -251,6 +265,28 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.changePlaylistDetails(token, id, name, null, false);
     }
 
+    public void saveAlbum(String token) {
+        if (albumLiveData == null) return;
+        if (isThisAlbumSavedByUser == null) return;
+
+        setCurrentOperation(PlaylistOperation.SAVE_ALBUM);
+
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(albumLiveData.getValue().get_id());
+        mRepo.saveTheseAlbumsForTheCurrentUser(token, ids);
+    }
+
+    public void unsaveAlbum(String token) {
+        if (albumLiveData == null) return;
+        if (isThisAlbumSavedByUser == null) return;
+
+        setCurrentOperation(PlaylistOperation.UNSAVE_ALBUM);
+
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(albumLiveData.getValue().get_id());
+        mRepo.unsaveTheseAlbumsForTheCurrentUser(token, ids);
+    }
+
     private void updateLiveDataUponReordering() {
         //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
         Track track = playlistLiveData.getValue().getTracks().remove(reorderingFromPosition);
@@ -297,6 +333,14 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistLiveData.getValue().setCollaborative(false);
     }
 
+    private void updateLiveDataUponSavingAnAlbum() {
+        isThisAlbumSavedByUser.getValue().getIsFound().set(0, true);
+    }
+
+    private void updateLiveDataUponUnSavingAnAlbum() {
+        isThisAlbumSavedByUser.getValue().getIsFound().set(0, false);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
@@ -327,6 +371,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     break;
                 case MAKE_PLAYLIST_NON_COLLABORATIVE: updateLiveDataUponMakingPlaylistNonCollaborative();
                     break;
+                case SAVE_ALBUM: updateLiveDataUponSavingAnAlbum();
+                    break;
+                case UNSAVE_ALBUM:updateLiveDataUponUnSavingAnAlbum();
+                    break;
 
         }
 
@@ -347,9 +395,11 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistLiveData = null;
         eachTrackAlbumLiveData = null;
         doesUserFollowThisPlaylist = null;
-        areTracksLikedLiveData = null;
 
         albumLiveData = null;
+        isThisAlbumSavedByUser = null;
 
+
+        areTracksLikedLiveData = null;
     }
 }
