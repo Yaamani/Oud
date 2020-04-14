@@ -66,7 +66,10 @@ public class OptionsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        //view.setOnClickListener(v -> Log.i(TAG, "Outer View"));
+        view.setOnClickListener(v -> {
+            // Log.i(TAG, "Outer View");
+            hideOptionsFragment(getActivity(), R.id.container_options);
+        });
 
 
         OptionsRecyclerViewAdapter adapter = new OptionsRecyclerViewAdapter(
