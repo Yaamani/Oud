@@ -71,7 +71,7 @@
         android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
-        android:src="@drawable/ic_follow" />
+        android:src="@drawable/ic_follow_artist" />
 
 
     <androidx.core.widget.NestedScrollView
@@ -255,6 +255,17 @@
 
 
     </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/view_block_ui_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_artist"

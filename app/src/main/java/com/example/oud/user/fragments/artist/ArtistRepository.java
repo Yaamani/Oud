@@ -2,8 +2,10 @@ package com.example.oud.user.fragments.artist;
 
 import android.util.Log;
 
+import com.example.oud.OudUtils;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
+import com.example.oud.api.IsFoundResponse;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.RelatedArtists;
@@ -13,6 +15,7 @@ import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -93,6 +96,56 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
 
         return similarArtistsLiveData;
+    }
+
+    public MutableLiveData<IsFoundResponse> areTracksLiked(String token, ArrayList<String> ids) {
+        MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = new MutableLiveData<>();
+
+        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
+            @Override
+            public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+
+                savedTracksMutableLiveData.setValue(response.body());
+            }
+        });
+
+        return savedTracksMutableLiveData;
+    }
+
+    public void addTheseTracksToLikedTracks(String token, ArrayList<String> ids) {
+
+        Call<ResponseBody> addTheseTracksToLikedTracksCall = oudApi.addTheseTracksToLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(addTheseTracksToLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
+    }
+
+    public void removeTheseTracksFromLikedTracks(String token, ArrayList<String> ids) {
+
+        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(removeTheseTracksFromLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
     }
 
 }

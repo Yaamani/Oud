@@ -13,16 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
-import com.example.oud.user.fragments.playlist.PlaylistViewModel;
-
-import java.lang.reflect.ParameterizedType;
 
 public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwareViewModel> extends Fragment implements ReconnectingListener, ConnectionStatusListener{
 
@@ -38,20 +34,33 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
     @IdRes
     private int progressBarId;
     @IdRes
+    private Integer viewBlockUiId;
+    @IdRes
     private Integer swipeRefreshLayoutId;
 
-    private ProgressBar progressBar;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar mProgressBar;
+    private View mViewBlockUi;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public ConnectionAwareFragment(Class<ConnectionAwareViewM> viewModelClass,
                                    @LayoutRes int layoutId,
                                    @IdRes int progressBarId,
                                    @Nullable @IdRes Integer swipeRefreshLayoutId) {
+        this(viewModelClass, layoutId, progressBarId, null, swipeRefreshLayoutId);
+    }
+
+    public ConnectionAwareFragment(Class<ConnectionAwareViewM> viewModelClass,
+                                   @LayoutRes int layoutId,
+                                   @IdRes int progressBarId,
+                                   @Nullable @IdRes Integer viewBlockUiId,
+                                   @Nullable @IdRes Integer swipeRefreshLayoutId) {
         this.viewModelClass = viewModelClass;
         this.layoutId = layoutId;
         this.progressBarId = progressBarId;
+        this.viewBlockUiId = viewBlockUiId;
         this.swipeRefreshLayoutId = swipeRefreshLayoutId;
     }
+
 
     @Nullable
     @Override
@@ -62,11 +71,14 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         Log.i(TAG, "onCreateView: " + "Hello from ConnectionAwareFragment.");
 
 
-        progressBar = root.findViewById(progressBarId);
+        mProgressBar = root.findViewById(progressBarId);
+
+        if (viewBlockUiId != null)
+            mViewBlockUi = root.findViewById(viewBlockUiId);
 
         if (swipeRefreshLayoutId != null) {
-            swipeRefreshLayout = root.findViewById(swipeRefreshLayoutId);
-            swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+            mSwipeRefreshLayout = root.findViewById(swipeRefreshLayoutId);
+            mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         }
 
         return root;
@@ -106,48 +118,70 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
             Log.i(TAG, "onViewCreated: " + connectionStatus);
 
 
-            if (progressBar != null)
-                if (progressBar.getVisibility() == View.VISIBLE)
-                    progressBar.setVisibility(View.GONE);
+            if (mProgressBar != null)
+                if (mProgressBar.getVisibility() == View.VISIBLE)
+                    mProgressBar.setVisibility(View.GONE);
 
 
-            if (swipeRefreshLayout != null)
-                swipeRefreshLayout.setRefreshing(false);
+            if (mSwipeRefreshLayout != null)
+                mSwipeRefreshLayout.setRefreshing(false);
 
         });
 
-        if (swipeRefreshLayout != null)
-            swipeRefreshLayout.setOnRefreshListener(() -> {
+        if (mSwipeRefreshLayout != null)
+            mSwipeRefreshLayout.setOnRefreshListener(() -> {
                 onTryingToReconnect();
 
-                progressBar.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
             });
 
     }
 
+
     protected void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     protected void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Call this if you want the user to stop interacting with the app. It'll show the progress bar and the view that blocks the ui input.
+     */
+    protected void blockUiAndWait() {
+        if (mViewBlockUi != null)
+            mViewBlockUi.setVisibility(View.VISIBLE);
+        showProgressBar();
+    }
+
+    /**
+     * Enables ui interaction. See {@link ConnectionAwareFragment#blockUiAndWait()}.
+     */
+    protected void unBlockUi() {
+        if (mViewBlockUi != null)
+            mViewBlockUi.setVisibility(View.GONE);
+        hideProgressBar();
     }
 
     @Override
     public void onConnectionSuccess() {
         connectionStatusListenerWhoHandlesYouAreOffline.onConnectionSuccess();
+        unBlockUi();
+
     }
 
     @Override
     public void onConnectionFailure() {
         connectionStatusListenerWhoHandlesYouAreOffline.onConnectionFailure();
+        unBlockUi();
     }
 
     @Override
     public void onTryingToReconnect() {
-        if (progressBar != null)
-            if (progressBar.getVisibility() == View.GONE)
-                progressBar.setVisibility(View.VISIBLE);
+        if (mProgressBar != null)
+            if (mProgressBar.getVisibility() == View.GONE)
+                mProgressBar.setVisibility(View.VISIBLE);
 
         mViewModel.clearData();
     }

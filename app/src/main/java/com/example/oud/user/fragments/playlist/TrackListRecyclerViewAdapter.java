@@ -87,7 +87,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         holder.mTrackName.setText(mTrackNames.get(position));
 
         if (mLikedTracks.get(position))
-            holder.mHeart.setImageResource(R.drawable.ic_heart_selected);
+            //holder.mHeart.setImageResource(R.drawable.ic_heart_selected);
+            holder.mHeart.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
 
         //holder.mHeart.setOnClickListener(mHeartClickListeners.get(position));
 

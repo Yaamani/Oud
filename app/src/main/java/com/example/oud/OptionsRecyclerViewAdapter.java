@@ -1,6 +1,7 @@
 package com.example.oud;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,18 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
 
     private ArrayList<Integer> mIcons;
     private ArrayList<String> mText;
+    private ArrayList<Boolean> mSelectedItems;
     private ArrayList<View.OnClickListener> mClickListeners;
 
-    public OptionsRecyclerViewAdapter(android.content.Context mContext, ArrayList<Integer> mIcons, ArrayList<String> mText, ArrayList<View.OnClickListener> mClickListeners) {
+    public OptionsRecyclerViewAdapter(android.content.Context mContext,
+                                      ArrayList<Integer> mIcons,
+                                      ArrayList<String> mText,
+                                      ArrayList<Boolean> selectedItems,
+                                      ArrayList<View.OnClickListener> mClickListeners) {
         this.mContext = mContext;
         this.mIcons = mIcons;
         this.mText = mText;
+        this.mSelectedItems = selectedItems;
         this.mClickListeners = mClickListeners;
     }
 
@@ -53,6 +60,13 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
 
         /*holder.itemView.setClickable(false);
         holder.itemView.setFocusable(false);*/
+
+        if (mSelectedItems.get(position)) {
+            int tintColor = mContext.getResources().getColor(R.color.colorPrimary);
+            holder.mIcon.setColorFilter(tintColor);
+            holder.mText.setTextColor(tintColor);
+        }
+
 
     }
 

@@ -30,14 +30,18 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
+import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.Album;
+import com.example.oud.api.Artist;
+import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.player.PlayerInterface;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -66,7 +70,6 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private ImageButton mImageButtonRename;
     private ImageButton mImageButtonOptions;
 
-    private View mViewBlockUi;
 
 
 
@@ -99,6 +102,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         super(PlaylistViewModel.class,
                 R.layout.fragment_playlist,
                 R.id.progress_playlist,
+                R.id.view_block_ui_input,
                 null);
     }
 
@@ -157,18 +161,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
 
-
-
-        if (type == Constants.PlaylistFragmentType.ALBUM) {
-            disableEditing(view);
-            handleAlbumData(mViewModel, view);
-        } else {
-            handlePlaylistData(mViewModel, view);
-        }
-
-
-
-
+        loadData(view);
 
     }
 
@@ -185,6 +178,16 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+    }
+
+    private void loadData(View view) {
+        if (type == Constants.PlaylistFragmentType.ALBUM) {
+            disableEditing(view);
+            handleAlbumData();
+        } else {
+            handlePlaylistData(view);
+        }
 
     }
 
@@ -216,17 +219,6 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
 
         mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
-        mImageButtonOptions.setOnClickListener(v -> {
-            /*OptionsFragment.builder(getActivity())
-                    .addItem(null, "Go To Artist", v1 -> {
-                        ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .addToBackStack(null)
-                                .commit();
-                    }).show();*/
-        });
 
         mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
         mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -249,10 +241,170 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, this);
         });
 
-        mViewBlockUi = view.findViewById(R.id.view_block_ui_input);
     }
 
-    private void handlePlaylistData(PlaylistViewModel mViewModel, View view) {
+
+
+    private void handlePlaylistOptions() {
+
+        mViewModel.getDoesUserFollowThisPlaylist(token, playlistOrAlbumId, userId).observe(getViewLifecycleOwner(), doesUserFollowThisPlaylist -> {
+            mImageButtonOptions.setVisibility(View.VISIBLE);
+        });
+
+
+        mImageButtonOptions.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Playlist playlist = mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).getValue();
+
+            OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
+
+            if (!playlist.getOwner().equals(userId)) {
+
+                boolean isFollowed = mViewModel.getDoesUserFollowThisPlaylist(token, playlistOrAlbumId, userId).getValue().get(0);
+                View.OnClickListener followClickListener = instantiateFollowClickListener(isFollowed);
+                optionsBuilder.addItem(R.drawable.ic_follow_playlist, "Follow", isFollowed, followClickListener);
+            }
+
+            if (playlist.getOwner().equals(userId)) {
+                boolean isPublic = playlist.isPublicPlaylist();
+                View.OnClickListener makePublicClickListener = instantiateMakePublicClickListener(isPublic);
+                optionsBuilder.addItem(R.drawable.ic_public, "Make Public", isPublic, makePublicClickListener);
+
+                boolean isCollaborative = playlist.isCollaborative();
+                View.OnClickListener makeCollaborativeClickListener = instantiateMakeCollaborativeClickListener(isCollaborative);
+                optionsBuilder.addItem(R.drawable.ic_collaborative, "Make Collaborative", isCollaborative, makeCollaborativeClickListener);
+            }
+
+            optionsBuilder.show();
+        });
+
+
+    }
+
+    private void handleAlbumOptions() {
+        mViewModel.getIsThisAlbumSavedByUser(token).observe(getViewLifecycleOwner(), isFoundResponse -> {
+            mImageButtonOptions.setVisibility(View.VISIBLE);
+        });
+
+        mImageButtonOptions.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Album album = mViewModel.getAlbumLiveData(token, playlistOrAlbumId).getValue();
+
+            View.OnClickListener goToArtistClickListener = instantiateGoToArtistClickListener(album.getArtists());
+
+            boolean isSaved = mViewModel.getIsThisAlbumSavedByUser(token).getValue().getIsFound().get(0);
+            View.OnClickListener saveAlbumClickListener = instantiateSaveAlbumClickListener(isSaved);
+
+
+            OptionsFragment.builder(getActivity())
+                    .addItem(R.drawable.ic_user, "Go To Artist", false, goToArtistClickListener)
+                    .addItem(R.drawable.ic_star, "Save Album", isSaved, saveAlbumClickListener)
+                    .show();
+        });
+    }
+
+    private View.OnClickListener instantiateFollowClickListener(boolean isFollowed) {
+        if (isFollowed)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.unfollowThisPlaylist(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.followThisPlaylist(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateMakePublicClickListener(boolean isPublic) {
+        if (isPublic)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.makePlaylistPrivate(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.makePlaylistPublic(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateMakeCollaborativeClickListener(boolean isCollaborative) {
+        if (isCollaborative)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.makePlaylistNonCollaborative(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.makePlaylistCollaborative(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateGoToArtistClickListener(ArtistPreview[] artists) {
+        if (artists.length == 1)
+            return openArtistFragmentClickListener(artists[0].get_id());
+        else
+            return v -> {
+                OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
+
+                for (ArtistPreview artistPreview : artists) {
+                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
+                }
+
+                optionsBuilder.show();
+            };
+    }
+
+    private View.OnClickListener openArtistFragmentClickListener(String artistId) {
+        return v -> ArtistFragment.show(getActivity(),
+                R.id.nav_host_fragment,
+                artistId);
+    }
+
+    private View.OnClickListener instantiateSaveAlbumClickListener(boolean isSaved) {
+        if (isSaved)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.unsaveAlbum(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.saveAlbum(token);
+            blockUiAndWait();
+        };
+    }
+
+    private void handlePlaylistData(View view) {
         mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
 
 
@@ -274,10 +426,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             mTextViewPlaylistName.setText(playlist.getName());
 
             handlePlaylistTracks(playlist);
+            handlePlaylistOptions();
         });
     }
 
-    private void handleAlbumData(PlaylistViewModel mViewMode, View view) {
+    private void handleAlbumData() {
         mViewModel.getAlbumLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
             DrawableCrossFadeFactory factory =
                     new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
@@ -291,6 +444,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             mTextViewPlaylistName.setText(album.getName());
 
             handleAlbumTracks(album);
+
+            handleAlbumOptions();
         });
     }
 
@@ -398,6 +553,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         trackLikePosition = position;
 
+        if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+            return;
+
         String id = trackListRecyclerViewAdapter.getIds().get(position);
         if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
             mViewModel.removeTrackFromLikedTracks(token, id, position);
@@ -407,7 +565,6 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             mViewModel.addTrackToLikedTracks(token, id, position);
             trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
             trackListRecyclerViewAdapter.notifyItemChanged(position);
-
         }
 
         blockUiAndWait();
@@ -616,22 +773,12 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
     }
 
-    private void blockUiAndWait() {
-        mViewBlockUi.setVisibility(View.VISIBLE);
-        showProgressBar();
-    }
 
-    private void unBlockUi() {
-        mViewBlockUi.setVisibility(View.GONE);
-        hideProgressBar();
-    }
 
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
         //mViewModel.setCurrentOperation(null);
-
-        unBlockUi();
     }
 
     @Override
@@ -657,21 +804,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             }
 
-        unBlockUi();
-
         mViewModel.setCurrentOperation(null);
-    }
-
-    @Override
-    public void onTryingToReconnect() {
-        super.onTryingToReconnect();
-
-        if (type == Constants.PlaylistFragmentType.ALBUM) {
-            disableEditing(getView());
-            handleAlbumData(mViewModel, getView());
-        } else {
-            handlePlaylistData(mViewModel, getView());
-        }
     }
 
     @Override
@@ -691,5 +824,12 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             mViewModel.renamePlaylist(token, newName);
             blockUiAndWait();
         }
+    }
+
+    @Override
+    public void onTryingToReconnect() {
+        super.onTryingToReconnect();
+
+        loadData(getView());
     }
 }

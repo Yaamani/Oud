@@ -10,7 +10,11 @@
 
     "/artists/:id/related-artists": "/related_artists", 
 
+    "/playlists/playlist1/followers/contains*": "/user_doesn't_follow_playlist", 
+    "/playlists/*/followers/contains*": "/user_follows_playlist",
 
+    "/me/albums/contains?ids=album0": "/this_album_isn't_saved", 
+    "/me/albums/contains*": "/this_album_is_saved", 
     
 
     "/users/1":"/user1",

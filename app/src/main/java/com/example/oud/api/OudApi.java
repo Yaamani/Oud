@@ -7,6 +7,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -101,7 +102,7 @@ public interface OudApi {
     Call<Category2> category2(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId);
 
     @GET("browse/categories/{categoryId}/playlists")
-    Call<OudList<Playlist>> categoryPlaylist(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+    Call<OudList<Playlist>> categoryPlaylists(@Header("AUTHORIZATION") String token, @Path("categoryId") String categoryId, @Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("albums/{albumId}")
     Call<Album> album(@Header("AUTHORIZATION") String token, @Path("albumId") String albumId);
@@ -121,13 +122,32 @@ public interface OudApi {
     Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
 
     @GET("me/tracks/contains")
-    Call<UserAreTracksLiked> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query("ids") ArrayList<String> ids);
+    Call<IsFoundResponse> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
 
     @PUT("me/tracks")
-    Call<ResponseBody> addTheseTracksToLikedTracks(@Header("AUTHORIZATION") String token, @Query("IDs") ArrayList<String> ids);
+    Call<ResponseBody> addTheseTracksToLikedTracks(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
 
     @HTTP(method = "DELETE", path = "me/tracks", hasBody = true)
-    Call<ResponseBody> removeTheseTracksFromLikedTracks(@Header("AUTHORIZATION") String token, @Query("IDs") ArrayList<String> ids);
+    Call<ResponseBody> removeTheseTracksFromLikedTracks(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
+
+
+    @GET("playlists/{playlistId}/followers/contains")
+    Call<ArrayList<Boolean>> checkIfUsersFollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Query(value = "ids", encoded = true) String userIds);
+
+    @PUT("playlists/{playlistId}/followers")
+    Call<ResponseBody> followPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body FollowingPublicityPayload followingPublicityPayload);
+
+    @DELETE("playlists/{playlistId}/followers")
+    Call<ResponseBody> unfollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
+
+    @GET("me/albums/contains")
+    Call<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
+
+    @PUT("me/albums")
+    Call<ResponseBody> saveTheseAlbumsForTheCurrentUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
+
+    @DELETE("me/albums")
+    Call<ResponseBody> unsaveTheseAlbumsForTheCurrentUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
 
     @GET("artists/{artistId}")
     Call<Artist> artist(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);

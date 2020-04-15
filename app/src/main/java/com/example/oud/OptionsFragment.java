@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,6 +30,7 @@ public class OptionsFragment extends Fragment {
 
     private ArrayList<Integer> mIcons;
     private ArrayList<String> mTitles;
+    private ArrayList<Boolean> mSelectedItems;
     private ArrayList<View.OnClickListener> mClickListeners;
 
     private RecyclerView mRecyclerView;
@@ -40,10 +40,14 @@ public class OptionsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static OptionsFragment newInstance(ArrayList<Integer> icons, ArrayList<String> titles, ArrayList<View.OnClickListener> clickListeners) {
+    public static OptionsFragment newInstance(ArrayList<Integer> icons,
+                                              ArrayList<String> titles,
+                                              ArrayList<Boolean> selectedItems,
+                                              ArrayList<View.OnClickListener> clickListeners) {
         OptionsFragment instance = new OptionsFragment();
         instance.mIcons = icons;
         instance.mTitles = titles;
+        instance.mSelectedItems = selectedItems;
         instance.mClickListeners = clickListeners;
 
         return instance;
@@ -62,13 +66,17 @@ public class OptionsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        //view.setOnClickListener(v -> Log.i(TAG, "Outer View"));
+        view.setOnClickListener(v -> {
+            // Log.i(TAG, "Outer View");
+            hideOptionsFragment(getActivity(), R.id.container_options);
+        });
 
 
         OptionsRecyclerViewAdapter adapter = new OptionsRecyclerViewAdapter(
                 getContext(),
                 mIcons,
                 mTitles,
+                mSelectedItems,
                 mClickListeners
         );
 
@@ -105,21 +113,33 @@ public class OptionsFragment extends Fragment {
     public static class Builder {
 
         private FragmentActivity fragmentActivity;
-        private int containerId = R.id.container_options;
+        public static int DEFAULT_CONTAINER_ID = R.id.container_options;
+        private int containerId = DEFAULT_CONTAINER_ID;
 
         private ArrayList<Integer> icons;
         private ArrayList<String> titles;
+        private ArrayList<Boolean> selectedItems;
         private ArrayList<View.OnClickListener> clickListeners;
 
         public Builder(FragmentActivity fragmentActivity) {
             this.fragmentActivity = fragmentActivity;
         }
 
+        /**
+         *
+         * @param iconId Can be null if you want to test something.
+         * @param title Can be null if you want to test something.
+         * @param selected If true, the icon as well as the title will be tinted with the primary color of the app.
+         * @param onClickListener Can be null if you want to test something.
+         * @return The same builder object.
+         */
         public Builder addItem(@Nullable @DrawableRes Integer iconId,
                                @Nullable String title,
+                               boolean selected,
                                @Nullable View.OnClickListener onClickListener) {
             if (icons == null) icons = new ArrayList<>();
             if (titles == null) titles = new ArrayList<>();
+            if (selectedItems == null) selectedItems = new ArrayList<>();
             if (clickListeners == null) clickListeners = new ArrayList<>();
 
             if (iconId == null) icons.add(R.drawable.ic_oud);
@@ -127,6 +147,8 @@ public class OptionsFragment extends Fragment {
 
             if(title == null) titles.add("item" + titles.size());
             else titles.add(title);
+
+            selectedItems.add(selected);
 
             if (onClickListener == null) {
                 String currentTitle = titles.get(titles.size() - 1);
@@ -137,14 +159,35 @@ public class OptionsFragment extends Fragment {
             return this;
         }
 
+        /**
+         *
+         * @param iconId Can be null if you want to test something.
+         * @param title Can be null if you want to test something.
+         * @param onClickListener Can be null if you want to test something.
+         * @return The same builder object.
+         */
+        public Builder addItem(@Nullable @DrawableRes Integer iconId,
+                               @Nullable String title,
+                               @Nullable View.OnClickListener onClickListener) {
+            return addItem(iconId, title, false, onClickListener);
+        }
+
+        /**
+         *
+         * @param containerId The id of the fragment container to be placed inside. By default it's {@link Builder#DEFAULT_CONTAINER_ID}
+         * @return
+         */
         public Builder inContainer(@IdRes int containerId) {
             this.containerId = containerId;
             return this;
         }
 
+        /**
+         * Create a new instance of {@link OptionsFragment} and show it in the specified container.
+         */
         public void show() {
             FragmentManager manager = fragmentActivity.getSupportFragmentManager();
-            OptionsFragment optionsFragment = newInstance(icons, titles, clickListeners);
+            OptionsFragment optionsFragment = newInstance(icons, titles, selectedItems, clickListeners);
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.add(containerId, optionsFragment, Constants.OPTIONS_FRAGMENT_TAG)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

@@ -102,7 +102,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                     .commit();
         });
 
-        userId = (String) getIntent().getExtras().get(Constants.USER_ID_KEY);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null)
+            userId = (String) intent.getExtras().get(Constants.USER_ID_KEY);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -540,6 +544,15 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     protected void onDestroy() {
         super.onDestroy();
         mPlayerHelper.releasePlayer();
+    }
+
+    /**
+     * USED FOR TESTS ONLY.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     // for handle button click in notification
