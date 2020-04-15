@@ -8,6 +8,9 @@
     
     "/me/tracks/contains*": "/are_these_tracks_liked", 
 
+    "/artists/*/albums?offset=0&limit=7": "/artist_albums",
+    "/artists/*/albums?offset=7&limit=7": "/artist_more_albums", 
+    
     "/artists/:id/related-artists": "/related_artists", 
 
     "/playlists/playlist1/followers/contains*": "/user_doesn't_follow_playlist", 

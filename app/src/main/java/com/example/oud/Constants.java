@@ -11,7 +11,7 @@ public class Constants {
     public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
 
-    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = /*SENDING | RECEIVING | JSON_RESPONSE*/0;
+    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING/* | RECEIVING | JSON_RESPONSE*//*0*/;
 
 
 

@@ -26,15 +26,17 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     private ArrayList<String> followerIds = new ArrayList<>();
     private ArrayList<String> followerTypes = new ArrayList<>();
 
+    private String userId;
 
     private Context context;
 
 
-    public ProfileFollowersRecyclerViewAdapter( Context context ,ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds) {
+    public ProfileFollowersRecyclerViewAdapter(Context context, ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds, String userId) {
         this.followerNames = followerNames;
         this.followerImagesUrls = followerImagesUrls;
         this.followerIds = followerIds;
         this.context = context;
+        this.userId = userId;
     }
 
     @NonNull
@@ -56,7 +58,7 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
                     ProfileFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position));
                 }
                 else
-                    ArtistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position));
+                    ArtistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position), userId);
             }
         });
 

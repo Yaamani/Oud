@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,9 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     private ArrayList<String> titles;
     private ArrayList<String> subtitles;
 
+    private ArrayList<HashMap<String, Object>> relatedInfo;
+
+
     //private boolean circularImages;
 
     public HorizontalRecyclerViewAdapter(Context mContext,
@@ -39,7 +43,8 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
                                          ArrayList<String> images,
                                          ArrayList<Boolean> circularImages,
                                          ArrayList<String> titles,
-                                         ArrayList<String> subtitles) {
+                                         ArrayList<String> subtitles,
+                                         ArrayList<HashMap<String, Object>> relatedInfo) {
         this.mContext = mContext;
 
         this.clickListeners = clickListeners;
@@ -48,6 +53,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         this.titles = titles;
         this.subtitles = subtitles;
 
+        this.relatedInfo = relatedInfo;
     }
 
     @NonNull
@@ -165,5 +171,9 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     public ArrayList<String> getSubtitles() {
         return subtitles;
+    }
+
+    public ArrayList<HashMap<String, Object>> getRelatedInfo() {
+        return relatedInfo;
     }
 }

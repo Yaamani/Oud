@@ -241,6 +241,25 @@ public class OudApiJsonGenerator {
         return s;
     }
 
+    public static String getJsonArtistAlbumList(int limit, int offset) {
+        String s = "";
+
+        s += "{\n" +
+                "  \"items\": [";
+                for (int i = 0; i < limit; i++) {
+                    s += getJsonAlbumPreview(offset + i);
+                    if (i < limit - 1)
+                        s+= ", ";
+                }
+        s +=    "  ]," +
+                "  \"limit\": " + limit + "," +
+                "  \"offset\": " + offset + "," +
+                "  \"total\": 10\n" +
+                "}";
+
+        return s;
+    }
+
 
     public static String getJsonListOfCategories(int categoryCount) {
         String s = "{\n" +

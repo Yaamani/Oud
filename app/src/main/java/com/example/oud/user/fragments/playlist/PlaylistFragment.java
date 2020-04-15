@@ -33,7 +33,6 @@ import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
 import com.example.oud.R;
 import com.example.oud.api.Album;
-import com.example.oud.api.Artist;
 import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
@@ -382,7 +381,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private View.OnClickListener openArtistFragmentClickListener(String artistId) {
         return v -> ArtistFragment.show(getActivity(),
                 R.id.nav_host_fragment,
-                artistId);
+                artistId, userId);
     }
 
     private View.OnClickListener instantiateSaveAlbumClickListener(boolean isSaved) {

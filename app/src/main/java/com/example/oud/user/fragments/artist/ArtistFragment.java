@@ -11,6 +11,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -25,15 +26,19 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.Constants;
 import com.example.oud.R;
+import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.LoadMoreAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -42,6 +47,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private static final String TAG = ArtistFragment.class.getSimpleName();
 
     private String token;
+    private String userId;
     private String artistId;
 
     private MotionLayout mMotionLayout;
@@ -56,7 +62,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private RecyclerView mRecyclerViewSimilarArtists;
 
     private TrackListRecyclerViewAdapter trackListRecyclerViewAdapter;
-    HorizontalRecyclerViewAdapter mSimilarArtistsAdapter;
+    private LoadMoreAdapter mAlbumsAdapter;
+    private HorizontalRecyclerViewAdapter mSimilarArtistsAdapter;
 
     private TextView mTextViewNoSongsToShow;
     private TextView mTextViewNoAlbumsToShow;
@@ -79,17 +86,17 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 null);
     }
 
-    public static ArtistFragment newInstance(String artistId) {
+    public static ArtistFragment newInstance(String artistId, String userId) {
         ArtistFragment artistFragment = new ArtistFragment();
-        artistFragment.setArguments(myArgs(artistId));
+        artistFragment.setArguments(myArgs(artistId, userId));
         return artistFragment;
     }
 
-    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId) {
+    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId, String userId) {
         FragmentManager manager = activity.getSupportFragmentManager();
         ArtistFragment artistFragment/* = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG)*/;
         //if (artistFragment == null)
-            artistFragment = ArtistFragment.newInstance(artistId);
+            artistFragment = ArtistFragment.newInstance(artistId, userId);
         //else {
             //artistFragment.setArguments(ArtistFragment.myArgs(artistId));
         //}
@@ -102,9 +109,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         transaction.commit();
     }
 
-    public static Bundle myArgs(String artistId) {
+    public static Bundle myArgs(String artistId, String userId) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ARTIST_ID_KEY, artistId);
+        bundle.putString(Constants.USER_ID_KEY, userId);
         return bundle;
     }
 
@@ -234,6 +242,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         Bundle args = getArguments();
         if (args != null) {
             artistId = args.getString(Constants.ARTIST_ID_KEY);
+            userId = args.getString(Constants.USER_ID_KEY);
         } else {
             String fragName = ArtistFragment.class.getSimpleName();
             throw new RuntimeException("Instead of calling new " + fragName + "()" +
@@ -270,48 +279,13 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             handlePopularSongs(artist);
 
 
-
-
             mTextViewBio.setText(artist.getBio());
 
         });
 
+        handleAlbums();
 
-        // TODO: Observe the loaded albums first.
-        // TODO: Observe last set of loaded albums and add the newly fetched ones to the loaded albums if they weren't already added.
-
-
-        mViewModel.getSimilarArtistsMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artists -> {
-
-            if (!artists.getArtists().isEmpty()) {
-
-                ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
-                ArrayList<String> images = new ArrayList<>();
-                ArrayList<Boolean> circularImages = new ArrayList<>();
-                ArrayList<String> titles = new ArrayList<>();
-                ArrayList<String> subtitles = new ArrayList<>();
-
-
-                for (Artist artist : artists.getArtists()) {
-                    clickListeners.add(v -> ArtistFragment.show(getActivity(),
-                            R.id.nav_host_fragment,
-                            artist.get_id()));
-                    images.add(artist.getImages().get(0));
-                    circularImages.add(true);
-                    titles.add(artist.getName());
-                    subtitles.add("");
-                }
-
-                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, circularImages, titles, subtitles);
-                mRecyclerViewSimilarArtists.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
-
-                mRecyclerViewSimilarArtists.setAdapter(mSimilarArtistsAdapter);
-            } else {
-                mRecyclerViewSimilarArtists.setVisibility(View.GONE);
-                mTextViewNoArtistsToShow.setVisibility(View.VISIBLE);
-            }
-
-        });
+        handleSimilarArtists();
     }
 
     private void handlePopularSongs(Artist artist) {
@@ -389,6 +363,163 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         blockUiAndWait();
 
     };
+
+    private void handleAlbums() {
+        // TODO: Observe the loaded albums first.
+        // TODO: Observe last set of loaded albums and add the newly fetched ones to the loaded albums if they weren't already added.
+
+        if (mViewModel.getLoadedAlbums().size() < Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT)
+            loadMoreAlbums();
+        else
+            observeLoadedAlbums();
+
+
+    }
+
+    private void loadMoreAlbums() {
+        mViewModel.loadMoreAlbums(token, artistId).observe(getViewLifecycleOwner(), albumOudList -> {
+
+            if (albumOudList.getTotal() == 0) {
+                mRecyclerViewAlbums.setVisibility(View.GONE);
+                mTextViewNoAlbumsToShow.setVisibility(View.VISIBLE);
+            }
+
+            if (mAlbumsAdapter != null)
+                mAlbumsAdapter.setLoaded();
+
+            for (Album album : albumOudList.getItems()) {
+                mViewModel.getLoadedAlbums().add(new MutableLiveData<>(album));
+            }
+
+            observeLoadedAlbums();
+
+        });
+    }
+
+    private void observeLoadedAlbums() {
+
+        ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+        ArrayList<String> images = new ArrayList<>();
+        ArrayList<Boolean> circularImages = new ArrayList<>();
+        ArrayList<String> titles = new ArrayList<>();
+        ArrayList<String> subtitles = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> relatedInfo = new ArrayList<>();
+
+
+        int i = 0;
+        for (MutableLiveData<Album> albumMutableLiveData : mViewModel.getLoadedAlbums()) {
+            int _i = i;
+            albumMutableLiveData.observe(getViewLifecycleOwner(), album -> {
+
+                if (mAlbumsAdapter != null) {
+                    if (mAlbumsAdapter.getItemCount()-1 >= _i) {
+                        /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(album.get_id())) {*/
+                            return;
+                        } else {
+
+                            mAlbumsAdapter.getClickListeners().add(v -> PlaylistFragment.show(getActivity(),
+                                    R.id.nav_host_fragment,
+                                    userId,
+                                    Constants.PlaylistFragmentType.ALBUM,
+                                    album.get_id()));
+                            mAlbumsAdapter.getImages().add(album.getImage());
+                            mAlbumsAdapter.getCircularImages().add(false);
+                            mAlbumsAdapter.getTitles().add(album.getName());
+                            mAlbumsAdapter.getSubtitles().add("");
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put(Constants.ID_KEY, album.get_id());
+                            mAlbumsAdapter.getRelatedInfo().add(hashMap);
+                            
+                            mAlbumsAdapter.notifyItemInserted(_i);
+                        }
+
+                        
+                } else {
+
+                    clickListeners.add(v -> PlaylistFragment.show(getActivity(),
+                            R.id.nav_host_fragment,
+                            userId,
+                            Constants.PlaylistFragmentType.ALBUM,
+                            album.get_id()));
+                    images.add(album.getImage());
+                    circularImages.add(false);
+                    titles.add(album.getName());
+                    subtitles.add("");
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put(Constants.ID_KEY, album.get_id());
+                    relatedInfo.add(hashMap);
+                }
+            });
+
+            i++;
+        }
+
+        if (mAlbumsAdapter == null) {
+
+            mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
+                    Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT,
+                    getContext(),
+                    clickListeners,
+                    images,
+                    circularImages,
+                    titles,
+                    subtitles,
+                    relatedInfo);
+            mRecyclerViewAlbums.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
+            //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
+            mAlbumsAdapter.setOnLoadMoreListener(() -> {
+                //images.add(null);
+                loadMoreAlbums();
+            });
+        }
+
+
+        if (mRecyclerViewAlbums.getAdapter() == null) {
+            mRecyclerViewAlbums.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
+            mAlbumsAdapter.setRecyclerView(mRecyclerViewAlbums);
+        }
+    }
+
+    private void handleSimilarArtists() {
+        mViewModel.getSimilarArtistsMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artists -> {
+
+            if (!artists.getArtists().isEmpty()) {
+
+                ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+                ArrayList<String> images = new ArrayList<>();
+                ArrayList<Boolean> circularImages = new ArrayList<>();
+                ArrayList<String> titles = new ArrayList<>();
+                ArrayList<String> subtitles = new ArrayList<>();
+                ArrayList<HashMap<String, Object>> relatedInfo = new ArrayList<>();
+
+
+                for (Artist artist : artists.getArtists()) {
+                    clickListeners.add(v -> ArtistFragment.show(getActivity(),
+                            R.id.nav_host_fragment,
+                            artist.get_id(), userId));
+                    images.add(artist.getImages().get(0));
+                    circularImages.add(true);
+                    titles.add(artist.getName());
+                    subtitles.add("");
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put(Constants.ID_KEY, artist.get_id());
+                    relatedInfo.add(hashMap);
+                }
+
+                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, circularImages, titles, subtitles, relatedInfo);
+                mRecyclerViewSimilarArtists.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
+
+                mRecyclerViewSimilarArtists.setAdapter(mSimilarArtistsAdapter);
+            } else {
+                mRecyclerViewSimilarArtists.setVisibility(View.GONE);
+                mTextViewNoArtistsToShow.setVisibility(View.VISIBLE);
+            }
+
+        });
+    }
 
     private void undoLikingTrack() {
         boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
