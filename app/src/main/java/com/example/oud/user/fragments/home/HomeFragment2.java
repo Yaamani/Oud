@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
@@ -73,7 +74,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         super.onViewCreated(view, savedInstanceState);
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
         userId = getArguments().getString(Constants.USER_ID_KEY);
 
@@ -100,10 +102,10 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         }
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
-    }
+    }*/
 
     private void handleRecentlyPlayed() {
         mViewModel.getRecentlyPlayedLiveData(token).observe(getViewLifecycleOwner(), recentlyPlayedTracks2 -> {

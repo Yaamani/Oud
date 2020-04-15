@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.user.fragments.artist.ArtistFragment;
 
@@ -58,7 +59,7 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
                     ProfileFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position));
                 }
                 else
-                    ArtistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position), userId);
+                    ArtistFragment.show((FragmentActivity)context,R.id.nav_host_fragment,followerIds.get(position), OudUtils.getUserId(context));
             }
         });
 

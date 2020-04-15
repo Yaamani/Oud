@@ -37,7 +37,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
 
         //OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Playlist> playlistCall = oudApi.playlist("Bearer "+ token, playlistId);
+        Call<Playlist> playlistCall = oudApi.playlist(token, playlistId);
 
         addCall(playlistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
             @Override
@@ -62,7 +62,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         MutableLiveData<Album> albumMutableLiveData = new MutableLiveData<>();
 
         //OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Album> albumCall = oudApi.album("Bearer "+ token, albumId);
+        Call<Album> albumCall = oudApi.album(token, albumId);
 
         addCall(albumCall).enqueue(new FailureSuccessHandledCallback<Album>(this) {
 
@@ -89,7 +89,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         ReorderPlaylistPayload reorderPlaylistPayload = new ReorderPlaylistPayload(fromPosition, 1, toPosition);
 
-        Call reorderCall = oudApi.reorderPlaylistTracks("Bearer " + token, playlistId, reorderPlaylistPayload);
+        Call reorderCall = oudApi.reorderPlaylistTracks(token, playlistId, reorderPlaylistPayload);
 
         addCall(reorderCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -109,7 +109,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         ChangePlaylistDetailsPayload changePlaylistDetailsPayload = new ChangePlaylistDetailsPayload(newName, _public, collaborative, null, null);
 
-        Call changeDetailsCall = oudApi.changePlaylistDetails("Bearer " + token, playlistId, changePlaylistDetailsPayload);
+        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, changePlaylistDetailsPayload);
 
         addCall(changeDetailsCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -126,7 +126,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public void deleteTrack(String token, String playlistId, String trackId) {
 
         RemovePlaylistTracksPayload removePlaylistTracksPayload = new RemovePlaylistTracksPayload(trackId);
-        Call removeTrackCall = oudApi.removePlaylistTracks("Bearer " + token, playlistId, removePlaylistTracksPayload);
+        Call removeTrackCall = oudApi.removePlaylistTracks(token, playlistId, removePlaylistTracksPayload);
 
         addCall(removeTrackCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -144,7 +144,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public MutableLiveData<IsFoundResponse> areTracksLiked(String token, ArrayList<String> ids) {
         MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
             @Override
             public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
@@ -163,7 +163,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void addTheseTracksToLikedTracks(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> addTheseTracksToLikedTracksCall = oudApi.addTheseTracksToLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> addTheseTracksToLikedTracksCall = oudApi.addTheseTracksToLikedTracks(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(addTheseTracksToLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -178,7 +178,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void removeTheseTracksFromLikedTracks(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(removeTheseTracksFromLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -194,7 +194,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public MutableLiveData<ArrayList<Boolean>> checkIfUsersFollowPlaylist(String token, String playlistId, ArrayList<String> ids) {
         MutableLiveData<ArrayList<Boolean>> followingLiveData = new MutableLiveData<>();
 
-        Call<ArrayList<Boolean>> followingCall = oudApi.checkIfUsersFollowPlaylist("Bearer " + token, playlistId, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ArrayList<Boolean>> followingCall = oudApi.checkIfUsersFollowPlaylist(token, playlistId, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(followingCall).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
             @Override
             public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
@@ -215,7 +215,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         FollowingPublicityPayload followingPublicityPayload = new FollowingPublicityPayload(followingPublicly);
 
-        Call<ResponseBody> followCall = oudApi.followPlaylist("Bearer " + token, playlistId, followingPublicityPayload);
+        Call<ResponseBody> followCall = oudApi.followPlaylist(token, playlistId, followingPublicityPayload);
         addCall(followCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -230,7 +230,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void unfollowPlaylist(String token, String playlistId) {
 
-        Call<ResponseBody> unfollowCall = oudApi.unfollowPlaylist("Bearer " + token, playlistId);
+        Call<ResponseBody> unfollowCall = oudApi.unfollowPlaylist(token, playlistId);
         addCall(unfollowCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -246,7 +246,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public MutableLiveData<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(String token, ArrayList<String> ids) {
         MutableLiveData<IsFoundResponse> theseAlbumsSavedByUserLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> theseAlbumsSavedByUserCall = oudApi.checkIfTheseAlbumsAreSavedByUser("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<IsFoundResponse> theseAlbumsSavedByUserCall = oudApi.checkIfTheseAlbumsAreSavedByUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(theseAlbumsSavedByUserCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
             @Override
             public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
@@ -265,7 +265,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void saveTheseAlbumsForTheCurrentUser(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> saveAlbumsCall = oudApi.saveTheseAlbumsForTheCurrentUser("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> saveAlbumsCall = oudApi.saveTheseAlbumsForTheCurrentUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(saveAlbumsCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -280,7 +280,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void unsaveTheseAlbumsForTheCurrentUser(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> unsaveAlbumsCall = oudApi.unsaveTheseAlbumsForTheCurrentUser("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> unsaveAlbumsCall = oudApi.unsaveTheseAlbumsForTheCurrentUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(unsaveAlbumsCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

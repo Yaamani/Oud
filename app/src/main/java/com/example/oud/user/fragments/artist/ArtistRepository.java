@@ -35,7 +35,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
 
         //OudApi oudApi = instantiateRetrofitOudApi();
-        Call<Artist> artistCall = oudApi.artist("Bearer "+ token, artistId);
+        Call<Artist> artistCall = oudApi.artist(token, artistId);
 
         addCall(artistCall).enqueue(new FailureSuccessHandledCallback<Artist>(this) {
             @Override
@@ -60,7 +60,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
         MutableLiveData<OudList<Album>> albumsMutableLiveData = new MutableLiveData<>();
 
         //OudApi oudApi = instantiateRetrofitOudApi();
-        Call<OudList<Album>> albumsCall = oudApi.artistAlbums("Bearer "+ token, artistId, offset, limit);
+        Call<OudList<Album>> albumsCall = oudApi.artistAlbums(token, artistId, offset, limit);
 
         addCall(albumsCall).enqueue(new FailureSuccessHandledCallback<OudList<Album>>(this) {
             @Override
@@ -78,7 +78,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
 
         //OudApi oudApi = instantiateRetrofitOudApi();
-        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists("Bearer "+ token, artistId);
+        Call<RelatedArtists> similarArtistsCall = oudApi.similarArtists(token, artistId);
 
         addCall(similarArtistsCall).enqueue(new FailureSuccessHandledCallback<RelatedArtists>(this) {
             @Override
@@ -101,7 +101,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
     public MutableLiveData<IsFoundResponse> areTracksLiked(String token, ArrayList<String> ids) {
         MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked("Bearer " + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
             @Override
             public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
@@ -120,7 +120,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
     public void addTheseTracksToLikedTracks(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> addTheseTracksToLikedTracksCall = oudApi.addTheseTracksToLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> addTheseTracksToLikedTracksCall = oudApi.addTheseTracksToLikedTracks(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(addTheseTracksToLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -135,7 +135,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
     public void removeTheseTracksFromLikedTracks(String token, ArrayList<String> ids) {
 
-        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks("Bearer" + token, OudUtils.commaSeparatedListQueryParameter(ids));
+        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(removeTheseTracksFromLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

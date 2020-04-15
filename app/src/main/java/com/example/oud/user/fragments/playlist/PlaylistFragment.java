@@ -31,6 +31,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.ArtistPreview;
@@ -150,7 +151,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
 
 
@@ -209,10 +211,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     " to pass the arguments to the fragment. Or you can use playlistFragment.setArguments(" + PlaylistFragment.class.getSimpleName() + ".myArgs()).");
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
-    }
+    }*/
 
     private void initializeUiStuff(View view) {
         mMotionLayout = view.findViewById(R.id.motion_layout_playlist);

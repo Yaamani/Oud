@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
@@ -123,7 +124,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         Log.i(TAG, "onViewCreated: ");
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageViewArtist = view.findViewById(R.id.img_artist);
@@ -251,10 +253,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         }
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
-    }
+    }*/
 
     private void handleData() {
         mViewModel.getArtistMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artist -> {
