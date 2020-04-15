@@ -153,9 +153,10 @@ public class ActualLoginFragment extends Fragment {
     }
     private void saveToken(View v , String token){
 
-        SharedPreferences prefs = v.getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences prefs = v.getContext().getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+
         SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
+        prefsEditor.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME,token);
         prefsEditor.apply();    //token saved in shared preferences
 
     }
