@@ -2,6 +2,7 @@ package com.example.oud;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -156,7 +157,7 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
                     if(response.body().toString().contains("\"token\":")){
                         Gson gson = new Gson();
                         LoginResponse loginResponse = gson.fromJson(response.body().toString(),LoginResponse.class);
-                        saveToken(loginResponse.getToken());
+                        OudUtils.saveUserData(getApplicationContext(),loginResponse.getToken(),loginResponse.getUser().get_id());
 
                         Intent i = new Intent(getActivity(), UserActivity.class);
                         i.putExtra(Constants.USER_ID_KEY, loginResponse.getUser().get_id());
@@ -208,14 +209,6 @@ public class ConnectWithOtherServicesDialogFragment extends DialogFragment {
 
     }
 
-    private void saveToken(String token){
-
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
-        prefsEditor.apply();    //token saved in shared preferences
-
-    }
 
 
 

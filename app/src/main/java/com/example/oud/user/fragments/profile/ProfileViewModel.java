@@ -1,11 +1,14 @@
 package com.example.oud.user.fragments.profile;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.oud.ConnectionStatusListener;
+
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
 import com.example.oud.api.UserPlaylistsResponse;
@@ -31,8 +34,8 @@ public class ProfileViewModel extends ViewModel implements ConnectionStatusListe
     }
 
 
-    public void updateProfileImage(String token, Uri image){
-        repository.setProfileImage(token,image);
+    public void updateProfileImage(String token, Uri image, Bitmap bitmap, Context context){
+        repository.setProfileImage(token,image,bitmap,context);
     }
 
 

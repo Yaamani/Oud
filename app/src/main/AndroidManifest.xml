@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
+
         <uses-library
             android:name="android.test.runner"
             android:required="false" />

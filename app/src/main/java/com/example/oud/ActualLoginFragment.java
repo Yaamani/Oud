@@ -125,7 +125,8 @@ public class ActualLoginFragment extends Fragment {
                 if (response.isSuccessful()) {
                     //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
-                    saveToken(view,token);
+                    String userId = response.body().getUser().get_id();
+                    OudUtils.saveUserData(view,token,userId);
                     Log.e("ActualLoginFragment",token);
                     Intent i = new Intent(getActivity(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
@@ -151,13 +152,6 @@ public class ActualLoginFragment extends Fragment {
 
 
     }
-    private void saveToken(View v , String token){
 
-        SharedPreferences prefs = v.getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
-        prefsEditor.apply();    //token saved in shared preferences
-
-    }
 
 }

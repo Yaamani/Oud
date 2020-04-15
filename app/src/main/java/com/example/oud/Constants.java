@@ -8,7 +8,7 @@ import static com.example.oud.connectionaware.ConnectionAwareRepository.*;
 public class Constants {
 
     public static String BASE_URL = "http://oud-zerobase.me/api/v1/";
-    public static final boolean MOCK = true;
+    public static final boolean MOCK = false;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
 
     public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING/* | RECEIVING | JSON_RESPONSE*//*0*/;
@@ -35,6 +35,9 @@ public class Constants {
     public static final String RENAME_FRAGMENT_TAG = "RENAME";
     public static final String OPTIONS_FRAGMENT_TAG = "OPTIONS";
     public static final String PROFILE_FRAGMENT_TAG = "PROFILE";
+    public static final String SHARED_PREFERENCES_FILE_NAME = "MyPreferences";
+    public static final String SHARED_PREFERENCES_TOKEN_NAME = "token";
+    public static final String SHARED_PREFERENCES_USER_ID_NAME = "USER_ID";
 
 
     public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";
