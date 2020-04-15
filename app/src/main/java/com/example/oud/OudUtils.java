@@ -34,8 +34,12 @@ public class OudUtils {
 
         SharedPreferences prefs = v.getContext().getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
 
+        token = "Bearer "+token;
+        
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME,token);
+        prefsEditor.putString(Constants.SHARED_PREFERENCES_USER_ID_NAME,userId);
+
         prefsEditor.apply();    //token saved in shared preferences
 
     }
@@ -43,8 +47,12 @@ public class OudUtils {
     public static void saveUserData(Context context, String token,String userId){
 
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+
+        token = "Bearer "+token;
+
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME,token);
+        prefsEditor.putString(Constants.SHARED_PREFERENCES_USER_ID_NAME,userId);
         prefsEditor.apply();    //token saved in shared preferences
 
     }
