@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
@@ -114,8 +115,8 @@ public class ProfileFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
         if(userId!=null) {
-            SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-            String token = prefs.getString("token","000000");
+
+            String token = OudUtils.getToken(getContext());
             mViewModel.getProfile(userId,token).observe(getViewLifecycleOwner(), new Observer<ProfilePreview>() {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {

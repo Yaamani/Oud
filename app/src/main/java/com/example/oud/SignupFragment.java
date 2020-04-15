@@ -221,7 +221,9 @@ public class SignupFragment extends Fragment {
                 if (response.isSuccessful()) {
 
                     String token = response.body().getToken();
-                    saveToken(v,token);
+                    String userId = response.body().getUser().get_id();
+                    OudUtils.saveUserData(v,token,userId);
+
                     Intent i = new Intent(getActivity(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
                     startActivity(i);
@@ -243,15 +245,6 @@ public class SignupFragment extends Fragment {
         });
 
 
-
-    }
-
-    private void saveToken(View v , String token){
-
-        SharedPreferences prefs = v.getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
-        prefsEditor.apply();    //token saved in shared preferences
 
     }
 
