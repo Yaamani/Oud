@@ -93,50 +93,59 @@ public class ProfileRepository  {
         Log.e("profile Repository","image  repo started");
 
 
-        File f = new File(context.getCacheDir(), "image.png");
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        File sd = context.getCacheDir();
+        File folder = new File(sd, "/myfolder/");
+        if (!folder.exists()) {
+            if (!folder.mkdir()) {
+                Log.e("ERROR", "Cannot create a directory!");
+            } else {
+                folder.mkdirs();
+            }
         }
 
-//Convert bitmap to byte array
+        File fileName = new File(folder,"mypic.jpg");
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-        FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(f);
+            FileOutputStream outputStream = new FileOutputStream(String.valueOf(fileName));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+            outputStream.close();
+            Log.e("profile Repository","image output stream");
+
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        try {
-            fos.write(bitmapdata);
+            Log.e("Profile Repository",e.getMessage());
+            Log.e("Profile Repository","first catch");
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        try {
-            fos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Profile Repository",e.getMessage());
+            Log.e("Profile Repository","second catch");
         }
 
 
-        RequestBody requestFile = RequestBody.create(f,MediaType.parse("multipart/form-data"));
+        Log.e("profile Repository", ("file size :"+Integer.parseInt(String.valueOf(fileName.length()/1024))));
 
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", f.getName(), requestFile);
+
+
+        RequestBody requestFile = RequestBody.create(fileName,MediaType.parse("multipart/form-data"));
+
+        //MultipartBody.Part body = MultipartBody.Part.createFormData("profileImage", fileName.getName(), requestFile);
+        MultipartBody.Part body = MultipartBody.Part.create(requestFile);
+
+
 
         Call<LoggedInUser> call = oudApi.updateUserPicture("Bearer "+token,body);
         call.enqueue(new FailureSuccessHandledCallback<LoggedInUser>(listener) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
-                if(response.isSuccessful())
+                if(response.isSuccessful()){
                     Log.e("profile Repository","image uploaded");
-                else
-                    Log.e("profile Repository",response.toString());
+                    Log.e("profile Repository","number of images "+response.body().getImages().length);
+                }
+                else{
+                    Log.e("profile Repository","image not successful");
+                    Log.e("profile Repository",response.message());
+                }
 
             }
 

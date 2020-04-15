@@ -65,7 +65,7 @@ public interface OudApi {
 
     @Multipart
     @PATCH("me/profilePicture")
-    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATION") String token,@Part MultipartBody.Part image);
+    Call<LoggedInUser> updateUserPicture(@Header("AUTHORIZATION") String token,@Part MultipartBody.Part profileImage);
 
     @GET("users/{user_id}/followers")//todo add when back end finished
     Call<FollowingOrFollowersResponse> getFollowers(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
