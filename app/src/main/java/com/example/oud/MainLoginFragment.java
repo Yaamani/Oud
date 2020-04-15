@@ -80,6 +80,7 @@ public class MainLoginFragment extends Fragment {
         homeTest.setOnClickListener(v1 -> {
             Intent i = new Intent(getActivity(), UserActivity.class);
             i.putExtra(Constants.USER_ID_KEY, "user0");
+            OudUtils.saveUserData(getContext(),"token","user0");
             startActivity(i);
         });
 
