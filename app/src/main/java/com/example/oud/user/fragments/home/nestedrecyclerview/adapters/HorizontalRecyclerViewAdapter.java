@@ -28,26 +28,26 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     private ArrayList<View.OnClickListener> clickListeners;
 
     private ArrayList<String> images;
-    //private ArrayList<Boolean> circularImages;
+    private ArrayList<Boolean> circularImages;
     private ArrayList<String> titles;
     private ArrayList<String> subtitles;
 
-    private boolean circularImages;
+    //private boolean circularImages;
 
     public HorizontalRecyclerViewAdapter(Context mContext,
                                          ArrayList<View.OnClickListener> clickListeners,
                                          ArrayList<String> images,
+                                         ArrayList<Boolean> circularImages,
                                          ArrayList<String> titles,
-                                         ArrayList<String> subtitles,
-                                         boolean circularImages) {
+                                         ArrayList<String> subtitles) {
         this.mContext = mContext;
 
         this.clickListeners = clickListeners;
+        this.circularImages = circularImages;
         this.images = images;
         this.titles = titles;
         this.subtitles = subtitles;
 
-        this.circularImages = circularImages;
     }
 
     @NonNull
@@ -68,7 +68,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
-        if (!circularImages)
+        if (!circularImages.get(position))
             Glide.with(mContext)
                     .load(images.get(position))
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -87,7 +87,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_title);
         holder.mTitle.setTag(titleTagPrefix + position);
         holder.mTitle.setText(titles.get(position));
-        if (circularImages) {
+        if (circularImages.get(position)) {
             holder.mTitle.setGravity(Gravity.CENTER);
         }
 
@@ -153,6 +153,10 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     public ArrayList<String> getImages() {
         return images;
+    }
+
+    public ArrayList<Boolean> getCircularImages() {
+        return circularImages;
     }
 
     public ArrayList<String> getTitles() {

@@ -287,6 +287,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
                 ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
                 ArrayList<String> images = new ArrayList<>();
+                ArrayList<Boolean> circularImages = new ArrayList<>();
                 ArrayList<String> titles = new ArrayList<>();
                 ArrayList<String> subtitles = new ArrayList<>();
 
@@ -296,11 +297,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                             R.id.nav_host_fragment,
                             artist.get_id()));
                     images.add(artist.getImages().get(0));
+                    circularImages.add(true);
                     titles.add(artist.getName());
                     subtitles.add("");
                 }
 
-                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, titles, subtitles, true);
+                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, circularImages, titles, subtitles);
                 mRecyclerViewSimilarArtists.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
 
                 mRecyclerViewSimilarArtists.setAdapter(mSimilarArtistsAdapter);

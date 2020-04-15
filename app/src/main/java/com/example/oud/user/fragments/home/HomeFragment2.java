@@ -1,6 +1,5 @@
 package com.example.oud.user.fragments.home;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
@@ -164,6 +162,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
                 NestedRecyclerViewHelper.Item _item = item;
                 liveData.observe(getViewLifecycleOwner(), o -> {
+                    boolean circularImage = false;
+
                     String title = "", image = "";
                     if (o instanceof Album) {
                         title = ((Album) o).getName();
@@ -186,6 +186,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                                         ((Playlist) o).getId()));
                     }
                     else if (o instanceof Artist) {
+                        circularImage = true;
                         title = ((Artist) o).getName();
                         image = ((Artist) o).getImages().get(0);
                         _item.setClickListener(v ->
@@ -195,7 +196,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                     }
 
                     _item.setTitle(title);
-                    _item.setImageUrl(image);
+                    _item.setImage(image, circularImage);
 
                 });
 
@@ -347,7 +348,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                 }
 
 
-                item.setImageUrl(playlist.getImage());
+                item.setImage(playlist.getImage(), false);
                 item.setTitle(playlist.getName());
                 item.setClickListener(v ->
                         PlaylistFragment.show(getActivity(),
