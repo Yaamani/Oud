@@ -62,6 +62,20 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
     }
 
 
+    public ConnectionAwareFragment(Class<ConnectionAwareViewM> viewModelClass,
+                                   @LayoutRes int layoutId,
+                                   ProgressBar progressBar,
+                                   @Nullable @IdRes Integer viewBlockUiId,
+                                   @Nullable @IdRes Integer swipeRefreshLayoutId) {
+        this.viewModelClass = viewModelClass;
+        this.layoutId = layoutId;
+        this.viewBlockUiId = viewBlockUiId;
+        this.swipeRefreshLayoutId = swipeRefreshLayoutId;
+
+        mProgressBar = progressBar;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,8 +84,8 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
         Log.i(TAG, "onCreateView: " + "Hello from ConnectionAwareFragment.");
 
-
-        mProgressBar = root.findViewById(progressBarId);
+        if(mProgressBar == null)
+            mProgressBar = root.findViewById(progressBarId);
 
         if (viewBlockUiId != null)
             mViewBlockUi = root.findViewById(viewBlockUiId);
