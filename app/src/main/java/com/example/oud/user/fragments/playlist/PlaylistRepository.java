@@ -13,9 +13,13 @@ import com.example.oud.api.Playlist;
 import com.example.oud.api.ReorderPlaylistPayload;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -125,8 +129,12 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     public void deleteTrack(String token, String playlistId, String trackId) {
 
-        RemovePlaylistTracksPayload removePlaylistTracksPayload = new RemovePlaylistTracksPayload(trackId);
-        Call removeTrackCall = oudApi.removePlaylistTracks(token, playlistId, removePlaylistTracksPayload);
+        // RemovePlaylistTracksPayload removePlaylistTracksPayload = new RemovePlaylistTracksPayload(trackId);
+
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(trackId);
+
+        Call removeTrackCall = oudApi.removePlaylistTracks(token, playlistId, OudUtils.commaSeparatedListQueryParameter(ids));
 
         addCall(removeTrackCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -282,6 +290,26 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         Call<ResponseBody> unsaveAlbumsCall = oudApi.unsaveTheseAlbumsForTheCurrentUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
         addCall(unsaveAlbumsCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
+    }
+
+    public void uploadPlaylistImage(String token, File file) {
+
+        RequestBody requestFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
+
+        //MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("profileImage", fileName.getName(), requestFile);
+        MultipartBody.Part multipartBody = MultipartBody.Part.create(requestFile);
+
+        Call<ResponseBody> uploadImageCall = oudApi.uploadPlaylistImage(token, multipartBody);
+        addCall(uploadImageCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 super.onResponse(call, response);

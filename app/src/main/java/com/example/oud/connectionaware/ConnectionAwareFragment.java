@@ -149,7 +149,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
     /**
      * Call this if you want the user to stop interacting with the app. It'll show the progress bar and the view that blocks the ui input.
      */
-    protected void blockUiAndWait() {
+    public void blockUiAndWait() {
         if (mViewBlockUi != null)
             mViewBlockUi.setVisibility(View.VISIBLE);
         showProgressBar();

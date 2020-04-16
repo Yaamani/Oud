@@ -140,6 +140,10 @@ public interface OudApi {
     @DELETE("playlists/{playlistId}/followers")
     Call<ResponseBody> unfollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
 
+    @Multipart
+    @PUT("playlists/{playlist_id}/images")
+    Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Part MultipartBody.Part image);
+
     @GET("me/albums/contains")
     Call<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
 
