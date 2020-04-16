@@ -39,6 +39,9 @@ import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.Horizo
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.Fragment;
+import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +99,14 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         return artistFragment;
     }
 
+    /**
+     *
+     * @param activity Most likely you'll call {@link #getActivity()} if you're in other {@link Fragment}.
+     *                 Or <code>this</code> if you're inside the activity itself.
+     * @param containerId The {@link FragmentContainerView} that you want the layout of this fragment to be inflated in.
+     * @param artistId
+     * @param userId The id of the logged in user.
+     */
     public static void show(FragmentActivity activity, @IdRes int containerId, String artistId, String userId) {
         FragmentManager manager = activity.getSupportFragmentManager();
         ArtistFragment artistFragment/* = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG)*/;
@@ -113,6 +124,13 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         transaction.commit();
     }
 
+
+    /**
+     * When creating a new instance, this method returns the {@link Bundle} object that {@link ArtistFragment} needs.
+     * @param artistId
+     * @param userId The id of the logged in user.
+     * @return
+     */
     public static Bundle myArgs(String artistId, String userId) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ARTIST_ID_KEY, artistId);
@@ -243,7 +261,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     }
 
 
-
+    /**
+     * Assigns the values coming with {@link #getArguments()} to their corresponding variables.
+     */
     private void handleArgs() {
         Bundle args = getArguments();
         if (args != null) {
@@ -262,6 +282,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         token = prefs.getString("token","000000");
     }*/
 
+    /**
+     * Observes all the {@link MutableLiveData} objects inside {@link ArtistViewModel}.
+     */
     private void handleData() {
         mViewModel.getArtistMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artist -> {
 
@@ -296,6 +319,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         handleSimilarArtists();
     }
 
+    /**
+     * Handles the data and the logic behind following an unfollowing the artist.
+     */
     private void handleFollowArtist() {
         mViewModel.getDoesUserFollowThisArtist(token, artistId).observe(getViewLifecycleOwner(), booleanIdsResponse -> {
 
@@ -326,6 +352,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         });
     }
 
+    /**
+     * Handles the data and the logic behind this artist's popular songs.
+     */
     private void handlePopularSongs(Artist artist) {
         ArrayList<Track> tracks = artist.getPopularSongs();
 
@@ -379,6 +408,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         });
     }
 
+    /**
+     * The {@link OnClickListener} when the user likes or dislikes a popular song.
+     */
     private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
         Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
 
@@ -402,9 +434,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     };
 
+    /**
+     * Handles the data and the logic behind the albums of this artist.
+     */
     private void handleAlbums() {
-        // TODO: Observe the loaded albums first.
-        // TODO: Observe last set of loaded albums and add the newly fetched ones to the loaded albums if they weren't already added.
 
         if (mViewModel.getLoadedAlbums().size() < Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT)
             loadMoreAlbums();
@@ -414,6 +447,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     }
 
+    /**
+     * Observes lastSetOfLoadedAlbums in {@link ArtistViewModel} and adds the newly loaded albums to the loaded ones.
+     */
     private void loadMoreAlbums() {
         mViewModel.loadMoreAlbums(token, artistId).observe(getViewLifecycleOwner(), albumOudList -> {
 
@@ -434,6 +470,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         });
     }
 
+    /**
+     * Observes loadedAlbums in {@link ArtistViewModel}. and populates {@link #mAlbumsAdapter}.
+     */
     private void observeLoadedAlbums() {
 
         ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
@@ -520,6 +559,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         }
     }
 
+    /**
+     * Observes similarArtistsMutableLiveData in {@link ArtistViewModel}. and populates {@link #mSimilarArtistsAdapter}.
+     */
     private void handleSimilarArtists() {
         mViewModel.getSimilarArtistsMutableLiveData(token, artistId).observe(getViewLifecycleOwner(), artists -> {
 
@@ -559,20 +601,32 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         });
     }
 
+    /**
+     * Undo the ui change when liking a track.
+     */
     private void undoLikingTrack() {
         boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
         trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
         trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
     }
 
+    /**
+     * Indicate that this artist is being followed by the logged in user.
+     */
     private void uiFollow() {
         mImageButtonFollowArtist.setColorFilter(getResources().getColor(R.color.colorPrimary));
     }
 
+    /**
+     * Indicate that this artist isn't followed by the logged in user.
+     */
     private void uiUnFollow() {
         mImageButtonFollowArtist.setColorFilter(Color.WHITE);
     }
 
+    /**
+     * When the currentOperations fails, undo the change happened in the ui.
+     */
     @Override
     public void onConnectionFailure() {
         super.onConnectionFailure();
