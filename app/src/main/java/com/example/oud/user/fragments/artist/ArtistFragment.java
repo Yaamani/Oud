@@ -60,6 +60,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
     private TextView mTextViewArtistName;
     private ImageButton mImageButtonFollowArtist;
+    public int currentFollowColor;
     private ImageView mImageViewArtist;
     private ImageView mImageViewArtistBlurred;
     private View mViewImageGradientTint;
@@ -199,6 +200,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         handleData();
 
+        mMotionLayout.transitionToEnd();
+
     }
 
     @Override
@@ -227,20 +230,20 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         Log.i(TAG, "onResume: ");
 
         // Motion layout bug fix.
-        if (paused) {
+        // if (paused) {
 
             //((ViewGroup)(getView())).removeAllViews();
             //onCreateView(LayoutInflater.from(getContext()), container, null);
 
             /*getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, newInstance(artistId), Constants.ARTIST_FRAGMENT_TAG).commit();*/
-        }
+        // }
 
 
-        paused = false;
+        // paused = false;
     }
 
-    private boolean paused = false;
+    // private boolean paused = false;
 
     @Override
     public void onPause() {
@@ -250,7 +253,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         /*((UserActivity) getActivity()).setArtistFragPaused(true);
         ((UserActivity) getActivity()).setArtistFragPausedArtistId(artistId);*/
 
-        paused = true;
+        // paused = true;
 
         /*getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -614,14 +617,16 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
      * Indicate that this artist is being followed by the logged in user.
      */
     private void uiFollow() {
-        mImageButtonFollowArtist.setColorFilter(getResources().getColor(R.color.colorPrimary));
+        currentFollowColor = getResources().getColor(R.color.colorPrimary);
+        mImageButtonFollowArtist.setColorFilter(currentFollowColor);
     }
 
     /**
      * Indicate that this artist isn't followed by the logged in user.
      */
     private void uiUnFollow() {
-        mImageButtonFollowArtist.setColorFilter(Color.WHITE);
+        currentFollowColor = Color.WHITE;
+        mImageButtonFollowArtist.setColorFilter(currentFollowColor);
     }
 
     /**
@@ -650,6 +655,24 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             }
 
         mViewModel.setCurrentOperation(null);
+    }
+
+    /**
+     * For testing only.
+     * @return
+     */
+    @Deprecated
+    public TrackListRecyclerViewAdapter getTrackListRecyclerViewAdapter() {
+        return trackListRecyclerViewAdapter;
+    }
+
+    /**
+     * For testing only.
+     * @return
+     */
+    @Deprecated
+    public MotionLayout getmMotionLayout() {
+        return mMotionLayout;
     }
 
     @Override

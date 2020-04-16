@@ -1,5 +1,6 @@
-package com.example.oud;
+package com.example.oud.user.home;
 
+import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Category;
 import com.example.oud.api.OudApi;

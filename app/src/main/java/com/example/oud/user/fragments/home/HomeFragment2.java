@@ -391,4 +391,13 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         handleCategories();
 
     }
+
+    /**
+     * For tests only.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

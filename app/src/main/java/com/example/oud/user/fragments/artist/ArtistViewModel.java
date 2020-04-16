@@ -16,6 +16,8 @@ import androidx.lifecycle.MutableLiveData;
 
 public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> {
 
+    private static final String TAG = ArtistViewModel.class.getSimpleName();
+
     public enum UserArtistOperation {
         ADD_TRACK_TO_LIKED_TRACKS,
         REMOVE_TRACK_FROM_LIKED_TRACKS,
@@ -57,7 +59,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * @param artistId The id of the artist you wanna get the info for.
      * @return The {@link MutableLiveData} that holds all the artist info.
      */
-    public MutableLiveData<Artist> getArtistMutableLiveData(String token, String artistId) {
+        public MutableLiveData<Artist> getArtistMutableLiveData(String token, String artistId) {
         if (artistMutableLiveData == null) {
             artistMutableLiveData = mRepo.fetchArtist(token, artistId);
         } else {
@@ -243,6 +245,9 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * When the {@link #currentOperation} succeeds, update the {@link MutableLiveData} accordingly to match that on the server.
      */
     private void updateLiveDataUponUnFollowingArtist() {
+        /*System.out.println(doesUserFollowThisArtist + ", ");
+        System.out.println(doesUserFollowThisArtist.getValue() + ", ");
+        System.out.println(doesUserFollowThisArtist.getValue().getIds() + ", ");*/
         doesUserFollowThisArtist.getValue().getIds().set(0, false);
     }
 

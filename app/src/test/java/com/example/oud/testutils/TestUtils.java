@@ -71,6 +71,16 @@ public class TestUtils {
         return oudApi;
     }
 
+    /*public static OudApi instantiateOudApiConnectionFailure() {
+        OudApi oudApi = new Retrofit.Builder()
+                .baseUrl("http://حرام عليكم ..")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(OudApi.class);
+
+        return oudApi;
+    }*/
+
     public static void sleep(int iterationCount, int millisForEachIteration) {
         for (int i = 0; i < iterationCount; i++) {
             try {

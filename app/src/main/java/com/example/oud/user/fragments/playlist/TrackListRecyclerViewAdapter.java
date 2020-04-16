@@ -90,6 +90,9 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             //holder.mHeart.setImageResource(R.drawable.ic_heart_selected);
             holder.mHeart.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
 
+        String heartTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_heart);
+        holder.mHeart.setTag(heartTagPrefix + position);
+
         //holder.mHeart.setOnClickListener(mHeartClickListeners.get(position));
 
     }

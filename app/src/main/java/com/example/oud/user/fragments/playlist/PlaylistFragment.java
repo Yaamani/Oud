@@ -68,7 +68,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     public static final int RESULT_LOAD_IMG = 4331;
 
     private String token;
-    private String userId;
+    private String userId = "user0";
     private Constants.PlaylistFragmentType type;
     private String playlistOrAlbumId;
 
@@ -919,5 +919,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         super.onTryingToReconnect();
 
         loadData(getView());
+    }
+
+    /**
+     * For tests only.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

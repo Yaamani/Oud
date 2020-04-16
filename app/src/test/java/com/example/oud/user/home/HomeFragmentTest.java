@@ -1,5 +1,7 @@
-package com.example.oud;
+package com.example.oud.user.home;
 
+import com.example.oud.Constants;
+import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Category2;
@@ -15,6 +17,7 @@ import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -26,11 +29,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 import okhttp3.mockwebserver.MockWebServer;
 
-import static androidx.test.espresso.action.ViewActions.*;
 import static org.robolectric.Shadows.shadowOf;
+import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
@@ -70,7 +74,7 @@ public class HomeFragmentTest {
 
         activityScenario.onActivity(activity -> {
 
-            activity.setUserId("ID");
+            activity.setUserId("user0");
 
             //FragmentScenario scenario = FragmentScenario.launchInContainer(HomeFragment.class);
             //scenario.moveToState(Lifecycle.State.CREATED);
@@ -112,7 +116,7 @@ public class HomeFragmentTest {
         System.out.println("Recently played : ");
 
 
-        onView(withId(R.id.recycler_view_home))
+        onView(ViewMatchers.withId(R.id.recycler_view_home))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, ViewActions.scrollTo()));
 
         /*onView(withRecyclerView(R.id.recycler_view_home)
@@ -355,11 +359,18 @@ public class HomeFragmentTest {
 
         //HomeRepository2.getInstance().setBaseUrl(mockWebServer.url("/").toString()); // The test fails because this line doesn't get executed before fetching for the data.
 
+
+
         scenario.onActivity(activity -> {
 
-            activity.setUserId("ID");
 
             TestUtils.sleep(2, 200);
+
+            activity.setUserId("user0");
+
+            FragmentManager manager = activity.getSupportFragmentManager();
+            HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
+            homeFragment.setUserId("user0");
 
             // when
             String recyclerViewItemOuterTagPrefix =
@@ -371,12 +382,10 @@ public class HomeFragmentTest {
                     .perform(click());
 
             // then
-            FragmentManager manager = activity.getSupportFragmentManager();
+
             PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
-            HomeFragment2 homeFragment = (HomeFragment2) manager.findFragmentByTag(Constants.HOME_FRAGMENT_TAG);
 
             assertThat(playlistFragment).isNotNull();
-            //assertThat(homeFragment).isNull();
 
         });
     }

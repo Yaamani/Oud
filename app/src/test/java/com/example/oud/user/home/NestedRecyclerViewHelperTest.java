@@ -1,7 +1,8 @@
-package com.example.oud;
+package com.example.oud.user.home;
 
 import android.content.Context;
 
+import com.example.oud.Constants;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
