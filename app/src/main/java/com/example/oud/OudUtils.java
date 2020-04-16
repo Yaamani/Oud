@@ -35,7 +35,7 @@ public class OudUtils {
         SharedPreferences prefs = v.getContext().getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
 
         token = "Bearer "+token;
-        
+
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME,token);
         prefsEditor.putString(Constants.SHARED_PREFERENCES_USER_ID_NAME,userId);

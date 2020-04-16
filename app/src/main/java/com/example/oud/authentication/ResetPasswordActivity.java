@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.authentication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oud.Constants;
+import com.example.oud.OudUtils;
+import com.example.oud.R;
 import com.example.oud.api.LoginResponse;
 import com.example.oud.api.LoginUserInfo;
 import com.example.oud.api.OudApi;

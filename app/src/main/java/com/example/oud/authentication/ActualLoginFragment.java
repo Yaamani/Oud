@@ -1,9 +1,7 @@
-package com.example.oud;
+package com.example.oud.authentication;
 
 import android.content.Intent;
 
-import android.content.SharedPreferences;
-import android.net.ParseException;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,14 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.oud.Constants;
+import com.example.oud.OudUtils;
+import com.example.oud.R;
 import com.example.oud.api.*;
 import com.example.oud.user.UserActivity;
 import com.google.gson.Gson;
 
-import android.telephony.TelephonyManager;
 
-
-import android.content.Context;
 import android.widget.TextView;
 
 import retrofit2.Call;
@@ -31,8 +29,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class ActualLoginFragment extends Fragment {
