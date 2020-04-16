@@ -3,12 +3,11 @@ package com.example.oud.user.fragments.artist;
 import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
+import com.example.oud.api.BooleanIdsResponse;
 import com.example.oud.api.IsFoundResponse;
 import com.example.oud.api.OudList;
 import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
-import com.example.oud.user.UserActivity;
-import com.example.oud.user.fragments.playlist.PlaylistViewModel;
 
 import java.util.ArrayList;
 
@@ -18,13 +17,16 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
 
     public enum UserArtistOperation {
         ADD_TRACK_TO_LIKED_TRACKS,
-        REMOVE_TRACK_FROM_LIKED_TRACKS
+        REMOVE_TRACK_FROM_LIKED_TRACKS,
+        FOLLOW_ARTIST,
+        UNFOLLOW_ARTIST
     }
 
     private UserArtistOperation currentOperation = null;
 
 
     private MutableLiveData<Artist> artistMutableLiveData;
+    private MutableLiveData<BooleanIdsResponse> doesUserFollowThisArtist;
 
     private MutableLiveData<OudList<Album>> lastSetOfLoadedAlbums;
     private ArrayList<MutableLiveData<Album>> loadedAlbums = new ArrayList<>();
@@ -43,6 +45,12 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
         super(ArtistRepository.getInstance(), Constants.YAMANI_MOCK_BASE_URL);
     }
 
+    /**
+     *
+     * @param token
+     * @param artistId
+     * @return
+     */
     public MutableLiveData<Artist> getArtistMutableLiveData(String token, String artistId) {
         if (artistMutableLiveData == null) {
             artistMutableLiveData = mRepo.fetchArtist(token, artistId);
@@ -57,6 +65,35 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
             }
         }
         return artistMutableLiveData;
+    }
+
+    public MutableLiveData<BooleanIdsResponse> getDoesUserFollowThisArtist(String token, String artistId) {
+        if (doesUserFollowThisArtist == null) {
+            ArrayList<String> ids = new ArrayList<>();
+            ids.add(artistId);
+            doesUserFollowThisArtist = mRepo.doesUserFollowTheseArtistsOrUsers(token, Constants.API_ARTIST, ids);
+        }
+        return doesUserFollowThisArtist;
+    }
+
+    public void followThisArtist(String token, String artistId) {
+        if (doesUserFollowThisArtist == null) return;
+
+        setCurrentOperation(UserArtistOperation.FOLLOW_ARTIST);
+
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(artistId);
+        mRepo.followArtistsOrUsers(token, Constants.API_ARTIST, ids);
+    }
+
+    public void unfollowThisArtist(String token, String artistId) {
+        if (doesUserFollowThisArtist == null) return;
+
+        setCurrentOperation(UserArtistOperation.UNFOLLOW_ARTIST);
+
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add(artistId);
+        mRepo.unfollowArtistsOrUsers(token, Constants.API_ARTIST, ids);
     }
 
     public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
@@ -136,6 +173,14 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
         areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
     }
 
+    private void updateLiveDataUponFollowingArtist() {
+        doesUserFollowThisArtist.getValue().getIds().set(0, true);
+    }
+
+    private void updateLiveDataUponUnFollowingArtist() {
+        doesUserFollowThisArtist.getValue().getIds().set(0, false);
+    }
+
     @Override
     public void onConnectionSuccess() {
         super.onConnectionSuccess();
@@ -145,6 +190,10 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
                 case ADD_TRACK_TO_LIKED_TRACKS: updateLiveDataUponAddingTrackToLikedTracks();
                     break;
                 case REMOVE_TRACK_FROM_LIKED_TRACKS: updateLiveDataUponRemovingTrackFromLikedTracks();
+                    break;
+                case FOLLOW_ARTIST: updateLiveDataUponFollowingArtist();
+                    break;
+                case UNFOLLOW_ARTIST: updateLiveDataUponUnFollowingArtist();
                     break;
             }
 
@@ -157,6 +206,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     @Override
     public void clearData() {
         artistMutableLiveData = null;
+        doesUserFollowThisArtist = null;
 
         similarArtistsMutableLiveData = null;
 

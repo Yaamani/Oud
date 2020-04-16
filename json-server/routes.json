@@ -6,19 +6,23 @@
     "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
     "/browse/categories?limit=:limit": "/categories_list",
     
-    "/me/tracks/contains*": "/are_these_tracks_liked", 
-
-    "/artists/*/albums?offset=0&limit=7": "/artist_albums",
-    "/artists/*/albums?offset=7&limit=7": "/artist_more_albums", 
-    
-    "/artists/:id/related-artists": "/related_artists", 
+    "/me/tracks/contains*": "/are_these_tracks_liked",    
 
     "/playlists/playlist1/followers/contains*": "/user_doesn't_follow_playlist", 
     "/playlists/*/followers/contains*": "/user_follows_playlist",
 
     "/me/albums/contains?ids=album0": "/this_album_isn't_saved", 
     "/me/albums/contains*": "/this_album_is_saved", 
+
+    "/artists/*/albums?offset=0&limit=7": "/artist_albums",
+    "/artists/*/albums?offset=7&limit=7": "/artist_more_albums", 
     
+    "/artists/:id/related-artists": "/related_artists", 
+
+    "/me/following/contains?type=artist&ids=artist10": "/user_doesn't_follow_this_artist", 
+    "/me/following/contains?type=artist*": "/user_follows_this_artist", 
+
+
 
     "/users/1":"/user1",
 

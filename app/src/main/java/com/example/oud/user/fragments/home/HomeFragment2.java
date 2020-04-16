@@ -1,6 +1,5 @@
 package com.example.oud.user.fragments.home;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -22,11 +21,10 @@ import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.oud.api.Context.CONTEXT_UNKNOWN ;
-import static com.example.oud.api.Context.CONTEXT_ALBUM   ;
-import static com.example.oud.api.Context.CONTEXT_ARTIST  ;
-import static com.example.oud.api.Context.CONTEXT_PLAYLIST;
+import static com.example.oud.Constants.API_UNKNOWN;
+import static com.example.oud.Constants.API_ALBUM;
+import static com.example.oud.Constants.API_ARTIST;
+import static com.example.oud.Constants.API_PLAYLIST;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -117,20 +115,20 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
             for (RecentlyPlayedTrack2 recentlyPlayedTrack : recentlyPlayedTracks2.getItems()) {
                 com.example.oud.api.Context context = recentlyPlayedTrack.getContext();
 
-                if (context.getType().equals(CONTEXT_UNKNOWN)) {
+                if (context.getType().equals(API_UNKNOWN)) {
                     continue;
                 }
 
                 if (!hasAlreadyBeenFetchedRecentlyPlayed(recentlyPlayedTrack)) {
                     // fetch
                     switch (context.getType()) {
-                        case CONTEXT_ALBUM:
+                        case API_ALBUM:
                             mViewModel.addRecentlyPlayedAlbum(token, context.getId(), i);
                             break;
-                        case CONTEXT_ARTIST:
+                        case API_ARTIST:
                             mViewModel.addRecentlyPlayedArtist(token, context.getId(), i);
                             break;
-                        case CONTEXT_PLAYLIST:
+                        case API_PLAYLIST:
                             mViewModel.addRecentlyPlayedPlaylist(token, context.getId(), i);
                             break;
                     }
@@ -216,7 +214,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         for (int i = 0; i < recentlyPlayedTracks2.getItems().size(); i++) {
             com.example.oud.api.Context context = recentlyPlayedTracks2.getItems().get(i).getContext();
 
-            if (!context.getType().equals(CONTEXT_UNKNOWN))
+            if (!context.getType().equals(API_UNKNOWN))
                 break;
 
             if (i == recentlyPlayedTracks2.getItems().size() - 1) {

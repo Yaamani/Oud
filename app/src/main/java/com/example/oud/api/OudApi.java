@@ -117,9 +117,9 @@ public interface OudApi {
     @PUT("playlists/{playlistId}")
     Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
 
-    //@DELETE("playlists/{playlistId}/tracks")
-    @HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
-    Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
+    @DELETE("playlists/{playlistId}/tracks")
+    //@HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
+    Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Query(value = "ids", encoded = true) String ids);
 
     @GET("me/tracks/contains")
     Call<IsFoundResponse> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
@@ -161,4 +161,13 @@ public interface OudApi {
 
     @GET("artists/{artistId}/related-artists")
     Call<RelatedArtists> similarArtists(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
+
+    @GET("me/following/contains")
+    Call<BooleanIdsResponse> doesCurrentUserFollowsArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
+
+    @PUT("me/following")
+    Call<ResponseBody> followArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
+
+    @DELETE("me/following")
+    Call<ResponseBody> unfollowArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
 }

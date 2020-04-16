@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.artist;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -18,6 +19,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private MotionLayout mMotionLayout;
 
     private TextView mTextViewArtistName;
+    private ImageButton mImageButtonFollowArtist;
     private ImageView mImageViewArtist;
     private ImageView mImageViewArtistBlurred;
     private View mViewImageGradientTint;
@@ -128,6 +131,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         token = OudUtils.getToken(getContext());
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
+        mImageButtonFollowArtist = view.findViewById(R.id.btn_artist_follow);
         mImageViewArtist = view.findViewById(R.id.img_artist);
         mImageViewArtistBlurred = view.findViewById(R.id.img_artist_blurred);
         mViewImageGradientTint = view.findViewById(R.id.view_artist_img_tint);
@@ -285,9 +289,41 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         });
 
+        handleFollowArtist();
+
         handleAlbums();
 
         handleSimilarArtists();
+    }
+
+    private void handleFollowArtist() {
+        mViewModel.getDoesUserFollowThisArtist(token, artistId).observe(getViewLifecycleOwner(), booleanIdsResponse -> {
+
+            boolean doesCurrentUserFollowArtist = booleanIdsResponse.getIds().get(0);
+            if (doesCurrentUserFollowArtist) {
+                mImageButtonFollowArtist.setVisibility(View.VISIBLE);
+                uiFollow();
+            } else {
+                mImageButtonFollowArtist.setVisibility(View.VISIBLE);
+                uiUnFollow();
+            }
+
+            mImageButtonFollowArtist.setOnClickListener(v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                if (mViewModel.getDoesUserFollowThisArtist(token, artistId).getValue().getIds().get(0)) {
+                    mViewModel.unfollowThisArtist(token, artistId);
+                    uiUnFollow();
+                } else {
+                    mViewModel.followThisArtist(token, artistId);
+                    uiFollow();
+                }
+
+                blockUiAndWait();
+            });
+
+        });
     }
 
     private void handlePopularSongs(Artist artist) {
@@ -529,6 +565,14 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
     }
 
+    private void uiFollow() {
+        mImageButtonFollowArtist.setColorFilter(getResources().getColor(R.color.colorPrimary));
+    }
+
+    private void uiUnFollow() {
+        mImageButtonFollowArtist.setColorFilter(Color.WHITE);
+    }
+
     @Override
     public void onConnectionFailure() {
         super.onConnectionFailure();
@@ -541,6 +585,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 case REMOVE_TRACK_FROM_LIKED_TRACKS:
                 case ADD_TRACK_TO_LIKED_TRACKS:
                     undoLikingTrack();
+                    break;
+                case FOLLOW_ARTIST:
+                    uiUnFollow();
+                    break;
+                case UNFOLLOW_ARTIST:
+                    uiFollow();
                     break;
 
             }

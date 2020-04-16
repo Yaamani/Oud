@@ -6894,6 +6894,18 @@
     "IsFound": [
       false
     ]
+  }, 
+
+  "user_follows_this_artist": {
+    "ids": [
+      true
+    ]
+  }, 
+
+  "user_doesn't_follow_this_artist": {
+    "ids": [
+      false
+    ]
   }
 
   

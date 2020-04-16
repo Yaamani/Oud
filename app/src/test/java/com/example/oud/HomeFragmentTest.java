@@ -15,7 +15,6 @@ import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -29,10 +28,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.platform.app.InstrumentationRegistry;
 import okhttp3.mockwebserver.MockWebServer;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.os.Looper.getMainLooper;
 import static androidx.test.espresso.action.ViewActions.*;
 import static org.robolectric.Shadows.shadowOf;
 import static androidx.test.espresso.Espresso.*;
@@ -203,7 +199,7 @@ public class HomeFragmentTest {
     private String getCurrentContextName(Context current) {
         String currentName = null;
 
-        if (current.getType().equals(Context.CONTEXT_ALBUM)) {
+        if (current.getType().equals(Constants.API_ALBUM)) {
 
             try {
                 Album currentAlbum = oudApi.album("token", current.getId()).execute().body();
@@ -212,14 +208,14 @@ public class HomeFragmentTest {
                 e.printStackTrace();
             }
 
-        } else if (current.getType().equals(Context.CONTEXT_ARTIST)) {
+        } else if (current.getType().equals(Constants.API_ARTIST)) {
             try {
                 Artist currentArtist = oudApi.artist("token", current.getId()).execute().body();
                 currentName = currentArtist.getName();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (current.getType().equals(Context.CONTEXT_PLAYLIST)) {
+        } else if (current.getType().equals(Constants.API_PLAYLIST)) {
             try {
                 Playlist currentPlaylist = oudApi.playlist("token", current.getId()).execute().body();
                 currentName = currentPlaylist.getName();
