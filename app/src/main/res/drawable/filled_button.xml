@@ -12,10 +12,7 @@
         android:right="0dp"
         android:bottom="0dp"
         />
-    <size
-        android:width="170dp"
-        android:height="43dp"
-        />
+
     <stroke
         android:width="0dp"
         android:color="#878787"

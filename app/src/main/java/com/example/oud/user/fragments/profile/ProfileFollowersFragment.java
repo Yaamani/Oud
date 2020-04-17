@@ -103,7 +103,7 @@ public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFol
 
     private void setRecyclerView(){
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followersNames,followersImageUrls,followersIds,followersTypes);
+        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followersNames,followersImageUrls,followersIds,followersTypes,getViewLifecycleOwner());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

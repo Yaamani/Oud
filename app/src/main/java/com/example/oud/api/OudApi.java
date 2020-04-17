@@ -172,5 +172,13 @@ public interface OudApi {
     @GET("me/following/contains")
     Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
 
+    @GET("playlists/{playlistId}/followers/contains")
+    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
+
+    @PUT("playlists/{playlistId}/followers")
+    Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
+
+    @DELETE("playlists/{playlistId}/followers")
+    Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId);
 
 }

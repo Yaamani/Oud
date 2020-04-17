@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.UserOrArtistPreview;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
@@ -66,6 +67,36 @@ public class ProfileFollowingViewModel extends ConnectionAwareViewModel<ProfileF
         mRepo.loadMoreUserFollowedUsers(userId,followedUsers.getValue().size()-1,followedUsers);
     }
 
+    public void followUser(String token, String userId,ConnectionStatusListener connectionStatusListener){
+        mRepo.followUser(token,userId,connectionStatusListener);
+    }
+
+    public void unFollowUser(String token, String userId,ConnectionStatusListener connectionStatusListener){
+        mRepo.unFollowUser(token,userId,connectionStatusListener);
+    }
+
+
+    public void followArtist(String token, String userId,ConnectionStatusListener connectionStatusListener){
+        mRepo.followArtist(token,userId,connectionStatusListener);
+    }
+
+    public void unFollowArtist(String token, String userId,ConnectionStatusListener connectionStatusListener){
+        mRepo.unFollowArtist(token,userId,connectionStatusListener);
+    }
+
+    public MutableLiveData<Boolean> checkIfIFollowThisUser(String token,String userId){
+        MutableLiveData<Boolean> iFollowThisUser= new MutableLiveData<>();
+        mRepo.checkIfIFollowThisUser(token,userId,iFollowThisUser);
+
+        return iFollowThisUser;
+    }
+
+    public MutableLiveData<Boolean> checkIfIFollowThisArtist(String token,String userId){
+        MutableLiveData<Boolean> iFollowThisUser= new MutableLiveData<>();
+        mRepo.checkIfIFollowThisArtist(token,userId,iFollowThisUser);
+
+        return iFollowThisUser;
+    }
 
 
 

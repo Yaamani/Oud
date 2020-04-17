@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.UserOrArtistPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
@@ -33,12 +34,14 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
     private ArrayList<String> followedArtistsImageUrls = new ArrayList<>();
     private ArrayList<String> followedArtistsIds = new ArrayList<>();
     private ArrayList<String> followedArtistsTypes = new ArrayList<>();
+    private ArrayList<Boolean> isFollowedArtists = new ArrayList<>();
 
 
     private ArrayList<String> followedUsersNames = new ArrayList<>();
     private ArrayList<String> followedUsersImageUrls = new ArrayList<>();
     private ArrayList<String> followedUsersIds = new ArrayList<>();
     private ArrayList<String> followedUsersTypes = new ArrayList<>();
+    private ArrayList<Boolean> isFollowedUser = new ArrayList<>();
 
 
 
@@ -178,11 +181,12 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
         followedArtistsAndUsersTypes.addAll(followedUsersTypes);
 
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),
+
+        ProfileFollowingRecyclerViewAdapter adapter = new ProfileFollowingRecyclerViewAdapter(getContext(),
                 followedArtistsAndUsersNames,
                 followedArtistsAndUsersImageUrls,
                 followedArtistsAndUsersIds,
-                followedArtistsAndUsersTypes);
+                followedArtistsAndUsersTypes,getViewLifecycleOwner());
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

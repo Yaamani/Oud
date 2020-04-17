@@ -125,7 +125,7 @@ public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePla
     private void setRecyclerView(){
 
 
-        adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds,userId);
+        adapter = new ProfilePlaylistRecyclerViewAdapter(getContext(), playlistNames,playlistImageUrls,playlistIds,userId,getViewLifecycleOwner());
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
