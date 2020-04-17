@@ -30,10 +30,11 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     private Context context;
 
 
-    public ProfileFollowersRecyclerViewAdapter( Context context ,ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds) {
+    public ProfileFollowersRecyclerViewAdapter( Context context ,ArrayList<String> followerNames, ArrayList<String> followerImagesUrls, ArrayList<String> followerIds,ArrayList<String> followerTypes) {
         this.followerNames = followerNames;
         this.followerImagesUrls = followerImagesUrls;
         this.followerIds = followerIds;
+        this.followerTypes = followerTypes;
         this.context = context;
     }
 

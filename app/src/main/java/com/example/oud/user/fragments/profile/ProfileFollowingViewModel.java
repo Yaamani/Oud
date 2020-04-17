@@ -47,7 +47,7 @@ public class ProfileFollowingViewModel extends ConnectionAwareViewModel<ProfileF
 
     public MutableLiveData<List<UserOrArtistPreview>> getUserFollowedUsers(String userId){
         MutableUserOrArtistWithTotal result;
-        if(followedArtists == null){
+        if(followedUsers == null){
             result = mRepo.loadUserFollowedUsers(userId);
             followedUsers = result.getUserOrArtistList();
             totalNumberOfFollowedUsers = result.getTotal();
