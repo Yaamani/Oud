@@ -3,31 +3,36 @@ package com.example.oud.user.fragments.profile;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.ContactsContract;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.oud.ConnectionStatusListener;
 
+import com.example.oud.Constants;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
 import com.example.oud.api.UserPlaylistsResponse;
+import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProfileViewModel extends ViewModel implements ConnectionStatusListener {
+public class ProfileViewModel extends ConnectionAwareViewModel<ProfileRepository> {
 
-    private ProfileRepository repository;
-    private MutableLiveData<Boolean> connectionSuccessful = new MutableLiveData<>();
+    public ProfileViewModel(){
+        super(new ProfileRepository(), Constants.YAMANI_MOCK_BASE_URL);
+
+    }
     private MutableLiveData<ProfilePreview> profile;
-    private MutableLiveData<List<PlaylistPreview>> playlists;
+
 
     public MutableLiveData<ProfilePreview> getProfile(String userId,String token){
         if(profile ==null){
 
-            profile = repository.loadProfile(userId, token);
+            profile = mRepo.loadProfile(userId, token);
 
         }
         return  profile;
@@ -35,27 +40,15 @@ public class ProfileViewModel extends ViewModel implements ConnectionStatusListe
 
 
     public void updateProfileImage(String token, Uri image, Bitmap bitmap, Context context){
-        repository.setProfileImage(token,image,bitmap,context);
+        mRepo.setProfileImage(token,image,bitmap,context);
     }
 
-
-
-    public ProfileViewModel() {
-        repository = new ProfileRepository(this);
-    }
 
     @Override
-    public void onConnectionSuccess() {
-        connectionSuccessful.setValue(true);
+    public void clearData() {
+        profile = null;
     }
 
-    @Override
-    public void onConnectionFailure() {
-        connectionSuccessful.setValue(false);
-    }
 
-    public MutableLiveData<Boolean> getConnectionSuccessful() {
-        return connectionSuccessful;
-    }
 
 }

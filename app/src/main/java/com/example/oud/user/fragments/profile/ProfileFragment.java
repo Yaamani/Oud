@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ import com.example.oud.R;
 import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
+import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -54,29 +56,42 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
     private ImageView profileImageView;
     private TextView profileDisplaynameTextView;
     private BottomNavigationView navigationView;
     private ImageButton renameButton;
     private ImageButton optionsButton;
+    private Button followButton;
+    private Button unFollowButton;
 
 
-    private ProfileViewModel mViewModel;
+
+
     private String userId;
 
     ProfilePlaylistsFragment profilePlaylistsFragment;
     ProfileFollowersFragment profileFollowersFragment;
+    ProfileFollowingFragment profileFollowingFragment;
 
+    private boolean isMyProfile;
 
 
 
     private final int RESULT_LOAD_IMG=111;
 
 
-    public static ProfileFragment newInstance(String userId) {
-        ProfileFragment profileFragment = new ProfileFragment();
+    public ProfileFragment(Activity activity){
+        super(ProfileViewModel.class,
+                R.layout.fragment_profile,
+                activity.findViewById(R.id.progress_bar_user_activity),
+                activity.findViewById(R.id.block_view),
+                null);
+    }
+
+    public static ProfileFragment newInstance(String userId,Activity activity) {
+        ProfileFragment profileFragment = new ProfileFragment(activity);
         profileFragment.setUserId(userId);
         return profileFragment;
     }
@@ -86,7 +101,8 @@ public class ProfileFragment extends Fragment {
                             String userId) {
 
         FragmentManager manager = activity.getSupportFragmentManager();
-        ProfileFragment profileFragment = ProfileFragment.newInstance(userId);
+
+        ProfileFragment profileFragment = ProfileFragment.newInstance(userId,activity);
 
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(containerId, profileFragment)
@@ -97,23 +113,21 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        initializeViews(v);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initializeViews(view);
         setButtonsOnClickListener();
-        profilePlaylistsFragment= ProfilePlaylistsFragment.newInstance(userId);
-        profileFollowersFragment= ProfileFollowersFragment.newInstance(userId);
+
+        profilePlaylistsFragment= ProfilePlaylistsFragment.newInstance(userId,getActivity());
+        profileFollowersFragment= ProfileFollowersFragment.newInstance(userId,getActivity());
+        profileFollowingFragment= ProfileFollowingFragment.newInstance(userId,getActivity());
+
         navigationView.setSelectedItemId(R.id.navigation_profile_playlists);
+        handleAuthorization();
 
-        return v;
-    }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
+
         if(userId!=null) {
 
             String token = OudUtils.getToken(getContext());
@@ -121,30 +135,30 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
-                    profileDisplaynameTextView.setText(profilePreview.getDisplayName());
-                    if(profilePreview.getImages().length > 0){
-                        Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
-                        String imageUrl = ("http://oud-zerobase.me/api/"+profilePreview.getImages()[0]);
-                        for(int i=0;i<imageUrl.length();i++){
-                            if(imageUrl.charAt(i)==(char)92){
-                                Log.e("profile fragment",imageUrl.charAt(i)+" at position: "+i);
-                                StringBuilder tempString = new StringBuilder(imageUrl);
-                                tempString.setCharAt(i, '/');
-                                imageUrl = tempString.toString();
+                        profileDisplaynameTextView.setText(profilePreview.getDisplayName());
+                        if(profilePreview.getImages().length > 0){
+                            Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
+                            String imageUrl = ("http://oud-zerobase.me/api/"+profilePreview.getImages()[0]);
+                            for(int i=0;i<imageUrl.length();i++){
+                                if(imageUrl.charAt(i)==(char)92){
+                                    Log.e("profile fragment",imageUrl.charAt(i)+" at position: "+i);
+                                    StringBuilder tempString = new StringBuilder(imageUrl);
+                                    tempString.setCharAt(i, '/');
+                                    imageUrl = tempString.toString();
+                                }
+
                             }
+                            Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
+                            Log.e("profile fragment",imageUrl);
 
                         }
-                        Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
-                        Log.e("profile fragment",imageUrl);
-
-                    }
-                }}
+                    }}
             });
 
         }
-
-        // TODO: Use the ViewModel
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -187,6 +201,8 @@ public class ProfileFragment extends Fragment {
         navigationView = v.findViewById(R.id.navigation_bar_profile);
         renameButton = v.findViewById(R.id.btn_rename_profile);
         optionsButton = v.findViewById(R.id.btn_profile_options);
+        followButton = v.findViewById(R.id.btn_profile_follow);
+        unFollowButton = v.findViewById(R.id.btn_profile_unfollow);
     }
 
     private void setButtonsOnClickListener(){
@@ -208,6 +224,7 @@ public class ProfileFragment extends Fragment {
 
         profileImageView.setOnClickListener(updateImageOnClickListener);
         renameButton.setOnClickListener(renameOnClickListener);
+
         optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,10 +248,26 @@ public class ProfileFragment extends Fragment {
                         openFragment(profileFollowersFragment);
                         return true;
                     case R.id.navigation_profile_following:
-                        openFragment(ProfileFollowingFragment.newInstance(userId));
+                        openFragment(profileFollowingFragment);
                 }
 
                 return false;
+            }
+        });
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                followButton.setVisibility(View.INVISIBLE);
+                unFollowButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        unFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                followButton.setVisibility(View.VISIBLE);
+                unFollowButton.setVisibility(View.GONE);
             }
         });
 
@@ -251,7 +284,21 @@ public class ProfileFragment extends Fragment {
     }
 
     private void openFragment(Fragment fragment){
-        getChildFragmentManager().beginTransaction().replace(R.id.fragment_host_profile,fragment).commit();
+        getChildFragmentManager().beginTransaction().replace(R.id.fragment_host_profile,fragment).addToBackStack(null).commit();
+    }
+
+    private void handleAuthorization(){
+        String myUserId =OudUtils.getUserId(getContext());
+        if(!userId.equals(myUserId)) {
+            renameButton.setVisibility(View.GONE);
+            optionsButton.setVisibility(View.GONE);
+        }else {
+            followButton.setVisibility(View.GONE);
+            unFollowButton.setVisibility(View.GONE);
+        }
+
+
+
     }
 
 

@@ -12,6 +12,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
+import com.example.oud.api.ListOfIds;
+import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
@@ -30,6 +33,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,33 +46,18 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ProfileRepository  {
-    private ConnectionStatusListener listener;
-    private OudApi oudApi;
+public class ProfileRepository extends ConnectionAwareRepository {
 
 
 
-    public ProfileRepository(ConnectionStatusListener listener) {
-        this.listener = listener;
-        String base = Constants.BASE_URL;
-        if(Constants.MOCK)
-            base = Constants.YAMANI_MOCK_BASE_URL;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(base)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-
-        oudApi = retrofit.create(OudApi.class);
-    }
 
     public MutableLiveData<ProfilePreview> loadProfile(String userId,String token){
         MutableLiveData<ProfilePreview> mutableProfile = new MutableLiveData<>();
 
         Log.e("ProfileRepository",token);
-        Call<ProfilePreview> call = oudApi.getUserById("Bearer "+token,userId);
+        Call<ProfilePreview> call = oudApi.getUserById(token,userId);
 
-        call.enqueue(new FailureSuccessHandledCallback<ProfilePreview>(listener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ProfilePreview>(this){
             @Override
             public void onResponse(Call call, Response response) {
                 super.onResponse(call, response);
@@ -134,10 +123,11 @@ public class ProfileRepository  {
 
 
 
-        Call<LoggedInUser> call = oudApi.updateUserPicture("Bearer "+token,body);
-        call.enqueue(new FailureSuccessHandledCallback<LoggedInUser>(listener) {
+        Call<LoggedInUser> call = oudApi.updateUserPicture(token,body);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
+                super.onResponse(call,response);
                 if(response.isSuccessful()){
                     Log.e("profile Repository","image uploaded");
                     Log.e("profile Repository","number of images "+response.body().getImages().length);
@@ -151,6 +141,7 @@ public class ProfileRepository  {
 
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
+                super.onFailure(call,t);
                 Log.e("profile Repository","image not uploaded");
                 Log.e("profile Repository",t.getMessage());
 
@@ -159,6 +150,22 @@ public class ProfileRepository  {
             }
         });
 
+
+
+    }
+    public void followUser(String token,String userId,ConnectionStatusListener connectionStatusListener){
+        ArrayList<String>id = new ArrayList<>();
+        id.add(userId);
+        ListOfIds listOfIds = new ListOfIds(id);
+        Call<Void> call = oudApi.followUsersOrArtists(token,"user",listOfIds);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
 
 
     }
