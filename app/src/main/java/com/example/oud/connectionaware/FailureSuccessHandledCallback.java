@@ -17,6 +17,13 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
 
     private ConnectionAwareRepository repo;
     private ConnectionStatusListener connectionStatusListener;
+    private ConnectionStatusListener connectionStatusListenerForUndo;
+
+    public FailureSuccessHandledCallback(ConnectionAwareRepository repo,ConnectionStatusListener connectionStatusListenerForUndo) {
+        this.repo = repo;
+        this.connectionStatusListener = repo.getConnectionStatusListener();
+        this.connectionStatusListenerForUndo = connectionStatusListenerForUndo;
+    }
 
     public FailureSuccessHandledCallback(ConnectionAwareRepository repo) {
         this.repo = repo;
@@ -27,10 +34,13 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
         this.connectionStatusListener = connectionStatusListener;
     }
 
+
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
         Log.i(TAG, "onResponse: " + "SUCCESS");
         connectionStatusListener.onConnectionSuccess();
+        if(connectionStatusListenerForUndo!=null)
+            connectionStatusListenerForUndo.onConnectionSuccess();
 
         if (repo != null)
             repo.calls.remove(call);
@@ -45,7 +55,8 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
         t.printStackTrace();
         //Log.e(TAG, "onFailure: " + t.getMessage());
 
-
+        if(connectionStatusListenerForUndo!=null)
+            connectionStatusListenerForUndo.onConnectionFailure();
 
         if (!call.isCanceled()) {
             cancelAllRequests();
