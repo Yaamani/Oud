@@ -18,7 +18,7 @@
             android:id="@+id/btn_profile_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_options"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
