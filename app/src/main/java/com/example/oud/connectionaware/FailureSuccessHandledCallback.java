@@ -39,9 +39,12 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
     public void onResponse(Call<T> call, Response<T> response) {
         Log.i(TAG, "onResponse: " + "SUCCESS");
         connectionStatusListener.onConnectionSuccess();
-        if(connectionStatusListenerForUndo!=null)
-            connectionStatusListenerForUndo.onConnectionSuccess();
-
+        if(connectionStatusListenerForUndo!=null) {
+            if(response.isSuccessful())
+                connectionStatusListenerForUndo.onConnectionSuccess();
+            else
+                connectionStatusListenerForUndo.onConnectionFailure();
+        }
         if (repo != null)
             repo.calls.remove(call);
 
