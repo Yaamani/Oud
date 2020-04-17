@@ -3,6 +3,7 @@ package com.example.oud.user.fragments.profile;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -41,8 +42,8 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
 
 
 
-    public static ProfileFollowingFragment newInstance(String id) {
-        ProfileFollowingFragment fragment = new ProfileFollowingFragment();
+    public static ProfileFollowingFragment newInstance(String id,Activity activity) {
+        ProfileFollowingFragment fragment = new ProfileFollowingFragment(activity);
         fragment.setUserId(id);
         return fragment;
     }
@@ -51,12 +52,12 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
         this.userId = userId;
     }
 
-    public ProfileFollowingFragment(){
+    public ProfileFollowingFragment(Activity activity){
         super(ProfileFollowingViewModel.class,
                 R.layout.fragment_profile_following,
-                R.id.progress_bar_profile_following,
+                activity.findViewById(R.id.progress_bar_user_activity),
+                activity.findViewById(R.id.block_view),
                 null);
-
     }
 
     @Override
@@ -159,8 +160,30 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
 
 
     private void setRecyclerView(){
+        ArrayList<String> followedArtistsAndUsersNames = new ArrayList<>();
+        followedArtistsAndUsersNames.addAll(followedArtistsNames);
+        followedArtistsAndUsersNames.addAll(followedUsersNames);
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes);
+        ArrayList<String> followedArtistsAndUsersImageUrls = new ArrayList<>();
+        followedArtistsAndUsersImageUrls.addAll(followedArtistsImageUrls);
+        followedArtistsAndUsersImageUrls.addAll(followedUsersImageUrls);
+
+
+        ArrayList<String> followedArtistsAndUsersIds = new ArrayList<>();
+        followedArtistsAndUsersIds.addAll(followedArtistsIds);
+        followedArtistsAndUsersIds.addAll(followedUsersIds);
+
+        ArrayList<String> followedArtistsAndUsersTypes = new ArrayList<>();
+        followedArtistsAndUsersTypes.addAll(followedArtistsTypes);
+        followedArtistsAndUsersTypes.addAll(followedUsersTypes);
+
+
+        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),
+                followedArtistsAndUsersNames,
+                followedArtistsAndUsersImageUrls,
+                followedArtistsAndUsersIds,
+                followedArtistsAndUsersTypes);
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

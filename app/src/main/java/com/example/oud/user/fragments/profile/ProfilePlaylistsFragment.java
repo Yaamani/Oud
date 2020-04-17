@@ -3,6 +3,7 @@ package com.example.oud.user.fragments.profile;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -44,16 +45,17 @@ public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePla
         this.userId = userId;
     }
 
-    public ProfilePlaylistsFragment(){
+    public ProfilePlaylistsFragment(Activity activity){
         super(ProfilePlaylistsViewModel.class,
                 R.layout.fragment_profile_playlists,
-                R.id.progress_bar_profile_playlist,
+                activity.findViewById(R.id.progress_bar_user_activity),
+                activity.findViewById(R.id.block_view),
                 null);
     }
 
-    public static ProfilePlaylistsFragment newInstance(String id) {
+    public static ProfilePlaylistsFragment newInstance(String id,Activity activity) {
 
-        ProfilePlaylistsFragment fragment =  new ProfilePlaylistsFragment();
+        ProfilePlaylistsFragment fragment =  new ProfilePlaylistsFragment(activity);
         fragment.setUserId(id);
         return  fragment;
     }
@@ -62,6 +64,8 @@ public class ProfilePlaylistsFragment extends ConnectionAwareFragment<ProfilePla
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
 
         recyclerView = view.findViewById(R.id.recycler_view_profile_playlists);
         loadMoreButton = view.findViewById(R.id.btn_profile_playlist_load_more);

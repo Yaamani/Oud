@@ -3,6 +3,7 @@ package com.example.oud.user.fragments.profile;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -35,8 +36,8 @@ public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFol
     private RecyclerView recyclerView;
     private Button loadMoreButton;
 
-    public static ProfileFollowersFragment newInstance(String id) {
-        ProfileFollowersFragment fragment = new ProfileFollowersFragment();
+    public static ProfileFollowersFragment newInstance(String id,Activity activity) {
+        ProfileFollowersFragment fragment = new ProfileFollowersFragment(activity);
         fragment.setUserId(id);
         return fragment;
     }
@@ -44,10 +45,11 @@ public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFol
         this.userId = userId;
     }
 
-    public ProfileFollowersFragment(){
+    public ProfileFollowersFragment(Activity activity){
         super(ProfileFollowersViewModel.class,
                 R.layout.fragment_profile_followers,
-                R.id.progress_bar_profile_followers,
+                activity.findViewById(R.id.progress_bar_user_activity),
+                activity.findViewById(R.id.block_view),
                 null);
     }
 
@@ -101,7 +103,7 @@ public class ProfileFollowersFragment extends ConnectionAwareFragment<ProfileFol
 
     private void setRecyclerView(){
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followersNames,followersImageUrls,followersTypes);
+        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followersNames,followersImageUrls,followersIds,followersTypes);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
