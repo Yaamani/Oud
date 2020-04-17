@@ -8,6 +8,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -76,6 +77,7 @@ public interface OudApi {
 
     @PATCH("me/update/display")//todo add when back end finished
     Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATION") String token,@Body String displayName);
+
 
 
 
@@ -157,4 +159,9 @@ public interface OudApi {
 
     @GET("artists/{artistId}/related-artists")
     Call<RelatedArtists> similarArtists(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
+
+
+
+    @PUT
+    Call<Void> followUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Body ListOfIds listOfIds);
 }
