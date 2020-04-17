@@ -5,15 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".user.fragments.settings.SettingsFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/title_settings" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="view profile test"
-        android:id="@+id/btn_view_profile_test"
+        android:text="view my profile test"
+        android:id="@+id/btn_view_my_profile_test"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="view other profile test"
+        android:id="@+id/btn_view_other_profile_test"
+        />
+</LinearLayout>
 
 </FrameLayout>

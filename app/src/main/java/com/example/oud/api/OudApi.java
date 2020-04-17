@@ -1,6 +1,7 @@
 package com.example.oud.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 
@@ -162,6 +163,14 @@ public interface OudApi {
 
 
 
-    @PUT
+    @PUT("me/following")
     Call<Void> followUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Body ListOfIds listOfIds);
+
+    @DELETE("me/following")
+    Call<Void> unFollowUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Query("ids")String commaSeparatedUserId);
+
+    @GET("me/following/contains")
+    Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
+
+
 }

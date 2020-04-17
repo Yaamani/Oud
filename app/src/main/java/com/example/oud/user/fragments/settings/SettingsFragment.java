@@ -32,18 +32,28 @@ public class SettingsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
         Button viewMyProfileTest =v.findViewById(R.id.btn_view_my_profile_test);
+        Button viewOtherProfileTest =v.findViewById(R.id.btn_view_other_profile_test);
 
         viewMyProfileTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ProfileFragment profileFragment = ProfileFragment.newInstance(((UserActivity)getActivity()).getUserId(),getActivity());
                 ProfileFragment.show(getActivity(),R.id.nav_host_fragment, OudUtils.getUserId(getContext()));
 
 
             }
         });
-        return v;
 
+        viewOtherProfileTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProfileFragment.show(getActivity(),R.id.nav_host_fragment,"user1");
+
+
+            }
+        });
+
+
+        return v;
     }
 
     @Override
