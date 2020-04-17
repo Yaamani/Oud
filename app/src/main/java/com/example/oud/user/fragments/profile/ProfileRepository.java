@@ -1,50 +1,38 @@
 package com.example.oud.user.fragments.profile;
 
-import android.app.Activity;
-import android.app.DownloadManager;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
-import com.example.oud.Constants;
-import com.example.oud.OudUtils;
+
+import com.example.oud.api.ListOfBoolean;
 import com.example.oud.api.ListOfIds;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.LoggedInUser;
-import com.example.oud.api.OudApi;
-import com.example.oud.api.PlaylistPreview;
-import com.example.oud.api.ProfilePreview;
-import com.example.oud.api.UserOrArtistPreview;
-import com.example.oud.api.UserPlaylistsResponse;
 
-import java.io.ByteArrayOutputStream;
+import com.example.oud.api.ProfilePreview;
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Callback;
+
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class ProfileRepository extends ConnectionAwareRepository {
 
@@ -138,7 +126,6 @@ public class ProfileRepository extends ConnectionAwareRepository {
                 }
 
             }
-
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
                 super.onFailure(call,t);
@@ -158,7 +145,7 @@ public class ProfileRepository extends ConnectionAwareRepository {
         id.add(userId);
         ListOfIds listOfIds = new ListOfIds(id);
         Call<Void> call = oudApi.followUsersOrArtists(token,"user",listOfIds);
-        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this) {
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 super.onResponse(call,response);
@@ -169,6 +156,42 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
     }
+
+    public void unFollowUser(String token,String userId,ConnectionStatusListener connectionStatusListener){
+
+        Call<Void> call = oudApi.unFollowUsersOrArtists(token,"user",userId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
+
+
+    }
+
+
+    public void checkIfIFollowThisUser(String token,String commaSeparatedUsers,MutableLiveData<Boolean> isFollowed){
+        Call<ListOfBoolean> call = oudApi.checkIfIFollowTheseUsersOrArtists(token,"user",commaSeparatedUsers);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ListOfBoolean>(this) {
+            @Override
+            public void onResponse(Call<ListOfBoolean> call, Response<ListOfBoolean> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    isFollowed.setValue(response.body().getIds().get(0));
+                }
+
+            }
+
+        });
+
+
+
+    }
+
+
 
 
 

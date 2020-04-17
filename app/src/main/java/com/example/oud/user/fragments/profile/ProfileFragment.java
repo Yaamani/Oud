@@ -4,6 +4,7 @@ import androidx.annotation.IdRes;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
@@ -96,6 +98,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         return profileFragment;
     }
 
+
+
     public static void show(FragmentActivity activity,
                             @IdRes int containerId,
                             String userId) {
@@ -124,6 +128,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
         navigationView.setSelectedItemId(R.id.navigation_profile_playlists);
         handleAuthorization();
+        handleFollowChecks();
 
 
 
@@ -203,6 +208,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         optionsButton = v.findViewById(R.id.btn_profile_options);
         followButton = v.findViewById(R.id.btn_profile_follow);
         unFollowButton = v.findViewById(R.id.btn_profile_unfollow);
+
+        followButton.setEnabled(false);
     }
 
     private void setButtonsOnClickListener(){
@@ -221,8 +228,6 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
                 RenameFragment.showRenameFragment(getActivity(),R.id.nav_host_fragment,profileDisplaynameTextView.getText().toString(),profileDisplaynameTextView);
             }
         };
-
-        profileImageView.setOnClickListener(updateImageOnClickListener);
         renameButton.setOnClickListener(renameOnClickListener);
 
         optionsButton.setOnClickListener(new View.OnClickListener() {
@@ -255,23 +260,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
             }
         });
 
-        followButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                followButton.setVisibility(View.INVISIBLE);
-                unFollowButton.setVisibility(View.VISIBLE);
-            }
-        });
-
-        unFollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                followButton.setVisibility(View.VISIBLE);
-                unFollowButton.setVisibility(View.GONE);
-            }
-        });
-
-
+        setFollowButtonClickListener();
+        setUnFollowButtonClickListener();
     }
 
 
@@ -279,9 +269,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    private void uploadProfileImage(Bitmap newImage){
 
-    }
 
     private void openFragment(Fragment fragment){
         getChildFragmentManager().beginTransaction().replace(R.id.fragment_host_profile,fragment).addToBackStack(null).commit();
@@ -290,9 +278,13 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     private void handleAuthorization(){
         String myUserId =OudUtils.getUserId(getContext());
         if(!userId.equals(myUserId)) {
+            isMyProfile=false;
             renameButton.setVisibility(View.GONE);
             optionsButton.setVisibility(View.GONE);
+            followButton.setVisibility(View.VISIBLE);
+            unFollowButton.setVisibility(View.INVISIBLE);
         }else {
+            isMyProfile=true;
             followButton.setVisibility(View.GONE);
             unFollowButton.setVisibility(View.GONE);
         }
@@ -300,6 +292,85 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
 
     }
+
+    private void handleFollowChecks() {
+        if (!isMyProfile) {
+            mViewModel.checkIfIFollowThisUser(OudUtils.getToken(getContext()), userId).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean iFollowThisUser) {
+                    if (iFollowThisUser) {
+                        followButton.setVisibility(View.INVISIBLE);
+                        unFollowButton.setVisibility(View.VISIBLE);
+                        unFollowButton.setEnabled(true);
+                    } else {
+                        unFollowButton.setVisibility(View.INVISIBLE);
+                        followButton.setVisibility(View.VISIBLE);
+                        followButton.setEnabled(true);
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    private void setFollowButtonClickListener(){
+        ConnectionStatusListener followButtonConnectionListener = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                unFollowButton.setEnabled(true);
+            }
+            @Override
+            public void onConnectionFailure() {
+                followButton.setEnabled(true);
+                followButton.setVisibility(View.VISIBLE);
+                unFollowButton.setVisibility(View.INVISIBLE);
+            }
+        };
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                followButton.setVisibility(View.INVISIBLE);
+                unFollowButton.setVisibility(View.VISIBLE);
+                unFollowButton.setEnabled(false);
+                mViewModel.followUser(OudUtils.getToken(getContext()),userId,followButtonConnectionListener);
+
+            }
+        });
+
+
+    }
+
+    private void setUnFollowButtonClickListener(){
+        ConnectionStatusListener unFollowButtonConnectionListener = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                followButton.setEnabled(true);
+            }
+            @Override
+            public void onConnectionFailure() {
+                unFollowButton.setEnabled(true);
+                unFollowButton.setVisibility(View.VISIBLE);
+                followButton.setVisibility(View.INVISIBLE);
+            }
+        };
+
+        unFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                followButton.setVisibility(View.VISIBLE);
+                unFollowButton.setVisibility(View.INVISIBLE);
+                followButton.setEnabled(false);
+                mViewModel.unFollowUser(OudUtils.getToken(getContext()),userId,unFollowButtonConnectionListener);
+
+            }
+        });
+
+
+    }
+
+
 
 
 }
