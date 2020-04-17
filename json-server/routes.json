@@ -17,23 +17,47 @@
     "/me/albums/contains*": "/this_album_is_saved", 
     
 
-    "/users/1":"/user1",
 
-    "/users/1/playlists":"/playlistsUser1",
+    "/users/user1":"/user1",
 
-    "/users/1/playlists?offset=5":"/playlistsUser1",
+    "/users/user1/playlists":"/playlistsUser1",
 
-    "/users/1/playlists?offset=11":"/playlistsUser1",
+    "/users/user1/playlists?offset=5":"/playlistsUser1",
 
-    "/users/1/playlists?offset=17":"/playlistsUser1",
+    "/users/user1/playlists?offset=11":"/playlistsUser1",
+
+    "/users/user1/playlists?offset=17":"/playlistsUser1",
+
+    "/users/user1/followers?type=user&offset=0":"/followersUser1",
+
+    "/users/user1/followers?type=user&offset=5":"/followersUser1",
+
+    "/users/user1/followers?type=user&offset=11":"/followersUser1",
+    
+    "/users/user1/following?type=artist&offset=0":"/followingUser1",
+
+
+
+
+    "/users/user0":"/user0",
+
+    "/users/user0/playlists":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=5":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=11":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=17":"/playlistsUser0",
     
 
-    "/users/1/followers?type=user&offset=0":"/followersUser1",
+    "/users/user0/followers?type=user&offset=0":"/followersUser0",
 
-    "/users/1/followers?type=user&offset=5":"/followersUser1",
+    "/users/user0/followers?type=user&offset=5":"/followersUser0",
 
-    "/users/1/followers?type=user&offset=11":"/followersUser1",
+    "/users/user0/followers?type=user&offset=11":"/followersUser0",
     
-    "/users/1/following?type=artist&offset=0":"/followingUser1"
+    "/users/user0/following?type=artist&offset=0":"/followingUser0artists",
+
+    "/users/user0/following?type=user&offset=0":"/followingUser0users"
 
 }
