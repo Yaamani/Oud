@@ -98,15 +98,17 @@ public class PlayerFragment extends Fragment /*implements ExoPlayer.EventListene
         TextView albumName = v.findViewById(R.id.text_album_name);
         ImageView imageView = v.findViewById(R.id.exo_artwork);
 
-        playerName.setText(mTrack.getName());
-        albumName.setText(mAlbum.getName());
-        artistName.setText(mPlayerHelper.getArtistsNames());
+        if(mTrack != null && mAlbum != null) {
+            playerName.setText(mTrack.getName());
+            albumName.setText(mAlbum.getName());
+            artistName.setText(mPlayerHelper.getArtistsNames());
 
-        Glide.with(v.getContext())
-                .load(mAlbum.getImage())
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.ic_oud_loading)
-                .into(imageView);
+            Glide.with(v.getContext())
+                    .load(mAlbum.getImage())
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.ic_oud_loading)
+                    .into(imageView);
+        }
 
 
         /*mPlayerView.setDefaultArtwork(getResources().getDrawable(R.drawable.bach1));*/

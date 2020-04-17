@@ -4,11 +4,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.oud.FailureSuccessHandledCallback;
+/*import com.example.oud.FailureSuccessHandledCallback;*/
 import com.example.oud.api.Album;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -70,7 +71,7 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
 
         OudApi oudApi = instantiateRetrofitOudApi();
 
-        Call<Album> albumCall = oudApi.album(albumId);
+        Call<Album> albumCall = oudApi.album("token",albumId);
         albumCall.enqueue(new FailureSuccessHandledCallback<Album>(connectionStatusListener){
 
             Album album;
