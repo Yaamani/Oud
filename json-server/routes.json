@@ -58,6 +58,8 @@
     
     "/users/user0/following?type=artist&offset=0":"/followingUser0artists",
 
-    "/users/user0/following?type=user&offset=0":"/followingUser0users"
+    "/users/user0/following?type=user&offset=0":"/followingUser0users",
+
+    "/me/following/contains?type=user&ids=user1":"/oneIdTrue"
 
 }
