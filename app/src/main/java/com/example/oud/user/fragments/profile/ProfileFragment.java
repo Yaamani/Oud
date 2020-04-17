@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
@@ -112,15 +115,29 @@ public class ProfileFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
         if(userId!=null) {
-            SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-            String token = prefs.getString("token","000000");
+
+            String token = OudUtils.getToken(getContext());
             mViewModel.getProfile(userId,token).observe(getViewLifecycleOwner(), new Observer<ProfilePreview>() {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
                     profileDisplaynameTextView.setText(profilePreview.getDisplayName());
-                    if(profilePreview.getImages().length > 0)
-                        Glide.with(getContext()).asBitmap().load(profilePreview.getImages()[0]).into(profileImageView);
+                    if(profilePreview.getImages().length > 0){
+                        Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
+                        String imageUrl = ("http://oud-zerobase.me/api/"+profilePreview.getImages()[0]);
+                        for(int i=0;i<imageUrl.length();i++){
+                            if(imageUrl.charAt(i)==(char)92){
+                                Log.e("profile fragment",imageUrl.charAt(i)+" at position: "+i);
+                                StringBuilder tempString = new StringBuilder(imageUrl);
+                                tempString.setCharAt(i, '/');
+                                imageUrl = tempString.toString();
+                            }
+
+                        }
+                        Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
+                        Log.e("profile fragment",imageUrl);
+
+                    }
                 }}
             });
 
@@ -149,7 +166,8 @@ public class ProfileFragment extends Fragment {
                         .into(profileImageView);
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
-                mViewModel.updateProfileImage(token,imageUri);
+                Context context = ((Activity)getActivity()).getApplicationContext();
+                mViewModel.updateProfileImage(token,imageUri,selectedImage,context);
 
             } catch (FileNotFoundException e) {
                 Log.e("Profile Fragment",e.getMessage());
@@ -193,9 +211,11 @@ public class ProfileFragment extends Fragment {
         optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 OptionsFragment.builder(getActivity())
                         .addItem(R.drawable.ic_camera,"Update profile Picture",updateImageOnClickListener)
-                        .addItem(R.drawable.ic_rename, "Change displayName",renameOnClickListener).show();
+                        .addItem(R.drawable.ic_rename, "Change displayName",renameOnClickListener)
+                        .show();
             }
         });
 

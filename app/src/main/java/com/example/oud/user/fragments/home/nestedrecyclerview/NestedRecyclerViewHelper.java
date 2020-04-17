@@ -66,15 +66,19 @@ public class NestedRecyclerViewHelper {
         ArrayList<Item> items = section.items;
         ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
         ArrayList<String> imageUls = new ArrayList<>();
+        ArrayList<Boolean> circularImages = new ArrayList<>();
         ArrayList<String> titles = new ArrayList<>();
         ArrayList<String> subtitles = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> relatedInfo = new ArrayList<>();
         for (Item item : items) {
             clickListeners.add(item.clickListener);
             imageUls.add(item.imageUrl);
+            circularImages.add(item.circularImage);
             titles.add(item.title);
             subtitles.add(item.subtitle);
+            relatedInfo.add(item.getRelatedInfo());
         }
-        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, titles, subtitles, false);
+        HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(context, clickListeners, imageUls, circularImages, titles, subtitles, relatedInfo);
         mVerticalAdapter.getInnerItemAdapters().add(position, hAdapter);
 
         mVerticalAdapter.notifyItemInserted(position);
@@ -197,10 +201,13 @@ public class NestedRecyclerViewHelper {
 
             int index = helper.sections.indexOf(Section.this);
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(index);
+
             hAdapter.getClickListeners().add(position, item.clickListener);
             hAdapter.getImages().add(position, item.imageUrl);
+            hAdapter.getCircularImages().add(position, item.circularImage);
             hAdapter.getTitles().add(position, item.title);
             hAdapter.getSubtitles().add(position, item.subtitle);
+            hAdapter.getRelatedInfo().add(position, item.relatedInfo);
 
             hAdapter.notifyItemInserted(position);
         }
@@ -213,9 +220,12 @@ public class NestedRecyclerViewHelper {
 
             int index = helper.sections.indexOf(Section.this);
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(index);
+            hAdapter.getClickListeners().remove(position);
             hAdapter.getImages().remove(position);
+            hAdapter.getCircularImages().remove(position);
             hAdapter.getTitles().remove(position);
             hAdapter.getSubtitles().remove(position);
+            hAdapter.getRelatedInfo().remove(position);
 
             hAdapter.notifyItemRemoved(position);
         }
@@ -242,6 +252,7 @@ public class NestedRecyclerViewHelper {
         private Section section;
 
         private String imageUrl;
+        private boolean circularImage;
         private String title;
         private String subtitle;
 
@@ -253,10 +264,9 @@ public class NestedRecyclerViewHelper {
 
         }
 
-        public Item(String imageUrl, String title, String subtitle) {
+        public Item(String imageUrl, boolean circularImage, String title, String subtitle) {
 
-
-            setImageUrl(imageUrl);
+            setImage(imageUrl, circularImage);
             setTitle(title);
             setSubtitle(subtitle);
         }
@@ -272,8 +282,9 @@ public class NestedRecyclerViewHelper {
             else this.helper = null;
         }
 
-        public void setImageUrl(String imageUrl) {
+        public void setImage(String imageUrl, boolean circular) {
             this.imageUrl = imageUrl;
+            this.circularImage = circular;
 
             if (helper == null) return;
 
@@ -281,6 +292,7 @@ public class NestedRecyclerViewHelper {
             int itemIndex = section.items.indexOf(Item.this);
             HorizontalRecyclerViewAdapter hAdapter = helper.mVerticalAdapter.getInnerItemAdapters().get(sectionIndex);
             hAdapter.getImages().set(itemIndex, imageUrl);
+            hAdapter.getCircularImages().set(itemIndex, circular);
 
             hAdapter.notifyItemChanged(itemIndex);
         }
@@ -330,6 +342,10 @@ public class NestedRecyclerViewHelper {
 
         public String getImageUrl() {
             return imageUrl;
+        }
+
+        public boolean isCircularImage() {
+            return circularImage;
         }
 
         public String getTitle() {

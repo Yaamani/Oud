@@ -80,6 +80,7 @@ public class MainLoginFragment extends Fragment {
         homeTest.setOnClickListener(v1 -> {
             Intent i = new Intent(getActivity(), UserActivity.class);
             i.putExtra(Constants.USER_ID_KEY, "user0");
+            OudUtils.saveUserData(getContext(),"token","user0");
             startActivity(i);
         });
 
@@ -140,15 +141,16 @@ public class MainLoginFragment extends Fragment {
         oudApi = retrofit.create(OudApi.class);
 
 
-        SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        if(prefs.contains("token")){
-            String token = prefs.getString("token","000000");
-            Call<LoggedInUser> call = oudApi.getUserProfile("Bearer "+token);
+        SharedPreferences prefs = getContext().getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if(prefs.contains(Constants.SHARED_PREFERENCES_TOKEN_NAME)){
+            String token = prefs.getString(Constants.SHARED_PREFERENCES_TOKEN_NAME,"000000");
+            Call<LoggedInUser> call = oudApi.getUserProfile(token);
             call.enqueue(new Callback<LoggedInUser>() {
                 @Override
                 public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                     if(response.isSuccessful()){
                         Intent i = new Intent(getActivity(), UserActivity.class);
+
                         i.putExtra(Constants.USER_ID_KEY, response.body().get_id());
                         startActivity(i);
                     }

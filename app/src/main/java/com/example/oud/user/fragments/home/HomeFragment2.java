@@ -1,11 +1,10 @@
 package com.example.oud.user.fragments.home;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
@@ -18,16 +17,14 @@ import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.oud.api.Context.CONTEXT_UNKNOWN ;
-import static com.example.oud.api.Context.CONTEXT_ALBUM   ;
-import static com.example.oud.api.Context.CONTEXT_ARTIST  ;
-import static com.example.oud.api.Context.CONTEXT_PLAYLIST;
+import static com.example.oud.Constants.API_UNKNOWN;
+import static com.example.oud.Constants.API_ALBUM;
+import static com.example.oud.Constants.API_ARTIST;
+import static com.example.oud.Constants.API_PLAYLIST;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,7 +72,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         super.onViewCreated(view, savedInstanceState);
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
         userId = getArguments().getString(Constants.USER_ID_KEY);
 
@@ -86,6 +84,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
+        //mViewModel.getCategoryListLiveData();
 
     }
 
@@ -100,10 +100,10 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         }
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
-    }
+    }*/
 
     private void handleRecentlyPlayed() {
         mViewModel.getRecentlyPlayedLiveData(token).observe(getViewLifecycleOwner(), recentlyPlayedTracks2 -> {
@@ -115,20 +115,20 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
             for (RecentlyPlayedTrack2 recentlyPlayedTrack : recentlyPlayedTracks2.getItems()) {
                 com.example.oud.api.Context context = recentlyPlayedTrack.getContext();
 
-                if (context.getType().equals(CONTEXT_UNKNOWN)) {
+                if (context.getType().equals(API_UNKNOWN)) {
                     continue;
                 }
 
                 if (!hasAlreadyBeenFetchedRecentlyPlayed(recentlyPlayedTrack)) {
                     // fetch
                     switch (context.getType()) {
-                        case CONTEXT_ALBUM:
+                        case API_ALBUM:
                             mViewModel.addRecentlyPlayedAlbum(token, context.getId(), i);
                             break;
-                        case CONTEXT_ARTIST:
+                        case API_ARTIST:
                             mViewModel.addRecentlyPlayedArtist(token, context.getId(), i);
                             break;
-                        case CONTEXT_PLAYLIST:
+                        case API_PLAYLIST:
                             mViewModel.addRecentlyPlayedPlaylist(token, context.getId(), i);
                             break;
                     }
@@ -162,6 +162,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
                 NestedRecyclerViewHelper.Item _item = item;
                 liveData.observe(getViewLifecycleOwner(), o -> {
+                    boolean circularImage = false;
+
                     String title = "", image = "";
                     if (o instanceof Album) {
                         title = ((Album) o).getName();
@@ -184,16 +186,17 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                                         ((Playlist) o).getId()));
                     }
                     else if (o instanceof Artist) {
+                        circularImage = true;
                         title = ((Artist) o).getName();
                         image = ((Artist) o).getImages().get(0);
                         _item.setClickListener(v ->
                                 ArtistFragment.show(getActivity(),
                                         R.id.nav_host_fragment,
-                                        ((Artist) o).get_id()));
+                                        ((Artist) o).get_id(), userId));
                     }
 
                     _item.setTitle(title);
-                    _item.setImageUrl(image);
+                    _item.setImage(image, circularImage);
 
                 });
 
@@ -211,7 +214,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         for (int i = 0; i < recentlyPlayedTracks2.getItems().size(); i++) {
             com.example.oud.api.Context context = recentlyPlayedTracks2.getItems().get(i).getContext();
 
-            if (!context.getType().equals(CONTEXT_UNKNOWN))
+            if (!context.getType().equals(API_UNKNOWN))
                 break;
 
             if (i == recentlyPlayedTracks2.getItems().size() - 1) {
@@ -345,7 +348,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                 }
 
 
-                item.setImageUrl(playlist.getImage());
+                item.setImage(playlist.getImage(), false);
                 item.setTitle(playlist.getName());
                 item.setClickListener(v ->
                         PlaylistFragment.show(getActivity(),
@@ -386,5 +389,15 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
+    }
+
+    /**
+     * For tests only.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

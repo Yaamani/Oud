@@ -117,7 +117,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
-                    saveToken(token);
+                    String userId = response.body().getUser().get_id();
+
+                    OudUtils.saveUserData(getApplicationContext(),token,userId);
                     Intent i = new Intent(getParent(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
                     startActivity(i);
@@ -141,13 +143,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
 
     }
-    private void saveToken(String token){
 
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
-        prefsEditor.apply();    //token saved in shared preferences
-
-    }
 
 }

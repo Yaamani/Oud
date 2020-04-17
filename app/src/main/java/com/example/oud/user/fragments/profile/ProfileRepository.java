@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -25,7 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -85,33 +88,79 @@ public class ProfileRepository  {
 
 
 
-    public void setProfileImage(String token , Uri newImage){
-        Log.e("profile Repository","image ");
-        File file = new File(newImage.getPath());
-        Log.e("profile Repository",file.getName());
+    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context){
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        Log.e("profile Repository","image  repo started");
 
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        File sd = context.getCacheDir();
+        File folder = new File(sd, "/myfolder/");
+        if (!folder.exists()) {
+            if (!folder.mkdir()) {
+                Log.e("ERROR", "Cannot create a directory!");
+            } else {
+                folder.mkdirs();
+            }
+        }
+
+
+        File fileName = new File(folder,"mypic.jpg");
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(String.valueOf(fileName));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+            outputStream.close();
+            Log.e("profile Repository","image output stream");
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e("Profile Repository",e.getMessage());
+            Log.e("Profile Repository","first catch");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("Profile Repository",e.getMessage());
+            Log.e("Profile Repository","second catch");
+        }
+
+
+        Log.e("profile Repository", ("file size :"+Integer.parseInt(String.valueOf(fileName.length()/1024))));
+
+
+
+        RequestBody requestFile = RequestBody.create(fileName,MediaType.parse("multipart/form-data"));
+
+        //MultipartBody.Part body = MultipartBody.Part.createFormData("profileImage", fileName.getName(), requestFile);
+        MultipartBody.Part body = MultipartBody.Part.create(requestFile);
+
+
 
         Call<LoggedInUser> call = oudApi.updateUserPicture("Bearer "+token,body);
         call.enqueue(new FailureSuccessHandledCallback<LoggedInUser>(listener) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
-                if(response.isSuccessful())
+                if(response.isSuccessful()){
                     Log.e("profile Repository","image uploaded");
-                else
-                    Log.e("profile Repository",response.toString());
+                    Log.e("profile Repository","number of images "+response.body().getImages().length);
+                }
+                else{
+                    Log.e("profile Repository","image not successful");
+                    Log.e("profile Repository",response.message());
+                }
 
             }
 
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
+                Log.e("profile Repository","image not uploaded");
                 Log.e("profile Repository",t.getMessage());
+
 
 
             }
         });
+
+
 
     }
 

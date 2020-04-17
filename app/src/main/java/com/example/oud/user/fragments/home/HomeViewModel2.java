@@ -1,6 +1,8 @@
 package com.example.oud.user.fragments.home;
 
 import com.example.oud.Constants;
+import com.example.oud.api.Album;
+import com.example.oud.api.Artist;
 import com.example.oud.api.Category2;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
@@ -41,10 +43,12 @@ public class HomeViewModel2 extends ConnectionAwareViewModel<HomeRepository2> {
             recentlyPlayedAlbumsPlaylistsArtists.add(mRepo.fetchAlbum(albumId));
         }*/
 
+        MutableLiveData<Album> data = mRepo.fetchAlbum(token, albumId);
+
         boolean done = false;
         while(!done) {
             try {
-                recentlyPlayedAlbumsPlaylistsArtists.set(position, mRepo.fetchAlbum(token, albumId));
+                recentlyPlayedAlbumsPlaylistsArtists.set(position, data);
                 done = true;
             } catch (IndexOutOfBoundsException e) {
                 recentlyPlayedAlbumsPlaylistsArtists.add(null);
@@ -60,10 +64,12 @@ public class HomeViewModel2 extends ConnectionAwareViewModel<HomeRepository2> {
             recentlyPlayedAlbumsPlaylistsArtists.add(mRepo.fetchArtist(artistId));
         }*/
 
+        MutableLiveData<Artist> data = mRepo.fetchArtist(token, artistId);
+
         boolean done = false;
         while (!done) {
             try {
-                recentlyPlayedAlbumsPlaylistsArtists.set(position, mRepo.fetchArtist(token, artistId));
+                recentlyPlayedAlbumsPlaylistsArtists.set(position, data);
                 done = true;
             } catch (IndexOutOfBoundsException e) {
                 recentlyPlayedAlbumsPlaylistsArtists.add(null);
@@ -79,10 +85,12 @@ public class HomeViewModel2 extends ConnectionAwareViewModel<HomeRepository2> {
             recentlyPlayedAlbumsPlaylistsArtists.add(mRepo.fetchPlaylist(playlistId));
         }*/
 
+        MutableLiveData<Playlist> data = mRepo.fetchPlaylist(token, playlistId);
+
         boolean done = false;
         while (!done) {
             try {
-                recentlyPlayedAlbumsPlaylistsArtists.set(position, mRepo.fetchPlaylist(token, playlistId));
+                recentlyPlayedAlbumsPlaylistsArtists.set(position, data);
                 done = true;
             } catch (IndexOutOfBoundsException e) {
                 recentlyPlayedAlbumsPlaylistsArtists.add(null);
@@ -103,10 +111,13 @@ public class HomeViewModel2 extends ConnectionAwareViewModel<HomeRepository2> {
     }
 
     public void addCategoryPlaylists(String token, String categoryId, int position) {
+
+        MutableLiveData<OudList<Playlist>> data = mRepo.fetchCategoryPlaylists(token, categoryId);
+
         boolean done = false;
         while (!done) {
             try {
-                playlistsOfEachCategory.set(position, mRepo.fetchCategoryPlaylists(token, categoryId));
+                playlistsOfEachCategory.set(position, data);
                 done = true;
             } catch (IndexOutOfBoundsException e) {
                 playlistsOfEachCategory.add(null);

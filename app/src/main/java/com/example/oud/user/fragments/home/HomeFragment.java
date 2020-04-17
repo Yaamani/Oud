@@ -3,27 +3,18 @@ package com.example.oud.user.fragments.home;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.R;
-import com.example.oud.ReconnectingListener;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
@@ -196,18 +187,19 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
             start++;
 
+            NestedRecyclerViewHelper.Item _item = item;
             if (item == null) {
                 item = new NestedRecyclerViewHelper.Item();
-                itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+                itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> _item.setImage(imageUrl, false));
                 itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
                 _section.addItem(item);
             }
 
-            itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+            itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> _item.setImage(imageUrl, false));
             itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
             itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
 
-            NestedRecyclerViewHelper.Item _item = item;
+            //NestedRecyclerViewHelper.Item _item = item;
             itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                 String trackId = (String) map.get(Constants.TRACK_ID_KEY);
                 _item.getRelatedInfo().put(Constants.TRACK_ID_KEY, trackId);
@@ -270,9 +262,10 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
                 start++;
 
+                NestedRecyclerViewHelper.Item _item = item;
                 if (item == null) {
                     item = new NestedRecyclerViewHelper.Item();
-                    itemData.getImage().observe(getViewLifecycleOwner(), item::setImageUrl);
+                    itemData.getImage().observe(getViewLifecycleOwner(), imageUrl -> _item.setImage(imageUrl, false));
                     itemData.getTitle().observe(getViewLifecycleOwner(), item::setTitle);
                     _section.addItem(item);
                 }
@@ -280,7 +273,7 @@ public class HomeFragment extends ConnectionAwareFragment<HomeViewModel> {
 
                 itemData.getSubTitle().observe(getViewLifecycleOwner(), item::setSubtitle);
 
-                NestedRecyclerViewHelper.Item _item = item;
+                // NestedRecyclerViewHelper.Item _item = item;
                 itemData.getRelatedInfo().observe(getViewLifecycleOwner(), map -> {
                     String playlistId = (String) map.get(Constants.PLAYLIST_ID_KEY);
                     _item.getRelatedInfo().put(Constants.PLAYLIST_ID_KEY, playlistId);

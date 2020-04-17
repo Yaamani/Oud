@@ -6,4 +6,6 @@
     <string name="tag_home_inner_item_image">tag_home_inner_item_image_</string>
     <string name="tag_home_inner_item_title">tag_home_inner_item_title_</string>
     <string name="tag_home_inner_item_subtitle">tag_home_inner_item_subtitle_</string>
+
+    <string name="tag_track_list_adapter_heart">tag_track_list_adapter_heart_</string>
 </resources>

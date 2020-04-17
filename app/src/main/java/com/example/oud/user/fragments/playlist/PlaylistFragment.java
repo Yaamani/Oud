@@ -1,10 +1,15 @@
 package com.example.oud.user.fragments.playlist;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -19,52 +24,66 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
+import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
+import com.example.oud.api.Album;
+import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudList;
+import com.example.oud.api.Playlist;
 import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.player.PlayerInterface;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import static android.content.Context.MODE_PRIVATE;
+import static android.app.Activity.RESULT_OK;
 
-public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> {
+public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> implements RenameFragment.OnRenamingListener {
 
     private static final String TAG = PlaylistFragment.class.getSimpleName();
 
+    public static final int RESULT_LOAD_IMG = 4331;
+
     private String token;
-    private String userId;
+    private String userId = "user0";
     private Constants.PlaylistFragmentType type;
     private String playlistOrAlbumId;
 
     private MotionLayout mMotionLayout;
 
     private RecyclerView mRecyclerViewTracks;
-    private PlaylistRecyclerViewAdapter adapter;
+    private TrackListRecyclerViewAdapter trackListRecyclerViewAdapter;
     private ItemTouchHelper touchHelper;
 
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
+    private ImageButton mImageButtonUploadImage;
     private ImageButton mImageButtonRename;
     private ImageButton mImageButtonOptions;
+
 
 
 
@@ -73,16 +92,24 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
 
-    private int positionBeforeDeletion;
+    private int deletionPosition;
+    //private View.OnClickListener trackClickListenerBeforeDeletion;
     private String trackImageBeforeDeletion;
     private String trackNameBeforeDeletion;
+    private Boolean trackIsLikedBeforeDeletion;
+    //private View.OnClickListener heartClickListenerBeforeDeletion;
+    private boolean undoDeletionClicked;
 
     private String playlistNameBeforeRenaming;
 
     private int reorderingFromPosition;
     private int reorderingToPosition;
 
-    private boolean renamePressed;
+    //private boolean renamePressed;
+
+    private int trackLikePosition;
+
+    private Drawable playlistImageBeforeUploadingTheNewOne; // Uri or String
 
 
 
@@ -91,6 +118,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         super(PlaylistViewModel.class,
                 R.layout.fragment_playlist,
                 R.id.progress_playlist,
+                R.id.view_block_ui_input,
                 null);
     }
 
@@ -139,62 +167,18 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
 
 
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
-        mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
-
-        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
-        mImageButtonOptions.setOnClickListener(v -> {
-            /*OptionsFragment.builder(getActivity())
-                    .addItem(null, "Go To Artist", v1 -> {
-                        ArtistFragment artistFragment = ArtistFragment.newInstance("artist10");
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.nav_host_fragment, artistFragment, Constants.ARTIST_FRAGMENT_TAG)
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .addToBackStack(null)
-                                .commit();
-                    }).show();*/
-        });
-
-        mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
-        mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
-        touchHelper = new ItemTouchHelper(recyclerViewTouchCallback);
-        touchHelper.attachToRecyclerView(mRecyclerViewTracks);
-
-
-        mImageViewPlaylist = view.findViewById(R.id.img_playlist);
-
-        mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
-        mTextViewPlaylistName.setSelected(true);
-        mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
-
-
-        mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
-        mImageButtonRename.setOnClickListener(v -> {
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
-            playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
-
-            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, mTextViewPlaylistName);
-        });
+        initializeUiStuff(view);
 
 
 
-
-
-        if (type == Constants.PlaylistFragmentType.ALBUM) {
-            disableEditing(view);
-            handleAlbumData(mViewModel, view);
-        } else {
-            handlePlaylistData(mViewModel, view);
-        }
-
-
-
-
+        loadData(view);
 
     }
 
@@ -211,6 +195,16 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+    }
+
+    private void loadData(View view) {
+        if (type == Constants.PlaylistFragmentType.ALBUM) {
+            disableEditing(view);
+            handleAlbumData();
+        } else {
+            handlePlaylistData(view);
+        }
 
     }
 
@@ -233,12 +227,244 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     " to pass the arguments to the fragment. Or you can use playlistFragment.setArguments(" + PlaylistFragment.class.getSimpleName() + ".myArgs()).");
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
+    }*/
+
+    private void initializeUiStuff(View view) {
+        mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
+
+        mImageButtonOptions = view.findViewById(R.id.btn_playlist_options);
+
+        mRecyclerViewTracks = view.findViewById(R.id.recycler_view_playlist_tracks);
+        mRecyclerViewTracks.setLayoutManager(new LinearLayoutManager(getContext()));
+        touchHelper = new ItemTouchHelper(recyclerViewTouchCallback);
+        touchHelper.attachToRecyclerView(mRecyclerViewTracks);
+
+
+        mImageViewPlaylist = view.findViewById(R.id.img_playlist);
+
+        mTextViewPlaylistName = view.findViewById(R.id.txt_playlist_name);
+        mTextViewPlaylistName.setSelected(true);
+        //mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
+
+        mImageButtonUploadImage = view.findViewById(R.id.btn_upload_playlist_image);
+        mImageButtonUploadImage.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        });
+
+        mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
+        mImageButtonRename.setOnClickListener(v -> {
+            // mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
+            playlistNameBeforeRenaming = mTextViewPlaylistName.getText().toString();
+
+            RenameFragment.showRenameFragment(getActivity(), R.id.nav_host_fragment, playlistNameBeforeRenaming, this);
+        });
+
     }
 
-    private void handlePlaylistData(PlaylistViewModel mViewModel, View view) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                Log.i(TAG, imageUri.getPath());
+
+                Drawable before = mImageViewPlaylist.getDrawable();
+
+                /*DrawableCrossFadeFactory factory =
+                        new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
+                Glide.with(getContext())
+                        .load(imageUri)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .into(mImageViewPlaylist);*/
+
+                final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                mImageViewPlaylist.setImageDrawable(new BitmapDrawable(getResources(), selectedImage));
+
+                String token = OudUtils.getToken(getContext());
+                mViewModel.uploadPlaylistImage(token, getContext(), this, before, selectedImage);
+
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+
+            }
+        }
+
+    }
+
+    private void handlePlaylistOptions() {
+
+        mViewModel.getDoesUserFollowThisPlaylist(token, playlistOrAlbumId, userId).observe(getViewLifecycleOwner(), doesUserFollowThisPlaylist -> {
+            mImageButtonOptions.setVisibility(View.VISIBLE);
+        });
+
+
+        mImageButtonOptions.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Playlist playlist = mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).getValue();
+
+            OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
+
+            if (!playlist.getOwner().equals(userId)) {
+
+                boolean isFollowed = mViewModel.getDoesUserFollowThisPlaylist(token, playlistOrAlbumId, userId).getValue().get(0);
+                View.OnClickListener followClickListener = instantiateFollowClickListener(isFollowed);
+                optionsBuilder.addItem(R.drawable.ic_follow_playlist, "Follow", isFollowed, followClickListener);
+            }
+
+            if (playlist.getOwner().equals(userId)) {
+                boolean isPublic = playlist.isPublicPlaylist();
+                View.OnClickListener makePublicClickListener = instantiateMakePublicClickListener(isPublic);
+                optionsBuilder.addItem(R.drawable.ic_public, "Make Public", isPublic, makePublicClickListener);
+
+                boolean isCollaborative = playlist.isCollaborative();
+                View.OnClickListener makeCollaborativeClickListener = instantiateMakeCollaborativeClickListener(isCollaborative);
+                optionsBuilder.addItem(R.drawable.ic_collaborative, "Make Collaborative", isCollaborative, makeCollaborativeClickListener);
+            }
+
+            optionsBuilder.show();
+        });
+
+
+    }
+
+    private void handleAlbumOptions() {
+        mViewModel.getIsThisAlbumSavedByUser(token).observe(getViewLifecycleOwner(), isFoundResponse -> {
+            mImageButtonOptions.setVisibility(View.VISIBLE);
+        });
+
+        mImageButtonOptions.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Album album = mViewModel.getAlbumLiveData(token, playlistOrAlbumId).getValue();
+
+            View.OnClickListener goToArtistClickListener = instantiateGoToArtistClickListener(album.getArtists());
+
+            boolean isSaved = mViewModel.getIsThisAlbumSavedByUser(token).getValue().getIsFound().get(0);
+            View.OnClickListener saveAlbumClickListener = instantiateSaveAlbumClickListener(isSaved);
+
+
+            OptionsFragment.builder(getActivity())
+                    .addItem(R.drawable.ic_user, "Go To Artist", false, goToArtistClickListener)
+                    .addItem(R.drawable.ic_star, "Save Album", isSaved, saveAlbumClickListener)
+                    .show();
+        });
+    }
+
+    private View.OnClickListener instantiateFollowClickListener(boolean isFollowed) {
+        if (isFollowed)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.unfollowThisPlaylist(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.followThisPlaylist(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateMakePublicClickListener(boolean isPublic) {
+        if (isPublic)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.makePlaylistPrivate(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.makePlaylistPublic(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateMakeCollaborativeClickListener(boolean isCollaborative) {
+        if (isCollaborative)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.makePlaylistNonCollaborative(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.makePlaylistCollaborative(token);
+            blockUiAndWait();
+        };
+    }
+
+    private View.OnClickListener instantiateGoToArtistClickListener(ArtistPreview[] artists) {
+        if (artists.length == 1)
+            return openArtistFragmentClickListener(artists[0].get_id());
+        else
+            return v -> {
+                OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
+
+                for (ArtistPreview artistPreview : artists) {
+                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
+                }
+
+                optionsBuilder.show();
+            };
+    }
+
+    private View.OnClickListener openArtistFragmentClickListener(String artistId) {
+        return v -> ArtistFragment.show(getActivity(),
+                R.id.nav_host_fragment,
+                artistId, userId);
+    }
+
+    private View.OnClickListener instantiateSaveAlbumClickListener(boolean isSaved) {
+        if (isSaved)
+            return v -> {
+                if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                    return;
+
+                mViewModel.unsaveAlbum(token);
+                blockUiAndWait();
+            };
+
+        return v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            mViewModel.saveAlbum(token);
+            blockUiAndWait();
+        };
+    }
+
+    private void handlePlaylistData(View view) {
         mViewModel.getPlaylistLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), playlist -> {
 
 
@@ -247,31 +473,94 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 disableEditing(view);
 
 
+            if (mViewModel.getNewPlaylistImage() == null) {
 
+                DrawableCrossFadeFactory factory =
+                        new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
+                //playlistImageBeforeUploadingTheNewOne = playlist.getImage();
+
+                Glide.with(getContext())
+                        .load(playlist.getImage())
+                        .addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                mImageButtonUploadImage.setVisibility(View.VISIBLE);
+                                return false;
+                            }
+                        })
+                        .placeholder(R.drawable.ic_oud_loading)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .into(mImageViewPlaylist);
+
+            } else {
+                mImageViewPlaylist.setImageDrawable(mViewModel.getNewPlaylistImage());
+                mImageButtonUploadImage.setVisibility(View.VISIBLE);
+            }
+
+            mTextViewPlaylistName.setText(playlist.getName());
+
+            handlePlaylistTracks(playlist);
+            handlePlaylistOptions();
+        });
+    }
+
+    private void handleAlbumData() {
+        mViewModel.getAlbumLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
             DrawableCrossFadeFactory factory =
                     new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
             Glide.with(getContext())
-                    .load(playlist.getImage())
+                    .load(album.getImage())
                     .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);
 
-            mTextViewPlaylistName.setText(playlist.getName());
+            mTextViewPlaylistName.setText(album.getName());
 
-            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+            handleAlbumTracks(album);
+
+            handleAlbumOptions();
+        });
+    }
+
+    private void handlePlaylistTracks(Playlist playlist) {
+
+        ArrayList<String> ids = new ArrayList<>();
+        for (Track track : playlist.getTracks()) {
+            ids.add(track.get_id());
+        }
+
+        mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
+            //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
             ArrayList<Track> tracks = playlist.getTracks();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
 
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
+
+
+
+            trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                    ids,
+                    trackClickListener,
+                    trackImages,
+                    trackNames,
+                    userAreTracksLiked.getIsFound(),
+                    availableOfflineClickListener,
+                    heartClickListener);
 
 
             for (int i = 0; i < tracks.size(); i++) {
 
                 Track current = tracks.get(i);
 
-                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
+                //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
                 trackImages.add(current.getAlbum().getImage());
 
@@ -282,50 +571,89 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                             trackImages.set(_i, album.getImage());
                             adapter.notifyItemChanged(_i);
                         });*/
-
+                playlistNameBeforeRenaming = current.getName();
                 trackNames.add(current.getName());
+
             }
 
-            mRecyclerViewTracks.setAdapter(adapter);
+            mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
         });
+
     }
 
-    private void handleAlbumData(PlaylistViewModel mViewMode, View view) {
-        mViewModel.getAlbumLiveData(token, playlistOrAlbumId).observe(getViewLifecycleOwner(), album -> {
-            DrawableCrossFadeFactory factory =
-                    new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+    private void handleAlbumTracks(Album album) {
+        ArrayList<String> ids = new ArrayList<>();
+        for (TrackPreview track : album.getTracks().getItems()) {
+            ids.add(track.get_id());
+        }
 
-            Glide.with(getContext())
-                    .load(album.getImage())
-                    .placeholder(R.drawable.ic_loading)
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
-                    .into(mImageViewPlaylist);
-
-            mTextViewPlaylistName.setText(album.getName());
-
+        mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
             OudList<TrackPreview> tracksOudList = album.getTracks();
             ArrayList<TrackPreview> tracks = tracksOudList.getItems();
-            ArrayList<View.OnClickListener> clickListeners = new ArrayList<>();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
             ArrayList<String> trackImages = new ArrayList<>();
             ArrayList<String> trackNames = new ArrayList<>();
+            //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
 
-            adapter = new PlaylistRecyclerViewAdapter(getContext(), clickListeners, trackImages, trackNames);
+
+            trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
+                    ids,
+                    trackClickListener,
+                    trackImages,
+                    trackNames,
+                    userAreTracksLiked.getIsFound(),
+                    availableOfflineClickListener,
+                    heartClickListener);
 
 
             for (int i = 0; i < tracks.size(); i++) {
 
                 TrackPreview current = tracks.get(i);
 
-                clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
+                //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
                 trackImages.add(album.getImage());
 
                 trackNames.add(current.getName());
+
+                //heartClickListeners.add(v -> Toast.makeText(getContext(), "Like !!", Toast.LENGTH_SHORT).show());
+
             }
 
-            mRecyclerViewTracks.setAdapter(adapter);
+            mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
         });
     }
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
+        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+    };
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
+        //Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
+
+        trackLikePosition = position;
+
+        if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+            return;
+
+        String id = trackListRecyclerViewAdapter.getIds().get(position);
+        if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
+            mViewModel.removeTrackFromLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+        } else {
+            mViewModel.addTrackToLikedTracks(token, id, position);
+            trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
+            trackListRecyclerViewAdapter.notifyItemChanged(position);
+        }
+
+        blockUiAndWait();
+
+    };
+
+    private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
+        Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+    };
 
     private ItemTouchHelper.SimpleCallback recyclerViewTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -356,9 +684,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             else if (toPosition < fromPosition)
                 target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);*/
 
-            Collections.swap(adapter.getTrackImages(), fromPosition, toPosition);
-            Collections.swap(adapter.getTrackNames(), fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
+            trackListRecyclerViewAdapter.swapItems(fromPosition, toPosition);
+            trackListRecyclerViewAdapter.notifyItemMoved(fromPosition, toPosition);
 
             reorderingToPosition = toPosition;
 
@@ -376,12 +703,21 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             final int position = viewHolder.getAdapterPosition();
 
-            String trackImage = adapter.getTrackImages().remove(position);
-            String trackName = adapter.getTrackNames().remove(position);
-            adapter.notifyItemRemoved(position);
+            //View.OnClickListener trackClickListener = trackListRecyclerViewAdapter.getTrackClickListeners().get(position);
+            String trackImage = trackListRecyclerViewAdapter.getTrackImages().get(position);
+            String trackName = trackListRecyclerViewAdapter.getTrackNames().get(position);
+            Boolean isLiked = trackListRecyclerViewAdapter.getLikedTracks().get(position);
+            //View.OnClickListener heartClickListener = trackListRecyclerViewAdapter.getHeartClickListeners().get(position);
+            trackListRecyclerViewAdapter.removeItem(position);
+            trackListRecyclerViewAdapter.notifyItemRemoved(position);
 
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
-            positionBeforeDeletion = position;
+            //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
+            deletionPosition = position;
+            //trackClickListenerBeforeDeletion = trackClickListener;
+            trackImageBeforeDeletion = trackImage;
+            trackNameBeforeDeletion = trackName;
+            trackIsLikedBeforeDeletion = isLiked;
+            //heartClickListenerBeforeDeletion = heartClickListener;
 
             //mMotionLayout.refreshDrawableState();
             //mMotionLayout.jumpDrawablesToCurrentState();
@@ -389,7 +725,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             //Log.i(TAG, "onSwiped: " + );
                 //mMotionLayout.setProgress(mMotionLayout.getProgress() + 0.001f); // Little hack to refresh the recycler view,
 
-            snackbarUndoTrackRemoved(position, trackImage, trackName);
+            snackbarUndoTrackRemoved();
 
         }
 
@@ -425,8 +761,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 // Server stuff
                 if (reorderingToPosition != reorderingFromPosition) {
-                    mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
-                    mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
+                    //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.REORDER);
+
+                    if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+                        undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
+                    } else {
+                        blockUiAndWait();
+                        mViewModel.reorderTrack(token, reorderingFromPosition, reorderingToPosition);
+                    }
 
                 }
 
@@ -461,63 +803,65 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         }
     };
 
-    private void snackbarUndoTrackRemoved(int position, String trackImage, String trackName) {
+    private void snackbarUndoTrackRemoved() {
         Snackbar.make(mMotionLayout, "Track removed.", BaseTransientBottomBar.LENGTH_LONG)
-                .setAction("Undo", new View.OnClickListener() {
+
+                .setAction("Undo", v -> {
+                    undoDeletionRecyclerView();
+                    undoDeletionClicked = true;
+                })
+
+                .addCallback(new Snackbar.Callback() {
                     @Override
-                    public void onClick(View v) {
-                        undoDeletionRecyclerView(position, trackImage, trackName);
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        if (!undoDeletionClicked) {
+                            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+                                undoDeletionRecyclerView();
+                            } else {
+                                mViewModel.deleteTrack(token, deletionPosition);
+                                blockUiAndWait();
+                            }
+                        }
+                        undoDeletionClicked = false;
                     }
-                }).addCallback(new Snackbar.Callback() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                // Server stuff
-                mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
-            }
-        }).show();
+                })
+                .show();
     }
 
-    private TextWatcher renameTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    private void undoPlaylistImageChange() {
+        mImageViewPlaylist.setImageDrawable(playlistImageBeforeUploadingTheNewOne);
+    }
 
-        }
+    public void setPlaylistImageBeforeUploadingTheNewOne(Drawable playlistImageBeforeUploadingTheNewOne) {
+        this.playlistImageBeforeUploadingTheNewOne = playlistImageBeforeUploadingTheNewOne;
+    }
 
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.i(TAG, "onTextChanged: ");
-            // Server stuff
-            // Current operation has been set in onClickListener
-            mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.RENAME);
-            String newName = s.toString();
+    private void undoDeletionRecyclerView() {
+        trackListRecyclerViewAdapter.addItem(deletionPosition,
+                trackImageBeforeDeletion,
+                trackNameBeforeDeletion,
+                trackIsLikedBeforeDeletion);
 
-            if (s.equals(playlistNameBeforeRenaming)) return;
-
-            mViewModel.renamePlaylist(token, newName);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
-
-    private void undoDeletionRecyclerView(int position, String trackImage, String trackName) {
-        adapter.getTrackImages().add(position, trackImage);
-        adapter.getTrackNames().add(position, trackName);
-        adapter.notifyItemInserted(position);
+        trackListRecyclerViewAdapter.notifyItemInserted(deletionPosition);
     }
 
     private void undoReorderingRecyclerView(int fromPosition, int toPosition) {
-        Collections.swap(adapter.getTrackImages(), toPosition, fromPosition); // swap fromPosition & toPosition params
-        Collections.swap(adapter.getTrackNames(), toPosition, fromPosition); // swap fromPosition & toPosition params
-        adapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
+        trackListRecyclerViewAdapter.swapItems(toPosition, fromPosition); // swap fromPosition & toPosition params
+        trackListRecyclerViewAdapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
     }
 
     private void undoRenaming(String previousName) {
         mTextViewPlaylistName.setText(previousName);
     }
+
+    private void undoLikingTrack() {
+        boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
+        trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
+        trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
+    }
+
+
 
     @Override
     public void onConnectionSuccess() {
@@ -533,31 +877,56 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         if (mViewModel.getCurrentOperation() != null)
             switch (mViewModel.getCurrentOperation()) {
-                case DELETE: undoDeletionRecyclerView(positionBeforeDeletion, trackImageBeforeDeletion, trackNameBeforeDeletion);
+                case DELETE: undoDeletionRecyclerView();
                     break;
                 case RENAME: undoRenaming(playlistNameBeforeRenaming);
                     break;
                 case REORDER: undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
                     break;
-                case UPLOAD_IMAGE:
+                case UPLOAD_IMAGE: undoPlaylistImageChange();
+                    break;
+                case REMOVE_TRACK_FROM_LIKED_TRACKS:
+                case ADD_TRACK_TO_LIKED_TRACKS:
+                    undoLikingTrack();
                     break;
 
-        }
-
+            }
 
         mViewModel.setCurrentOperation(null);
+    }
+
+    @Override
+    public void onRenamingListener(String s) {
+        if (type == Constants.PlaylistFragmentType.ALBUM) return;
+
+        String newName = s;
+
+        //if (s.equals(playlistNameBeforeRenaming)) return;
+
+        if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED) {
+            //if (playlistNameBeforeRenaming.equals(s))
+            undoRenaming(playlistNameBeforeRenaming);
+            playlistNameBeforeRenaming = newName;
+        } else {
+            mTextViewPlaylistName.setText(newName);
+            mViewModel.renamePlaylist(token, newName);
+            blockUiAndWait();
+        }
     }
 
     @Override
     public void onTryingToReconnect() {
         super.onTryingToReconnect();
 
-        if (type == Constants.PlaylistFragmentType.ALBUM) {
-            disableEditing(getView());
-            handleAlbumData(mViewModel, getView());
-        } else {
-            handlePlaylistData(mViewModel, getView());
-        }
+        loadData(getView());
     }
 
+    /**
+     * For tests only.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

@@ -16,7 +16,6 @@ import com.example.oud.R;
 
 public class LibraryFragment extends Fragment {
 
-    private LibraryViewModel mViewModel;
 
     public static LibraryFragment newInstance() {
         return new LibraryFragment();
@@ -31,8 +30,6 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(LibraryViewModel.class);
-        // TODO: Use the ViewModel
     }
 
 }

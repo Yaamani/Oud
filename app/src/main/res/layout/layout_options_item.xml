@@ -7,12 +7,13 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_options_item_icon"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/txt_options_item"
         app:layout_constraintHorizontal_bias="0.5"

@@ -14,7 +14,7 @@
             app:touchAnchorId="@+id/scroll_view_artist"
             app:touchAnchorSide="top"
             app:dragDirection="dragUp"
-            app:onTouchUp="stop"/>
+            app:onTouchUp="autoComplete"/>
 
         <KeyFrameSet>
 
@@ -41,10 +41,10 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_follow"
+            android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@+id/img_artist"
@@ -106,6 +106,15 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
+
+        <Constraint
             android:id="@+id/progress_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,10 +143,10 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_follow"
+            android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@+id/img_artist"
@@ -197,6 +206,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint
+            android:id="@+id/view_block_ui_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:visibilityMode="ignore"/>
 
         <Constraint
             android:id="@+id/progress_artist"

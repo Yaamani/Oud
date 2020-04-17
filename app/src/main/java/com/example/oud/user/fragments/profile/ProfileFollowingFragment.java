@@ -1,19 +1,15 @@
 package com.example.oud.user.fragments.profile;
 
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.oud.R;
@@ -160,7 +156,7 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
 
     private void setRecyclerView(){
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes);
+        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes, userId);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

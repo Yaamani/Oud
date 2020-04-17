@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     if(response.body().toString().contains("token")){
                         Gson gson = new Gson();
                         LoginResponse loginResponse = gson.fromJson(response.body().toString(),LoginResponse.class);
-                        saveToken(loginResponse.getToken());
+                        OudUtils.saveUserData(getApplicationContext(),loginResponse.getToken(),loginResponse.getUser().get_id());
 
                         Intent i = new Intent(getParent(), UserActivity.class);
                         i.putExtra(Constants.USER_ID_KEY, loginResponse.getUser().get_id());
@@ -232,14 +232,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void saveToken(String token){
-
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putString("token",token);
-        prefsEditor.apply();    //token saved in shared preferences
-
-    }
 
 }
 

@@ -3,6 +3,7 @@ package com.example.oud.testutils;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.api.OudApi;
 import com.example.tryingstuff.OudApiJsonGenerator;
 
 import org.hamcrest.Matcher;
@@ -14,6 +15,11 @@ import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.os.Looper.getMainLooper;
+import static org.robolectric.Shadows.shadowOf;
 
 public class TestUtils {
 
@@ -46,6 +52,45 @@ public class TestUtils {
         };
 
         return dispatcher;
+    }
+
+    public static OudApi instantiateOudApi() {
+        String baseUrl;
+
+        if (Constants.MOCK)
+            baseUrl = Constants.YAMANI_MOCK_BASE_URL;
+        else
+            baseUrl = Constants.BASE_URL;
+
+        OudApi oudApi = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(OudApi.class);
+
+        return oudApi;
+    }
+
+    /*public static OudApi instantiateOudApiConnectionFailure() {
+        OudApi oudApi = new Retrofit.Builder()
+                .baseUrl("http://حرام عليكم ..")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(OudApi.class);
+
+        return oudApi;
+    }*/
+
+    public static void sleep(int iterationCount, int millisForEachIteration) {
+        for (int i = 0; i < iterationCount; i++) {
+            try {
+                Thread.sleep(millisForEachIteration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            shadowOf(getMainLooper()).idle();
+        }
     }
 
     private static Dispatcher getOudMockServerDispatcher(int recentlyPlayedTrackCount, 
