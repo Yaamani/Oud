@@ -1,4 +1,4 @@
-package com.example.oud.user.fragments.playlist;
+package com.example.oud.user;
 
 import android.content.Context;
 import android.view.LayoutInflater;

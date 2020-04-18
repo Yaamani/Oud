@@ -1,7 +1,6 @@
 package com.example.oud.user.fragments.artist;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -37,7 +36,7 @@ import com.example.oud.user.LoadMoreAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.Fragment;
@@ -45,8 +44,6 @@ import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
@@ -200,7 +197,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         handleData();
 
-        mMotionLayout.transitionToEnd();
+        // mMotionLayout.transitionToEnd();
 
     }
 
@@ -497,21 +494,23 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                             return;
                         } else {
 
-                            mAlbumsAdapter.getClickListeners().add(v -> PlaylistFragment.show(getActivity(),
+                        HorizontalRecyclerViewAdapter hAdapter = (HorizontalRecyclerViewAdapter) mAlbumsAdapter.getAdapter();
+
+                        hAdapter.getClickListeners().add(v -> PlaylistFragment.show(getActivity(),
                                     R.id.nav_host_fragment,
                                     userId,
                                     Constants.PlaylistFragmentType.ALBUM,
                                     album.get_id()));
-                            mAlbumsAdapter.getImages().add(album.getImage());
-                            mAlbumsAdapter.getCircularImages().add(false);
-                            mAlbumsAdapter.getTitles().add(album.getName());
-                            mAlbumsAdapter.getSubtitles().add("");
+                            hAdapter.getImages().add(album.getImage());
+                            hAdapter.getCircularImages().add(false);
+                            hAdapter.getTitles().add(album.getName());
+                            hAdapter.getSubtitles().add("");
 
                             HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put(Constants.ID_KEY, album.get_id());
-                            mAlbumsAdapter.getRelatedInfo().add(hashMap);
+                            hAdapter.getRelatedInfo().add(hashMap);
                             
-                            mAlbumsAdapter.notifyItemInserted(_i);
+                            hAdapter.notifyItemInserted(_i);
                         }
 
                         
@@ -538,15 +537,19 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         if (mAlbumsAdapter == null) {
 
-            mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
-                    Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT,
+            HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(
                     getContext(),
+                    R.layout.item_inner,
                     clickListeners,
                     images,
                     circularImages,
                     titles,
                     subtitles,
                     relatedInfo);
+
+            mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
+                    hAdapter,
+                    hAdapter.getImages());
             mRecyclerViewAlbums.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
             //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
             mAlbumsAdapter.setOnLoadMoreListener(() -> {
@@ -592,7 +595,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                     relatedInfo.add(hashMap);
                 }
 
-                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, circularImages, titles, subtitles, relatedInfo);
+                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), R.layout.item_inner, clickListeners, images, circularImages, titles, subtitles, relatedInfo);
                 mRecyclerViewSimilarArtists.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
 
                 mRecyclerViewSimilarArtists.setAdapter(mSimilarArtistsAdapter);

@@ -1,21 +1,15 @@
 package com.example.oud.user;
 
-import android.content.Context;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.R;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,47 +25,20 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
     private RecyclerView recyclerView;
 
 
-    private int singleFetchItemCount;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
     private OnLoadMoreListener onLoadMoreListener;
 
-
-    private Context mContext;
-
-    private ArrayList<View.OnClickListener> clickListeners;
-
-    private ArrayList<String> images;
-    private ArrayList<Boolean> circularImages;
-    private ArrayList<String> titles;
-    private ArrayList<String> subtitles;
-
-    private ArrayList<HashMap<String, Object>> relatedInfo;
+    private RecyclerView.Adapter adapter;
+    private ArrayList mainList;
 
 
     public LoadMoreAdapter(RecyclerView recyclerView,
-                           int singleFetchItemCount,
-                           Context mContext,
-                           ArrayList<View.OnClickListener> clickListeners,
-                           ArrayList<String> images,
-                           ArrayList<Boolean> circularImages,
-                           ArrayList<String> titles,
-                           ArrayList<String> subtitles,
-                           ArrayList<HashMap<String, Object>> relatedInfo) {
+                           RecyclerView.Adapter adapter,
+                           ArrayList mainList) {
 
-
-
-        this.singleFetchItemCount = singleFetchItemCount;
-
-        this.mContext = mContext;
-
-        this.clickListeners = clickListeners;
-        this.images = images;
-        this.circularImages = circularImages;
-        this.titles = titles;
-        this.subtitles = subtitles;
-
-        this.relatedInfo = relatedInfo;
+        this.adapter = adapter;
+        this.mainList = mainList;
 
         setRecyclerView(recyclerView);
     }
@@ -83,7 +50,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         else
             return VIEW_ITEM;*/
 
-        return images.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+        return mainList.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
 
     @Override
@@ -91,10 +58,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
                                                       int viewType) {
         RecyclerView.ViewHolder vh;
         if (viewType == VIEW_ITEM) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.item_inner, parent, false);
-
-            vh = new HorizontalRecyclerViewAdapter.InnerItemViewHolder(v);
+            vh = adapter.onCreateViewHolder(parent, viewType);
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.progressbar_item, parent, false);
@@ -112,39 +76,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
             //holder.mImageView.setImageDrawable(mBitmaps.get(position));
             //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
 
-            HorizontalRecyclerViewAdapter.InnerItemViewHolder h = (HorizontalRecyclerViewAdapter.InnerItemViewHolder) holder;
-
-            h.getmLayout().setOnClickListener(clickListeners.get(position));
-
-            //if (!mImages.get(position).equals(""))
-            String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
-            h.getmImage().setTag(iconTagPrefix + position);
-            if (!circularImages.get(position))
-                Glide.with(mContext)
-                        .load(images.get(position))
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .placeholder(R.drawable.ic_oud_loading)
-                        //.error(R.drawable.ic_warning)
-                        .into(h.getmImage());
-            else
-                Glide.with(mContext)
-                        .load(images.get(position))
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .placeholder(R.drawable.ic_oud_loading_circular)
-                        //.error(R.drawable.ic_warning)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(h.getmImage());
-
-            String titleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_title);
-            h.getmTitle().setTag(titleTagPrefix + position);
-            h.getmTitle().setText(titles.get(position));
-            if (circularImages.get(position)) {
-                h.getmTitle().setGravity(Gravity.CENTER);
-            }
-
-            String subtitleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_subtitle);
-            h.getmSubTitle().setTag(subtitleTagPrefix + position);
-            h.getmSubTitle().setText(subtitles.get(position));
+            adapter.onBindViewHolder((HorizontalRecyclerViewAdapter.InnerItemViewHolder) holder, position);
 
         } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
@@ -152,9 +84,9 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
     }
 
     public void setLoaded() {
-        if (images.get(images.size()-1) == null) {
-            images.remove(images.size() - 1);
-            notifyItemRemoved(images.size());
+        if (mainList.get(mainList.size()-1) == null) {
+            mainList.remove(mainList.size() - 1);
+            notifyItemRemoved(mainList.size());
         }
         loading = false;
     }
@@ -188,8 +120,9 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
                             if (!loading && b) {
                                 // End has been reached
                                 // Do something
-                                images.add(null);
-                                notifyItemInserted(images.size()-1);
+
+                                mainList.add(null);
+                                notifyItemInserted(mainList.size()-1);
                                 if (onLoadMoreListener != null) {
                                     onLoadMoreListener.onLoadMore();
                                 }
@@ -200,33 +133,13 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public ArrayList<View.OnClickListener> getClickListeners() {
-        return clickListeners;
-    }
-
-    public ArrayList<String> getImages() {
-        return images;
-    }
-
-    public ArrayList<Boolean> getCircularImages() {
-        return circularImages;
-    }
-
-    public ArrayList<String> getTitles() {
-        return titles;
-    }
-
-    public ArrayList<String> getSubtitles() {
-        return subtitles;
-    }
-
-    public ArrayList<HashMap<String, Object>> getRelatedInfo() {
-        return relatedInfo;
-    }
-
     @Override
     public int getItemCount() {
-        return images.size();
+        return mainList.size();
+    }
+
+    public RecyclerView.Adapter getAdapter() {
+        return adapter;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {

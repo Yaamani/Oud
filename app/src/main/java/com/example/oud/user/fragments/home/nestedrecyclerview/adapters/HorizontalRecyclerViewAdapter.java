@@ -17,6 +17,7 @@ import com.example.oud.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +26,9 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     private static final String TAG = HorizontalRecyclerViewAdapter.class.getSimpleName();
 
     private Context mContext;
+
+    @LayoutRes
+    private int itemLayout;
 
     private ArrayList<View.OnClickListener> clickListeners;
 
@@ -39,6 +43,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     //private boolean circularImages;
 
     public HorizontalRecyclerViewAdapter(Context mContext,
+                                         int itemLayout,
                                          ArrayList<View.OnClickListener> clickListeners,
                                          ArrayList<String> images,
                                          ArrayList<Boolean> circularImages,
@@ -46,6 +51,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
                                          ArrayList<String> subtitles,
                                          ArrayList<HashMap<String, Object>> relatedInfo) {
         this.mContext = mContext;
+        this.itemLayout = itemLayout;
 
         this.clickListeners = clickListeners;
         this.circularImages = circularImages;
@@ -59,7 +65,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     @NonNull
     @Override
     public InnerItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_inner, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
         return new InnerItemViewHolder(view);
     }
 
