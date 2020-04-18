@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -56,6 +59,7 @@ public class OudUtils {
         prefsEditor.apply();    //token saved in shared preferences
 
     }
+
     public static String getToken(Context context){
     SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
     return  prefs.getString(Constants.SHARED_PREFERENCES_TOKEN_NAME,"");
@@ -68,7 +72,12 @@ public class OudUtils {
 
     }
 
+    public static Gson getGson() {
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .create();
 
-
+        return gson;
+    }
 
 }

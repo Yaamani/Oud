@@ -1,5 +1,8 @@
 package com.example.tryingstuff;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -355,6 +358,42 @@ public class OudApiJsonGenerator {
                 "}";
 
                 playlistCounter++;
+        return s;
+    }
+
+    public static String getJsonLikedTrack(Date date, int i) {
+
+        String s = "";
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String dateString = dateFormat.format(date).replace(' ', 'T') + 'Z';
+
+        s += "{" +
+                "\"added_at\": \"" + dateString + "\"," +
+                "\"track\": " + getJsonTrack(i) +
+                "}";
+
+        return s;
+    }
+
+    public static String getJsonLikedTracksList(int limit, int offset) {
+        String s = "{\n";
+
+        Date date = new Date(10000000);
+
+        s += "\"items\": [";
+                for (int _i = offset ; _i < limit+offset; _i++) {
+                    s += getJsonLikedTrack(date, _i);
+                    if (_i < limit+offset - 1)
+                        s += ", ";
+                    date.setTime(date.getTime() + 10000);
+                }
+        s +=    "],\n" +
+                "\"limit\": " + limit + "," +
+                "\"offset\": " + offset + "," +
+                "\"total\": " + limit +
+                "\n}";
+
         return s;
     }
 

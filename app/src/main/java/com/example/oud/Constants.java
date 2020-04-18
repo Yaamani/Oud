@@ -12,7 +12,7 @@ public class Constants {
     public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
 
-    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING/* | RECEIVING | JSON_RESPONSE*//*0*/;
+    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING*/ | JSON_RESPONSE/*0*/;
 
 
 
@@ -24,6 +24,8 @@ public class Constants {
 
     public static final int USER_ARTIST_POPULAR_SONGS_COUNT = 5;
     public static final int USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT = 7;
+
+    public static final int USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT = 20;
 
     public static final String HOME_FRAGMENT_TAG = "HOME";
     public static final String SEARCH_FRAGMENT_TAG = "SEARCH";

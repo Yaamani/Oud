@@ -50,6 +50,7 @@ import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.player.PlayerInterface;
 import com.google.android.material.snackbar.BaseTransientBottomBar;

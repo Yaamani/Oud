@@ -16,11 +16,16 @@
 
     "/artists/*/albums?offset=0&limit=7": "/artist_albums",
     "/artists/*/albums?offset=7&limit=7": "/artist_more_albums", 
+    "/artists/*/albums*": "/empty_list", 
     
     "/artists/:id/related-artists": "/related_artists", 
 
     "/me/following/contains?type=artist&ids=artist10": "/user_doesn't_follow_this_artist", 
     "/me/following/contains?type=artist*": "/user_follows_this_artist", 
+
+    "/me/tracks?limit=20&offset=0": "/liked_tracks", 
+    "/me/tracks?limit=20&offset=20": "/more_liked_tracks", 
+    "/me/tracks*": "/empty_list",    
 
 
 

@@ -1,5 +1,8 @@
 package com.example.tryingstuff;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DesktopTryingStuff {
     public static void main(String[] args) {
         System.out.println("HI");
@@ -30,5 +33,10 @@ public class DesktopTryingStuff {
         }*/
 
         //System.out.println(OudApiJsonGenerator.getJsonListOfCategories(7, 7));
+
+        System.out.println(OudApiJsonGenerator.getJsonLikedTracksList(20, 0));
+
+        /*Date date = new Date(100000);
+        System.out.println(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(date).replace(' ', 'T') + 'Z');*/
     }
 }
