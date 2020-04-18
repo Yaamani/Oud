@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.mockwebserver.Dispatcher;
@@ -26,6 +27,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 public class TestUtils {
 
+    @Deprecated
     public static MockWebServer getOudMockServer(int recentlyPlayedTrackCount,
                                                  int categoryPlaylistCount,
                                                  int playlistTrackCount) {
@@ -36,12 +38,14 @@ public class TestUtils {
         return mockWebServer;
     }
 
+    @Deprecated
     public static MockWebServer getOudMockServerTimeoutFailure() {
         MockWebServer mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(getOudMockServerTimeoutFailureDispatcher());
         return mockWebServer;
     }
 
+    @Deprecated
     private static Dispatcher getOudMockServerTimeoutFailureDispatcher() {
         Dispatcher dispatcher = new Dispatcher() {
             @NotNull
@@ -55,6 +59,16 @@ public class TestUtils {
         };
 
         return dispatcher;
+    }
+
+    public static MockWebServer getOkHttpMockWebServer() {
+        MockWebServer server = new MockWebServer();
+        try {
+            server.start(Constants.OKHTTP_MOCK_WEB_SERVER_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return server;
     }
 
     public static OudApi instantiateOudApi() {
@@ -98,6 +112,7 @@ public class TestUtils {
         }
     }
 
+    @Deprecated
     private static Dispatcher getOudMockServerDispatcher(int recentlyPlayedTrackCount, 
                                                          int categoryPlaylistCount, 
                                                          int playlistTrackCount) {

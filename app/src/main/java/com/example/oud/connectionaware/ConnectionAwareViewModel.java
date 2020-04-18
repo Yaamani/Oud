@@ -19,6 +19,10 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
     public ConnectionAwareViewModel(ConnectionAwareRepo repoInstance, String MOCK_SERVER_URL) {
         mRepo = repoInstance;
         mRepo.setConnectionStatusListener(this);
+
+        if (mRepo.getBaseUrl().equals("http://localhost:"+ Constants.OKHTTP_MOCK_WEB_SERVER_PORT + "/"))
+            return;
+
         if (Constants.MOCK)
             mRepo.setBaseUrl(MOCK_SERVER_URL);
     }
