@@ -121,4 +121,8 @@ dependencies {
 
     // Glide Transformations
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
+
+
+    implementation 'androidx.preference:preference:1.0.0'
+
 }
