@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
+import com.example.oud.Constants;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,10 +41,14 @@ public class FailureSuccessHandledCallback<T> implements Callback<T> {
         Log.i(TAG, "onResponse: " + "SUCCESS");
         connectionStatusListener.onConnectionSuccess();
         if(connectionStatusListenerForUndo!=null) {
-            if(response.isSuccessful())
-                connectionStatusListenerForUndo.onConnectionSuccess();
-            else
-                connectionStatusListenerForUndo.onConnectionFailure();
+            if (Constants.MOCK) {
+                    connectionStatusListenerForUndo.onConnectionSuccess();
+            } else {
+                if (response.isSuccessful())
+                    connectionStatusListenerForUndo.onConnectionSuccess();
+                else
+                    connectionStatusListenerForUndo.onConnectionFailure();
+            }
         }
         if (repo != null)
             repo.calls.remove(call);

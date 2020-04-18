@@ -100,6 +100,12 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         return root;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressBar();
+    }
+
     /**
      * ViewModel object is available here.
      * @param view
