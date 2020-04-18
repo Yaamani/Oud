@@ -146,6 +146,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         //handleToken();
         token = OudUtils.getToken(getContext());
 
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageButtonFollowArtist = view.findViewById(R.id.btn_artist_follow);
         mImageViewArtist = view.findViewById(R.id.img_artist);

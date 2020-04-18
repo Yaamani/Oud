@@ -453,17 +453,34 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return currentOperation;
     }
 
+    public void clearDoesUserFollowThisPlaylistData() {
+        doesUserFollowThisPlaylist = null;
+    }
+
+    public void clearIsThisAlbumSavedByUserData() {
+        isThisAlbumSavedByUser = null;
+    }
+
+    public void clearAreTracksLikedData() {
+        areTracksLikedLiveData = null;
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearDoesUserFollowThisPlaylistData();
+        clearIsThisAlbumSavedByUserData();
+        clearAreTracksLikedData();
+    }
+
     @Override
     public void clearData() {
         playlistLiveData = null;
         //eachTrackAlbumLiveData = null;
-        doesUserFollowThisPlaylist = null;
+        clearDoesUserFollowThisPlaylistData();
         newPlaylistImage = null;
 
         albumLiveData = null;
-        isThisAlbumSavedByUser = null;
+        clearIsThisAlbumSavedByUserData();
 
-
-        areTracksLikedLiveData = null;
+        clearAreTracksLikedData();
     }
 }

@@ -284,14 +284,27 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     }
 
 
+    public void clearDoesUserFollowThisArtist() {
+        doesUserFollowThisArtist = null;
+    }
+
+    public void clearAreTracksLikedData() {
+        areTracksLikedLiveData = null;
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearDoesUserFollowThisArtist();
+        clearAreTracksLikedData();
+    }
 
     @Override
     public void clearData() {
         artistMutableLiveData = null;
-        doesUserFollowThisArtist = null;
+        clearDoesUserFollowThisArtist();
+        loadedAlbums = new ArrayList<>();
 
         similarArtistsMutableLiveData = null;
 
-        areTracksLikedLiveData = null;
+        clearAreTracksLikedData();
     }
 }

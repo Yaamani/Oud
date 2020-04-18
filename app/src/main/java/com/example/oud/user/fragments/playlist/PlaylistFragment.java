@@ -171,12 +171,12 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         //handleToken();
         token = OudUtils.getToken(getContext());
 
-
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+        // blockUiAndWait();
 
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
         initializeUiStuff(view);
-
 
 
         loadData(view);
