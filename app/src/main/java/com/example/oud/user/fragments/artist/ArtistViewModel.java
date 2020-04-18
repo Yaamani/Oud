@@ -8,7 +8,7 @@ import com.example.oud.api.IsFoundResponse;
 import com.example.oud.api.OudList;
 import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
-import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
@@ -189,8 +189,17 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     public MutableLiveData<OudList<Album>> loadMoreAlbums(String token, String artistId) {
         if (lastSetOfLoadedAlbums == null) {
             lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
-        } else
-            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, lastSetOfLoadedAlbums.getValue().getLimit(), Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+        } else {
+            int prevOffset = lastSetOfLoadedAlbums.getValue().getOffset();
+            int prevLimit = lastSetOfLoadedAlbums.getValue().getLimit();
+
+            int offset = prevOffset+prevLimit, limit = Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT;
+
+            // if (off)
+
+
+            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, offset, limit);
+        }
 
         return lastSetOfLoadedAlbums;
     }

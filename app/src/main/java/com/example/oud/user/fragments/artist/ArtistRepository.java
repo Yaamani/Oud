@@ -27,6 +27,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
     private static final ArtistRepository ourInstance = new ArtistRepository();
 
+    private ArtistRepository() {}
 
     public static ArtistRepository getInstance() {
         return ourInstance;
