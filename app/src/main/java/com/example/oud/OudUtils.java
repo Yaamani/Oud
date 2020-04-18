@@ -73,6 +73,9 @@ public class OudUtils {
 
     public static String convertImageToFullUrl(String imageUrl) {
 
+        if(Constants.MOCK)
+            return imageUrl;
+        
         imageUrl = ("http://oud-zerobase.me/api/" + imageUrl);
 
         for (int i = 0; i < imageUrl.length(); i++) {
