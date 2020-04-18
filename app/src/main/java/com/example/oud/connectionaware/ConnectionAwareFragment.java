@@ -62,6 +62,21 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
     }
 
 
+    public ConnectionAwareFragment(Class<ConnectionAwareViewM> viewModelClass,
+                                   @LayoutRes int layoutId,
+                                   ProgressBar progressBar,
+                                   View viewBlockUi,
+                                   @Nullable @IdRes Integer swipeRefreshLayoutId) {
+
+        this.viewModelClass = viewModelClass;
+        this.layoutId = layoutId;
+        this.swipeRefreshLayoutId = swipeRefreshLayoutId;
+
+        mViewBlockUi = viewBlockUi;
+        mProgressBar = progressBar;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,10 +85,11 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
         Log.i(TAG, "onCreateView: " + "Hello from ConnectionAwareFragment.");
 
+        if(mProgressBar == null)
+            mProgressBar = root.findViewById(progressBarId);
 
-        mProgressBar = root.findViewById(progressBarId);
 
-        if (viewBlockUiId != null)
+        if (viewBlockUiId != null && mViewBlockUi==null)
             mViewBlockUi = root.findViewById(viewBlockUiId);
 
         if (swipeRefreshLayoutId != null) {
@@ -82,6 +98,12 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         }
 
         return root;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressBar();
     }
 
     /**
@@ -94,6 +116,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         super.onViewCreated(view, savedInstanceState);
 
         mViewModel = new ViewModelProvider(this).get(viewModelClass);
+        showProgressBar();
 
 
         mViewModel.getConnectionStatus().observe(getViewLifecycleOwner(), connectionStatus -> {

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <PreferenceCategory
+        app:key="notifications_category"
+        app:title="Notifications"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="Enable notifications"
+            app:icon="@drawable/ic_notification_4"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="social_category"
+        app:title="Social">
+
+        <SwitchPreferenceCompat
+            app:key="private_session"
+            app:title="Private session"
+            app:summary="start a private session to listen to music anonymously"
+            app:icon="@drawable/ic_private_white_2"
+            app:iconSpaceReserved="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="playback_category"
+        app:title="Playback"
+        app:iconSpaceReserved="false"
+        >
+
+        <SwitchPreferenceCompat
+            app:key="auto_play"
+            app:title="Autoplay"
+            app:summary="keep on listening to similar tracks when your music ends"
+            app:icon="@drawable/ic_play_2"
+            app:iconSpaceReserved="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="storage_category"
+        app:title="Storage">
+
+        <Preference
+            app:key="clear_cache"
+            app:summary="free up space "
+            app:title="clear cache"
+            app:icon="@drawable/ic_delete_2"
+            />
+
+    </PreferenceCategory>
+
+
+
+    <PreferenceCategory
+        app:key="other_category"
+        app:title="other">
+
+        <Preference
+            app:key="log_out"
+            app:summary="you are logged in as {displayName}"
+            app:title="Log out"
+            app:icon="@drawable/ic_logout_thin"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

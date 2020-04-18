@@ -4,14 +4,20 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.api.FollowingPublicityPayload;
+import com.example.oud.api.ListOfBoolean;
+import com.example.oud.api.ListOfIds;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.UserPlaylistsResponse;
+import com.example.oud.api.publicPlaylistfollow;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -70,5 +76,44 @@ public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
             });
         }
+
+    public void followPlaylist(String token,String playlistId,ConnectionStatusListener connectionStatusListener){
+
+
+        FollowingPublicityPayload followingPublicityPayload = new FollowingPublicityPayload(true);
+        Call<ResponseBody> call = oudApi.followPlaylist(token,playlistId,followingPublicityPayload);
+
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this,connectionStatusListener) {});
+
     }
+
+    public void unFollowPlaylist(String token,String playlistId,ConnectionStatusListener connectionStatusListener){
+        Call<ResponseBody> call = oudApi.unfollowPlaylist(token,playlistId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this,connectionStatusListener) {
+
+
+        });
+
+
+    }
+
+
+    public void checkIfIFollowThisPlaylist(String token,String commaSeparatedUsers,String userId,MutableLiveData<Boolean> isFollowed){
+        Call<ListOfBoolean> call = oudApi.checkIfIFollowThisPlaylist(token,commaSeparatedUsers,userId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ListOfBoolean>(this) {
+            @Override
+            public void onResponse(Call<ListOfBoolean> call, Response<ListOfBoolean> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    isFollowed.setValue(response.body().getIds().get(0));
+                }
+            }
+
+        });
+
+
+
+    }
+
+}
 

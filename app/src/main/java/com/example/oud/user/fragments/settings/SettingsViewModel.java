@@ -2,6 +2,17 @@ package com.example.oud.user.fragments.settings;
 
 import androidx.lifecycle.ViewModel;
 
-public class SettingsViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
+import com.example.oud.Constants;
+import com.example.oud.connectionaware.ConnectionAwareViewModel;
+
+public class SettingsViewModel extends ConnectionAwareViewModel<SettingsRepository> {
+
+    public SettingsViewModel(){
+        super(new SettingsRepository(), Constants.YAMANI_MOCK_BASE_URL);
+    }
+
+    @Override
+    public void clearData() {
+
+    }
 }

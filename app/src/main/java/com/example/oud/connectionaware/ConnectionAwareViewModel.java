@@ -14,7 +14,7 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
 
     protected ConnectionAwareRepo mRepo;
 
-    private MutableLiveData<Constants.ConnectionStatus> connectionStatus;
+    private MutableLiveData<Constants.ConnectionStatus> connectionStatus = new MutableLiveData<>();
 
     public ConnectionAwareViewModel(ConnectionAwareRepo repoInstance, String MOCK_SERVER_URL) {
         mRepo = repoInstance;

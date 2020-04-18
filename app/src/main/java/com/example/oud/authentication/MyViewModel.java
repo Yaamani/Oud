@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.authentication;
 
 import androidx.lifecycle.ViewModel;
 

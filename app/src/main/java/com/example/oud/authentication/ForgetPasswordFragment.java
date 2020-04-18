@@ -1,4 +1,4 @@
-package com.example.oud;
+package com.example.oud.authentication;
 
 import android.os.Bundle;
 
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.oud.Constants;
+import com.example.oud.R;
 import com.example.oud.api.ForgetPasswordRequestBody;
 import com.example.oud.api.LoginResponse;
 import com.example.oud.api.LoginUserInfo;

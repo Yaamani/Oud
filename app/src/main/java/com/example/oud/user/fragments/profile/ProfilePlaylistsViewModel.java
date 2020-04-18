@@ -60,5 +60,21 @@ public class ProfilePlaylistsViewModel extends ConnectionAwareViewModel<ProfileP
 
     }
 
+    public void followPlaylist(String token, String playlistId,ConnectionStatusListener connectionStatusListener){
+        mRepo.followPlaylist(token ,playlistId,connectionStatusListener);
+    }
+
+    public void unFollowPlaylist(String token, String playlistId,ConnectionStatusListener connectionStatusListener){
+        mRepo.unFollowPlaylist(token,playlistId,connectionStatusListener);
+    }
+
+    public MutableLiveData<Boolean> checkIfIFollowThisPlaylist(String token,String playlistId,String userId){
+        MutableLiveData<Boolean> iFollowThisPlaylist= new MutableLiveData<>();
+        mRepo.checkIfIFollowThisPlaylist(token,playlistId,userId,iFollowThisPlaylist);
+
+        return iFollowThisPlaylist;
+    }
+
+
 
 }

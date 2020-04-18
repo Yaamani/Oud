@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.profile;
 
 import androidx.lifecycle.Observer;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.UserOrArtistPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
@@ -28,17 +30,19 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
     private ArrayList<String> followedArtistsImageUrls = new ArrayList<>();
     private ArrayList<String> followedArtistsIds = new ArrayList<>();
     private ArrayList<String> followedArtistsTypes = new ArrayList<>();
+    private ArrayList<Boolean> isFollowedArtists = new ArrayList<>();
 
 
     private ArrayList<String> followedUsersNames = new ArrayList<>();
     private ArrayList<String> followedUsersImageUrls = new ArrayList<>();
     private ArrayList<String> followedUsersIds = new ArrayList<>();
     private ArrayList<String> followedUsersTypes = new ArrayList<>();
+    private ArrayList<Boolean> isFollowedUser = new ArrayList<>();
 
 
 
-    public static ProfileFollowingFragment newInstance(String id) {
-        ProfileFollowingFragment fragment = new ProfileFollowingFragment();
+    public static ProfileFollowingFragment newInstance(String id,Activity activity) {
+        ProfileFollowingFragment fragment = new ProfileFollowingFragment(activity);
         fragment.setUserId(id);
         return fragment;
     }
@@ -47,12 +51,12 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
         this.userId = userId;
     }
 
-    public ProfileFollowingFragment(){
+    public ProfileFollowingFragment(Activity activity){
         super(ProfileFollowingViewModel.class,
                 R.layout.fragment_profile_following,
-                R.id.progress_bar_profile_following,
+                activity.findViewById(R.id.progress_bar_user_activity),
+                activity.findViewById(R.id.block_view),
                 null);
-
     }
 
     @Override
@@ -155,8 +159,32 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
 
 
     private void setRecyclerView(){
+        ArrayList<String> followedArtistsAndUsersNames = new ArrayList<>();
+        followedArtistsAndUsersNames.addAll(followedArtistsNames);
+        followedArtistsAndUsersNames.addAll(followedUsersNames);
 
-        ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes, userId);
+        ArrayList<String> followedArtistsAndUsersImageUrls = new ArrayList<>();
+        followedArtistsAndUsersImageUrls.addAll(followedArtistsImageUrls);
+        followedArtistsAndUsersImageUrls.addAll(followedUsersImageUrls);
+
+
+        ArrayList<String> followedArtistsAndUsersIds = new ArrayList<>();
+        followedArtistsAndUsersIds.addAll(followedArtistsIds);
+        followedArtistsAndUsersIds.addAll(followedUsersIds);
+
+        ArrayList<String> followedArtistsAndUsersTypes = new ArrayList<>();
+        followedArtistsAndUsersTypes.addAll(followedArtistsTypes);
+        followedArtistsAndUsersTypes.addAll(followedUsersTypes);
+
+
+
+        ProfileFollowingRecyclerViewAdapter adapter = new ProfileFollowingRecyclerViewAdapter(getContext(),
+                followedArtistsAndUsersNames,
+                followedArtistsAndUsersImageUrls,
+                followedArtistsAndUsersIds,
+                followedArtistsAndUsersTypes,getViewLifecycleOwner());
+
+        //ProfileFollowersRecyclerViewAdapter adapter = new ProfileFollowersRecyclerViewAdapter(getContext(),followedArtistsNames,followedArtistsImageUrls,followedArtistsTypes, userId);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

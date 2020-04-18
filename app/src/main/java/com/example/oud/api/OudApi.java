@@ -1,6 +1,7 @@
 package com.example.oud.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 
@@ -8,6 +9,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -76,6 +78,7 @@ public interface OudApi {
 
     @PATCH("me/update/display")//todo add when back end finished
     Call<LoggedInUser> updateDisplayName(@Header("AUTHORIZATION") String token,@Body String displayName);
+
 
 
 
@@ -176,5 +179,29 @@ public interface OudApi {
 
     @GET("me/tracks")
     Call<OudList<LikedTrack>> getLikedTrackByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+
+    @PUT("me/following")
+    Call<Void> followUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Body ListOfIds listOfIds);
+
+    @DELETE("me/following")
+    Call<Void> unFollowUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Query("ids")String commaSeparatedUserId);
+
+    @GET("me/following/contains")
+    Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
+
+    @GET("playlists/{playlistId}/followers/contains")
+    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
+
+    @PUT("playlists/{playlistId}/followers")
+    Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
+
+    @DELETE("playlists/{playlistId}/followers")
+    Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId);
+
+
+
+    @PUT("me/profile")
+    Call<ResponseBody> updateProfile(@Header("AUTHORIZATION") String token,@Body UpdateProfileData updateProfileData);
 
 }

@@ -1,24 +1,18 @@
-package com.example.oud;
+package com.example.oud.authentication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import com.example.oud.Constants;
+import com.example.oud.OudUtils;
+import com.example.oud.R;
 import com.example.oud.api.AccessToken;
 import com.example.oud.api.LoginResponse;
 import com.example.oud.api.OudApi;
