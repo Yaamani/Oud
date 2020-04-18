@@ -91,25 +91,23 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 null);
     }
 
-    public static ArtistFragment newInstance(String artistId, String userId) {
+    public static ArtistFragment newInstance(String artistId) {
         ArtistFragment artistFragment = new ArtistFragment();
-        artistFragment.setArguments(myArgs(artistId, userId));
+        artistFragment.setArguments(myArgs(artistId));
         return artistFragment;
     }
 
     /**
-     *
-     * @param activity Most likely you'll call {@link #getActivity()} if you're in other {@link Fragment}.
+     *  @param activity Most likely you'll call {@link #getActivity()} if you're in other {@link Fragment}.
      *                 Or <code>this</code> if you're inside the activity itself.
      * @param containerId The {@link FragmentContainerView} that you want the layout of this fragment to be inflated in.
      * @param artistId
-     * @param userId The id of the logged in user.
      */
-    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId, String userId) {
+    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId) {
         FragmentManager manager = activity.getSupportFragmentManager();
         ArtistFragment artistFragment/* = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG)*/;
         //if (artistFragment == null)
-            artistFragment = ArtistFragment.newInstance(artistId, userId);
+            artistFragment = ArtistFragment.newInstance(artistId);
         //else {
             //artistFragment.setArguments(ArtistFragment.myArgs(artistId));
         //}
@@ -126,13 +124,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     /**
      * When creating a new instance, this method returns the {@link Bundle} object that {@link ArtistFragment} needs.
      * @param artistId
-     * @param userId The id of the logged in user.
      * @return
      */
-    public static Bundle myArgs(String artistId, String userId) {
+    public static Bundle myArgs(String artistId) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ARTIST_ID_KEY, artistId);
-        bundle.putString(Constants.USER_ID_KEY, userId);
         return bundle;
     }
 
@@ -145,6 +141,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         handleArgs();
         //handleToken();
         token = OudUtils.getToken(getContext());
+        userId = OudUtils.getUserId(getContext());
 
         mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
 
@@ -586,7 +583,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 for (Artist artist : artists.getArtists()) {
                     clickListeners.add(v -> ArtistFragment.show(getActivity(),
                             R.id.nav_host_fragment,
-                            artist.get_id(), userId));
+                            artist.get_id()));
                     images.add(artist.getImages().get(0));
                     circularImages.add(true);
                     titles.add(artist.getName());

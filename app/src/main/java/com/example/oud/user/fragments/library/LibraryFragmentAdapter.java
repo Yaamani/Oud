@@ -39,6 +39,22 @@ public class LibraryFragmentAdapter extends FragmentStateAdapter {
         return null;
     }
 
+    public LibraryLikedTracksFragment getLibraryLikedTracksFragment() {
+        return libraryLikedTracksFragment;
+    }
+
+    public LibraryPlaylistsFragment getLibraryPlaylistsFragment() {
+        return libraryPlaylistsFragment;
+    }
+
+    public LibraryArtistsFragment getLibraryArtistsFragment() {
+        return libraryArtistsFragment;
+    }
+
+    public LibrarySavedAlbumsFragment getLibrarySavedAlbumsFragment() {
+        return librarySavedAlbumsFragment;
+    }
+
     @Override
     public int getItemCount() {
         return 4;

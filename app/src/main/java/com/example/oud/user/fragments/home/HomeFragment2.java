@@ -192,7 +192,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                         _item.setClickListener(v ->
                                 ArtistFragment.show(getActivity(),
                                         R.id.nav_host_fragment,
-                                        ((Artist) o).get_id(), userId));
+                                        ((Artist) o).get_id()));
                     }
 
                     _item.setTitle(title);

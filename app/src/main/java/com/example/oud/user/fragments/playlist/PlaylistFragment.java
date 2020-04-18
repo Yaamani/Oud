@@ -443,7 +443,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     private View.OnClickListener openArtistFragmentClickListener(String artistId) {
         return v -> ArtistFragment.show(getActivity(),
                 R.id.nav_host_fragment,
-                artistId, userId);
+                artistId);
     }
 
     private View.OnClickListener instantiateSaveAlbumClickListener(boolean isSaved) {
