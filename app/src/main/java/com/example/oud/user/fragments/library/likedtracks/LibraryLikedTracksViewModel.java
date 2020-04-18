@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.library.likedtracks;
 
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.api.LikedTrack;
 import com.example.oud.api.OudList;
@@ -13,15 +14,19 @@ import androidx.lifecycle.MutableLiveData;
 
 public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<LibraryLikedTracksRepository> {
 
-    public enum UserLibraryLikedTracksOperation {
+    /*public enum UserLibraryLikedTracksOperation {
         REMOVE_TRACK_FROM_LIKED_TRACKS,
-    }
+    }*/
 
-    private UserLibraryLikedTracksOperation currentOperation = null;
+    //private UserLibraryLikedTracksOperation currentOperation = null;
 
 
     private MutableLiveData<OudList<LikedTrack>> lastSetOfLoadedTracks;
-    private ArrayList<MutableLiveData<LikedTrack>> loadedLikedTracks;
+    private ArrayList<MutableLiveData<LikedTrack>> loadedLikedTracks = new ArrayList<>();
+
+
+    private int removedLikedTrackPosition;
+
 
     public LibraryLikedTracksViewModel() {
         super(LibraryLikedTracksRepository.getInstance(), Constants.YAMANI_MOCK_BASE_URL);
@@ -49,28 +54,60 @@ public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<Librar
         return lastSetOfLoadedTracks;
     }
 
+    /**
+     *
+     * @param token
+     * @param id The track you want the current user not to like.
+     * @param position The track position in {@link TrackListRecyclerViewAdapter}.
+     */
+    public void removeTrackFromLikedTracks(String token,
+                                           String id,
+                                           int position,
+                                           ConnectionStatusListener undoUiAndUpdateLiveData) {
+        if (loadedLikedTracks.isEmpty()) return;
+
+        /*setCurrentOperation(UserLibraryLikedTracksOperation.REMOVE_TRACK_FROM_LIKED_TRACKS);*/
+
+        removedLikedTrackPosition = position;
+
+        ArrayList<String> s = new ArrayList<>();
+        s.add(id);
+
+        mRepo.removeTheseTracksFromLikedTracks(token, s, undoUiAndUpdateLiveData);
+    }
+
     public ArrayList<MutableLiveData<LikedTrack>> getLoadedLikedTracks() {
         return loadedLikedTracks;
     }
 
-    public UserLibraryLikedTracksOperation getCurrentOperation() {
+    /*public UserLibraryLikedTracksOperation getCurrentOperation() {
         return currentOperation;
     }
 
     public void setCurrentOperation(UserLibraryLikedTracksOperation currentOperation) {
         this.currentOperation = currentOperation;
+    }*/
+
+    public void updateLiveDataUponRemovingTrackFromLikedTracks() {
+        loadedLikedTracks.remove(removedLikedTrackPosition);
     }
 
-    public void clearLoadedAlbums() {
+    public void clearLoadedTracks() {
         loadedLikedTracks = new ArrayList<>();
     }
 
+    public void clearLastSetOfLoadedTracks() {
+        lastSetOfLoadedTracks = null;
+    }
+
     public void clearTheDataThatHasThePotentialToBeChangedOutside() {
-        clearLoadedAlbums();
+        clearLastSetOfLoadedTracks();
+        clearLoadedTracks();
     }
 
     @Override
     public void clearData() {
-        clearLoadedAlbums();
+        clearLastSetOfLoadedTracks();
+        clearLoadedTracks();
     }
 }

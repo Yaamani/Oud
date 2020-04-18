@@ -2,13 +2,18 @@ package com.example.oud.user.fragments.library.likedtracks;
 
 import android.util.Log;
 
+import com.example.oud.ConnectionStatusListener;
+import com.example.oud.OudUtils;
 import com.example.oud.api.LikedTrack;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
+import java.util.ArrayList;
+
 import androidx.lifecycle.MutableLiveData;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -52,6 +57,27 @@ public class LibraryLikedTracksRepository extends ConnectionAwareRepository {
         return likedTracksLiveData;
     }
 
+    /**
+     *
+     * @param token
+     * @param ids Ids for tracks you want the current user to not like anymore.
+     */
+    public void removeTheseTracksFromLikedTracks(String token,
+                                                 ArrayList<String> ids,
+                                                 ConnectionStatusListener undoUiAndUpdateLiveData) {
+
+        Call<ResponseBody> removeTheseTracksFromLikedTracksCall = oudApi.removeTheseTracksFromLikedTracks(token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(removeTheseTracksFromLikedTracksCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this, undoUiAndUpdateLiveData) {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    return;
+                }
+            }
+        });
+    }
 
 
 }

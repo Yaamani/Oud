@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.library;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,15 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oud.R;
+import com.example.oud.ReconnectingListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class LibraryFragment extends Fragment {
+public class LibraryFragment extends Fragment implements ReconnectingListener {
 
     private static final String TAG = LibraryFragment.class.getSimpleName();
 
     private ViewPager2 mViewPager2;
     private TabLayout mTabLayout;
+
+    private LibraryFragmentAdapter libraryFragmentAdapter;
 
     public static LibraryFragment newInstance() {
         return new LibraryFragment();
@@ -39,7 +43,9 @@ public class LibraryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mViewPager2 = view.findViewById(R.id.view_pager2_library);
-        mViewPager2.setAdapter(new LibraryFragmentAdapter(this));
+        //if (libraryFragmentAdapter == null)
+            libraryFragmentAdapter = new LibraryFragmentAdapter(this);
+        mViewPager2.setAdapter(libraryFragmentAdapter);
 
         mTabLayout = view.findViewById(R.id.tab_layout_library);
         new TabLayoutMediator(mTabLayout, mViewPager2, (tab, position) -> {
@@ -52,6 +58,33 @@ public class LibraryFragment extends Fragment {
         }).attach();
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        //libraryFragmentAdapter = new LibraryFragmentAdapter(this);
+    }
 
 
+
+    @Override
+    public void onTryingToReconnect() {
+        /*int currentTab = mTabLayout.getSelectedTabPosition();
+        switch (currentTab) {
+            case 0:
+                libraryFragmentAdapter.getLibraryLikedTracksFragment().onTryingToReconnect();
+                break;
+            case 1:
+                libraryFragmentAdapter.getLibraryPlaylistsFragment().onTryingToReconnect();
+                break;
+            case 2:  libraryFragmentAdapter.getLibraryArtistsFragment().onTryingToReconnect();
+                break;
+            case 3:  libraryFragmentAdapter.getLibrarySavedAlbumsFragment().onTryingToReconnect();
+                break;
+        }*/
+
+        libraryFragmentAdapter.getLibraryLikedTracksFragment().onTryingToReconnect();
+        libraryFragmentAdapter.getLibraryPlaylistsFragment().onTryingToReconnect();
+        libraryFragmentAdapter.getLibraryArtistsFragment().onTryingToReconnect();
+        libraryFragmentAdapter.getLibrarySavedAlbumsFragment().onTryingToReconnect();
+    }
 }

@@ -293,11 +293,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 break;
             case R.id.navigation_library:
                 //selected = new LibraryFragment();
-                LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(Constants.LIBRARY_FRAGMENT_TAG);
-                if (libraryFragment == null)
+                /*LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(Constants.LIBRARY_FRAGMENT_TAG);
+                if (libraryFragment == null)*/
                     transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), Constants.LIBRARY_FRAGMENT_TAG);
-                else
-                    transaction.replace(R.id.nav_host_fragment,libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);
+                /*else
+                    transaction.replace(R.id.nav_host_fragment,libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);*/
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;

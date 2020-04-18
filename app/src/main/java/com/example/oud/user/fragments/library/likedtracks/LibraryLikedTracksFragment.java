@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
@@ -38,7 +40,11 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
 
     private PlayerInterface talkToPlayer;
 
-    private int likedTrackToBeMovedPosition;
+
+    private int likedTrackToBeRemovedPosition;
+    private String removedLikedTrackId;
+    private String removedLikedTrackName;
+    private String removedLikedTrackImage;
 
 
     public LibraryLikedTracksFragment() {
@@ -81,6 +87,7 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
         mRecyclerViewLikedTracks = view.findViewById(R.id.recycler_view_library_liked_tracks);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerViewLikedTracks.setLayoutManager(layoutManager);
+        mRecyclerViewLikedTracks.setItemAnimator(new DefaultItemAnimator());
 
         mTextViewNoLikedTracks = view.findViewById(R.id.txt_no_liked_tracks);
     }
@@ -92,8 +99,10 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
 
         if (mViewModel.getLoadedLikedTracks().size() < Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT)
             loadMoreTracks();
-        else
+        else {
             observerLoadedTracks();
+            unBlockUi();
+        }
     }
 
     /**
@@ -146,7 +155,7 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
                         trackAdapter.getTrackNames().add(likedTrack.getTrack().getName());
                         trackAdapter.getLikedTracks().add(true);
 
-                        trackAdapter.notifyItemInserted(_i);
+                        mLikedTracksAdapter.notifyItemInserted(_i);
                     }
 
 
@@ -204,21 +213,51 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
-        Toast.makeText(getContext(), "track liked !!", Toast.LENGTH_SHORT).show();
 
-        /*likedTrackToBeMovedPosition = position;
+        likedTrackToBeRemovedPosition = position;
 
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
 
+        ConnectionStatusListener undoUiAndUpdateLiveData = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                mViewModel.updateLiveDataUponRemovingTrackFromLikedTracks();
+            }
+
+            @Override
+            public void onConnectionFailure() {
+                // Undo ui
+                TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
+
+                adapter.getIds().add(position, removedLikedTrackId);
+                adapter.getTrackNames().add(position, removedLikedTrackName);
+                adapter.getTrackImages().add(position, removedLikedTrackImage);
+                adapter.getLikedTracks().add(position, true);
+
+                mLikedTracksAdapter.notifyItemInserted(position);
+            }
+        };
+
         TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
         String id = adapter.getIds().get(position);
-        mViewModel.removeTrackFromLikedTracks(token, id, position);
-        trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
-        trackListRecyclerViewAdapter.notifyItemChanged(position);
+        mViewModel.removeTrackFromLikedTracks(token, id, position, undoUiAndUpdateLiveData);
 
+        removedLikedTrackId = adapter.getIds().remove(position);
+        removedLikedTrackName = adapter.getTrackNames().remove(position);
+        removedLikedTrackImage = adapter.getTrackImages().remove(position);
+        adapter.getLikedTracks().remove(position);
 
-        blockUiAndWait();*/
+        mLikedTracksAdapter.notifyItemRemoved(position);
+
+        blockUiAndWait();
 
     };
+
+    @Override
+    public void onTryingToReconnect() {
+        super.onTryingToReconnect();
+
+        handleLikedTracks();
+    }
 }

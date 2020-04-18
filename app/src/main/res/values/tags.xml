@@ -8,4 +8,5 @@
     <string name="tag_home_inner_item_subtitle">tag_home_inner_item_subtitle_</string>
 
     <string name="tag_track_list_adapter_heart">tag_track_list_adapter_heart_</string>
+    <string name="tag_track_list_adapter_title">tag_track_list_adapter_title_</string>
 </resources>

@@ -187,6 +187,15 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         hideProgressBar();
     }
 
+    /**
+     * Used for testing only
+     * @return
+     */
+    @Deprecated
+    public ConnectionAwareViewM getmViewModel() {
+        return mViewModel;
+    }
+
     @Override
     public void onConnectionSuccess() {
         connectionStatusListenerWhoHandlesYouAreOffline.onConnectionSuccess();
@@ -206,6 +215,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
             if (mProgressBar.getVisibility() == View.GONE)
                 mProgressBar.setVisibility(View.VISIBLE);
 
-        mViewModel.clearData();
+        if (mViewModel != null)
+            mViewModel.clearData();
     }
 }
