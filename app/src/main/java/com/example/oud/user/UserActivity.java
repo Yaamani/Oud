@@ -315,7 +315,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 //selected = new SettingsFragment();
                 SettingsFragment settingsFragment = (SettingsFragment) manager.findFragmentByTag(Constants.SETTINGS_FRAGMENT_TAG);
                 if (settingsFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(), Constants.SETTINGS_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(this), Constants.SETTINGS_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, settingsFragment, Constants.SETTINGS_FRAGMENT_TAG);
 
