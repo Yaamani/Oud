@@ -3,8 +3,11 @@ package com.example.oud.testutils;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.api.OudApi;
 import com.example.tryingstuff.OudApiJsonGenerator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
@@ -62,9 +65,11 @@ public class TestUtils {
         else
             baseUrl = Constants.BASE_URL;
 
+
+
         OudApi oudApi = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(OudUtils.getGson()))
                 .build()
                 .create(OudApi.class);
 
