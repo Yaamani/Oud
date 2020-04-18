@@ -455,7 +455,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private void loadMoreAlbums() {
         mViewModel.loadMoreAlbums(token, artistId).observe(getViewLifecycleOwner(), albumOudList -> {
 
-            if (albumOudList.getTotal() == 0) {
+            if (albumOudList.getTotal() == 0 & mViewModel.getLoadedAlbums().size() == 0) {
                 mRecyclerViewAlbums.setVisibility(View.GONE);
                 mTextViewNoAlbumsToShow.setVisibility(View.VISIBLE);
             }
@@ -491,7 +491,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             albumMutableLiveData.observe(getViewLifecycleOwner(), album -> {
 
                 if (mAlbumsAdapter != null) {
-                    if (mAlbumsAdapter.getItemCount()-1 >= _i) {
+                    if (mAlbumsAdapter.getItemCount()-1 >= _i) { // Tracks already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(album.get_id())) {*/
                             return;
                         } else {
@@ -551,7 +551,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
                     hAdapter,
-                    hAdapter.getImages());
+                    HorizontalRecyclerViewAdapter.InnerItemViewHolder.class, hAdapter.getImages(), R.layout.progressbar_item);
             mRecyclerViewAlbums.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
             //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
             mAlbumsAdapter.setOnLoadMoreListener(() -> {

@@ -115,7 +115,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return ids;
     }
 
-    public OnTrackClickListener getTrackClickListeners() {
+    public OnTrackClickListener getTrackClickListener() {
         return mTrackClickListener;
     }
 
@@ -131,7 +131,11 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mLikedTracks;
     }
 
-    public OnTrackClickListener getHeartClickListeners() {
+    public OnTrackClickListener getAvailableOfflineClickListener() {
+        return mAvailableOfflineClickListener;
+    }
+
+    public OnTrackClickListener getHeartClickListener() {
         return mHeartClickListener;
     }
 
@@ -162,7 +166,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         //Collections.swap(mHeartClickListener, i, j);
     }
 
-    static class TrackItemViewHolder extends RecyclerView.ViewHolder {
+    public static class TrackItemViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout mLayout;
         private ImageView mTrackImage;

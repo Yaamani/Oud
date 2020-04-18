@@ -7,14 +7,16 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.oud.R;
-import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
+import androidx.annotation.LayoutRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class LoadMoreAdapter extends RecyclerView.Adapter {
+public class LoadMoreAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter {
 
     private static final String TAG = LoadMoreAdapter.class.getSimpleName();
 
@@ -30,15 +32,22 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
     private OnLoadMoreListener onLoadMoreListener;
 
     private RecyclerView.Adapter adapter;
+    @LayoutRes int progressBarLayout;
+    private Class<?>viewHolderClass;
     private ArrayList mainList;
 
 
     public LoadMoreAdapter(RecyclerView recyclerView,
                            RecyclerView.Adapter adapter,
-                           ArrayList mainList) {
+                           Class<?> viewHolderClass,
+                           ArrayList mainList,
+                           @LayoutRes int progressBarLayout) {
 
         this.adapter = adapter;
+        this.viewHolderClass = viewHolderClass;
         this.mainList = mainList;
+
+        this.progressBarLayout = progressBarLayout;
 
         setRecyclerView(recyclerView);
     }
@@ -61,7 +70,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
             vh = adapter.onCreateViewHolder(parent, viewType);
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.progressbar_item, parent, false);
+                    progressBarLayout, parent, false);
 
             vh = new ProgressViewHolder(v);
         }
@@ -69,14 +78,14 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof HorizontalRecyclerViewAdapter.InnerItemViewHolder) {
+    public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
+        if (viewHolderClass.isInstance(holder)) {
 
 
             //holder.mImageView.setImageDrawable(mBitmaps.get(position));
             //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
 
-            adapter.onBindViewHolder((HorizontalRecyclerViewAdapter.InnerItemViewHolder) holder, position);
+            adapter.onBindViewHolder(holder, position);
 
         } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
@@ -95,6 +104,8 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
         this.recyclerView = recyclerView;
 
         recyclerView.setAdapter(this);
+        /*LinearSnapHelper linearSnapHelper = new LinearSnapHelper();
+        linearSnapHelper.attachToRecyclerView(recyclerView);*/
 
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
@@ -152,7 +163,8 @@ public class LoadMoreAdapter extends RecyclerView.Adapter {
 
         public ProgressViewHolder(View v) {
             super(v);
-            progressBar = v.findViewById(R.id.progressBar1);
+            // v.getLayoutParams().width = MATCH_PARENT;
+            progressBar = v.findViewById(R.id.progress_bar);
         }
     }
 

@@ -5,11 +5,20 @@ import com.example.oud.api.LikedTrack;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
+import com.example.oud.user.TrackListRecyclerViewAdapter;
+
 import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
 
 public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<LibraryLikedTracksRepository> {
+
+    public enum UserLibraryLikedTracksOperation {
+        REMOVE_TRACK_FROM_LIKED_TRACKS,
+    }
+
+    private UserLibraryLikedTracksOperation currentOperation = null;
+
 
     private MutableLiveData<OudList<LikedTrack>> lastSetOfLoadedTracks;
     private ArrayList<MutableLiveData<LikedTrack>> loadedLikedTracks;
@@ -32,7 +41,7 @@ public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<Librar
             int prevOffset = lastSetOfLoadedTracks.getValue().getOffset();
             int prevLimit = lastSetOfLoadedTracks.getValue().getLimit();
 
-            int offset = prevOffset+prevLimit, limit = Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT;
+            int offset = prevOffset+prevLimit, limit = Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT;
 
             lastSetOfLoadedTracks = mRepo.getLikedTrackByCurrentUser(token, limit, offset);
         }
@@ -44,8 +53,24 @@ public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<Librar
         return loadedLikedTracks;
     }
 
+    public UserLibraryLikedTracksOperation getCurrentOperation() {
+        return currentOperation;
+    }
+
+    public void setCurrentOperation(UserLibraryLikedTracksOperation currentOperation) {
+        this.currentOperation = currentOperation;
+    }
+
+    public void clearLoadedAlbums() {
+        loadedLikedTracks = new ArrayList<>();
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearLoadedAlbums();
+    }
+
     @Override
     public void clearData() {
-
+        clearLoadedAlbums();
     }
 }

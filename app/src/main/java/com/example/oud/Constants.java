@@ -14,7 +14,7 @@ public class Constants {
     public static final int OKHTTP_MOCK_WEB_SERVER_PORT = 4331;
 
 
-    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING*/ | JSON_RESPONSE/*0*/;
+    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING | JSON_RESPONSE*//*0*/;
 
 
 
