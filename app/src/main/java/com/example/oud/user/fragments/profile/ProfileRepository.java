@@ -191,6 +191,24 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
     }
 
+    public MutableLiveData<LoggedInUser> getCurrentUser(String token){
+        MutableLiveData<LoggedInUser> loggedInUserMutableLiveData = new MutableLiveData<>();
+        Call<LoggedInUser> call = oudApi.getUserProfile(token);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this) {
+            @Override
+            public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    loggedInUserMutableLiveData.setValue(response.body());
+                }
+            }
+
+        });
+
+
+        return loggedInUserMutableLiveData;
+    }
+
 
 
 

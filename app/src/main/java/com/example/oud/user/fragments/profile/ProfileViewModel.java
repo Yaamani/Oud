@@ -12,14 +12,12 @@ import com.example.oud.ConnectionStatusListener;
 
 import com.example.oud.Constants;
 import com.example.oud.OudUtils;
-import com.example.oud.api.PlaylistPreview;
+
+import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.ProfilePreview;
-import com.example.oud.api.UserPlaylistsResponse;
+
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 public class ProfileViewModel extends ConnectionAwareViewModel<ProfileRepository> {
 
@@ -62,6 +60,11 @@ public class ProfileViewModel extends ConnectionAwareViewModel<ProfileRepository
 
     public void unFollowUser(String token,String userid,ConnectionStatusListener connectionStatusListener){
         mRepo.unFollowUser(token,userid,connectionStatusListener);
+    }
+
+    public MutableLiveData<LoggedInUser> getFullProfile(String token){
+        MutableLiveData<LoggedInUser> fullProfile = mRepo.getCurrentUser(token);
+        return fullProfile;
     }
 
 

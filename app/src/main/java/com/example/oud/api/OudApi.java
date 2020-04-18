@@ -181,4 +181,9 @@ public interface OudApi {
     @DELETE("playlists/{playlistId}/followers")
     Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId);
 
+
+
+    @PUT("me/profile")
+    Call<ResponseBody> updateProfile(@Header("AUTHORIZATION") String token,@Body UpdateProfileData updateProfileData);
+
 }
