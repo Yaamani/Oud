@@ -101,7 +101,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         super.onStop();
         hideProgressBar();
     }
