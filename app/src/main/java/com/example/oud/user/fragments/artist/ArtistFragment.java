@@ -289,15 +289,16 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
+            String fullUrl = OudUtils.convertImageToFullUrl(artist.getImages().get(0));
             mTextViewArtistName.setText(artist.getDisplayName());
             Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+                    .load(fullUrl)
                     .apply(RequestOptions.fitCenterTransform())
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
             Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+                    .load(fullUrl)
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtistBlurred);

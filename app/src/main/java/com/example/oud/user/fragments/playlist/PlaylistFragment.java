@@ -481,8 +481,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 //playlistImageBeforeUploadingTheNewOne = playlist.getImage();
 
+                String fullUrl = OudUtils.convertImageToFullUrl(playlist.getImage());
                 Glide.with(getContext())
-                        .load(playlist.getImage())
+                        .load(fullUrl)
                         .addListener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -516,8 +517,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             DrawableCrossFadeFactory factory =
                     new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
+            String fullUrl = OudUtils.convertImageToFullUrl(album.getImage());
             Glide.with(getContext())
-                    .load(album.getImage())
+                    .load(fullUrl)
                     .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);

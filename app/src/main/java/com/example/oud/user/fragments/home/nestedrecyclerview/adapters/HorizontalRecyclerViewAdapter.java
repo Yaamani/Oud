@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 
 import java.util.ArrayList;
@@ -80,16 +81,17 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
+        String fullUrl = OudUtils.convertImageToFullUrl(images.get(position));
         if (!circularImages.get(position))
             Glide.with(mContext)
-                    .load(images.get(position))
+                    .load(fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading)
                     //.error(R.drawable.ic_warning)
                     .into(holder.mImage);
         else
             Glide.with(mContext)
-                    .load(images.get(position))
+                    .load(fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading_circular)
                     //.error(R.drawable.ic_warning)

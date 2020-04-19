@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 
 
@@ -76,9 +77,9 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         //holder.mLayout.setOnClickListener(mTrackClickListeners.get(position));
-
+        String fullUrl = OudUtils.convertImageToFullUrl(mTrackImages.get(position));
         Glide.with(mContext)
-                .load(mTrackImages.get(position))
+                .load(fullUrl)
                 .placeholder(R.drawable.ic_oud_loading)
                 .transition(DrawableTransitionOptions.withCrossFade(factory))
                 .into(holder.mTrackImage);
