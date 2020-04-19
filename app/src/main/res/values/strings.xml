@@ -38,5 +38,6 @@
     <string name="no_artists_to_show">No artists to show</string>
 
     <string name="you_have_no_liked_tracks">You have no liked tracks</string>
+    <string name="you_dont_follow_any_playlists">You don\'t follow any playlists</string>
 
 </resources>

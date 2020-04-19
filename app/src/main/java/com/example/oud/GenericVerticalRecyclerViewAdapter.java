@@ -85,10 +85,22 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
                         String image,
                         String title,
                         boolean imageButtonSelected) {
-        mIds.add(id);
-        mImages.add(image);
-        mTitles.add(title);
-        mImageButtonSelected.add(imageButtonSelected);
+        addItem(getItemCount(),
+                id,
+                image,
+                title,
+                imageButtonSelected);
+    }
+
+    public void addItem(int position,
+                        String id,
+                        String image,
+                        String title,
+                        boolean imageButtonSelected) {
+        mIds.add(position, id);
+        mImages.add(position, image);
+        mTitles.add(position, title);
+        mImageButtonSelected.add(position, imageButtonSelected);
     }
 
     public void removeItem(int position) {
@@ -98,6 +110,9 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         mImageButtonSelected.remove(position);
     }
 
+    public ArrayList<String> getIds() {
+        return mIds;
+    }
 
     public String getId(int position) {
         return mIds.get(position);
