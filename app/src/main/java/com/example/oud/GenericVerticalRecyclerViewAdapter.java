@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 
 import java.util.ArrayList;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +26,7 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
 
     private ArrayList<String> mIds = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
+    private ArrayList<Boolean> mCircularImages = new ArrayList<>();
     private ArrayList<String> mTitles = new ArrayList<>();
     private ArrayList<Boolean> mImageButtonSelected = new ArrayList<>();
 
@@ -58,11 +59,19 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         DrawableCrossFadeFactory factory =
                 new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
-        Glide.with(mContext)
-                .load(mImages.get(position))
-                .placeholder(R.drawable.ic_oud_loading)
-                .transition(DrawableTransitionOptions.withCrossFade(factory))
-                .into(holder.mImageView);
+        if (!mCircularImages.get(position))
+            Glide.with(mContext)
+                    .load(mImages.get(position))
+                    .placeholder(R.drawable.ic_oud_loading)
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
+                    .into(holder.mImageView);
+        else
+            Glide.with(mContext)
+                    .load(mImages.get(position))
+                    .placeholder(R.drawable.ic_oud_loading_circular)
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.mImageView);
 
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_generic_vertical_item_title);
         holder.mTextViewName.setTag(titleTagPrefix + position);
@@ -83,11 +92,13 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
 
     public void addItem(String id,
                         String image,
+                        boolean circularImage,
                         String title,
                         boolean imageButtonSelected) {
         addItem(getItemCount(),
                 id,
                 image,
+                circularImage,
                 title,
                 imageButtonSelected);
     }
@@ -95,10 +106,12 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
     public void addItem(int position,
                         String id,
                         String image,
+                        boolean circularImage,
                         String title,
                         boolean imageButtonSelected) {
         mIds.add(position, id);
         mImages.add(position, image);
+        mCircularImages.add(circularImage);
         mTitles.add(position, title);
         mImageButtonSelected.add(position, imageButtonSelected);
     }
@@ -106,6 +119,7 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
     public void removeItem(int position) {
         mIds.remove(position);
         mImages.remove(position);
+        mCircularImages.remove(position);
         mTitles.remove(position);
         mImageButtonSelected.remove(position);
     }
@@ -120,6 +134,10 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
 
     public String getImage(int position) {
         return mImages.get(position);
+    }
+
+    public boolean isCircularImage(int position) {
+        return mCircularImages.get(position);
     }
 
     public String getTitle(int position) {

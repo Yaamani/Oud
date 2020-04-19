@@ -43,6 +43,8 @@ public class Constants {
     public static final String PROFILE_FRAGMENT_TAG = "PROFILE";
     public static final String LIBRARY_LIKED_TRACKS_FRAGMENT_TAG = "LIBRARY_LIKED_TRACKS";
     public static final String LIBRARY_PLAYLISTS_FRAGMENT_TAG = "LIBRARY_PLAYLISTS_TRACKS";
+    public static final String LIBRARY_ARTISTS_FRAGMENT_TAG = "LIBRARY_ARTISTS_TRACKS";
+    public static final String LIBRARY_SAVED_ALBUMS_FRAGMENT_TAG = "LIBRARY_SAVED_ALBUMS";
 
     public static final String SHARED_PREFERENCES_FILE_NAME = "MyPreferences";
     public static final String SHARED_PREFERENCES_TOKEN_NAME = "token";

@@ -376,6 +376,21 @@ public class OudApiJsonGenerator {
         return s;
     }
 
+    public static String getJsonSavedAlbum(Date date, int i) {
+
+        String s = "";
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String dateString = dateFormat.format(date).replace(' ', 'T') + 'Z';
+
+        s += "{" +
+                "\"added_at\": \"" + dateString + "\"," +
+                "\"album\": " + getJsonAlbum(i) +
+                "}";
+
+        return s;
+    }
+
     public static String getJsonLikedTracksList(int limit, int offset) {
         String s = "{\n";
 
@@ -405,6 +420,45 @@ public class OudApiJsonGenerator {
             s += getJsonPlaylist(_i, 3);
             if (_i < limit+offset - 1)
                 s += ", ";
+        }
+        s +=    "],\n" +
+                "\"limit\": " + limit + "," +
+                "\"offset\": " + offset + "," +
+                "\"total\": " + limit +
+                "\n}";
+
+        return s;
+    }
+
+    public static String getJsonListOfArtistPreview(int limit, int offset) {
+        String s = "{\n";
+
+        s += "\"items\": [";
+        for (int _i = offset ; _i < limit+offset; _i++) {
+            s += getJsonArtistPreview(_i);
+            if (_i < limit+offset - 1)
+                s += ", ";
+        }
+        s +=    "],\n" +
+                "\"limit\": " + limit + "," +
+                "\"offset\": " + offset + "," +
+                "\"total\": " + limit +
+                "\n}";
+
+        return s;
+    }
+
+    public static String getJsonSavedAlbumsList(int limit, int offset) {
+        String s = "{\n";
+
+        Date date = new Date(10000000);
+
+        s += "\"items\": [";
+        for (int _i = offset ; _i < limit+offset; _i++) {
+            s += getJsonSavedAlbum(date, _i);
+            if (_i < limit+offset - 1)
+                s += ", ";
+            date.setTime(date.getTime() + 10000);
         }
         s +=    "],\n" +
                 "\"limit\": " + limit + "," +

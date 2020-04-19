@@ -433,7 +433,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
 
                 for (ArtistPreview artistPreview : artists) {
-                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
+                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getDisplayName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
                 }
 
                 optionsBuilder.show();

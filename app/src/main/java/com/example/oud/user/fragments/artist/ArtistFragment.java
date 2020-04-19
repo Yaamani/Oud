@@ -289,7 +289,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
-            mTextViewArtistName.setText(artist.getName());
+            mTextViewArtistName.setText(artist.getDisplayName());
             Glide.with(getContext())
                     .load(artist.getImages().get(0))
                     .apply(RequestOptions.fitCenterTransform())
@@ -586,7 +586,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                             artist.get_id()));
                     images.add(artist.getImages().get(0));
                     circularImages.add(true);
-                    titles.add(artist.getName());
+                    titles.add(artist.getDisplayName());
                     subtitles.add("");
 
                     HashMap<String, Object> hashMap = new HashMap<>();

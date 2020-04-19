@@ -7,7 +7,7 @@ public class Artist {
     private int followersCount;
     private ArrayList<String> genres;
     private ArrayList<String> images;
-    private String name;
+    private String displayName;
     private String bio;
     private ArrayList<Track> popularSongs;
     private String type;
@@ -28,8 +28,8 @@ public class Artist {
         return images;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getBio() {
@@ -48,7 +48,7 @@ public class Artist {
                   int followersCount,
                   ArrayList<String> genres,
                   ArrayList<String> images,
-                  String name,
+                  String displayName,
                   String bio,
                   ArrayList<Track> popularSongs,
                   String type) {
@@ -56,7 +56,7 @@ public class Artist {
         this.followersCount = followersCount;
         this.genres = genres;
         this.images = images;
-        this.name = name;
+        this.displayName = displayName;
         this.bio = bio;
         this.popularSongs = popularSongs;
         this.type = type;

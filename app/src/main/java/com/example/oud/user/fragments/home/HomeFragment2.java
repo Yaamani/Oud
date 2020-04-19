@@ -187,7 +187,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                     }
                     else if (o instanceof Artist) {
                         circularImage = true;
-                        title = ((Artist) o).getName();
+                        title = ((Artist) o).getDisplayName();
                         image = ((Artist) o).getImages().get(0);
                         _item.setClickListener(v ->
                                 ArtistFragment.show(getActivity(),

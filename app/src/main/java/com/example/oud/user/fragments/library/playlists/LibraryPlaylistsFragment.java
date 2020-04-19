@@ -1,25 +1,16 @@
 package com.example.oud.user.fragments.library.playlists;
 
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
-
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.GenericVerticalRecyclerViewAdapter;
 import com.example.oud.LoadMoreAdapter;
 import com.example.oud.R;
 import com.example.oud.api.Playlist;
-import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.fragments.library.LibrarySubFragment;
-import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, LibraryPlaylistsRepository, LibraryPlaylistsViewModel> {
@@ -57,8 +48,8 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
                         GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
                         adapter.addItem(playlist.getId(), 
-                                playlist.getImage(), 
-                                playlist.getName(), 
+                                playlist.getImage(),
+                                false, playlist.getName(),
                                 true);
 
                         mItemsAdapter.notifyItemInserted(_i);
@@ -86,7 +77,7 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
                     imageButtonClickListener);
 
             for (int j = 0; j < ids.size(); j++) {
-                itemAdapter.addItem(ids.get(j), images.get(j), names.get(j), true);
+                itemAdapter.addItem(ids.get(j), images.get(j), false, names.get(j), true);
             }
 
             mItemsAdapter = new LoadMoreAdapter(mRecyclerViewItems,
@@ -135,6 +126,7 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
                 itemAdapter.addItem(position,
                         removedItemId,
                         removedItemImage,
+                        false,
                         removedItemName,
                         true);
 

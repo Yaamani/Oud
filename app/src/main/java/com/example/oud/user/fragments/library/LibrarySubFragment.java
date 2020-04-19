@@ -81,7 +81,7 @@ public abstract class LibrarySubFragment<Item,
 
         initializeUiStuff(view);
 
-         handleItems();
+        handleItems();
     }
 
     private void handleToken() {

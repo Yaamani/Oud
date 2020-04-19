@@ -1,5 +1,7 @@
 package com.example.oud.api;
 
+import com.example.oud.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,6 +178,13 @@ public interface OudApi {
 
     @GET("me/playlists")
     Call<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+    @GET("me/following?type=" + Constants.API_ARTIST)
+    Call<OudList<ArtistPreview>> getArtistsFollowedByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+    @GET("me/albums")
+    Call<OudList<SavedAlbum>> getSavedAlbumsByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
 
 
 
