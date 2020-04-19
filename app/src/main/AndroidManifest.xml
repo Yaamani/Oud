@@ -30,10 +30,10 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
+                    android:scheme="https"
                     android:host="oud-zerobase.me"
 
-                    android:pathPrefix="/verify" />
+                    android:pathPrefix="/resetPassword" />
             </intent-filter>
         </activity>
         <activity
