@@ -101,6 +101,7 @@ public class PreferencesSettingsFragment extends PreferenceFragmentCompat {
                 SharedPreferences.Editor editor= prefs.edit();
                 editor.remove(Constants.SHARED_PREFERENCES_TOKEN_NAME);
                 editor.remove(Constants.SHARED_PREFERENCES_USER_ID_NAME);
+                editor.commit();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
