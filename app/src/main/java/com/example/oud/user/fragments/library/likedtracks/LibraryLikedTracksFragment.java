@@ -22,30 +22,14 @@ import com.example.oud.api.LikedTrack;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.LoadMoreAdapter;
 import com.example.oud.user.TrackListRecyclerViewAdapter;
+import com.example.oud.user.fragments.library.LibrarySubFragment;
 import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
 
-public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryLikedTracksViewModel> {
-
-    private static final String TAG = LibraryLikedTracksFragment.class.getSimpleName();
-
-    private String token;
-
-    private RecyclerView mRecyclerViewLikedTracks;
-    private LoadMoreAdapter mLikedTracksAdapter;
-
-    private TextView mTextViewNoLikedTracks;
-
-    private PlayerInterface talkToPlayer;
-
-
-    private int likedTrackToBeRemovedPosition;
-    private String removedLikedTrackId;
-    private String removedLikedTrackName;
-    private String removedLikedTrackImage;
-
+public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, LibraryLikedTracksRepository, LibraryLikedTracksViewModel> {
+    
 
     public LibraryLikedTracksFragment() {
         // Required empty public constructor
@@ -53,83 +37,13 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
                 R.layout.fragment_library_liked_tracks,
                 R.id.progress_library_liked_tracks,
                 R.id.view_block_ui_input_library_liked_tracks,
-                null);
+                null, 
+                R.id.recycler_view_library_liked_tracks, 
+                R.id.txt_no_liked_tracks);
     }
-
+    
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof PlayerInterface) {
-            talkToPlayer = (PlayerInterface) context;
-        } else {
-            throw new RuntimeException(context.toString() + "must implement" + PlayerInterface.class.getSimpleName() + ".");
-        }
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        handleToken();
-
-        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
-
-        initializeUiStuff(view);
-
-        handleLikedTracks();
-    }
-
-    private void handleToken() {
-        token = OudUtils.getToken(getContext());
-    }
-
-    private void initializeUiStuff(@NonNull View view) {
-        mRecyclerViewLikedTracks = view.findViewById(R.id.recycler_view_library_liked_tracks);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerViewLikedTracks.setLayoutManager(layoutManager);
-        mRecyclerViewLikedTracks.setItemAnimator(new DefaultItemAnimator());
-
-        mTextViewNoLikedTracks = view.findViewById(R.id.txt_no_liked_tracks);
-    }
-
-    /**
-     * Handles the data and the logic behind liked tracks.
-     */
-    private void handleLikedTracks() {
-
-        if (mViewModel.getLoadedLikedTracks().size() < Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT)
-            loadMoreTracks();
-        else {
-            observerLoadedTracks();
-            unBlockUi();
-        }
-    }
-
-    /**
-     * Observes loadedLikedTracks in {@link LibraryLikedTracksViewModel} and adds the newly loaded tracks to the loaded ones.
-     */
-    private void loadMoreTracks() {
-        mViewModel.loadMoreTracks(token).observe(getViewLifecycleOwner(), likedTrackOudList -> {
-            if (likedTrackOudList.getTotal() == 0 & mViewModel.getLoadedLikedTracks().size() == 0) {
-                mRecyclerViewLikedTracks.setVisibility(View.GONE);
-                mTextViewNoLikedTracks.setVisibility(View.VISIBLE);
-            }
-
-            if (mLikedTracksAdapter != null)
-                mLikedTracksAdapter.setLoaded();
-
-            for (LikedTrack likedTrack : likedTrackOudList.getItems()) {
-                mViewModel.getLoadedLikedTracks().add(new MutableLiveData<>(likedTrack));
-            }
-
-            observerLoadedTracks();
-        });
-    }
-
-    /**
-     * Observes loadedLikedTracks in {@link LibraryLikedTracksViewModel}. and populates {@link #mLikedTracksAdapter}.
-     */
-    private void observerLoadedTracks() {
+    protected void observerLoadedItems() {
 
         ArrayList<String> trackIds = new ArrayList<>();
         ArrayList<String> trackImages = new ArrayList<>();
@@ -138,24 +52,24 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
 
 
         int i = 0;
-        for (MutableLiveData<LikedTrack> trackLiveData : mViewModel.getLoadedLikedTracks()) {
+        for (MutableLiveData<LikedTrack> trackLiveData : mViewModel.getLoadedItems()) {
             int _i = i;
             trackLiveData.observe(getViewLifecycleOwner(), likedTrack -> {
 
-                if (mLikedTracksAdapter != null) {
-                    if (mLikedTracksAdapter.getItemCount()-1 >= _i) { // Tracks already loaded
+                if (mItemsAdapter != null) {
+                    if (mItemsAdapter.getItemCount()-1 >= _i) { // Tracks already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(likedTrack.get_id())) {*/
                         return;
                     } else {
 
-                        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
+                        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
                         trackAdapter.getIds().add(likedTrack.getTrack().get_id());
                         trackAdapter.getTrackImages().add(likedTrack.getTrack().getAlbum().getImage());
                         trackAdapter.getTrackNames().add(likedTrack.getTrack().getName());
                         trackAdapter.getLikedTracks().add(true);
 
-                        mLikedTracksAdapter.notifyItemInserted(_i);
+                        mItemsAdapter.notifyItemInserted(_i);
                     }
 
 
@@ -172,7 +86,7 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
             i++;
         }
 
-        if (mLikedTracksAdapter == null) {
+        if (mItemsAdapter == null) {
 
             TrackListRecyclerViewAdapter trackAdapter = new TrackListRecyclerViewAdapter(
                     getContext(),
@@ -184,37 +98,37 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
                     availableOfflineClickListener, 
                     heartClickListener);
 
-            mLikedTracksAdapter = new LoadMoreAdapter(mRecyclerViewLikedTracks,
+            mItemsAdapter = new LoadMoreAdapter(mRecyclerViewItems,
                     trackAdapter,
                     TrackListRecyclerViewAdapter.TrackItemViewHolder.class,
                     trackAdapter.getIds(),
                     R.layout.progressbar_item_vertical);
 
             //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
-            mLikedTracksAdapter.setOnLoadMoreListener(() -> {
+            mItemsAdapter.setOnLoadMoreListener(() -> {
                 //images.add(null);
-                loadMoreTracks();
+                loadMoreItems();
             });
         }
 
 
-        if (mRecyclerViewLikedTracks.getAdapter() == null) {
-            mLikedTracksAdapter.setRecyclerView(mRecyclerViewLikedTracks);
+        if (mRecyclerViewItems.getAdapter() == null) {
+            mItemsAdapter.setRecyclerView(mRecyclerViewItems);
         }
     }
 
-    TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
+    private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
+        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
         talkToPlayer.configurePlayer(trackAdapter.getIds().get(position), true);
     };
 
-    TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
+    private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
         Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
 
-        likedTrackToBeRemovedPosition = position;
+        // likedTrackToBeRemovedPosition = position;
 
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
@@ -222,42 +136,36 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
         ConnectionStatusListener undoUiAndUpdateLiveData = new ConnectionStatusListener() {
             @Override
             public void onConnectionSuccess() {
-                mViewModel.updateLiveDataUponRemovingTrackFromLikedTracks();
+                mViewModel.updateLiveDataUponRemovingItemFromLikedItems();
             }
 
             @Override
             public void onConnectionFailure() {
                 // Undo ui
-                TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
+                TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
-                adapter.getIds().add(position, removedLikedTrackId);
-                adapter.getTrackNames().add(position, removedLikedTrackName);
-                adapter.getTrackImages().add(position, removedLikedTrackImage);
+                adapter.getIds().add(position, removedItemId);
+                adapter.getTrackNames().add(position, removedItemName);
+                adapter.getTrackImages().add(position, removedItemImage);
                 adapter.getLikedTracks().add(position, true);
 
-                mLikedTracksAdapter.notifyItemInserted(position);
+                mItemsAdapter.notifyItemInserted(position);
             }
         };
 
-        TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mLikedTracksAdapter.getAdapter();
+        TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
         String id = adapter.getIds().get(position);
-        mViewModel.removeTrackFromLikedTracks(token, id, position, undoUiAndUpdateLiveData);
+        mViewModel.removeItem(token, id, position, undoUiAndUpdateLiveData);
 
-        removedLikedTrackId = adapter.getIds().remove(position);
-        removedLikedTrackName = adapter.getTrackNames().remove(position);
-        removedLikedTrackImage = adapter.getTrackImages().remove(position);
+        removedItemId = adapter.getIds().remove(position);
+        removedItemName = adapter.getTrackNames().remove(position);
+        removedItemImage = adapter.getTrackImages().remove(position);
         adapter.getLikedTracks().remove(position);
 
-        mLikedTracksAdapter.notifyItemRemoved(position);
+        mItemsAdapter.notifyItemRemoved(position);
 
         blockUiAndWait();
 
     };
 
-    @Override
-    public void onTryingToReconnect() {
-        super.onTryingToReconnect();
-
-        handleLikedTracks();
-    }
 }
