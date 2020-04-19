@@ -15,7 +15,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,35 +27,45 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
 
     private Context mContext;
 
+    @LayoutRes
+    private int itemLayout;
+
     private ArrayList<View.OnClickListener> clickListeners;
 
     private ArrayList<String> images;
-    //private ArrayList<Boolean> circularImages;
+    private ArrayList<Boolean> circularImages;
     private ArrayList<String> titles;
     private ArrayList<String> subtitles;
 
-    private boolean circularImages;
+    private ArrayList<HashMap<String, Object>> relatedInfo;
+
+
+    //private boolean circularImages;
 
     public HorizontalRecyclerViewAdapter(Context mContext,
+                                         int itemLayout,
                                          ArrayList<View.OnClickListener> clickListeners,
                                          ArrayList<String> images,
+                                         ArrayList<Boolean> circularImages,
                                          ArrayList<String> titles,
                                          ArrayList<String> subtitles,
-                                         boolean circularImages) {
+                                         ArrayList<HashMap<String, Object>> relatedInfo) {
         this.mContext = mContext;
+        this.itemLayout = itemLayout;
 
         this.clickListeners = clickListeners;
+        this.circularImages = circularImages;
         this.images = images;
         this.titles = titles;
         this.subtitles = subtitles;
 
-        this.circularImages = circularImages;
+        this.relatedInfo = relatedInfo;
     }
 
     @NonNull
     @Override
     public InnerItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_inner, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
         return new InnerItemViewHolder(view);
     }
 
@@ -68,7 +80,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
-        if (!circularImages)
+        if (!circularImages.get(position))
             Glide.with(mContext)
                     .load(images.get(position))
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -87,7 +99,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_title);
         holder.mTitle.setTag(titleTagPrefix + position);
         holder.mTitle.setText(titles.get(position));
-        if (circularImages) {
+        if (circularImages.get(position)) {
             holder.mTitle.setGravity(Gravity.CENTER);
         }
 
@@ -155,11 +167,19 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         return images;
     }
 
+    public ArrayList<Boolean> getCircularImages() {
+        return circularImages;
+    }
+
     public ArrayList<String> getTitles() {
         return titles;
     }
 
     public ArrayList<String> getSubtitles() {
         return subtitles;
+    }
+
+    public ArrayList<HashMap<String, Object>> getRelatedInfo() {
+        return relatedInfo;
     }
 }

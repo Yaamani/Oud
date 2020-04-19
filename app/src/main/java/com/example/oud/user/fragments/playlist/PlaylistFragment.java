@@ -1,10 +1,15 @@
 package com.example.oud.user.fragments.playlist;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.IdRes;
@@ -27,13 +32,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.Constants;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
-import com.example.oud.api.Artist;
 import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
@@ -41,21 +50,26 @@ import com.example.oud.api.Track;
 import com.example.oud.api.TrackPreview;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.RenameFragment;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.player.PlayerInterface;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
+import static android.app.Activity.RESULT_OK;
 
 public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel> implements RenameFragment.OnRenamingListener {
 
     private static final String TAG = PlaylistFragment.class.getSimpleName();
 
+    public static final int RESULT_LOAD_IMG = 4331;
+
     private String token;
-    private String userId;
+    private String userId = "user0";
     private Constants.PlaylistFragmentType type;
     private String playlistOrAlbumId;
 
@@ -67,6 +81,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private ImageView mImageViewPlaylist;
     private TextView mTextViewPlaylistName;
+    private ImageButton mImageButtonUploadImage;
     private ImageButton mImageButtonRename;
     private ImageButton mImageButtonOptions;
 
@@ -94,6 +109,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     //private boolean renamePressed;
 
     private int trackLikePosition;
+
+    private Drawable playlistImageBeforeUploadingTheNewOne; // Uri or String
 
 
 
@@ -151,14 +168,15 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
         handleArgs();
-        handleToken();
+        //handleToken();
+        token = OudUtils.getToken(getContext());
 
-
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+        // blockUiAndWait();
 
         Log.i(TAG, "onViewCreated: " + view.findViewById(R.id.progress_playlist).toString());
 
         initializeUiStuff(view);
-
 
 
         loadData(view);
@@ -210,10 +228,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     " to pass the arguments to the fragment. Or you can use playlistFragment.setArguments(" + PlaylistFragment.class.getSimpleName() + ".myArgs()).");
     }
 
-    private void handleToken() {
+    /*private void handleToken() {
         SharedPreferences prefs = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE);
         token = prefs.getString("token","000000");
-    }
+    }*/
 
     private void initializeUiStuff(View view) {
         mMotionLayout = view.findViewById(R.id.motion_layout_playlist);
@@ -232,6 +250,15 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         mTextViewPlaylistName.setSelected(true);
         //mTextViewPlaylistName.addTextChangedListener(renameTextWatcher);
 
+        mImageButtonUploadImage = view.findViewById(R.id.btn_upload_playlist_image);
+        mImageButtonUploadImage.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        });
 
         mImageButtonRename = view.findViewById(R.id.btn_rename_playlist);
         mImageButtonRename.setOnClickListener(v -> {
@@ -243,7 +270,41 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                Log.i(TAG, imageUri.getPath());
+
+                Drawable before = mImageViewPlaylist.getDrawable();
+
+                /*DrawableCrossFadeFactory factory =
+                        new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+
+                Glide.with(getContext())
+                        .load(imageUri)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .into(mImageViewPlaylist);*/
+
+                final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                mImageViewPlaylist.setImageDrawable(new BitmapDrawable(getResources(), selectedImage));
+
+                String token = OudUtils.getToken(getContext());
+                mViewModel.uploadPlaylistImage(token, getContext(), this, before, selectedImage);
+
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+
+            }
+        }
+
+    }
 
     private void handlePlaylistOptions() {
 
@@ -372,7 +433,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 OptionsFragment.Builder optionsBuilder = OptionsFragment.builder(getActivity());
 
                 for (ArtistPreview artistPreview : artists) {
-                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
+                    optionsBuilder.addItem(R.drawable.ic_user, artistPreview.getDisplayName(), false, openArtistFragmentClickListener(artistPreview.get_id()));
                 }
 
                 optionsBuilder.show();
@@ -413,15 +474,35 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 disableEditing(view);
 
 
+            if (mViewModel.getNewPlaylistImage() == null) {
 
-            DrawableCrossFadeFactory factory =
-                    new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
+                DrawableCrossFadeFactory factory =
+                        new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
-            Glide.with(getContext())
-                    .load(playlist.getImage())
-                    .placeholder(R.drawable.ic_oud_loading)
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
-                    .into(mImageViewPlaylist);
+                //playlistImageBeforeUploadingTheNewOne = playlist.getImage();
+
+                Glide.with(getContext())
+                        .load(playlist.getImage())
+                        .addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                mImageButtonUploadImage.setVisibility(View.VISIBLE);
+                                return false;
+                            }
+                        })
+                        .placeholder(R.drawable.ic_oud_loading)
+                        .transition(DrawableTransitionOptions.withCrossFade(factory))
+                        .into(mImageViewPlaylist);
+
+            } else {
+                mImageViewPlaylist.setImageDrawable(mViewModel.getNewPlaylistImage());
+                mImageButtonUploadImage.setVisibility(View.VISIBLE);
+            }
 
             mTextViewPlaylistName.setText(playlist.getName());
 
@@ -749,6 +830,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 .show();
     }
 
+    private void undoPlaylistImageChange() {
+        mImageViewPlaylist.setImageDrawable(playlistImageBeforeUploadingTheNewOne);
+    }
+
+    public void setPlaylistImageBeforeUploadingTheNewOne(Drawable playlistImageBeforeUploadingTheNewOne) {
+        this.playlistImageBeforeUploadingTheNewOne = playlistImageBeforeUploadingTheNewOne;
+    }
+
     private void undoDeletionRecyclerView() {
         trackListRecyclerViewAdapter.addItem(deletionPosition,
                 trackImageBeforeDeletion,
@@ -795,7 +884,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     break;
                 case REORDER: undoReorderingRecyclerView(reorderingFromPosition, reorderingToPosition);
                     break;
-                case UPLOAD_IMAGE:
+                case UPLOAD_IMAGE: undoPlaylistImageChange();
                     break;
                 case REMOVE_TRACK_FROM_LIKED_TRACKS:
                 case ADD_TRACK_TO_LIKED_TRACKS:
@@ -831,5 +920,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         super.onTryingToReconnect();
 
         loadData(getView());
+    }
+
+    /**
+     * For tests only.
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

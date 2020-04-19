@@ -10,6 +10,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 
+@Deprecated
 public class CustomBehaviour extends CoordinatorLayout.Behavior<View> {
 
     private static final String TAG = CustomBehaviour.class.getSimpleName();

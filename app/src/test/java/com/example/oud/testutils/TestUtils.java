@@ -3,12 +3,16 @@ package com.example.oud.testutils;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.api.OudApi;
 import com.example.tryingstuff.OudApiJsonGenerator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.mockwebserver.Dispatcher;
@@ -23,6 +27,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 public class TestUtils {
 
+    @Deprecated
     public static MockWebServer getOudMockServer(int recentlyPlayedTrackCount,
                                                  int categoryPlaylistCount,
                                                  int playlistTrackCount) {
@@ -33,12 +38,14 @@ public class TestUtils {
         return mockWebServer;
     }
 
+    @Deprecated
     public static MockWebServer getOudMockServerTimeoutFailure() {
         MockWebServer mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(getOudMockServerTimeoutFailureDispatcher());
         return mockWebServer;
     }
 
+    @Deprecated
     private static Dispatcher getOudMockServerTimeoutFailureDispatcher() {
         Dispatcher dispatcher = new Dispatcher() {
             @NotNull
@@ -54,6 +61,16 @@ public class TestUtils {
         return dispatcher;
     }
 
+    public static MockWebServer getOkHttpMockWebServer() {
+        MockWebServer server = new MockWebServer();
+        try {
+            server.start(Constants.OKHTTP_MOCK_WEB_SERVER_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return server;
+    }
+
     public static OudApi instantiateOudApi() {
         String baseUrl;
 
@@ -62,14 +79,26 @@ public class TestUtils {
         else
             baseUrl = Constants.BASE_URL;
 
+
+
         OudApi oudApi = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(OudUtils.getGson()))
                 .build()
                 .create(OudApi.class);
 
         return oudApi;
     }
+
+    /*public static OudApi instantiateOudApiConnectionFailure() {
+        OudApi oudApi = new Retrofit.Builder()
+                .baseUrl("http://حرام عليكم ..")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(OudApi.class);
+
+        return oudApi;
+    }*/
 
     public static void sleep(int iterationCount, int millisForEachIteration) {
         for (int i = 0; i < iterationCount; i++) {
@@ -83,6 +112,7 @@ public class TestUtils {
         }
     }
 
+    @Deprecated
     private static Dispatcher getOudMockServerDispatcher(int recentlyPlayedTrackCount, 
                                                          int categoryPlaylistCount, 
                                                          int playlistTrackCount) {

@@ -13,7 +13,7 @@ public class Album {
 
     private ArtistPreview[] artists;
 
-    private String[] genres;
+    private Genre[] genres;
 
     private String image;
 
@@ -29,7 +29,7 @@ public class Album {
     public Album(String _id,
                  String albumType,
                  ArtistPreview[] artists,
-                 String[] genres,
+                 Genre[] genres,
                  String image,
                  String name,
                  Date releaseDate,
@@ -58,7 +58,7 @@ public class Album {
         return artists;
     }
 
-    public String[] getGenres() {
+    public Genre[] getGenres() {
         return genres;
     }
 

@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,8 +22,6 @@ import com.example.oud.ConnectionStatusListener;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.user.fragments.artist.ArtistFragment;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -38,6 +34,7 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     private ArrayList<String> followerIds = new ArrayList<>();
     private ArrayList<String> followerTypes = new ArrayList<>();
 
+    private String userId;
 
     private LifecycleOwner lifecycleOwner;
 

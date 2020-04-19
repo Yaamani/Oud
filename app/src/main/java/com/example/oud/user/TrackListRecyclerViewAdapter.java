@@ -1,4 +1,4 @@
-package com.example.oud.user.fragments.playlist;
+package com.example.oud.user;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -84,11 +84,16 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 .into(holder.mTrackImage);
 
 
+        String titleTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_title);
+        holder.mTrackName.setTag(titleTagPrefix + position);
         holder.mTrackName.setText(mTrackNames.get(position));
 
         if (mLikedTracks.get(position))
             //holder.mHeart.setImageResource(R.drawable.ic_heart_selected);
             holder.mHeart.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
+
+        String heartTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_heart);
+        holder.mHeart.setTag(heartTagPrefix + position);
 
         //holder.mHeart.setOnClickListener(mHeartClickListeners.get(position));
 
@@ -112,7 +117,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return ids;
     }
 
-    public OnTrackClickListener getTrackClickListeners() {
+    public OnTrackClickListener getTrackClickListener() {
         return mTrackClickListener;
     }
 
@@ -128,7 +133,11 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mLikedTracks;
     }
 
-    public OnTrackClickListener getHeartClickListeners() {
+    public OnTrackClickListener getAvailableOfflineClickListener() {
+        return mAvailableOfflineClickListener;
+    }
+
+    public OnTrackClickListener getHeartClickListener() {
         return mHeartClickListener;
     }
 
@@ -159,7 +168,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         //Collections.swap(mHeartClickListener, i, j);
     }
 
-    static class TrackItemViewHolder extends RecyclerView.ViewHolder {
+    public static class TrackItemViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout mLayout;
         private ImageView mTrackImage;

@@ -4,7 +4,10 @@ import android.util.Log;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.api.OudApi;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,12 +50,10 @@ public class ConnectionAwareRepository {
                 .addInterceptor(new LoggingInterceptor())
                 .build();
 
-
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(OudUtils.getGson()))
                 .build();
 
 

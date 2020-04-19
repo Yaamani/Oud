@@ -44,7 +44,7 @@
             android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@+id/img_artist"
@@ -146,7 +146,7 @@
             android:src="@drawable/ic_follow_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            app:visibilityMode="ignore" />
 
         <Constraint
             android:id="@+id/img_artist"

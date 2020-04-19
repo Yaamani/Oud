@@ -1,5 +1,7 @@
 package com.example.oud.api;
 
+import com.example.oud.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,9 +122,9 @@ public interface OudApi {
     @PUT("playlists/{playlistId}")
     Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
 
-    //@DELETE("playlists/{playlistId}/tracks")
-    @HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
-    Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body RemovePlaylistTracksPayload removePlaylistTracksPayload);
+    @DELETE("playlists/{playlistId}/tracks")
+    //@HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
+    Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Query(value = "ids", encoded = true) String ids);
 
     @GET("me/tracks/contains")
     Call<IsFoundResponse> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
@@ -143,6 +145,10 @@ public interface OudApi {
     @DELETE("playlists/{playlistId}/followers")
     Call<ResponseBody> unfollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
 
+    @Multipart
+    @PUT("playlists/{playlist_id}/images")
+    Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Part MultipartBody.Part image);
+
     @GET("me/albums/contains")
     Call<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
 
@@ -161,6 +167,30 @@ public interface OudApi {
     @GET("artists/{artistId}/related-artists")
     Call<RelatedArtists> similarArtists(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
 
+    @GET("me/following/contains")
+    Call<BooleanIdsResponse> doesCurrentUserFollowsArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
+
+    @PUT("me/following")
+    Call<ResponseBody> followArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
+
+    @DELETE("me/following")
+    Call<ResponseBody> unfollowArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
+
+    @GET("me/playlists")
+    Call<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+    @GET("me/following?type=" + Constants.API_ARTIST)
+    Call<OudList<ArtistPreview>> getArtistsFollowedByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+    @GET("me/albums")
+    Call<OudList<SavedAlbum>> getSavedAlbumsByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+
+
+
+
+    @GET("me/tracks")
+    Call<OudList<LikedTrack>> getLikedTrackByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
 
 
     @PUT("me/following")

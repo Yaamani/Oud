@@ -5,11 +5,16 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class OudUtils {
+
+    private static final String TAG = OudUtils.class.getSimpleName();
 
     public static <T> String commaSeparatedListQueryParameter(ArrayList<T> list) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -70,6 +75,13 @@ public class OudUtils {
 
     }
 
+    public static Gson getGson() {
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .create();
+        return gson;
+    }
+
 
     public static boolean isAutoPlayback(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
@@ -107,24 +119,22 @@ public class OudUtils {
         prefsEditor.commit();
     }
 
-
-
-
     public static String convertImageToFullUrl(String imageUrl) {
 
         if(Constants.MOCK)
             return imageUrl;
 
-        imageUrl = ("https://oud-zerobase.me/api/" + imageUrl);
+        imageUrl = (Constants.IMAGES_BASE_URL + imageUrl);
 
         for (int i = 0; i < imageUrl.length(); i++) {
             if (imageUrl.charAt(i) == (char) 92) {
-                Log.e("profile fragment", imageUrl.charAt(i) + " at position: " + i);
+                Log.e(TAG, imageUrl.charAt(i) + " at position: " + i);
                 StringBuilder tempString = new StringBuilder(imageUrl);
                 tempString.setCharAt(i, '/');
                 imageUrl = tempString.toString();
             }
         }
+
         return imageUrl;
     }
 }

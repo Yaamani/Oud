@@ -1,5 +1,11 @@
 package com.example.oud.user.fragments.playlist;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+
 import com.example.oud.Constants;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
@@ -7,6 +13,10 @@ import com.example.oud.api.Track;
 import com.example.oud.api.IsFoundResponse;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
@@ -14,6 +24,7 @@ import androidx.lifecycle.MutableLiveData;
 public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistRepository> {
     // TODO: Implement the ViewModel
 
+    private static final String TAG = PlaylistViewModel.class.getSimpleName();
 
     public enum PlaylistOperation {RENAME,
         REORDER,
@@ -37,6 +48,8 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     private MutableLiveData<Playlist> playlistLiveData;
     //private ArrayList<MutableLiveData<Album>> eachTrackAlbumLiveData;
     private MutableLiveData<ArrayList<Boolean>> doesUserFollowThisPlaylist;
+    private Drawable newPlaylistImageThatIsBeingUploadedNow = null;
+    private Drawable newPlaylistImage = null;
 
     // Album
     private MutableLiveData<Album> albumLiveData;
@@ -83,6 +96,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         }
 
         return playlistLiveData;
+    }
+
+    public Drawable getNewPlaylistImage() {
+        return newPlaylistImage;
     }
 
     /*public MutableLiveData<Album> getTrackAlbumLiveData(String token, int position, String albumId) {
@@ -265,6 +282,48 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.changePlaylistDetails(token, id, name, null, false);
     }
 
+    public void uploadPlaylistImage(String token, Context context, PlaylistFragment playlistFragment, Drawable before, Bitmap bitmap) {
+        File sd = context.getCacheDir();
+        File folder = new File(sd, "/myfolder/");
+        if (!folder.exists()) {
+            if (!folder.mkdir()) {
+                Log.e(TAG, "Cannot create a directory!");
+            } else {
+                folder.mkdirs();
+            }
+        }
+
+        File file = new File(folder,"mypic.jpg");
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(String.valueOf(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+            outputStream.close();
+            Log.e(TAG,"image output stream");
+
+
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+            //Log.e(TAG,"first catch");
+        } catch (IOException e) {
+            //e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+            //Log.e(TAG,"second catch");
+        }
+
+        Log.i(TAG, ("file size :"+Integer.parseInt(String.valueOf(file.length()/1024))));
+
+
+        setCurrentOperation(PlaylistOperation.UPLOAD_IMAGE);
+        newPlaylistImageThatIsBeingUploadedNow = new BitmapDrawable(context.getResources(), bitmap);
+        playlistFragment.setPlaylistImageBeforeUploadingTheNewOne(before);
+        playlistFragment.blockUiAndWait();
+
+        mRepo.uploadPlaylistImage(token, file);
+
+    }
+
     public void saveAlbum(String token) {
         if (albumLiveData == null) return;
         if (isThisAlbumSavedByUser == null) return;
@@ -291,6 +350,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         //Collections.swap(playlistLiveData.getValue().getTracks(), reorderingFromPosition, reorderingToPosition);
         Track track = playlistLiveData.getValue().getTracks().remove(reorderingFromPosition);
         playlistLiveData.getValue().getTracks().add(reorderingToPosition, track);
+    }
+
+    private void updateDataUponUploadingPlaylistImage() {
+        this.newPlaylistImage = newPlaylistImageThatIsBeingUploadedNow;
     }
 
     private void updateLiveDataUponRenaming() {
@@ -353,7 +416,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
                     break;
                 case REORDER: updateLiveDataUponReordering();
                     break;
-                case UPLOAD_IMAGE:
+                case UPLOAD_IMAGE: updateDataUponUploadingPlaylistImage();
                     break;
                 case ADD_TRACK_TO_LIKED_TRACKS: updateLiveDataUponAddingTrackToLikedTracks();
                     break;
@@ -390,16 +453,34 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return currentOperation;
     }
 
+    public void clearDoesUserFollowThisPlaylistData() {
+        doesUserFollowThisPlaylist = null;
+    }
+
+    public void clearIsThisAlbumSavedByUserData() {
+        isThisAlbumSavedByUser = null;
+    }
+
+    public void clearAreTracksLikedData() {
+        areTracksLikedLiveData = null;
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearDoesUserFollowThisPlaylistData();
+        clearIsThisAlbumSavedByUserData();
+        clearAreTracksLikedData();
+    }
+
     @Override
     public void clearData() {
         playlistLiveData = null;
         //eachTrackAlbumLiveData = null;
-        doesUserFollowThisPlaylist = null;
+        clearDoesUserFollowThisPlaylistData();
+        newPlaylistImage = null;
 
         albumLiveData = null;
-        isThisAlbumSavedByUser = null;
+        clearIsThisAlbumSavedByUserData();
 
-
-        areTracksLikedLiveData = null;
+        clearAreTracksLikedData();
     }
 }

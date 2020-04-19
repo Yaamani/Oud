@@ -1,7 +1,8 @@
-package com.example.oud;
+package com.example.oud.user.home;
 
 import android.content.Context;
 
+import com.example.oud.Constants;
 import com.example.oud.user.fragments.home.nestedrecyclerview.NestedRecyclerViewHelper;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.VerticalRecyclerViewAdapter;
@@ -228,7 +229,7 @@ public class NestedRecyclerViewHelperTest {
         helper.addSection(section);
 
         // when
-        item.setImageUrl("Url");
+        item.setImage("Url", false);
         item.setTitle("Title");
         item.setSubtitle("Subtitle");
 
@@ -259,25 +260,22 @@ public class NestedRecyclerViewHelperTest {
         NestedRecyclerViewHelper.Section section = new NestedRecyclerViewHelper.Section();
         section.setIcon(Constants.USER_HOME_RECENTLY_PLAYED_ICON);
         section.setTitle("حضرتك جى تعزى ولا جى تهرج ؟");
-        section.addItem(new NestedRecyclerViewHelper.Item("لا أنا جى أهرج.",
-                "م تمسك يبنى نفسك شوية ...",
-                "تعالى امسكها معايا"));
+        section.addItem(new NestedRecyclerViewHelper.Item("لا أنا جى أهرج.", false,
+                "م تمسك يبنى نفسك شوية ...", "تعالى امسكها معايا"));
 
         return section;
     }
 
     private NestedRecyclerViewHelper.Item dummyItem0() {
-        NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item("+18",
-                "Confirm your age.",
-                "Are you sure ?");
+        NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item("+18", false,
+                "Confirm your age.", "Are you sure ?");
 
         return item;
     }
 
     private NestedRecyclerViewHelper.Item dummyItem1() {
-        NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item("لا أنا جى أهرج.",
-                "م تمسك يبنى نفسك شوية ...",
-                "تعالى امسكها معايا");
+        NestedRecyclerViewHelper.Item item = new NestedRecyclerViewHelper.Item("لا أنا جى أهرج.", false,
+                "م تمسك يبنى نفسك شوية ...", "تعالى امسكها معايا");
 
         return item;
     }
