@@ -142,24 +142,14 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
-                        profileDisplaynameTextView.setText(profilePreview.getDisplayName());
-                        displayName = profilePreview.getDisplayName();
-                        if(profilePreview.getImages().length > 0){
-                            Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
-                            String imageUrl = ("http://oud-zerobase.me/api/"+profilePreview.getImages()[0]);
-                            for(int i=0;i<imageUrl.length();i++){
-                                if(imageUrl.charAt(i)==(char)92){
-                                    Log.e("profile fragment",imageUrl.charAt(i)+" at position: "+i);
-                                    StringBuilder tempString = new StringBuilder(imageUrl);
-                                    tempString.setCharAt(i, '/');
-                                    imageUrl = tempString.toString();
-                                }
 
-                            }
+                        profileDisplaynameTextView.setText(profilePreview.getDisplayName());
+                            Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
+                            String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
                             Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
                             Log.e("profile fragment",imageUrl);
 
-                        }
+
                     }}
             });
 

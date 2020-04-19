@@ -10,7 +10,7 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
-            app:key="notifications"
+            app:key="enable_notifications"
             app:title="Enable notifications"
             app:icon="@drawable/ic_notification_4"/>
 
@@ -25,7 +25,9 @@
             app:title="Private session"
             app:summary="start a private session to listen to music anonymously"
             app:icon="@drawable/ic_private_white_2"
-            app:iconSpaceReserved="false"
+            app:defaultValue="false"
+            app:enabled="false"
+
             />
 
     </PreferenceCategory>

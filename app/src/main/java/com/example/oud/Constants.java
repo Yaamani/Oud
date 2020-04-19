@@ -35,9 +35,12 @@ public class Constants {
     public static final String RENAME_FRAGMENT_TAG = "RENAME";
     public static final String OPTIONS_FRAGMENT_TAG = "OPTIONS";
     public static final String PROFILE_FRAGMENT_TAG = "PROFILE";
+
     public static final String SHARED_PREFERENCES_FILE_NAME = "MyPreferences";
     public static final String SHARED_PREFERENCES_TOKEN_NAME = "token";
     public static final String SHARED_PREFERENCES_USER_ID_NAME = "USER_ID";
+    public static final String SHARED_PREFERENCES_IS_AUTO_PLAY_NAME = "AUTO_PLAY";
+    public static final String SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME = "NOTIFICATION_ALLOWED";
 
 
     public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";

@@ -71,12 +71,51 @@ public class OudUtils {
     }
 
 
+    public static boolean isAutoPlayback(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if(!prefs.contains(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME)){
+            SharedPreferences.Editor prefsEditor = prefs.edit();
+            prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,true);
+            prefsEditor.commit();
+        }
+
+        return prefs.getBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,true);
+    }
+
+    public static void setIsAutoPlayback(Context context,boolean isAutoPlayback){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,isAutoPlayback);
+        prefsEditor.commit();
+    }
+
+    public static boolean isNotificationAllowed(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if(!prefs.contains(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME)){
+            SharedPreferences.Editor prefsEditor = prefs.edit();
+            prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
+            prefsEditor.commit();
+        }
+
+        return prefs.getBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
+    }
+
+    public static void setIsNotificationAllowed(Context context,boolean isAllowed){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,isAllowed);
+        prefsEditor.commit();
+    }
+
+
+
+
     public static String convertImageToFullUrl(String imageUrl) {
 
         if(Constants.MOCK)
             return imageUrl;
-        
-        imageUrl = ("http://oud-zerobase.me/api/" + imageUrl);
+
+        imageUrl = ("https://oud-zerobase.me/api/" + imageUrl);
 
         for (int i = 0; i < imageUrl.length(); i++) {
             if (imageUrl.charAt(i) == (char) 92) {
