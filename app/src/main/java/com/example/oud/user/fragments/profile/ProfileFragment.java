@@ -1,6 +1,8 @@
 package com.example.oud.user.fragments.profile;
 
 import androidx.annotation.IdRes;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,10 +10,12 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -46,13 +50,16 @@ import com.example.oud.R;
 import com.example.oud.RenameFragment;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.ProfilePreview;
+import com.example.oud.authentication.MainActivity;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,9 +216,20 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         View.OnClickListener updateImageOnClickListener=new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                if(ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED)
+                {
+                    // Permission is not granted
+
+                    ActivityCompat
+                            .requestPermissions(getActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 11);
+                }
+                else{
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                }
             }
         };
 
@@ -366,7 +384,20 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        }
+    }
 
 
 
-}
+
+    }
