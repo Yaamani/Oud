@@ -32,7 +32,7 @@ import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.LoadMoreAdapter;
+import com.example.oud.LoadMoreAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;

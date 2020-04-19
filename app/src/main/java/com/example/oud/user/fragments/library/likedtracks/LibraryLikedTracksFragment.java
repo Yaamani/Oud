@@ -20,7 +20,7 @@ import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.LikedTrack;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.LoadMoreAdapter;
+import com.example.oud.LoadMoreAdapter;
 import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
 

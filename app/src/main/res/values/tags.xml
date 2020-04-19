@@ -9,4 +9,7 @@
 
     <string name="tag_track_list_adapter_heart">tag_track_list_adapter_heart_</string>
     <string name="tag_track_list_adapter_title">tag_track_list_adapter_title_</string>
+
+    <string name="tag_generic_vertical_item_title">tag_generic_vertical_item_title_</string>
+    <string name="tag_generic_vertical_item_btn">tag_generic_vertical_item_btn_</string>
 </resources>

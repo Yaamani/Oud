@@ -1,12 +1,10 @@
-package com.example.oud.user;
+package com.example.oud;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import com.example.oud.R;
 
 import org.jetbrains.annotations.NotNull;
 
