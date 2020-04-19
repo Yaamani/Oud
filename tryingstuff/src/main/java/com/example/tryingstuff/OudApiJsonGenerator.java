@@ -101,6 +101,13 @@ public class OudApiJsonGenerator {
         return s;
     }
 
+    public static String getJsonGenre(int i) {
+        return "{" +
+                "\"name\": \"genre" + i + "\"," +
+                "\"_id\": \"genre" + i + "\"" +
+                "}";
+    }
+
     /**
      * if type equals null, a random type will be generated.
      * @return
@@ -127,8 +134,8 @@ public class OudApiJsonGenerator {
                 getJsonArtistPreview(i) +
                 "  ]," +
                 "  \"genres\": [" +
-                "    \"genre" + i / 2 + "\", " +
-                "    \"genre" + i + "\"" +
+                        getJsonGenre(i/2) + ", " +
+                        getJsonGenre(i) +
                 "  ]," +
                 "  \"image\": \"" + VECTOR_ART[i%VECTOR_ART.length] + "\"," +
                 "  \"name\": \"album" + i + "\"," +
@@ -212,7 +219,7 @@ public class OudApiJsonGenerator {
         int portraitIndex = i%PORTRAITS.length;
         return "{" +
                 "   \"_id\": \"artist" + i + "\"," +
-                "   \"name\": \"artist" + i + "\"," +
+                "   \"displayName\": \"artist" + i + "\"," +
                 "   \"type\": \"artist_type" + i + "\"," +
                 "   \"image\": \"" + PORTRAITS[portraitIndex] + "\"" +
                 "}";
@@ -224,13 +231,13 @@ public class OudApiJsonGenerator {
                 "  \"_id\": \"artist" + i + "\"," +
                 "  \"followersCount\": 10000" + i + "," +
                 "  \"genres\": [" +
-                "    \"genre" + i / 2 + "\", " +
-                "    \"genre" + i + "\"" +
+                        getJsonGenre(i/2) + ", " +
+                        getJsonGenre(i) +
                 "  ]," +
                 "  \"images\": [" +
                 "\"" + PORTRAITS[i % PORTRAITS.length] + "\"" +
                 "  ]," +
-                "  \"name\": \"artist" + i + "\"," +
+                "  \"displayName\": \"artist" + i + "\"," +
                 "  \"bio\": \"I'm artist" + i + "\"," +
                 "  \"popularSongs\": [";
         for (int _i = 0; _i < JSON_GENERATION_ARTIST_TRACK_COUNT; _i++) {
@@ -453,14 +460,14 @@ public class OudApiJsonGenerator {
 
         Date date = new Date(10000000);
 
-        s += "\"items\": [";
+        s += "\"items\": [\n";
         for (int _i = offset ; _i < limit+offset; _i++) {
             s += getJsonSavedAlbum(date, _i);
             if (_i < limit+offset - 1)
-                s += ", ";
+                s += ", \n";
             date.setTime(date.getTime() + 10000);
         }
-        s +=    "],\n" +
+        s +=    "\n],\n" +
                 "\"limit\": " + limit + "," +
                 "\"offset\": " + offset + "," +
                 "\"total\": " + limit +

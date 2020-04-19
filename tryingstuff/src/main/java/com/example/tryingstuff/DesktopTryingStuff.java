@@ -11,12 +11,13 @@ public class DesktopTryingStuff {
 
         System.out.println(Integer.valueOf("Hi10".substring(3, 4)));
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 40; i++) {
             //System.out.println(/*"\"playlist" + i + "\": " + */OudApiJsonGenerator.getJsonPlaylist(i, -1) + ", ");
             //System.out.println(OudApiJsonGenerator.getJsonPlaylist(i, -1));
             //System.out.println("\"/playlists/playlist" + i + "\": " + "\"/playlist" + i + "\", ");
             //System.out.println("\"track" + i + "\": " + OudApiJsonGenerator.getJsonTrack(i) + ", ");
             //System.out.println(OudApiJsonGenerator.getJsonAlbum(i) + ", ");
+            System.out.println(OudApiJsonGenerator.getJsonArtist(i) + ", ");
             /*System.out.println("\"category_list_category" + i + "\": " + OudApiJsonGenerator.getJsonCategoryPlaylists(-1) + ", ");*/
         }
 
@@ -37,8 +38,8 @@ public class DesktopTryingStuff {
         //System.out.println(OudApiJsonGenerator.getJsonLikedTracksList(20, 0));
         //System.out.println(OudApiJsonGenerator.getJsonListOfPlaylists(20, 20));
         //System.out.println(OudApiJsonGenerator.getJsonListOfArtistPreview(20, 20));
-        System.out.println(OudApiJsonGenerator.getJsonSavedAlbumsList(20, 0));
-        System.out.println(OudApiJsonGenerator.getJsonSavedAlbumsList(20, 20));
+        //System.out.println(OudApiJsonGenerator.getJsonSavedAlbumsList(20, 0));
+        //System.out.println(OudApiJsonGenerator.getJsonSavedAlbumsList(20, 20));
 
         /*Date date = new Date(100000);
         System.out.println(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(date).replace(' ', 'T') + 'Z');*/

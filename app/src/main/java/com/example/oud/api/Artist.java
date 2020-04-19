@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Artist {
     private String _id;
     private int followersCount;
-    private ArrayList<String> genres;
+    private ArrayList<Genre> genres;
     private ArrayList<String> images;
     private String displayName;
     private String bio;
@@ -20,7 +20,7 @@ public class Artist {
         return followersCount;
     }
 
-    public ArrayList<String> getGenres() {
+    public ArrayList<Genre> getGenres() {
         return genres;
     }
 
@@ -46,7 +46,7 @@ public class Artist {
 
     public Artist(String _id,
                   int followersCount,
-                  ArrayList<String> genres,
+                  ArrayList<Genre> genres,
                   ArrayList<String> images,
                   String displayName,
                   String bio,
