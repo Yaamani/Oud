@@ -42,7 +42,7 @@ public class LibraryLikedTracksViewModelTest {
 
         OudList<LikedTrack> oudList = oudApi.getLikedTrackByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
 
-        MutableLiveData<OudList<LikedTrack>> liveData = viewModel.loadMoreTracks("");
+        MutableLiveData<OudList<LikedTrack>> liveData = viewModel.loadMoreItems("");
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
         for (int i = 0; i < oudList.getItems().size(); i++) {

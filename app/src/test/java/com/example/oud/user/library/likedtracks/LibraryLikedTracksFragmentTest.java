@@ -221,7 +221,7 @@ public class LibraryLikedTracksFragmentTest {
                     withTagValue(is(titleTagPrefix+1))))
                     .check(matches(withText(secondTrackName)));
 
-            assertThat(libraryLikedTracksFragment.getmViewModel().getLoadedLikedTracks().get(0).getValue().getTrack().getName())
+            assertThat(libraryLikedTracksFragment.getmViewModel().getLoadedItems().get(0).getValue().getTrack().getName())
                     .isEqualTo(secondTrackName);
 
 

@@ -41,7 +41,7 @@ public class LibraryPlaylistsViewModelTest {
 
         OudList<Playlist> oudList = oudApi.getPlaylistsFollowedByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
 
-        MutableLiveData<OudList<Playlist>> liveData = viewModel.loadMorePlaylists("");
+        MutableLiveData<OudList<Playlist>> liveData = viewModel.loadMoreItems("");
 
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 

@@ -68,7 +68,7 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         holder.mTextViewName.setTag(titleTagPrefix + position);
         holder.mTextViewName.setText(mTitles.get(position));
 
-        String imageButtonTagPrefix = mContext.getResources().getString(R.string.tag_generic_vertical_item_title);
+        String imageButtonTagPrefix = mContext.getResources().getString(R.string.tag_generic_vertical_item_btn);
         holder.mImageButton.setTag(imageButtonTagPrefix + position);
         holder.mImageButton.setImageResource(mImageButtonDrawableId);
         if (mImageButtonSelected.get(position))

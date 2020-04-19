@@ -48,6 +48,13 @@ public abstract class LibrarySubFragmentViewModel<ConnectionAwareRepo extends Co
         return loadedItems;
     }
 
+    /**
+     * Repository's call to fetch for items.
+     * @param token
+     * @param limit
+     * @param offset
+     * @return
+     */
     protected abstract MutableLiveData<OudList<Item>> repoFetchItems(String token, int limit, int offset);
 
 
@@ -64,6 +71,12 @@ public abstract class LibrarySubFragmentViewModel<ConnectionAwareRepo extends Co
         repoRemoveItem(token, id, undoUiAndUpdateLiveData);
     }
 
+    /**
+     *  Repository's call to remove items.
+     * @param token
+     * @param id
+     * @param undoUiAndUpdateLiveData
+     */
     public abstract void repoRemoveItem(String token, String id, ConnectionStatusListener undoUiAndUpdateLiveData);
 
     public void updateLiveDataUponRemovingItemFromLikedItems() {
