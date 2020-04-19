@@ -84,6 +84,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 .into(holder.mTrackImage);
 
 
+        String titleTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_title);
+        holder.mTrackName.setTag(titleTagPrefix + position);
         holder.mTrackName.setText(mTrackNames.get(position));
 
         if (mLikedTracks.get(position))

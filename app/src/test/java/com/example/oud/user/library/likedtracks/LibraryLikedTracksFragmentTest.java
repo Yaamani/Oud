@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
@@ -100,6 +101,7 @@ public class LibraryLikedTracksFragmentTest {
     }
 
     @Test
+    // @Ignore
     @LooperMode(LooperMode.Mode.PAUSED)
     public void loadFirstSetOfTracksAndLoadMoreTest() throws IOException {
         ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
@@ -129,9 +131,24 @@ public class LibraryLikedTracksFragmentTest {
                 onView(withId(R.id.recycler_view_library_liked_tracks))
                         .perform(RecyclerViewActions.scrollToPosition(i));
 
-                onView(TestUtils.withRecyclerView(R.id.recycler_view_library_liked_tracks).atPositionOnView(i, R.id.txt_track_playlist))
+                /*onView(TestUtils.withRecyclerView(R.id.recycler_view_library_liked_tracks).atPositionOnView(i, R.id.txt_track_playlist))
+                        .check(matches(withText(items.get(i).getTrack().getName())));*/
+                String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_title);
+
+                onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                        withTagValue(is(titleTagPrefix+i))))
                         .check(matches(withText(items.get(i).getTrack().getName())));
             }
+
+
+            ////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
+            // Load More
+            // Load More
+            // Load More
+            // Load More
 
             TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
@@ -156,10 +173,125 @@ public class LibraryLikedTracksFragmentTest {
                         .perform(RecyclerViewActions.scrollToPosition(recyclerViewIndex));
 
 
-                onView(TestUtils.withRecyclerView(R.id.recycler_view_library_liked_tracks).atPositionOnView(recyclerViewIndex, R.id.txt_track_playlist))
+                /*onView(TestUtils.withRecyclerView(R.id.recycler_view_library_liked_tracks).atPositionOnView(recyclerViewIndex, R.id.txt_track_playlist))
+                        .check(matches(withText(itemsMore.get(i).getTrack().getName())));*/
+
+                String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_title);
+
+                onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                        withTagValue(is(titleTagPrefix+recyclerViewIndex))))
                         .check(matches(withText(itemsMore.get(i).getTrack().getName())));
             }
 
+        });
+    }
+
+
+    @Test
+    // @Ignore
+    @LooperMode(LooperMode.Mode.PAUSED)
+    public void removeTrackFromLikedTracks_AndConnectionSucceeds_test() {
+        ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
+
+
+        LibraryLikedTracksRepository.getInstance().setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
+
+        scenario.onActivity(activity -> {
+
+            OudList<LikedTrack> likedTrackOudListFirstSet = null;
+            try {
+                likedTrackOudListFirstSet = oudApi.getLikedTrackByCurrentUser("", Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT, 0).execute().body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            LibraryLikedTracksFragment libraryLikedTracksFragment = new LibraryLikedTracksFragment();
+            FragmentManager manager = activity.getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, libraryLikedTracksFragment, Constants.LIBRARY_LIKED_TRACKS_FRAGMENT_TAG)
+                    .commit();
+
+            TestUtils.sleep(1, MILLIS_TO_PAUSE);
+
+            onView(withId(R.id.recycler_view_library_liked_tracks))
+                    .perform(RecyclerViewActions.scrollToPosition(0));
+
+            String heartTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_heart);
+
+            // Remove track from liked
+            onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                    withTagValue(is(heartTagPrefix+0))))
+                    .perform(click());
+
+            TestUtils.sleep(1, MILLIS_TO_PAUSE);
+
+            onView(withId(R.id.recycler_view_library_liked_tracks))
+                    .perform(RecyclerViewActions.scrollToPosition(0));
+
+            String secondTrackName = likedTrackOudListFirstSet.getItems().get(1).getTrack().getName();
+
+            String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_title);
+            onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                    withTagValue(is(titleTagPrefix+1))))
+                    .check(matches(withText(secondTrackName)));
+
+            assertThat(libraryLikedTracksFragment.getmViewModel().getLoadedLikedTracks().get(0).getValue().getTrack().getName())
+                    .isEqualTo(secondTrackName);
+
+
+        });
+    }
+
+    @Test
+    @LooperMode(LooperMode.Mode.PAUSED)
+    public void removeTrackFromLikedTracks_AndConnectionFails_test() {
+        ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
+
+
+        LibraryLikedTracksRepository.getInstance().setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
+
+        scenario.onActivity(activity -> {
+
+            OudList<LikedTrack> likedTrackOudListFirstSet = null;
+            try {
+                likedTrackOudListFirstSet = oudApi.getLikedTrackByCurrentUser("", Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT, 0).execute().body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            LibraryLikedTracksFragment libraryLikedTracksFragment = new LibraryLikedTracksFragment();
+            FragmentManager manager = activity.getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, libraryLikedTracksFragment, Constants.LIBRARY_LIKED_TRACKS_FRAGMENT_TAG)
+                    .commit();
+
+            TestUtils.sleep(1, MILLIS_TO_PAUSE);
+
+            // Simulate connection failure
+            LibraryLikedTracksRepository.getInstance().setBaseUrl("http:anything");
+
+            onView(withId(R.id.recycler_view_library_liked_tracks))
+                    .perform(RecyclerViewActions.scrollToPosition(0));
+
+            String heartTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_heart);
+            onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                    withTagValue(is(heartTagPrefix+0))))
+                    .perform(click());
+
+            TestUtils.sleep(1, MILLIS_TO_PAUSE);
+
+            onView(withId(R.id.recycler_view_library_liked_tracks))
+                    .perform(RecyclerViewActions.scrollToPosition(0));
+
+            String firstTrackName = likedTrackOudListFirstSet.getItems().get(0).getTrack().getName();;
+
+            String titleTagPrefix = InstrumentationRegistry.getInstrumentation().getContext().getResources().getString(R.string.tag_track_list_adapter_title);
+            onView(allOf(isDescendantOfA(withId(R.id.recycler_view_library_liked_tracks)),
+                    withTagValue(is(titleTagPrefix+0))))
+                    .check(matches(withText(firstTrackName)));
+            /*onView(TestUtils.withRecyclerView(R.id.recycler_view_library_liked_tracks).atPositionOnView(0, R.id.txt_track_playlist))
+                    .check(matches(withText(firstTrackName)));*/
         });
     }
 }

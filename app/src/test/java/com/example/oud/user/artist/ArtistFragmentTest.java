@@ -151,15 +151,13 @@ public class ArtistFragmentTest {
 
     @Test
     public void myArgsTest() {
-        Bundle bundle = ArtistFragment.myArgs("artistId", "userId");
+        Bundle bundle = ArtistFragment.myArgs("artistId");
 
         String artistId = bundle.getString(Constants.ARTIST_ID_KEY);
-        String userId = bundle.getString(Constants.USER_ID_KEY);
 
         assertThat(artistId)
                 .isEqualTo("artistId");
-        assertThat(userId)
-                .isEqualTo("userId");
+
 
     }
 
