@@ -219,6 +219,12 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         return followingLiveData;
     }
 
+    /**
+     *
+     * @param token
+     * @param playlistId
+     * @param followingPublicly When true, other users can see that you're following this playlist.
+     */
     public void followPlaylist(String token, String playlistId, boolean followingPublicly) {
 
         FollowingPublicityPayload followingPublicityPayload = new FollowingPublicityPayload(followingPublicly);

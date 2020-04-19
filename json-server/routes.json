@@ -27,6 +27,10 @@
     "/me/tracks?limit=20&offset=20": "/more_liked_tracks", 
     "/me/tracks*": "/empty_list",    
 
+    "/me/playlists?limit=20&offset=0": "/followed_playlists", 
+    "/me/playlists?limit=20&offset=20": "/more_followed_playlists", 
+    "/me/playlists*": "/empty_list",    
+
 
 
 

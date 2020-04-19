@@ -397,5 +397,22 @@ public class OudApiJsonGenerator {
         return s;
     }
 
+    public static String getJsonListOfPlaylists(int limit, int offset) {
+        String s = "{\n";
+
+        s += "\"items\": [";
+        for (int _i = offset ; _i < limit+offset; _i++) {
+            s += getJsonPlaylist(_i, 3);
+            if (_i < limit+offset - 1)
+                s += ", ";
+        }
+        s +=    "],\n" +
+                "\"limit\": " + limit + "," +
+                "\"offset\": " + offset + "," +
+                "\"total\": " + limit +
+                "\n}";
+
+        return s;
+    }
 
 }

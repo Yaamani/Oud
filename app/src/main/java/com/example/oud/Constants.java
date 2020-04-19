@@ -28,7 +28,7 @@ public class Constants {
     public static final int USER_ARTIST_POPULAR_SONGS_COUNT = 5;
     public static final int USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT = 7;
 
-    public static final int USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT = 20;
+    public static final int USER_LIBRARY_SINGLE_FETCH_LIMIT = 20;
 
     public static final String HOME_FRAGMENT_TAG = "HOME";
     public static final String SEARCH_FRAGMENT_TAG = "SEARCH";

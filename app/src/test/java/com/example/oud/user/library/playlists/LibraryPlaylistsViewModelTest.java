@@ -1,12 +1,11 @@
-package com.example.oud.user.library.likedtracks;
-
+package com.example.oud.user.library.playlists;
 
 import com.example.oud.Constants;
-import com.example.oud.api.LikedTrack;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
+import com.example.oud.api.Playlist;
 import com.example.oud.testutils.TestUtils;
-import com.example.oud.user.fragments.library.likedtracks.LibraryLikedTracksViewModel;
+import com.example.oud.user.fragments.library.playlists.LibraryPlaylistsViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +19,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import static com.google.common.truth.Truth.assertThat;
 
+
 @RunWith(RobolectricTestRunner.class)
-public class LibraryLikedTracksViewModelTest {
+public class LibraryPlaylistsViewModelTest {
     public static final int MILLIS_TO_PAUSE = 250;
 
 
@@ -32,22 +32,22 @@ public class LibraryLikedTracksViewModelTest {
         oudApi = TestUtils.instantiateOudApi();
     }
 
-
     @Test
     // @Ignore
     @LooperMode(LooperMode.Mode.PAUSED)
     public void loadMoreTracksTest() throws IOException {
-        LibraryLikedTracksViewModel viewModel = new LibraryLikedTracksViewModel();
+        LibraryPlaylistsViewModel viewModel = new LibraryPlaylistsViewModel();
         viewModel.getConnectionStatus(); // Initializes connectionStatus
 
-        OudList<LikedTrack> oudList = oudApi.getLikedTrackByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
+        OudList<Playlist> oudList = oudApi.getPlaylistsFollowedByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
 
-        MutableLiveData<OudList<LikedTrack>> liveData = viewModel.loadMoreTracks("");
+        MutableLiveData<OudList<Playlist>> liveData = viewModel.loadMorePlaylists("");
+
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
         for (int i = 0; i < oudList.getItems().size(); i++) {
-            assertThat(oudList.getItems().get(i).getTrack().get_id())
-                    .isEqualTo(liveData.getValue().getItems().get(i).getTrack().get_id());
+            assertThat(oudList.getItems().get(i).getId())
+                    .isEqualTo(liveData.getValue().getItems().get(i).getId());
         }
     }
 }

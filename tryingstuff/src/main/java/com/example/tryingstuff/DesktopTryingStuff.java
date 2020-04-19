@@ -34,7 +34,8 @@ public class DesktopTryingStuff {
 
         //System.out.println(OudApiJsonGenerator.getJsonListOfCategories(7, 7));
 
-        System.out.println(OudApiJsonGenerator.getJsonLikedTracksList(20, 0));
+        //System.out.println(OudApiJsonGenerator.getJsonLikedTracksList(20, 0));
+        System.out.println(OudApiJsonGenerator.getJsonListOfPlaylists(20, 20));
 
         /*Date date = new Date(100000);
         System.out.println(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(date).replace(' ', 'T') + 'Z');*/

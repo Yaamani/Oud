@@ -35,18 +35,18 @@ public class LibraryLikedTracksViewModel extends ConnectionAwareViewModel<Librar
     /**
      *
      * <p>Asks {@link LibraryLikedTracksRepository} to fetch for a new set of liked track starting from the last one found in {@link #loadedLikedTracks}.</p>
-     * <p>The number of tracks fetched equals {@link Constants#USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT}.</p>
+     * <p>The number of tracks fetched equals {@link Constants#USER_LIBRARY_SINGLE_FETCH_LIMIT}.</p>
      * @param token
      * @return A {@link MutableLiveData} containing a list of the newly loaded tracks.
      */
     public MutableLiveData<OudList<LikedTrack>> loadMoreTracks(String token) {
         if (lastSetOfLoadedTracks == null)
-            lastSetOfLoadedTracks = mRepo.getLikedTrackByCurrentUser(token, Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT, 0);
+            lastSetOfLoadedTracks = mRepo.getLikedTrackByCurrentUser(token, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0);
         else {
             int prevOffset = lastSetOfLoadedTracks.getValue().getOffset();
             int prevLimit = lastSetOfLoadedTracks.getValue().getLimit();
 
-            int offset = prevOffset+prevLimit, limit = Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT;
+            int offset = prevOffset+prevLimit, limit = Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT;
 
             lastSetOfLoadedTracks = mRepo.getLikedTrackByCurrentUser(token, limit, offset);
         }

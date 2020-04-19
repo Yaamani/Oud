@@ -97,7 +97,7 @@ public class LibraryLikedTracksFragment extends ConnectionAwareFragment<LibraryL
      */
     private void handleLikedTracks() {
 
-        if (mViewModel.getLoadedLikedTracks().size() < Constants.USER_LIBRARY_LIKED_TRACKS_SINGLE_FETCH_LIMIT)
+        if (mViewModel.getLoadedLikedTracks().size() < Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT)
             loadMoreTracks();
         else {
             observerLoadedTracks();

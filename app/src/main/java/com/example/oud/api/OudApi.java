@@ -174,6 +174,9 @@ public interface OudApi {
     @DELETE("me/following")
     Call<ResponseBody> unfollowArtistsOrUsers(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
 
+    @GET("me/playlists")
+    Call<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(@Header("AUTHORIZATION") String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
 
 
 
