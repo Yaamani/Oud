@@ -61,12 +61,12 @@
     
           "followersUser0":{
             "items": [
-              {"_id": "user2", "name": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
-              {"_id": "user3", "name": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
-              {"_id": "user4", "name": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
-              {"_id": "user5", "name": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
-              {"_id": "user6", "name": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
-              {"_id": "user7", "name": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
+              {"_id": "user2", "displayName": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
+              {"_id": "user3", "displayName": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
+              {"_id": "user4", "displayName": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
+              {"_id": "user5", "displayName": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
+              {"_id": "user6", "displayName": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
+              {"_id": "user7", "displayName": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
               
               
             ],
@@ -88,12 +88,12 @@
           },
           "followingUser0users":{
             "items": [
-              {"_id": "user2", "name": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
-              {"_id": "user3", "name": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
-              {"_id": "user4", "name": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
-              {"_id": "user5", "name": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
-              {"_id": "user6", "name": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
-              {"_id": "user7", "name": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
+              {"_id": "user2", "displayName": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
+              {"_id": "user3", "displayName": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
+              {"_id": "user4", "displayName": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
+              {"_id": "user5", "displayName": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
+              {"_id": "user6", "displayName": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
+              {"_id": "user7", "displayName": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
               
               
             ],

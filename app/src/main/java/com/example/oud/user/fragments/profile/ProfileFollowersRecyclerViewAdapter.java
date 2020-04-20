@@ -91,8 +91,8 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
 
         isFollowed.observe(lifecycleOwner, new Observer<Boolean>() {
             @Override
-            public void onChanged(Boolean isFollowed) {
-                if(isFollowed){
+            public void onChanged(Boolean followed) {
+                if(!followed){
                     holder.followButton.setVisibility(View.VISIBLE);
                     holder.unFollowButton.setVisibility(View.INVISIBLE);
                 }else {

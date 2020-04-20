@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class UserOrArtistPreview {
     @SerializedName("_id")
     String id ;
+    @SerializedName("displayName")
     String name;
     String type;
     @SerializedName("image")
