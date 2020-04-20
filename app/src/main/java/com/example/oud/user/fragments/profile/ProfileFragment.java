@@ -40,32 +40,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Switch;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.oud.ConnectionStatusListener;
-import com.example.oud.Constants;
+
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
-import com.example.oud.RenameFragment;
-import com.example.oud.api.PlaylistPreview;
+
 import com.example.oud.api.ProfilePreview;
-import com.example.oud.authentication.MainActivity;
+
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.UserActivity;
-import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.google.android.exoplayer2.upstream.cache.Cache;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.security.Permission;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;

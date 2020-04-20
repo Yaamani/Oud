@@ -18,6 +18,7 @@ import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
+import com.example.oud.artist.ArtistActivity;
 import com.example.oud.user.UserActivity;
 
 import retrofit2.Call;
@@ -84,6 +85,21 @@ public class MainLoginFragment extends Fragment {
             OudUtils.saveUserData(getContext(),"token","user0");
             startActivity(i);
         });
+
+
+        Button artistTest = v.findViewById(R.id.btn_artist_test);
+        artistTest.setOnClickListener(v1 -> {
+            Intent i = new Intent(getActivity(), ArtistActivity.class);
+            OudUtils.saveUserData(getContext(),"token","user0");
+            startActivity(i);
+        });
+
+        if(!Constants.MOCK){
+            homeTest.setVisibility(View.GONE);
+            artistTest.setVisibility(View.GONE);
+        }
+
+
 
 
 

@@ -46,6 +46,14 @@ public class Constants {
     public static final String LIBRARY_ARTISTS_FRAGMENT_TAG = "LIBRARY_ARTISTS_TRACKS";
     public static final String LIBRARY_SAVED_ALBUMS_FRAGMENT_TAG = "LIBRARY_SAVED_ALBUMS";
 
+    public static final String ARTIST_HOME_FRAGMENT_TAG = "HOME";
+    public static final String BIO_FRAGMENT_TAG = "SEARCH";
+    public static final String MY_ALBUMS_FRAGMENT_TAG = "LIBRARY";
+    public static final String ARTIST_SETTINGS_FRAGMENT_TAG = "SETTINGS";
+    public static final String ARTIST_OFFLINE_FRAGMENT_TAG = "OFFLINE";
+
+
+
     public static final String SHARED_PREFERENCES_FILE_NAME = "MyPreferences";
     public static final String SHARED_PREFERENCES_TOKEN_NAME = "token";
     public static final String SHARED_PREFERENCES_USER_ID_NAME = "USER_ID";

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -15,13 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".artist.ArtistActivity"></activity>
 
         <uses-library
             android:name="android.test.runner"
-            android:required="false" />
-
-        <!-- android:theme="@style/AppTheme"> -->
+            android:required="false" /> <!-- android:theme="@style/AppTheme"> -->
         <activity android:name=".authentication.ResetPasswordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -30,16 +27,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="oud-zerobase.me"
-
-                    android:pathPrefix="/resetPassword" />
+                    android:pathPrefix="/resetPassword"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
             android:name=".user.UserActivity"
-            android:label="@string/title_activity_user"
-            android:configChanges="screenSize|orientation|screenLayout|navigation" />
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
+            android:label="@string/title_activity_user" />
         <activity
             android:name=".authentication.MainActivity"
             android:configChanges="orientation|keyboardHidden"
