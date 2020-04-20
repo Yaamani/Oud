@@ -81,7 +81,8 @@ public SettingsFragment(Activity activity){
             @Override
             public void onChanged(ProfilePreview profilePreview) {
                 displayNameTextView.setText(profilePreview.getDisplayName());
-                Glide.with(getContext()).asBitmap().load(OudUtils.convertImageToFullUrl(profilePreview.getImages()[0])).into(profileImageView);
+                String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
+                OudUtils.glideBuilder(getActivity(),imageUrl).load(imageUrl).into(profileImageView);
             }
         });
 

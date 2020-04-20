@@ -1,5 +1,6 @@
 package com.example.oud.user.fragments.profile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,9 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
 
     @Override
     public void onBindViewHolder(@NonNull ProfileFollowersRecyclerViewAdapter.FollowersViewHolder holder, int position) {
-        Glide.with(context).asBitmap().load(OudUtils.convertImageToFullUrl(followerImagesUrls.get(position))).into(holder.followerItemImageView);
+        String imageUri = OudUtils.convertImageToFullUrl(followerImagesUrls.get(position));
+
+        OudUtils.glideBuilder((Activity) context,imageUri).load(imageUri).into(holder.followerItemImageView);
         holder.followerItemTextView.setText(followerNames.get(position));
         holder.followerParentConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
