@@ -36,7 +36,7 @@ public class RenameDisplayNameWithPasswordFragment extends ConnectionAwareFragme
     LoggedInUser fullProfile;
     EditText displayNameEditText;
     EditText passwordEditText;
-    Button renameButton;
+    Button renameButton;  
     MutableLiveData<String> errorMessage= new MutableLiveData<>();
 
     public void setUserId(String userId) {

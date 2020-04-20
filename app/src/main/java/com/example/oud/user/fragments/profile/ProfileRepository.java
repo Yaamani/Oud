@@ -67,20 +67,13 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
 
-    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context){
+    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context,ConnectionStatusListener connectionStatusListenerUndo){
 
         Log.e("profile Repository","image  repo started");
 
-        File file2= new File("21e1") ;
-
-        try {
-            file2 = FileUtils.getFileFromUri(context,newImage);
-        } catch (Exception e) {
-
-        }
 
 
-        if(false) {
+
             File sd = context.getCacheDir();
             File folder = new File(sd, "/myfolder/");
             if (!folder.exists()) {
@@ -91,7 +84,7 @@ public class ProfileRepository extends ConnectionAwareRepository {
                 }
             }
 
-            file2 = new File(folder, "mypic.png");
+           File file2 = new File(folder, "mypic.png");
 
             try {
                 FileOutputStream outputStream = new FileOutputStream(String.valueOf(file2));
@@ -109,19 +102,10 @@ public class ProfileRepository extends ConnectionAwareRepository {
                 Log.e("Profile Repository", e.getMessage());
                 Log.e("Profile Repository", "second catch");
             }
-        }
-
-
-
-
-
         RequestBody requestFile = RequestBody.create(file2,MediaType.parse(context.getContentResolver().getType(newImage)));
 
         MultipartBody.Part body = MultipartBody.Part.createFormData("images", file2.getName(), requestFile);
         //MultipartBody.Part body = MultipartBody.Part.create(requestFile);
-
-
-
         try {
             Log.e("profile Repository", ("file size :"+body.body().contentLength()));
         } catch (IOException e) {
@@ -130,7 +114,7 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
         Call<LoggedInUser> call = oudApi.updateUserPicture(token,body);
-        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this) {
+        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this,connectionStatusListenerUndo) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                 super.onResponse(call,response);

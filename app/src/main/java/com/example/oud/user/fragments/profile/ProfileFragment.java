@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -85,6 +86,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     ProfilePlaylistsFragment profilePlaylistsFragment;
     ProfileFollowersFragment profileFollowersFragment;
     ProfileFollowingFragment profileFollowingFragment;
+
+    Bitmap oldImage;
 
     private boolean isMyProfile;
 
@@ -169,6 +172,24 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        oldImage = ((BitmapDrawable)profileImageView.getDrawable()).getBitmap();
+
+        ConnectionStatusListener undoUpdateImage = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                Toast.makeText(getContext(),"image updated",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onConnectionFailure() {
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(oldImage)
+                        .into(profileImageView);
+                oldImage=null;
+            }
+        };
+
         if (resultCode == RESULT_OK) {
             try {
                 final Uri imageUri = data.getData();
@@ -186,7 +207,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
                 Context context = ((Activity)getActivity()).getApplicationContext();
-                mViewModel.updateProfileImage(token,imageUri,selectedImage,context);
+                mViewModel.updateProfileImage(token,imageUri,selectedImage,context,undoUpdateImage);
 
             } catch (FileNotFoundException e) {
                 Log.e("Profile Fragment",e.getMessage());
@@ -216,20 +237,10 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         View.OnClickListener updateImageOnClickListener=new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED)
-                {
-                    // Permission is not granted
-
-                    ActivityCompat
-                            .requestPermissions(getActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 11);
-                }
-                else{
                     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                     photoPickerIntent.setType("image/*");
                     startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-                }
+
             }
         };
 

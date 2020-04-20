@@ -66,7 +66,7 @@ public class ProfileFollowersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
 
     @Override
     public void onBindViewHolder(@NonNull ProfileFollowersRecyclerViewAdapter.FollowersViewHolder holder, int position) {
-        Glide.with(context).asBitmap().load(followerImagesUrls.get(position)).into(holder.followerItemImageView);
+        Glide.with(context).asBitmap().load(OudUtils.convertImageToFullUrl(followerImagesUrls.get(position))).into(holder.followerItemImageView);
         holder.followerItemTextView.setText(followerNames.get(position));
         holder.followerParentConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
