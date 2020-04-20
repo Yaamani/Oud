@@ -1,13 +1,22 @@
 package com.example.oud;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -136,5 +145,19 @@ public class OudUtils {
         }
 
         return imageUrl;
+    }
+
+    public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
+        if(imageUrl.contains(".svg")) {
+        return GlideToVectorYou
+                    .init()
+                    .with(activity)
+                    .getRequestBuilder();
+        }
+        else
+            return Glide
+                    .with(activity)
+                    .asBitmap();
+
     }
 }
