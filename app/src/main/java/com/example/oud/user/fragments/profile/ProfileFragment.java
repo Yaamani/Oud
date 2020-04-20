@@ -19,7 +19,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -160,7 +162,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
                         profileDisplaynameTextView.setText(profilePreview.getDisplayName());
                         Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
                         String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
-                        Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
+                        OudUtils.glideBuilder(getActivity(),imageUrl).load(imageUrl).into(profileImageView);
+                        //Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
                         Log.e("profile fragment",imageUrl);
 
 
@@ -177,7 +180,16 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(profileImageView.getDrawable()!=null) {
-            oldImage = ((BitmapDrawable) profileImageView.getDrawable()).getBitmap();
+            if(profileImageView.getDrawable() instanceof PictureDrawable){
+                PictureDrawable pd = (PictureDrawable) profileImageView.getDrawable();
+                oldImage = Bitmap.createBitmap(pd.getIntrinsicWidth(), pd.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(oldImage);
+                canvas.drawPicture(pd.getPicture());
+
+            }
+                else
+                    oldImage = ((BitmapDrawable) profileImageView.getDrawable()).getBitmap();
+
         }
         ConnectionStatusListener undoUpdateImage = new ConnectionStatusListener() {
             @Override
@@ -188,10 +200,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
             @Override
             public void onConnectionFailure() {
                 if(oldImage!=null){
-                    Glide.with(getContext())
-                            .asBitmap()
-                            .load(oldImage)
-                            .into(profileImageView);
+
+                    Glide.with(getContext()).asBitmap().load(oldImage).into(profileImageView);
                 }
                 oldImage=null;
             }
@@ -207,10 +217,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
                 profileImageView.setImageBitmap(selectedImage);
 
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(imageUri)
-                        .into(profileImageView);
+
+                Glide.with(getContext()).asBitmap().load(imageUri).into(profileImageView);
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
                 Context context = ((Activity)getActivity()).getApplicationContext();
