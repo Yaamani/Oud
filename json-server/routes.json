@@ -83,10 +83,15 @@
     "/me/following/contains*":"/oneIdTrue",
 
 
+
+
     "/me/following?type=artist&limit=20&offset=0": "/followed_artists", 
     "/me/following?type=artist&limit=20&offset=20": "/more_followed_artists", 
     
-    "/me/following*": "/empty_list"    
+    "/me/following*": "/empty_list" , 
+
+
+    "/me": "/full_profile"
 
     
 

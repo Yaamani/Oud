@@ -36,7 +36,7 @@ public class RenameDisplayNameWithPasswordFragment extends ConnectionAwareFragme
     LoggedInUser fullProfile;
     EditText displayNameEditText;
     EditText passwordEditText;
-    Button renameButton;  
+    Button renameButton;
     MutableLiveData<String> errorMessage= new MutableLiveData<>();
 
     public void setUserId(String userId) {
@@ -67,11 +67,14 @@ public class RenameDisplayNameWithPasswordFragment extends ConnectionAwareFragme
 
         passwordEditText = view.findViewById(R.id.edit_text_password_rename_with_password);
         renameButton = view.findViewById(R.id.btn_rename_with_password);
+        renameButton.setEnabled(false);
 
         mViewModel.getProfile(OudUtils.getToken(getContext())).observe(getViewLifecycleOwner(), new Observer<LoggedInUser>() {
             @Override
             public void onChanged(LoggedInUser loggedInUser) {
+
                 fullProfile = loggedInUser;
+                renameButton.setEnabled(true);
             }
         });
 
@@ -81,6 +84,9 @@ public class RenameDisplayNameWithPasswordFragment extends ConnectionAwareFragme
                 String password = passwordEditText.getText().toString();
                 String newDisplayname = displayNameEditText.getText().toString();
                 UpdateProfileData data = new UpdateProfileData(fullProfile.getEmail(),password,fullProfile.getGender(),fullProfile.getBirthDate(),fullProfile.getCountry(),newDisplayname);
+                if(passwordEditText.getText().toString().length()<8)
+                    passwordEditText.setError("please enter you password ");
+                else
                 mViewModel.updateProfile(OudUtils.getToken(getContext()),data,errorMessage);
             }
         });
@@ -89,7 +95,9 @@ public class RenameDisplayNameWithPasswordFragment extends ConnectionAwareFragme
             public void onChanged(String s) {
                 if(s.equals("success")){
                     hideRenameFragment(getActivity(), R.id.nav_host_fragment);
-                }else
+                }else if(s.equals("Bad Request"))
+                    passwordEditText.setError("Wrong password");
+                    else
                     Toast.makeText(getContext(),s,Toast.LENGTH_LONG).show();
             }
         });

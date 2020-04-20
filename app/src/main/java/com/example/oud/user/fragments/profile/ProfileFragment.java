@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -81,7 +82,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
 
     private String userId;
-    private String displayName;
+    private String displayName = "";
 
     ProfilePlaylistsFragment profilePlaylistsFragment;
     ProfileFollowersFragment profileFollowersFragment;
@@ -90,6 +91,8 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     Bitmap oldImage;
 
     private boolean isMyProfile;
+
+
 
 
 
@@ -107,6 +110,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public static ProfileFragment newInstance(String userId,Activity activity) {
         ProfileFragment profileFragment = new ProfileFragment(activity);
         profileFragment.setUserId(userId);
+
         return profileFragment;
     }
 
@@ -152,12 +156,12 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
-
+                        displayName = profilePreview.getDisplayName();
                         profileDisplaynameTextView.setText(profilePreview.getDisplayName());
-                            Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
-                            String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
-                            Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
-                            Log.e("profile fragment",imageUrl);
+                        Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
+                        String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
+                        Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
+                        Log.e("profile fragment",imageUrl);
 
 
                     }}
@@ -172,8 +176,9 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        oldImage = ((BitmapDrawable)profileImageView.getDrawable()).getBitmap();
-
+        if(profileImageView.getDrawable()!=null) {
+            oldImage = ((BitmapDrawable) profileImageView.getDrawable()).getBitmap();
+        }
         ConnectionStatusListener undoUpdateImage = new ConnectionStatusListener() {
             @Override
             public void onConnectionSuccess() {
@@ -182,10 +187,12 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
             @Override
             public void onConnectionFailure() {
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(oldImage)
-                        .into(profileImageView);
+                if(oldImage!=null){
+                    Glide.with(getContext())
+                            .asBitmap()
+                            .load(oldImage)
+                            .into(profileImageView);
+                }
                 oldImage=null;
             }
         };
@@ -245,12 +252,15 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         };
 
 
+
+
         View.OnClickListener renameOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //RenameFragment.showRenameFragment(getActivity(),R.id.nav_host_fragment,profileDisplaynameTextView.getText().toString(),profileDisplaynameTextView);
+                RenameDisplayNameWithPasswordFragment fragment = RenameDisplayNameWithPasswordFragment.newInstance(getActivity(),userId,displayName);
+                getParentFragmentManager().beginTransaction().add(R.id.nav_host_fragment,fragment).addToBackStack(null).commit();
 
-                //RenameDisplayNameWithPasswordFragment fragment = RenameDisplayNameWithPasswordFragment.newInstance(getActivity(),)
+
             }
         };
         renameButton.setOnClickListener(renameOnClickListener);
