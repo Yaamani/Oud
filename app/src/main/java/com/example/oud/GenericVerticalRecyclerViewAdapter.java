@@ -68,8 +68,8 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         else
             OudUtils.glideBuilder(mContext, fullUrl)
                     .placeholder(R.drawable.ic_oud_loading_circular)
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .apply(RequestOptions.circleCropTransform())
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(holder.mImageView);
 
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_generic_vertical_item_title);

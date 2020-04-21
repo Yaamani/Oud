@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -482,20 +480,22 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 //playlistImageBeforeUploadingTheNewOne = playlist.getImage();
 
-                String fullUrl = OudUtils.convertImageToFullUrl(playlist.getImage());
-                OudUtils.glideBuilder(getContext(), fullUrl)
-                        .addListener(new RequestListener<PictureDrawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target, boolean isFirstResource) {
-                                return false;
-                            }
+                RequestListener requestListener = new RequestListener() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
+                        return false;
+                    }
 
-                            @Override
-                            public boolean onResourceReady(PictureDrawable resource, Object model, Target<PictureDrawable> target, DataSource dataSource, boolean isFirstResource) {
-                                mImageButtonUploadImage.setVisibility(View.VISIBLE);
-                                return false;
-                            }
-                        })
+                    @Override
+                    public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                        mImageButtonUploadImage.setVisibility(View.VISIBLE);
+
+                        return false;
+                    }
+                };
+
+                String fullUrl = OudUtils.convertImageToFullUrl(playlist.getImage());
+                OudUtils.glideBuilder(getContext(), fullUrl, requestListener)
                         .placeholder(R.drawable.ic_oud_loading)
                         .transition(DrawableTransitionOptions.withCrossFade(factory))
                         .into(mImageViewPlaylist);

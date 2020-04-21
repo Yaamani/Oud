@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.oud.api.OudApi;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
@@ -25,6 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -223,19 +228,55 @@ public class OudUtils {
         return downloaded;
     }
 
-    public static RequestBuilder<PictureDrawable> glideBuilder(Context context, String imageUrl){
+    public static RequestBuilder<? extends Drawable> glideBuilder(Context context, String imageUrl){
+        return glideBuilder(context, imageUrl, new RequestListener() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                return false;
+            }
+        });
+    }
+
+    public static RequestBuilder<? extends Drawable> glideBuilder(Context context, String imageUrl, RequestListener listener) {
         if(imageUrl.contains(".svg")) {
             return GlideToVectorYou
                     .init()
                     .with(context)
                     .getRequestBuilder()
-                    .load(imageUrl);
+                    .load(imageUrl)
+                    .addListener(new RequestListener<PictureDrawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target, boolean isFirstResource) {
+                            return listener.onLoadFailed(e, model, target, isFirstResource);
+                        }
+
+                        @Override
+                        public boolean onResourceReady(PictureDrawable resource, Object model, Target<PictureDrawable> target, DataSource dataSource, boolean isFirstResource) {
+                            return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
+                        }
+                    });
         }
         else
             return Glide
                     .with(context)
-                    .as(PictureDrawable.class)
-                    .load(imageUrl);
+                    //.as(PictureDrawable.class)
+                    .load(imageUrl)
+                    .addListener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return listener.onLoadFailed(e, model, target, isFirstResource);
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
+                        }
+                    });
 
     }
 

@@ -77,6 +77,8 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //holder.mImageView.setImageDrawable(mBitmaps.get(position));
         //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
 
+        if (getImages().get(position) == null) return;
+
         holder.mLayout.setOnClickListener(clickListeners.get(position));
 
         //if (!mImages.get(position).equals(""))
