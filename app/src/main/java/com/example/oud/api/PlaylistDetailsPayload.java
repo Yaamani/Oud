@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import okhttp3.MultipartBody;
 
-public class ChangePlaylistDetailsPayload {
+public class PlaylistDetailsPayload {
 
     private String name;
 
@@ -17,11 +17,11 @@ public class ChangePlaylistDetailsPayload {
 
     private MultipartBody.Part image;
 
-    public ChangePlaylistDetailsPayload(String name,
-                                        Boolean _public,
-                                        Boolean collaborative,
-                                        String description,
-                                        MultipartBody.Part image) {
+    public PlaylistDetailsPayload(String name,
+                                  Boolean _public,
+                                  Boolean collaborative,
+                                  String description,
+                                  MultipartBody.Part image) {
         this.name = name;
         this._public = _public;
         this.collaborative = collaborative;

@@ -309,6 +309,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             mTextViewBio.setText(artist.getBio());
 
+            unBlockUi();
+
         });
 
         handleFollowArtist();

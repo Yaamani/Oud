@@ -147,11 +147,11 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
         FragmentManager manager = activity.getSupportFragmentManager();
         PlaylistFragment playlistFragment = (PlaylistFragment) manager.findFragmentByTag(Constants.PLAYLIST_FRAGMENT_TAG);
-        if (playlistFragment == null)
+        //if (playlistFragment == null)
             playlistFragment = PlaylistFragment.newInstance(userId, type, playlistOrAlbumId);
-        else {
+        /*else {
             playlistFragment.setArguments(PlaylistFragment.myArgs(userId, type, playlistOrAlbumId));
-        }
+        }*/
 
 
         FragmentTransaction transaction = manager.beginTransaction();
@@ -509,6 +509,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             handlePlaylistTracks(playlist);
             handlePlaylistOptions();
+
+            unBlockUi();
         });
     }
 
@@ -528,6 +530,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             handleAlbumTracks(album);
 
             handleAlbumOptions();
+
+            unBlockUi();
         });
     }
 

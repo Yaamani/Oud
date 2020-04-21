@@ -3,9 +3,8 @@ package com.example.oud.user.fragments.playlist;
 import android.util.Log;
 
 import com.example.oud.OudUtils;
-import com.example.oud.api.ChangePlaylistDetailsPayload;
+import com.example.oud.api.PlaylistDetailsPayload;
 import com.example.oud.api.FollowingPublicityPayload;
-import com.example.oud.api.IsFoundResponse;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
@@ -110,9 +109,9 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public void changePlaylistDetails(String token, String playlistId, String newName, Boolean _public, Boolean collaborative) {
         //OudApi oudApi = instantiateRetrofitOudApi();
 
-        ChangePlaylistDetailsPayload changePlaylistDetailsPayload = new ChangePlaylistDetailsPayload(newName, _public, collaborative, null, null);
+        PlaylistDetailsPayload playlistDetailsPayload = new PlaylistDetailsPayload(newName, _public, collaborative, null, null);
 
-        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, changePlaylistDetailsPayload);
+        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, playlistDetailsPayload);
 
         addCall(changeDetailsCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
