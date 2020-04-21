@@ -22,7 +22,9 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.huxq17.download.Pump;
+import com.huxq17.download.PumpFactory;
 import com.huxq17.download.core.DownloadInfo;
+import com.huxq17.download.core.service.IDownloadManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,6 +37,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -70,8 +73,14 @@ public class OudUtils {
             Request request = chain.request();
 
             if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & Constants.SENDING) == Constants.SENDING) {
-                Log.i(TAG, String.format("Sending request %s on %s%n%s",
-                        request.url(), chain.connection(), request.headers()));
+
+                final Buffer buffer = new Buffer();
+                if (request.body() != null)
+                    request.body().writeTo(buffer);
+
+                Log.i(TAG, String.format("Sending request %s on %s%n Headers: %s%n Body: %s",
+                        request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
+
             }
 
             long t2 = System.nanoTime();
@@ -199,7 +208,7 @@ public class OudUtils {
 
     public static String convertImageToFullUrl(String imageUrl) {
 
-        if(Constants.MOCK)
+        if(imageUrl.contains("http"))
             return imageUrl;
 
         imageUrl = (Constants.IMAGES_BASE_URL + imageUrl);
@@ -217,6 +226,9 @@ public class OudUtils {
     }
 
     public static boolean isDownloaded(String trackId) {
+        if (PumpFactory.getService(IDownloadManager.class) == null)
+            return false;
+
         DownloadInfo downloadInfo = Pump.getDownloadInfoById(trackId);
         boolean downloaded = false;
         if (downloadInfo != null) {
