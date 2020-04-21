@@ -27,6 +27,10 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
             mRepo.setBaseUrl(MOCK_SERVER_URL);
     }
 
+    public String getRepoBaseUrl() {
+        return mRepo.getBaseUrl();
+    }
+
     public MutableLiveData<Constants.ConnectionStatus> getConnectionStatus() {
         if (connectionStatus == null)
             connectionStatus = new MutableLiveData<>();

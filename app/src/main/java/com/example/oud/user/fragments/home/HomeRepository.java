@@ -45,7 +45,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
     public MutableLiveData<Boolean> areThereRecentlyPlayedTracks() {
         MutableLiveData<Boolean> areThereRecentlyPlayedTracks = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
+        OudApi oudApi = instantiateRetrofitOudApi(getBaseUrl());
 
         fetchRecentlyPlayedTracks(oudApi, areThereRecentlyPlayedTracks);
 
@@ -69,7 +69,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
         MutableLiveData<ArrayList<HomeViewModel.InnerItemLiveData>> innerItemsLiveData =
                 new MutableLiveData<>(new ArrayList<>());
 
-        OudApi oudApi = instantiateRetrofitOudApi();
+        OudApi oudApi = instantiateRetrofitOudApi(getBaseUrl());
 
         for (int i = 0; i < fetchedRecentlyPlayedTracks.size(); i++) {
             HomeViewModel.InnerItemLiveData current = new HomeViewModel.InnerItemLiveData();
@@ -103,7 +103,7 @@ public class HomeRepository extends ConnectionAwareRepository implements NestedR
 
 
 
-        OudApi oudApi = instantiateRetrofitOudApi();
+        OudApi oudApi = instantiateRetrofitOudApi(getBaseUrl());
 
         fetchCategoryList(oudApi);
 

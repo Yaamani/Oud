@@ -21,7 +21,7 @@ import retrofit2.Response;
 
 public class ProfileFollowersRepository extends ConnectionAwareRepository {
     public MutableUserOrArtistWithTotal loadUserFollowers(String userId){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi(getBaseUrl());
 
         MutableLiveData<List<UserOrArtistPreview>> mutableFollowers = new MutableLiveData<>();
         MutableLiveData<Integer> mutableTotal= new MutableLiveData<>();
@@ -41,7 +41,7 @@ public class ProfileFollowersRepository extends ConnectionAwareRepository {
     }
 
     public void loadMoreUserFollowers(String userId,int offset,MutableLiveData<List<UserOrArtistPreview>> mutableUserOrArtistList){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
         Call<FollowingOrFollowersResponse> call = oudApi.getFollowers(userId,"user",offset);
 
         addCall(call).enqueue(new FailureSuccessHandledCallback<FollowingOrFollowersResponse>(this){

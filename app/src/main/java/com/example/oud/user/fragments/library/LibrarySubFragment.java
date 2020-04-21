@@ -105,8 +105,8 @@ public abstract class LibrarySubFragment<Item,
         if (mViewModel.getLoadedItems().size() < Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT)
             loadMoreItems();
         else {
-            observerLoadedItems();
             unBlockUi();
+            observerLoadedItems();
         }
     }
 

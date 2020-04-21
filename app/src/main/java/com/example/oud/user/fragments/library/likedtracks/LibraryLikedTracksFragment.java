@@ -1,29 +1,16 @@
 package com.example.oud.user.fragments.library.likedtracks;
 
-import android.content.Context;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
-import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.LikedTrack;
-import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.LoadMoreAdapter;
 import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.fragments.library.LibrarySubFragment;
-import com.example.oud.user.player.PlayerInterface;
 
 import java.util.ArrayList;
 
@@ -64,7 +51,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
 
                         TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
-                        trackAdapter.getIds().add(likedTrack.getTrack().get_id());
+                        trackAdapter.getmIds().add(likedTrack.getTrack().get_id());
                         trackAdapter.getTrackImages().add(likedTrack.getTrack().getAlbum().getImage());
                         trackAdapter.getTrackNames().add(likedTrack.getTrack().getName());
                         trackAdapter.getLikedTracks().add(true);
@@ -90,18 +77,23 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
 
             TrackListRecyclerViewAdapter trackAdapter = new TrackListRecyclerViewAdapter(
                     getContext(),
-                    trackIds,
-                    trackClickListener,
-                    trackImages,
-                    trackNames, 
-                    likedTracks, 
-                    availableOfflineClickListener, 
+                    mViewModel.getRepoBaseUrl(), trackClickListener,
+                    availableOfflineClickListener,
                     heartClickListener);
+
+
+            for (int j = 0; j < trackIds.size(); j++) {
+                trackAdapter.addTrack(trackIds.get(j),
+                        trackImages.get(j),
+                        trackNames.get(j),
+                        likedTracks.get(j));
+            }
+
 
             mItemsAdapter = new LoadMoreAdapter(mRecyclerViewItems,
                     trackAdapter,
                     TrackListRecyclerViewAdapter.TrackItemViewHolder.class,
-                    trackAdapter.getIds(),
+                    trackAdapter.getmIds(),
                     R.layout.progressbar_item_vertical);
 
             //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
@@ -112,14 +104,17 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
         }
 
 
+
+
         if (mRecyclerViewItems.getAdapter() == null) {
             mItemsAdapter.setRecyclerView(mRecyclerViewItems);
+            mItemsAdapter.notifyDataSetChanged();
         }
     }
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
         TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        talkToPlayer.configurePlayer(trackAdapter.getIds().get(position), true);
+        talkToPlayer.configurePlayer(trackAdapter.getmIds().get(position), true);
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
@@ -144,7 +139,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
                 // Undo ui
                 TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
-                adapter.getIds().add(position, removedItemId);
+                adapter.getmIds().add(position, removedItemId);
                 adapter.getTrackNames().add(position, removedItemName);
                 adapter.getTrackImages().add(position, removedItemImage);
                 adapter.getLikedTracks().add(position, true);
@@ -154,10 +149,10 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
         };
 
         TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        String id = adapter.getIds().get(position);
+        String id = adapter.getmIds().get(position);
         mViewModel.removeItem(token, id, position, undoUiAndUpdateLiveData);
 
-        removedItemId = adapter.getIds().remove(position);
+        removedItemId = adapter.getmIds().remove(position);
         removedItemName = adapter.getTrackNames().remove(position);
         removedItemImage = adapter.getTrackImages().remove(position);
         adapter.getLikedTracks().remove(position);

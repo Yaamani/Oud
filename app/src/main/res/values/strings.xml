@@ -41,4 +41,15 @@
     <string name="you_dont_follow_any_playlist">You don\'t follow any playlist</string>
     <string name="you_dont_follow_any_artist">You don\'t follow any artist</string>
 
+    <string name="credit">Credit : </string>
+    <string name="oud_coins">Oud Coins</string>
+    <string name="coupon">Coupon</string>
+    <string name="redeem">REDEEM</string>
+    <string name="current_plan">Current plan :</string>
+    <string name="free_plan">Free</string>
+    <string name="subscribe">SUBSCRIBE</string>
+    <string name="extend">EXTEND</string>
+
+
+
 </resources>

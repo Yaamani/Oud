@@ -8,7 +8,7 @@
     android:background="@color/colorPrimaryDark">
 
 
-    <View
+    <!--<View
         android:id="@+id/track_reorder_separator_above"
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -22,7 +22,7 @@
         android:layout_height="4dp"
         android:background="@color/colorPrimary"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent" />-->
 
     <!--<androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_track_like_playlist"

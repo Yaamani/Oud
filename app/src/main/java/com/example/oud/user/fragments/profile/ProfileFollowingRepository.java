@@ -22,7 +22,7 @@ import retrofit2.Response;
 public class ProfileFollowingRepository extends ConnectionAwareRepository {
 
     public MutableUserOrArtistWithTotal loadUserFollowedArtists(String userId){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
 
         MutableLiveData<List<UserOrArtistPreview>> mutableFollowers = new MutableLiveData<>();
         MutableLiveData<Integer> mutableTotal= new MutableLiveData<>();
@@ -42,7 +42,7 @@ public class ProfileFollowingRepository extends ConnectionAwareRepository {
     }
 
     public void loadMoreUserFollowedArtists(String userId,int offset,MutableLiveData<List<UserOrArtistPreview>> mutableUserOrArtistList){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
         Call<FollowingOrFollowersResponse> call = oudApi.getFollowing(userId,"artist",offset);
 
         addCall(call).enqueue(new FailureSuccessHandledCallback<FollowingOrFollowersResponse>(this){
@@ -64,7 +64,7 @@ public class ProfileFollowingRepository extends ConnectionAwareRepository {
 
 
     public MutableUserOrArtistWithTotal loadUserFollowedUsers(String userId){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
 
         MutableLiveData<List<UserOrArtistPreview>> mutableFollowers = new MutableLiveData<>();
         MutableLiveData<Integer> mutableTotal= new MutableLiveData<>();
@@ -84,7 +84,7 @@ public class ProfileFollowingRepository extends ConnectionAwareRepository {
     }
 
     public void loadMoreUserFollowedUsers(String userId,int offset,MutableLiveData<List<UserOrArtistPreview>> mutableUserOrArtistList){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
         Call<FollowingOrFollowersResponse> call = oudApi.getFollowing(userId,"user",offset);
 
         addCall(call).enqueue(new FailureSuccessHandledCallback<FollowingOrFollowersResponse>(this){

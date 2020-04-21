@@ -3,7 +3,6 @@ package com.example.oud.api;
 import com.example.oud.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MultipartBody;
 
@@ -11,7 +10,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -127,7 +125,7 @@ public interface OudApi {
     Call<ResponseBody> removePlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Query(value = "ids", encoded = true) String ids);
 
     @GET("me/tracks/contains")
-    Call<IsFoundResponse> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
+    Call<ArrayList<Boolean>> getAreTheseTracksLiked(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
 
     @PUT("me/tracks")
     Call<ResponseBody> addTheseTracksToLikedTracks(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String ids);
@@ -150,7 +148,7 @@ public interface OudApi {
     Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Part MultipartBody.Part image);
 
     @GET("me/albums/contains")
-    Call<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
+    Call<ArrayList<Boolean>> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
 
     @PUT("me/albums")
     Call<ResponseBody> saveTheseAlbumsForTheCurrentUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
@@ -215,5 +213,10 @@ public interface OudApi {
 
     @PUT("me/profile")
     Call<ResponseBody> updateProfile(@Header("AUTHORIZATION") String token,@Body UpdateProfileData updateProfileData);
+
+
+
+    @GET
+    Call<Profile> getProfileOfCurrentUser(@Header("AUTHORIZATION") String token);
 
 }

@@ -43,8 +43,7 @@ public class LibraryFragment extends Fragment implements ReconnectingListener {
         super.onViewCreated(view, savedInstanceState);
 
         mViewPager2 = view.findViewById(R.id.view_pager2_library);
-        //if (libraryFragmentAdapter == null)
-            libraryFragmentAdapter = new LibraryFragmentAdapter(this);
+        libraryFragmentAdapter = new LibraryFragmentAdapter(this);
         mViewPager2.setAdapter(libraryFragmentAdapter);
 
         mTabLayout = view.findViewById(R.id.tab_layout_library);

@@ -17,6 +17,7 @@ import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.OfflineFragment;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.RenameFragment;
@@ -25,6 +26,7 @@ import com.example.oud.user.fragments.home.HomeFragment2;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
+import com.example.oud.user.fragments.premium.AuthorizationHeaderConnection;
 import com.example.oud.user.fragments.premium.PremiumFragment;
 import com.example.oud.user.fragments.search.SearchFragment;
 import com.example.oud.user.fragments.settings.SettingsFragment;
@@ -34,6 +36,9 @@ import com.example.oud.user.player.PlayerInterface;
 import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.huxq17.download.Pump;
+import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.DownloadRequest;
 
 import java.util.List;
 import java.util.Stack;
@@ -45,8 +50,11 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.media.session.MediaButtonReceiver;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener , PlayerInterface  {
+public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener, PlayerInterface  {
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
@@ -202,6 +210,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         /*NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);*/
+
     }
 
     /*private boolean artistFragPaused = false;
@@ -303,11 +312,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 break;
             case R.id.navigation_premium:
                 //selected = new PremiumFragment();
-                PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(Constants.PREMIUM_FRAGMENT_TAG);
-                if (premiumFragment == null)
+               /* PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(Constants.PREMIUM_FRAGMENT_TAG);
+                if (premiumFragment == null)*/
                     transaction.replace(R.id.nav_host_fragment, new PremiumFragment(), Constants.PREMIUM_FRAGMENT_TAG);
-                else
-                    transaction.replace(R.id.nav_host_fragment, premiumFragment, Constants.PREMIUM_FRAGMENT_TAG);
+                /*else
+                    transaction.replace(R.id.nav_host_fragment, premiumFragment, Constants.PREMIUM_FRAGMENT_TAG);*/
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
@@ -498,6 +507,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.commit();
     }
 
+
+
     /**
      * these functions deal with track in fragments (home or search) and small player fragment
      * */
@@ -536,14 +547,13 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
                 .commit();
 
-
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mPlayerHelper.releasePlayer();
+        Pump.shutdown();
     }
 
     /**
