@@ -5,7 +5,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.oud.user.fragments.premium.AuthorizationHeaderConnection;
+import com.huxq17.download.PumpFactory;
 import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.service.IDownloadConfigService;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,8 +42,9 @@ public class OudApplication extends Application {
                 .addInterceptor(new OudUtils.LoggingInterceptor())
                 .build();
 
-        DownloadConfig.newBuilder()
-                .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(client, token))
-                .build();
+        if (PumpFactory.getService(IDownloadConfigService.class) != null)
+            DownloadConfig.newBuilder()
+                    .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(client, token))
+                    .build();
     }
 }

@@ -3,9 +3,9 @@ package com.example.oud.user.fragments.library.playlists;
 import android.util.Log;
 
 import com.example.oud.ConnectionStatusListener;
-import com.example.oud.api.FollowingPublicityPayload;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
+import com.example.oud.api.PlaylistDetailsPayload;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
@@ -69,4 +69,57 @@ public class LibraryPlaylistsRepository extends ConnectionAwareRepository {
         });
     }
 
+    /**
+     * Create a playlist with the supplied details.
+     * @param token
+     * @param loggedInUserId
+     * @param playlistDetailsPayload Playlist details.
+     * @param playlistCreationListener Listener to react when the playlist is created or when there's an error.
+     */
+    public void createPlaylist(String token, String loggedInUserId, PlaylistDetailsPayload playlistDetailsPayload, PlaylistCreationListener playlistCreationListener) {
+
+        Call<Playlist> createPlaylistCall = oudApi.createPlaylist(token, loggedInUserId, playlistDetailsPayload);
+        addCall(createPlaylistCall).enqueue(new FailureSuccessHandledCallback<Playlist>(this) {
+            @Override
+            public void onResponse(Call<Playlist> call, Response<Playlist> response) {
+                super.onResponse(call, response);
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: " + response.code());
+                    playlistCreationListener.onCreationFailure();
+                    return;
+                }
+
+                playlistCreationListener.onSuccessfulCreation(response.body());
+            }
+        });
+    }
+
+    public interface PlaylistCreationListener {
+        void onSuccessfulCreation(Playlist playlist);
+        void onCreationFailure();
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

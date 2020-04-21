@@ -1,21 +1,32 @@
 package com.example.oud.user.fragments.library.playlists;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.GenericVerticalRecyclerViewAdapter;
 import com.example.oud.LoadMoreAdapter;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Playlist;
 import com.example.oud.user.fragments.library.LibrarySubFragment;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 
 public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, LibraryPlaylistsRepository, LibraryPlaylistsViewModel> {
 
+    private String loggedInUserId;
 
+    private Button mButtonCreatePlaylist;
 
     public LibraryPlaylistsFragment() {
         // Required empty public constructor
@@ -27,6 +38,36 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
                 R.id.recycler_view_library_playlists,
                 R.id.txt_no_playlists);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        loggedInUserId = OudUtils.getUserId(getContext());
+
+        mButtonCreatePlaylist = view.findViewById(R.id.btn_create_playlist);
+        mButtonCreatePlaylist.setOnClickListener(v -> {
+            if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
+                return;
+            mViewModel.createPlaylist(token, loggedInUserId, playlistCreationListener);
+        });
+    }
+
+    private LibraryPlaylistsRepository.PlaylistCreationListener playlistCreationListener = new LibraryPlaylistsRepository.PlaylistCreationListener() {
+        @Override
+        public void onSuccessfulCreation(Playlist playlist) {
+            PlaylistFragment.show(getActivity(),
+                    R.id.nav_host_fragment,
+                    loggedInUserId,
+                    Constants.PlaylistFragmentType.PLAYLIST,
+                    playlist.getId());
+        }
+
+        @Override
+        public void onCreationFailure() {
+            Toast.makeText(getContext(), "Error!!", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void observerLoadedItems() {

@@ -118,7 +118,7 @@ public interface OudApi {
     Call<ResponseBody> reorderPlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     @PUT("playlists/{playlistId}")
-    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
+    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body PlaylistDetailsPayload playlistDetailsPayload);
 
     @DELETE("playlists/{playlistId}/tracks")
     //@HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
@@ -146,6 +146,9 @@ public interface OudApi {
     @Multipart
     @PUT("playlists/{playlist_id}/images")
     Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Part MultipartBody.Part image);
+
+    @POST("users/{user_id}/playlists")
+    Call<Playlist> createPlaylist(@Header("AUTHORIZATION") String token, @Path("user_id") String loggedInUserId, @Body PlaylistDetailsPayload playlistDetailsPayload);
 
     @GET("me/albums/contains")
     Call<ArrayList<Boolean>> checkIfTheseAlbumsAreSavedByUser(@Header("AUTHORIZATION") String token, @Query(value = "ids", encoded = true) String albumIds);
@@ -201,13 +204,13 @@ public interface OudApi {
     Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
 
     @GET("playlists/{playlistId}/followers/contains")
-    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
+    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Query("ids") String ids);
 
     @PUT("playlists/{playlistId}/followers")
-    Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
+    Call<Void> followPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body publicPlaylistfollow playlistfollow);
 
     @DELETE("playlists/{playlistId}/followers")
-    Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId);
+    Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId);
 
 
 

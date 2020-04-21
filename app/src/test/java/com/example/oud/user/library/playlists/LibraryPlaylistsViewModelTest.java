@@ -5,6 +5,7 @@ import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.testutils.TestUtils;
+import com.example.oud.user.fragments.library.artists.LibraryArtistsRepository;
 import com.example.oud.user.fragments.library.playlists.LibraryPlaylistsViewModel;
 
 import org.junit.Before;
@@ -16,6 +17,8 @@ import org.robolectric.annotation.LooperMode;
 import java.io.IOException;
 
 import androidx.lifecycle.MutableLiveData;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -36,8 +39,10 @@ public class LibraryPlaylistsViewModelTest {
     // @Ignore
     @LooperMode(LooperMode.Mode.PAUSED)
     public void loadMoreItemsTest() throws IOException {
+
         LibraryPlaylistsViewModel viewModel = new LibraryPlaylistsViewModel();
         viewModel.getConnectionStatus(); // Initializes connectionStatus
+
 
         OudList<Playlist> oudList = oudApi.getPlaylistsFollowedByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
 
@@ -50,4 +55,7 @@ public class LibraryPlaylistsViewModelTest {
                     .isEqualTo(liveData.getValue().getItems().get(i).getId());
         }
     }
+
+
+
 }

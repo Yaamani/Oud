@@ -11,6 +11,7 @@ public class PlaylistDetailsPayload {
     @SerializedName("public")
     private Boolean _public;
 
+    @SerializedName("collabrative")
     private Boolean collaborative;
 
     private String description;
