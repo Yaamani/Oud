@@ -74,6 +74,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private MotionLayout mMotionLayout;
 
+
+    private boolean editable = true;
+
     private RecyclerView mRecyclerViewTracks;
     private TrackListRecyclerViewAdapter trackListRecyclerViewAdapter;
     private ItemTouchHelper touchHelper;
@@ -210,6 +213,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private void disableEditing(View view) {
+        editable = false;
         view.findViewById(R.id.btn_rename_playlist).setVisibility(View.GONE);
         view.findViewById(R.id.btn_upload_playlist_image).setVisibility(View.GONE);
         view.findViewById(R.id.btn_floating_add_track_to_playlist).setVisibility(View.GONE);
@@ -488,7 +492,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                     @Override
                     public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                        mImageButtonUploadImage.setVisibility(View.VISIBLE);
+                        if (editable)
+                            mImageButtonUploadImage.setVisibility(View.VISIBLE);
 
                         return false;
                     }

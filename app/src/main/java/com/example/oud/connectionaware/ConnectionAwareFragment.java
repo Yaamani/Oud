@@ -102,7 +102,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
 
     @Override
     public void onPause() {
-        super.onStop();
+        super.onPause();
         hideProgressBar();
     }
 
@@ -116,7 +116,8 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
         super.onViewCreated(view, savedInstanceState);
 
         mViewModel = new ViewModelProvider(this).get(viewModelClass);
-        showProgressBar();
+        blockUiAndWait();
+        //showProgressBar();
 
 
         mViewModel.getConnectionStatus().observe(getViewLifecycleOwner(), connectionStatus -> {
