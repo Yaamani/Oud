@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 
+import com.example.oud.FileUtils;
 import com.example.oud.api.ListOfBoolean;
 import com.example.oud.api.ListOfIds;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
@@ -65,61 +66,61 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
 
-    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context){
+
+    public void setProfileImage(String token , Uri newImage,Bitmap bitmap,Context context,ConnectionStatusListener connectionStatusListenerUndo){
 
         Log.e("profile Repository","image  repo started");
 
 
-        File sd = context.getCacheDir();
-        File folder = new File(sd, "/myfolder/");
-        if (!folder.exists()) {
-            if (!folder.mkdir()) {
-                Log.e("ERROR", "Cannot create a directory!");
-            } else {
-                folder.mkdirs();
+
+
+            File sd = context.getCacheDir();
+            File folder = new File(sd, "/myfolder/");
+            if (!folder.exists()) {
+                if (!folder.mkdir()) {
+                    Log.e("ERROR", "Cannot create a directory!");
+                } else {
+                    folder.mkdirs();
+                }
             }
-        }
+
+           File file2 = new File(folder, "mypic.png");
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(String.valueOf(file2));
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream);
+                outputStream.close();
+                Log.e("profile Repository", "image output stream");
 
 
-        File fileName = new File(folder,"mypic.jpg");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.e("Profile Repository", e.getMessage());
+                Log.e("Profile Repository", "first catch");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("Profile Repository", e.getMessage());
+                Log.e("Profile Repository", "second catch");
+            }
+        RequestBody requestFile = RequestBody.create(file2,MediaType.parse(context.getContentResolver().getType(newImage)));
 
+        MultipartBody.Part body = MultipartBody.Part.createFormData("images", file2.getName(), requestFile);
+        //MultipartBody.Part body = MultipartBody.Part.create(requestFile);
         try {
-            FileOutputStream outputStream = new FileOutputStream(String.valueOf(fileName));
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-            outputStream.close();
-            Log.e("profile Repository","image output stream");
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.e("Profile Repository",e.getMessage());
-            Log.e("Profile Repository","first catch");
+            Log.e("profile Repository", ("file size :"+body.body().contentLength()));
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("Profile Repository",e.getMessage());
-            Log.e("Profile Repository","second catch");
         }
-
-
-        Log.e("profile Repository", ("file size :"+Integer.parseInt(String.valueOf(fileName.length()/1024))));
-
-
-
-        RequestBody requestFile = RequestBody.create(fileName,MediaType.parse("multipart/form-data"));
-
-        //MultipartBody.Part body = MultipartBody.Part.createFormData("profileImage", fileName.getName(), requestFile);
-        MultipartBody.Part body = MultipartBody.Part.create(requestFile);
-
 
 
         Call<LoggedInUser> call = oudApi.updateUserPicture(token,body);
-        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this) {
+        addCall(call).enqueue(new FailureSuccessHandledCallback<LoggedInUser>(this,connectionStatusListenerUndo) {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                 super.onResponse(call,response);
                 if(response.isSuccessful()){
                     Log.e("profile Repository","image uploaded");
-                    Log.e("profile Repository","number of images "+response.body().getImages().length);
+                    Log.e("profile Repository","images :" +response.body().getImages()[0] +"\n"+ response.body().getImages()[1]);
                 }
                 else{
                     Log.e("profile Repository","image not successful");
@@ -141,6 +142,11 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
     }
+
+
+
+
+
     public void followUser(String token,String userId,ConnectionStatusListener connectionStatusListener){
         ArrayList<String>id = new ArrayList<>();
         id.add(userId);

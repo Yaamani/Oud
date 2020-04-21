@@ -1,19 +1,27 @@
 package com.example.oud.user.fragments.profile;
 
 import androidx.annotation.IdRes;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,29 +40,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Switch;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.oud.ConnectionStatusListener;
-import com.example.oud.Constants;
+
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
-import com.example.oud.RenameFragment;
-import com.example.oud.api.PlaylistPreview;
+
 import com.example.oud.api.ProfilePreview;
+
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.google.android.exoplayer2.upstream.cache.Cache;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
@@ -73,13 +78,17 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
 
     private String userId;
-    private String displayName;
+    private String displayName = "";
 
     ProfilePlaylistsFragment profilePlaylistsFragment;
     ProfileFollowersFragment profileFollowersFragment;
     ProfileFollowingFragment profileFollowingFragment;
 
+    Bitmap oldImage;
+
     private boolean isMyProfile;
+
+
 
 
 
@@ -97,6 +106,7 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public static ProfileFragment newInstance(String userId,Activity activity) {
         ProfileFragment profileFragment = new ProfileFragment(activity);
         profileFragment.setUserId(userId);
+
         return profileFragment;
     }
 
@@ -142,24 +152,15 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
                 @Override
                 public void onChanged(ProfilePreview profilePreview) {
                     if(profilePreview !=null){
-                        profileDisplaynameTextView.setText(profilePreview.getDisplayName());
                         displayName = profilePreview.getDisplayName();
-                        if(profilePreview.getImages().length > 0){
-                            Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
-                            String imageUrl = ("http://oud-zerobase.me/api/"+profilePreview.getImages()[0]);
-                            for(int i=0;i<imageUrl.length();i++){
-                                if(imageUrl.charAt(i)==(char)92){
-                                    Log.e("profile fragment",imageUrl.charAt(i)+" at position: "+i);
-                                    StringBuilder tempString = new StringBuilder(imageUrl);
-                                    tempString.setCharAt(i, '/');
-                                    imageUrl = tempString.toString();
-                                }
+                        profileDisplaynameTextView.setText(profilePreview.getDisplayName());
+                        Log.e("profile fragment","number of images :"+profilePreview.getImages().length);
+                        String imageUrl = OudUtils.convertImageToFullUrl(profilePreview.getImages()[0]);
+                        OudUtils.glideBuilder(getActivity(),imageUrl).load(imageUrl).into(profileImageView);
+                        //Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
+                        Log.e("profile fragment",imageUrl);
 
-                            }
-                            Glide.with(getContext()).asBitmap().load(imageUrl).into(profileImageView);
-                            Log.e("profile fragment",imageUrl);
 
-                        }
                     }}
             });
 
@@ -172,6 +173,34 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if(profileImageView.getDrawable()!=null) {
+            if(profileImageView.getDrawable() instanceof PictureDrawable){
+                PictureDrawable pd = (PictureDrawable) profileImageView.getDrawable();
+                oldImage = Bitmap.createBitmap(pd.getIntrinsicWidth(), pd.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(oldImage);
+                canvas.drawPicture(pd.getPicture());
+
+            }
+                else
+                    oldImage = ((BitmapDrawable) profileImageView.getDrawable()).getBitmap();
+
+        }
+        ConnectionStatusListener undoUpdateImage = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                Toast.makeText(getContext(),"image updated",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onConnectionFailure() {
+                if(oldImage!=null){
+
+                    Glide.with(getContext()).asBitmap().load(oldImage).into(profileImageView);
+                }
+                oldImage=null;
+            }
+        };
+
         if (resultCode == RESULT_OK) {
             try {
                 final Uri imageUri = data.getData();
@@ -182,14 +211,12 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
                 profileImageView.setImageBitmap(selectedImage);
 
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(imageUri)
-                        .into(profileImageView);
+
+                Glide.with(getContext()).asBitmap().load(imageUri).into(profileImageView);
 
                 String token = getContext().getSharedPreferences("MyPreferences", MODE_PRIVATE).getString("token","0000");
                 Context context = ((Activity)getActivity()).getApplicationContext();
-                mViewModel.updateProfileImage(token,imageUri,selectedImage,context);
+                mViewModel.updateProfileImage(token,imageUri,selectedImage,context,undoUpdateImage);
 
             } catch (FileNotFoundException e) {
                 Log.e("Profile Fragment",e.getMessage());
@@ -219,19 +246,23 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
         View.OnClickListener updateImageOnClickListener=new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+
             }
         };
+
+
 
 
         View.OnClickListener renameOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //RenameFragment.showRenameFragment(getActivity(),R.id.nav_host_fragment,profileDisplaynameTextView.getText().toString(),profileDisplaynameTextView);
+                RenameDisplayNameWithPasswordFragment fragment = RenameDisplayNameWithPasswordFragment.newInstance(getActivity(),userId,displayName);
+                getParentFragmentManager().beginTransaction().add(R.id.nav_host_fragment,fragment).addToBackStack(null).commit();
 
-                //RenameDisplayNameWithPasswordFragment fragment = RenameDisplayNameWithPasswordFragment.newInstance(getActivity(),)
+
             }
         };
         renameButton.setOnClickListener(renameOnClickListener);
@@ -376,7 +407,20 @@ public class ProfileFragment extends ConnectionAwareFragment<ProfileViewModel> {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        }
+    }
 
 
 
-}
+
+    }

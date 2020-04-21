@@ -50,8 +50,8 @@ public class ProfileViewModel extends ConnectionAwareViewModel<ProfileRepository
     }
 
 
-    public void updateProfileImage(String token, Uri image, Bitmap bitmap, Context context){
-        mRepo.setProfileImage(token,image,bitmap,context);
+    public void updateProfileImage(String token, Uri image, Bitmap bitmap, Context context,ConnectionStatusListener connectionStatusListenerUndo){
+        mRepo.setProfileImage(token,image,bitmap,context,connectionStatusListenerUndo);
     }
 
     public void followUser(String token,String userid,ConnectionStatusListener connectionStatusListener){

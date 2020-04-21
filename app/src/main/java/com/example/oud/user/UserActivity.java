@@ -421,7 +421,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     @Override
     public void onTryingToReconnect() {
 
-        //hideOfflineFragment();
+
 
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {

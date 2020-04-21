@@ -76,7 +76,9 @@ public class ProfileFollowingRecyclerViewAdapter extends RecyclerView.Adapter<Pr
 
     @Override
     public void onBindViewHolder(@NonNull ProfileFollowingRecyclerViewAdapter.FollowingViewHolder holder, int position) {
-        Glide.with(context).asBitmap().load(followedImagesUrls.get(position)).into(holder.followerItemImageView);
+        String imageUrl =OudUtils.convertImageToFullUrl(followedImagesUrls.get(position));
+
+        OudUtils.glideBuilder((Activity) context,imageUrl).load(imageUrl).into(holder.followerItemImageView);
         holder.followerItemTextView.setText(followedNames.get(position));
 
         MutableLiveData<Boolean> isFollowed;
@@ -92,7 +94,7 @@ public class ProfileFollowingRecyclerViewAdapter extends RecyclerView.Adapter<Pr
         isFollowed.observe(lifecycleOwner, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isFollowed) {
-                if(isFollowed){
+                if(!isFollowed){
                     holder.followButton.setVisibility(View.VISIBLE);
                     holder.unFollowButton.setVisibility(View.INVISIBLE);
                 }else {
