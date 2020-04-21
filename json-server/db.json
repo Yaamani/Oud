@@ -832,8 +832,7 @@
     }, 
 
 
-  "are_these_tracks_liked": {
-    "IsFound": [
+  "are_these_tracks_liked": [
       true, 
       false, 
       false, 
@@ -852,8 +851,7 @@
       true, 
       true, 
       true 
-    ]
-  }, 
+    ], 
 
   "user_follows_playlist": [
     true
@@ -869,11 +867,9 @@
     ]
   }, 
 
-  "this_album_isn't_saved" : {
-    "IsFound": [
+  "this_album_isn't_saved" : [
       false
-    ]
-  }, 
+    ], 
 
   "user_follows_this_artist": {
     "ids": [

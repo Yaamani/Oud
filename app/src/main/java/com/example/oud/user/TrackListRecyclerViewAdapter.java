@@ -92,8 +92,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         //holder.mLayout.setOnClickListener(mTrackClickListeners.get(position));
         String url = mTrackImages.get(position);
         String fullUrl = OudUtils.convertImageToFullUrl(url);
-        Glide.with(mContext)
-                .load(fullUrl)
+        OudUtils.glideBuilder(mContext, fullUrl)
                 .placeholder(R.drawable.ic_oud_loading)
                 .transition(DrawableTransitionOptions.withCrossFade(factory))
                 .into(holder.mTrackImage);

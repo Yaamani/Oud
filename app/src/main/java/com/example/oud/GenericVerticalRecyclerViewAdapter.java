@@ -61,14 +61,12 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
 
         String fullUrl = OudUtils.convertImageToFullUrl(mImages.get(position));
         if (!mCircularImages.get(position))
-            Glide.with(mContext)
-                    .load(fullUrl)
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(holder.mImageView);
         else
-            Glide.with(mContext)
-                    .load(fullUrl)
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .placeholder(R.drawable.ic_oud_loading_circular)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .apply(RequestOptions.circleCropTransform())

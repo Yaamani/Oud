@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.home.nestedrecyclerview.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,16 +83,16 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
         String fullUrl = OudUtils.convertImageToFullUrl(images.get(position));
+        Log.d(TAG, "onBindViewHolder: " + fullUrl);
         if (!circularImages.get(position))
-            Glide.with(mContext)
-                    .load(fullUrl)
+            //OudUtils.glideBuilder(mContext, fullUrl)
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading)
                     //.error(R.drawable.ic_warning)
                     .into(holder.mImage);
         else
-            Glide.with(mContext)
-                    .load(fullUrl)
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading_circular)
                     //.error(R.drawable.ic_warning)

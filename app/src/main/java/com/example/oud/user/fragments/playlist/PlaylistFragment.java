@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -285,8 +286,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 /*DrawableCrossFadeFactory factory =
                         new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
-                Glide.with(getContext())
-                        .load(imageUri)
+                OudUtils.glideBuilder(getContext(), fullUrl)
                         .transition(DrawableTransitionOptions.withCrossFade(factory))
                         .into(mImageViewPlaylist);*/
 
@@ -483,16 +483,15 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 //playlistImageBeforeUploadingTheNewOne = playlist.getImage();
 
                 String fullUrl = OudUtils.convertImageToFullUrl(playlist.getImage());
-                Glide.with(getContext())
-                        .load(fullUrl)
-                        .addListener(new RequestListener<Drawable>() {
+                OudUtils.glideBuilder(getContext(), fullUrl)
+                        .addListener(new RequestListener<PictureDrawable>() {
                             @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target, boolean isFirstResource) {
                                 return false;
                             }
 
                             @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            public boolean onResourceReady(PictureDrawable resource, Object model, Target<PictureDrawable> target, DataSource dataSource, boolean isFirstResource) {
                                 mImageButtonUploadImage.setVisibility(View.VISIBLE);
                                 return false;
                             }
@@ -519,8 +518,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
             String fullUrl = OudUtils.convertImageToFullUrl(album.getImage());
-            Glide.with(getContext())
-                    .load(fullUrl)
+            OudUtils.glideBuilder(getContext(), fullUrl)
                     .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(mImageViewPlaylist);

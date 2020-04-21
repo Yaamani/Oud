@@ -3,6 +3,8 @@ package com.example.oud;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.util.Log;
@@ -199,7 +201,7 @@ public class OudUtils {
 
         for (int i = 0; i < imageUrl.length(); i++) {
             if (imageUrl.charAt(i) == (char) 92) {
-                Log.e(TAG, imageUrl.charAt(i) + " at position: " + i);
+                Log.e(TAG, "convertImageToFullUrl: " + imageUrl.charAt(i) + " at position: " + i);
                 StringBuilder tempString = new StringBuilder(imageUrl);
                 tempString.setCharAt(i, '/');
                 imageUrl = tempString.toString();
@@ -219,17 +221,26 @@ public class OudUtils {
         }
 
         return downloaded;
-    public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
+    }
+
+    public static RequestBuilder<PictureDrawable> glideBuilder(Context context, String imageUrl){
         if(imageUrl.contains(".svg")) {
-        return GlideToVectorYou
+            return GlideToVectorYou
                     .init()
-                    .with(activity)
-                    .getRequestBuilder();
+                    .with(context)
+                    .getRequestBuilder()
+                    .load(imageUrl);
         }
         else
             return Glide
-                    .with(activity)
-                    .asBitmap();
+                    .with(context)
+                    .as(PictureDrawable.class)
+                    .load(imageUrl);
 
     }
+
+    /*public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
+        return glideBuilder((Context) activity, imageUrl);
+
+    }*/
 }
