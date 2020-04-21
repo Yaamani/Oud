@@ -1,5 +1,27 @@
 {
-  "user1": {"_id": "1", "displayName": "user1", "followersCount": 0,"images": ["https://source.unsplash.com/random/801x600"],"verified": false,"type": "string"},
+  "full_profile":{
+    "_id": "token",
+    "username": "user0",
+    "birthDate": "2020-04-19",
+    "gender": "M",
+    "email": "example@example.com",
+    "displayName": "user0",
+    "role": "free",
+    "country": "EG",
+    "credit": 0,
+    "plan": null,
+    "images": [
+      "string"
+    ],
+    "followersCount": 0,
+    "verified": false,
+    "lastLogin": "2020-04-19",
+    "facebook_id": "string",
+    "google_id": "string",
+    "type": "string"
+  }
+  ,
+  "user1": {"_id": "user1", "displayName": "user1", "followersCount": 0,"images": ["https://source.unsplash.com/random/801x600"],"verified": false,"type": "string"},
 
     "playlistsUser1":{"items": [
         {"_id": "playlist1","name": "playlist1","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x600","type": "string"},
@@ -45,7 +67,7 @@
       },
 
 
-      "user0": {"_id": "user0", "displayName": "user1", "followersCount": 0,"images": ["https://source.unsplash.com/random/801x600"],"verified": false,"type": "string"},
+      "user0": {"_id": "user0", "displayName": "user0", "followersCount": 0,"images": ["https://source.unsplash.com/random/801x600"],"verified": false,"type": "string"},
 
         "playlistsUser0":{"items": [
             {"_id": "playlist1","name": "playlist1","owner": "string","collaborative": true,"description": "string","public": true,"image": "https://source.unsplash.com/random/800x600","type": "string"},
@@ -61,12 +83,12 @@
     
           "followersUser0":{
             "items": [
-              {"_id": "user2", "name": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
-              {"_id": "user3", "name": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
-              {"_id": "user4", "name": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
-              {"_id": "user5", "name": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
-              {"_id": "user6", "name": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
-              {"_id": "user7", "name": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
+              {"_id": "user2", "displayName": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
+              {"_id": "user3", "displayName": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
+              {"_id": "user4", "displayName": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
+              {"_id": "user5", "displayName": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
+              {"_id": "user6", "displayName": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
+              {"_id": "user7", "displayName": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
               
               
             ],
@@ -88,12 +110,12 @@
           },
           "followingUser0users":{
             "items": [
-              {"_id": "user2", "name": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
-              {"_id": "user3", "name": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
-              {"_id": "user4", "name": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
-              {"_id": "user5", "name": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
-              {"_id": "user6", "name": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
-              {"_id": "user7", "name": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
+              {"_id": "user2", "displayName": "user2","type": "user","image": "https://source.unsplash.com/random/802x601"},
+              {"_id": "user3", "displayName": "user3","type": "user","image": "https://source.unsplash.com/random/803x602"},
+              {"_id": "user4", "displayName": "user4","type": "user","image": "https://source.unsplash.com/random/804x603"},
+              {"_id": "user5", "displayName": "user5","type": "user","image": "https://source.unsplash.com/random/805x604"},
+              {"_id": "user6", "displayName": "user6","type": "user","image": "https://source.unsplash.com/random/806sx605"},
+              {"_id": "user7", "displayName": "user7","type": "user","image": "https://source.unsplash.com/random/801x607"}
               
               
             ],

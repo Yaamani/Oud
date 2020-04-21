@@ -52,7 +52,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
         List<String> pathSegmants = appLinkData.getPathSegments();
-        if(pathSegmants.get(pathSegmants.size()-2).equals("verify"))
+        if(pathSegmants.get(pathSegmants.size()-2).equals("resetPassword"))
             resetPasswordToken = pathSegmants.get(pathSegmants.size()-1);
         else
             resetPasswordToken = "";
@@ -110,20 +110,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
 
         oudApi = retrofit.create(OudApi.class);
+
         Call<LoginResponse> call = oudApi.resetPassword(resetPasswordToken,resetPasswordBody);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-
-                errorMessageText.setText("test");
-
                 if (response.isSuccessful()) {
-                    //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
                     String token = response.body().getToken();
                     String userId = response.body().getUser().get_id();
 
                     OudUtils.saveUserData(getApplicationContext(),token,userId);
-                    Intent i = new Intent(getParent(), UserActivity.class);
+                    Intent i = new Intent(getApplicationContext(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
                     startActivity(i);
 

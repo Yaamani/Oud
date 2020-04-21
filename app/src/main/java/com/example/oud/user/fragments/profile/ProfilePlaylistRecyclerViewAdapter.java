@@ -74,7 +74,7 @@ public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<Pro
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
-        Glide.with(context).asBitmap().load(playListImagesUrls.get(position)).into(holder.playlistItemImageView);
+        Glide.with(context).asBitmap().load(OudUtils.convertImageToFullUrl(playListImagesUrls.get(position))).into(holder.playlistItemImageView);
         holder.playlistItemTextView.setText(playlistNames.get(position));
         holder.playlistParentConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override

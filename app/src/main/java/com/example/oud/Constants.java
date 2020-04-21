@@ -10,7 +10,7 @@ public class Constants {
 
     public static String BASE_URL = "https://oud-zerobase.me/api/v1/";
     public static final String IMAGES_BASE_URL = "https://oud-zerobase.me/api/";
-    public static final boolean MOCK = false;
+    public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
     public static final int OKHTTP_MOCK_WEB_SERVER_PORT = 4331;
 
@@ -48,9 +48,19 @@ public class Constants {
     public static final String LIBRARY_ARTISTS_FRAGMENT_TAG = "LIBRARY_ARTISTS_TRACKS";
     public static final String LIBRARY_SAVED_ALBUMS_FRAGMENT_TAG = "LIBRARY_SAVED_ALBUMS";
 
+    public static final String ARTIST_HOME_FRAGMENT_TAG = "HOME";
+    public static final String BIO_FRAGMENT_TAG = "SEARCH";
+    public static final String MY_ALBUMS_FRAGMENT_TAG = "LIBRARY";
+    public static final String ARTIST_SETTINGS_FRAGMENT_TAG = "SETTINGS";
+    public static final String ARTIST_OFFLINE_FRAGMENT_TAG = "OFFLINE";
+
+
+
     public static final String SHARED_PREFERENCES_FILE_NAME = "MyPreferences";
     public static final String SHARED_PREFERENCES_TOKEN_NAME = "token";
     public static final String SHARED_PREFERENCES_USER_ID_NAME = "USER_ID";
+    public static final String SHARED_PREFERENCES_IS_AUTO_PLAY_NAME = "AUTO_PLAY";
+    public static final String SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME = "NOTIFICATION_ALLOWED";
 
 
     public static final String SMALL_PLAYER_FRAGMENT_TAG = "SMALL_PLAYER";

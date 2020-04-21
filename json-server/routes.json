@@ -31,9 +31,6 @@
     "/me/playlists?limit=20&offset=20": "/more_followed_playlists", 
     "/me/playlists*": "/empty_list",    
 
-    "/me/following?type=artist&limit=20&offset=0": "/followed_artists", 
-    "/me/following?type=artist&limit=20&offset=20": "/more_followed_artists", 
-    "/me/following*": "/empty_list",    
 
     "/me/albums?limit=20&offset=0": "/saved_albums", 
     "/me/albums?limit=20&offset=20": "/more_saved_albums", 
@@ -83,6 +80,22 @@
 
     "/users/user0/following?type=user&offset=0":"/followingUser0users",
 
-    "/me/following/contains?type=user&ids=user1":"/oneIdTrue"
+    "/me/following/contains*":"/oneIdTrue",
+
+
+
+
+    "/me/following?type=artist&limit=20&offset=0": "/followed_artists", 
+    "/me/following?type=artist&limit=20&offset=20": "/more_followed_artists", 
+    
+    "/me/following*": "/empty_list" , 
+
+
+    "/me": "/full_profile"
+
+    
+
+    
+    
 
 }

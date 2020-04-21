@@ -30,14 +30,12 @@ public class ProfileFollowingFragment extends ConnectionAwareFragment<ProfileFol
     private ArrayList<String> followedArtistsImageUrls = new ArrayList<>();
     private ArrayList<String> followedArtistsIds = new ArrayList<>();
     private ArrayList<String> followedArtistsTypes = new ArrayList<>();
-    private ArrayList<Boolean> isFollowedArtists = new ArrayList<>();
 
 
     private ArrayList<String> followedUsersNames = new ArrayList<>();
     private ArrayList<String> followedUsersImageUrls = new ArrayList<>();
     private ArrayList<String> followedUsersIds = new ArrayList<>();
     private ArrayList<String> followedUsersTypes = new ArrayList<>();
-    private ArrayList<Boolean> isFollowedUser = new ArrayList<>();
 
 
 

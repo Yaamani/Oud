@@ -1,17 +1,26 @@
 package com.example.oud;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.oud.api.OudApi;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.huxq17.download.Pump;
 import com.huxq17.download.core.DownloadInfo;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import okhttp3.Interceptor;
@@ -141,8 +150,44 @@ public class OudUtils {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                 .create();
-
         return gson;
+    }
+
+
+    public static boolean isAutoPlayback(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if(!prefs.contains(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME)){
+            SharedPreferences.Editor prefsEditor = prefs.edit();
+            prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,true);
+            prefsEditor.commit();
+        }
+
+        return prefs.getBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,true);
+    }
+
+    public static void setIsAutoPlayback(Context context,boolean isAutoPlayback){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME,isAutoPlayback);
+        prefsEditor.commit();
+    }
+
+    public static boolean isNotificationAllowed(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        if(!prefs.contains(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME)){
+            SharedPreferences.Editor prefsEditor = prefs.edit();
+            prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
+            prefsEditor.commit();
+        }
+
+        return prefs.getBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
+    }
+
+    public static void setIsNotificationAllowed(Context context,boolean isAllowed){
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,isAllowed);
+        prefsEditor.commit();
     }
 
     public static String convertImageToFullUrl(String imageUrl) {
@@ -174,5 +219,17 @@ public class OudUtils {
         }
 
         return downloaded;
+    public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
+        if(imageUrl.contains(".svg")) {
+        return GlideToVectorYou
+                    .init()
+                    .with(activity)
+                    .getRequestBuilder();
+        }
+        else
+            return Glide
+                    .with(activity)
+                    .asBitmap();
+
     }
 }
