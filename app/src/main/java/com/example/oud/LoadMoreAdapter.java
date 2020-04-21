@@ -91,10 +91,11 @@ public class LoadMoreAdapter<T extends RecyclerView.ViewHolder> extends Recycler
     }
 
     public void setLoaded() {
-        if (mainList.get(mainList.size()-1) == null) {
-            mainList.remove(mainList.size() - 1);
-            notifyItemRemoved(mainList.size());
-        }
+        if (mainList.size() > 0)
+            if (mainList.get(mainList.size()-1) == null) {
+                mainList.remove(mainList.size() - 1);
+                notifyItemRemoved(mainList.size());
+            }
         loading = false;
     }
 
