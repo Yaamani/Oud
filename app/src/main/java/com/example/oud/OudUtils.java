@@ -209,6 +209,9 @@ public class OudUtils {
 
     public static String convertImageToFullUrl(String imageUrl) {
 
+        if (imageUrl == null)
+            return null;
+
         if(imageUrl.contains("http"))
             return imageUrl;
 
