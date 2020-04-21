@@ -289,15 +289,15 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
+            String fullUrl = OudUtils.convertImageToFullUrl(artist.getImages().get(0));
             mTextViewArtistName.setText(artist.getDisplayName());
-            Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+
+            OudUtils.glideBuilder(getContext(), fullUrl)
                     .apply(RequestOptions.fitCenterTransform())
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
-            Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+            OudUtils.glideBuilder(getContext(), fullUrl)
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtistBlurred);
@@ -308,6 +308,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
 
             mTextViewBio.setText(artist.getBio());
+
+            unBlockUi();
 
         });
 
@@ -382,7 +384,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 }
 
                 TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getmIds().get(position), true);
                 };
 
 
@@ -391,15 +393,19 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 };
 
                 trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                        trackIds,
-                        trackClickListener,
-                        trackImages,
-                        trackNames,
-                        userAreTracksLiked.getIsFound(),
+                        mViewModel.getRepoBaseUrl(), trackClickListener,
                         availableOfflineClickListener,
                         heartClickListener);
 
+                for (int j = 0; j < trackIds.size(); j++) {
+                    trackListRecyclerViewAdapter.addTrack(trackIds.get(j),
+                            trackImages.get(j),
+                            trackNames.get(j),
+                            userAreTracksLiked.get(j));
+                }
+
                 mRecyclerViewPopularSongs.setAdapter(trackListRecyclerViewAdapter);
+                trackListRecyclerViewAdapter.notifyDataSetChanged();
             } else {
                 mRecyclerViewPopularSongs.setVisibility(View.GONE);
                 mTextViewNoSongsToShow.setVisibility(View.VISIBLE);
@@ -418,7 +424,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
 
-        String id = trackListRecyclerViewAdapter.getIds().get(position);
+        String id = trackListRecyclerViewAdapter.getmIds().get(position);
         if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
             mViewModel.removeTrackFromLikedTracks(token, id, position);
             trackListRecyclerViewAdapter.getLikedTracks().set(position, false);

@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.home.nestedrecyclerview.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 
 import java.util.ArrayList;
@@ -75,21 +77,24 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
         //holder.mImageView.setImageDrawable(mBitmaps.get(position));
         //VectorDrawable loading = (VectorDrawable) mContext.getResources().getDrawable(R.drawable.ic_loading);
 
+        if (getImages().get(position) == null) return;
+
         holder.mLayout.setOnClickListener(clickListeners.get(position));
 
         //if (!mImages.get(position).equals(""))
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_inner_item_image);
         holder.mImage.setTag(iconTagPrefix + position);
+        String fullUrl = OudUtils.convertImageToFullUrl(images.get(position));
+        Log.d(TAG, "onBindViewHolder: " + fullUrl);
         if (!circularImages.get(position))
-            Glide.with(mContext)
-                    .load(images.get(position))
+            //OudUtils.glideBuilder(mContext, fullUrl)
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading)
                     //.error(R.drawable.ic_warning)
                     .into(holder.mImage);
         else
-            Glide.with(mContext)
-                    .load(images.get(position))
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading_circular)
                     //.error(R.drawable.ic_warning)

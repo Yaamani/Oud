@@ -59,18 +59,17 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         DrawableCrossFadeFactory factory =
                 new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
+        String fullUrl = OudUtils.convertImageToFullUrl(mImages.get(position));
         if (!mCircularImages.get(position))
-            Glide.with(mContext)
-                    .load(mImages.get(position))
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .placeholder(R.drawable.ic_oud_loading)
                     .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(holder.mImageView);
         else
-            Glide.with(mContext)
-                    .load(mImages.get(position))
+            OudUtils.glideBuilder(mContext, fullUrl)
                     .placeholder(R.drawable.ic_oud_loading_circular)
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .apply(RequestOptions.circleCropTransform())
+                    .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .into(holder.mImageView);
 
         String titleTagPrefix = mContext.getResources().getString(R.string.tag_generic_vertical_item_title);

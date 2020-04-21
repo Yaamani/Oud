@@ -3,10 +3,8 @@ package com.example.oud.user.fragments.playlist;
 import android.util.Log;
 
 import com.example.oud.OudUtils;
-import com.example.oud.api.ChangePlaylistDetailsPayload;
+import com.example.oud.api.PlaylistDetailsPayload;
 import com.example.oud.api.FollowingPublicityPayload;
-import com.example.oud.api.RemovePlaylistTracksPayload;
-import com.example.oud.api.IsFoundResponse;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.api.Album;
 import com.example.oud.api.Playlist;
@@ -111,9 +109,9 @@ public class PlaylistRepository extends ConnectionAwareRepository {
     public void changePlaylistDetails(String token, String playlistId, String newName, Boolean _public, Boolean collaborative) {
         //OudApi oudApi = instantiateRetrofitOudApi();
 
-        ChangePlaylistDetailsPayload changePlaylistDetailsPayload = new ChangePlaylistDetailsPayload(newName, _public, collaborative, null, null);
+        PlaylistDetailsPayload playlistDetailsPayload = new PlaylistDetailsPayload(newName, _public, collaborative, null, null);
 
-        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, changePlaylistDetailsPayload);
+        Call changeDetailsCall = oudApi.changePlaylistDetails(token, playlistId, playlistDetailsPayload);
 
         addCall(changeDetailsCall).enqueue(new FailureSuccessHandledCallback(this) {
             @Override
@@ -149,13 +147,13 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
     }
 
-    public MutableLiveData<IsFoundResponse> areTracksLiked(String token, ArrayList<String> ids) {
-        MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<Boolean>> areTracksLiked(String token, ArrayList<String> ids) {
+        MutableLiveData<ArrayList<Boolean>> savedTracksMutableLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
-        addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
+        Call<ArrayList<Boolean>> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
             @Override
-            public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
                 super.onResponse(call, response);
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());
@@ -257,13 +255,13 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         });
     }
 
-    public MutableLiveData<IsFoundResponse> checkIfTheseAlbumsAreSavedByUser(String token, ArrayList<String> ids) {
-        MutableLiveData<IsFoundResponse> theseAlbumsSavedByUserLiveData = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<Boolean>> checkIfTheseAlbumsAreSavedByUser(String token, ArrayList<String> ids) {
+        MutableLiveData<ArrayList<Boolean>> theseAlbumsSavedByUserLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> theseAlbumsSavedByUserCall = oudApi.checkIfTheseAlbumsAreSavedByUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
-        addCall(theseAlbumsSavedByUserCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
+        Call<ArrayList<Boolean>> theseAlbumsSavedByUserCall = oudApi.checkIfTheseAlbumsAreSavedByUser(token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(theseAlbumsSavedByUserCall).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
             @Override
-            public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
                 super.onResponse(call, response);
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());

@@ -2,6 +2,7 @@ package com.example.oud.dummy;
 
 import com.example.oud.ConnectionStatusListener;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,14 +19,14 @@ public class DummyViewModel extends ViewModel implements ConnectionStatusListene
         repository = new DummyRepository(this);
     }
 
-    public MutableLiveData<String> getDummyString() {
+    public LiveData<String> getDummyString() {
         if (dummyString == null)
             dummyString = repository.loadDummyString();
 
         return dummyString;
     }
 
-    public MutableLiveData<Boolean> getConnectionSuccessful() {
+    public LiveData<Boolean> getConnectionSuccessful() {
         return connectionSuccessful;
     }
 

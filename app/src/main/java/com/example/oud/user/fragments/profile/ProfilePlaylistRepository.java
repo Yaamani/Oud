@@ -25,15 +25,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
-    private OudApi oudApi;
+    // private OudApi oudApi;
 
     public ProfilePlaylistRepository() {
-        oudApi = instantiateRetrofitOudApi();
+        // oudApi = instantiateRetrofitOudApi();
     }
 
 
         public  MutablePlaylistWithTotal loadUserPlaylists(String userId){
-            oudApi = instantiateRetrofitOudApi();
+            // oudApi = instantiateRetrofitOudApi();
             MutableLiveData<List<PlaylistPreview>> mutablePlaylists = new MutableLiveData<>();
             MutableLiveData<Integer> total= new MutableLiveData<>();
 
@@ -57,7 +57,7 @@ public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
 
         public void loadMoreUserPlaylists(String userId,int offset,MutableLiveData<List<PlaylistPreview>> mutablePlaylists){
-            oudApi = instantiateRetrofitOudApi();
+            // oudApi = instantiateRetrofitOudApi();
             Call<UserPlaylistsResponse> call = oudApi.getMoreUserPlaylists(userId,offset);
 
             addCall(call).enqueue(new FailureSuccessHandledCallback<UserPlaylistsResponse>(this){

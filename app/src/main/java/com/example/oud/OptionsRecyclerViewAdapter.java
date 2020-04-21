@@ -47,6 +47,7 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
     @Override
     public void onBindViewHolder(@NonNull OptionItemViewHolder holder, int position) {
 
+
         Glide.with(mContext)
                 .load(mIcons.get(position))
                 .into(holder.mIcon);

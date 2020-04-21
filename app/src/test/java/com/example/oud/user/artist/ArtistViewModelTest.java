@@ -13,7 +13,6 @@ import com.example.oud.testutils.TestUtils;
 import com.example.oud.user.fragments.artist.ArtistViewModel;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -163,17 +162,17 @@ public class ArtistViewModelTest {
         ids.add("track2");
         ids.add("track3");
 
-        IsFoundResponse isFoundResponse = oudApi.getAreTheseTracksLiked("", OudUtils.commaSeparatedListQueryParameter(ids)).execute().body();
+        ArrayList<Boolean> isFoundResponse = oudApi.getAreTheseTracksLiked("", OudUtils.commaSeparatedListQueryParameter(ids)).execute().body();
 
         ArtistViewModel viewModel = new ArtistViewModel();
         viewModel.getConnectionStatus(); // Initializes connectionStatus
         
-        MutableLiveData<IsFoundResponse> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
+        MutableLiveData<ArrayList<Boolean>> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
-        for (int i = 0; i < isFoundResponse.getIsFound().size(); i++) {
-            assertThat(isFoundResponse.getIsFound().get(i))
-                    .isEqualTo(areTheseTracksLikedLiveData.getValue().getIsFound().get(i));
+        for (int i = 0; i < isFoundResponse.size(); i++) {
+            assertThat(isFoundResponse.get(i))
+                    .isEqualTo(areTheseTracksLikedLiveData.getValue().get(i));
         }
         
     }
@@ -197,9 +196,9 @@ public class ArtistViewModelTest {
         viewModel.addTrackToLikedTracks("", "track2", 2);
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
-        MutableLiveData<IsFoundResponse> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
+        MutableLiveData<ArrayList<Boolean>> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
 
-        assertThat(areTheseTracksLikedLiveData.getValue().getIsFound().get(2))
+        assertThat(areTheseTracksLikedLiveData.getValue().get(2))
                 .isTrue();
     }
 
@@ -222,9 +221,9 @@ public class ArtistViewModelTest {
         viewModel.removeTrackFromLikedTracks("", "track2", 2);
         TestUtils.sleep(1, MILLIS_TO_PAUSE);
 
-        MutableLiveData<IsFoundResponse> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
+        MutableLiveData<ArrayList<Boolean>> areTheseTracksLikedLiveData = viewModel.getAreTracksLikedLiveData("", ids);
 
-        assertThat(areTheseTracksLikedLiveData.getValue().getIsFound().get(2))
+        assertThat(areTheseTracksLikedLiveData.getValue().get(2))
                 .isFalse();
     }
 

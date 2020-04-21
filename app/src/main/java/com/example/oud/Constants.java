@@ -15,8 +15,10 @@ public class Constants {
     public static final int OKHTTP_MOCK_WEB_SERVER_PORT = 4331;
 
 
+    public static final int SENDING = 1;
+    public static final int RECEIVING = 1 << 1;
+    public static final int JSON_RESPONSE = 1 << 2;
     public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING*/ | JSON_RESPONSE/*0*/;
-
 
 
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";

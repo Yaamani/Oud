@@ -14,7 +14,7 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
     public MutableLiveData<Track> fetchTrack(String trackId){
 
         MutableLiveData<Track> mutableLiveData = new MutableLiveData<>();
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
         //todo create fun to getTrack from Api
 
         return  mutableLiveData;

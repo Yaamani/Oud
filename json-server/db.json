@@ -832,8 +832,7 @@
     }, 
 
 
-  "are_these_tracks_liked": {
-    "IsFound": [
+  "are_these_tracks_liked": [
       true, 
       false, 
       false, 
@@ -852,8 +851,7 @@
       true, 
       true, 
       true 
-    ]
-  }, 
+    ], 
 
   "user_follows_playlist": [
     true
@@ -869,11 +867,9 @@
     ]
   }, 
 
-  "this_album_isn't_saved" : {
-    "IsFound": [
+  "this_album_isn't_saved" : [
       false
-    ]
-  }, 
+    ], 
 
   "user_follows_this_artist": {
     "ids": [
@@ -885,6 +881,27 @@
     "ids": [
       false
     ]
+  }, 
+
+  "me": {
+    "_id": "5a2539b41c574006c46f1a07",
+    "username": "user0",
+    "birthDate": "2020-04-21",
+    "gender": "F",
+    "email": "example@example.com",
+    "displayName": "user0",
+    "role": "free",
+    "country": "EG",
+    "credit": 0,
+    "plan": null,
+    "images": [
+      "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+    ],
+    "verified": false,
+    "lastLogin": "2020-04-21",
+    "facebook_id": "string",
+    "google_id": "string",
+    "type": "string"
   }
 
   
