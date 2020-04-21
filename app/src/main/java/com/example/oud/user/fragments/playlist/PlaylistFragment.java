@@ -95,6 +95,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private int deletionPosition;
     //private View.OnClickListener trackClickListenerBeforeDeletion;
+    private String trackIdBeforeDeletion;
     private String trackImageBeforeDeletion;
     private String trackNameBeforeDeletion;
     private Boolean trackIsLikedBeforeDeletion;
@@ -357,7 +358,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
             View.OnClickListener goToArtistClickListener = instantiateGoToArtistClickListener(album.getArtists());
 
-            boolean isSaved = mViewModel.getIsThisAlbumSavedByUser(token).getValue().getIsFound().get(0);
+            boolean isSaved = mViewModel.getIsThisAlbumSavedByUser(token).getValue().get(0);
             View.OnClickListener saveAlbumClickListener = instantiateSaveAlbumClickListener(isSaved);
 
 
@@ -542,21 +543,19 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         mViewModel.getAreTracksLikedLiveData(token, ids).observe(getViewLifecycleOwner(), userAreTracksLiked -> {
             //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
             ArrayList<Track> tracks = playlist.getTracks();
-            ArrayList<String> trackImages = new ArrayList<>();
-            ArrayList<String> trackNames = new ArrayList<>();
+            /*ArrayList<String> trackImages = new ArrayList<>();
+            ArrayList<String> trackNames = new ArrayList<>();*/
             //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
 
 
 
 
             trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                    ids,
-                    trackClickListener,
-                    trackImages,
-                    trackNames,
-                    userAreTracksLiked.getIsFound(),
+                    mViewModel.getRepoBaseUrl(), trackClickListener,
                     availableOfflineClickListener,
                     heartClickListener);
+
+
 
 
             for (int i = 0; i < tracks.size(); i++) {
@@ -565,7 +564,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
-                trackImages.add(current.getAlbum().getImage());
+                //trackImages.add(current.getAlbum().getImage());
 
                 //trackImages.add("");
                 //int _i = i;
@@ -575,11 +574,17 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                             adapter.notifyItemChanged(_i);
                         });*/
                 playlistNameBeforeRenaming = current.getName();
-                trackNames.add(current.getName());
+                //trackNames.add(current.getName());
+
+                trackListRecyclerViewAdapter.addTrack(current.get_id(),
+                        current.getAlbum().getImage(),
+                        current.getName(),
+                        userAreTracksLiked.get(i));
 
             }
 
             mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
+            trackListRecyclerViewAdapter.notifyDataSetChanged();
         });
 
     }
@@ -594,17 +599,13 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             OudList<TrackPreview> tracksOudList = album.getTracks();
             ArrayList<TrackPreview> tracks = tracksOudList.getItems();
             //TrackListRecyclerViewAdapter.OnTrackClickListener clickListeners = new ArrayList<>();
-            ArrayList<String> trackImages = new ArrayList<>();
-            ArrayList<String> trackNames = new ArrayList<>();
+            /*ArrayList<String> trackImages = new ArrayList<>();
+            ArrayList<String> trackNames = new ArrayList<>();*/
             //TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListeners = new ArrayList<>();
 
 
             trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                    ids,
-                    trackClickListener,
-                    trackImages,
-                    trackNames,
-                    userAreTracksLiked.getIsFound(),
+                    mViewModel.getRepoBaseUrl(), trackClickListener,
                     availableOfflineClickListener,
                     heartClickListener);
 
@@ -615,20 +616,25 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
 
-                trackImages.add(album.getImage());
+                //trackImages.add(album.getImage());
 
-                trackNames.add(current.getName());
+                //trackNames.add(current.getName());
 
                 //heartClickListeners.add(v -> Toast.makeText(getContext(), "Like !!", Toast.LENGTH_SHORT).show());
 
+                trackListRecyclerViewAdapter.addTrack(current.get_id(),
+                        album.getImage(),
+                        current.getName(),
+                        userAreTracksLiked.get(i));
             }
 
             mRecyclerViewTracks.setAdapter(trackListRecyclerViewAdapter);
+            trackListRecyclerViewAdapter.notifyDataSetChanged();
         });
     }
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getmIds().get(position), true);
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {
@@ -639,7 +645,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
 
-        String id = trackListRecyclerViewAdapter.getIds().get(position);
+        String id = trackListRecyclerViewAdapter.getmIds().get(position);
         if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
             mViewModel.removeTrackFromLikedTracks(token, id, position);
             trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
@@ -656,6 +662,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
         Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+
+        //Pump.newRequest()
     };
 
     private ItemTouchHelper.SimpleCallback recyclerViewTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -687,7 +695,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             else if (toPosition < fromPosition)
                 target.itemView.findViewById(R.id.track_reorder_separator_above).setVisibility(View.VISIBLE);*/
 
-            trackListRecyclerViewAdapter.swapItems(fromPosition, toPosition);
+            trackListRecyclerViewAdapter.swapTracks(fromPosition, toPosition);
             trackListRecyclerViewAdapter.notifyItemMoved(fromPosition, toPosition);
 
             reorderingToPosition = toPosition;
@@ -707,16 +715,18 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             final int position = viewHolder.getAdapterPosition();
 
             //View.OnClickListener trackClickListener = trackListRecyclerViewAdapter.getTrackClickListeners().get(position);
+            String trackId = trackListRecyclerViewAdapter.getmIds().get(position);
             String trackImage = trackListRecyclerViewAdapter.getTrackImages().get(position);
             String trackName = trackListRecyclerViewAdapter.getTrackNames().get(position);
             Boolean isLiked = trackListRecyclerViewAdapter.getLikedTracks().get(position);
             //View.OnClickListener heartClickListener = trackListRecyclerViewAdapter.getHeartClickListeners().get(position);
-            trackListRecyclerViewAdapter.removeItem(position);
+            trackListRecyclerViewAdapter.removeTrack(position);
             trackListRecyclerViewAdapter.notifyItemRemoved(position);
 
             //mViewModel.setCurrentOperation(PlaylistViewModel.PlaylistOperation.DELETE);
             deletionPosition = position;
             //trackClickListenerBeforeDeletion = trackClickListener;
+            trackIdBeforeDeletion = trackId;
             trackImageBeforeDeletion = trackImage;
             trackNameBeforeDeletion = trackName;
             trackIsLikedBeforeDeletion = isLiked;
@@ -841,7 +851,8 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private void undoDeletionRecyclerView() {
-        trackListRecyclerViewAdapter.addItem(deletionPosition,
+        trackListRecyclerViewAdapter.addTrack(deletionPosition,
+                trackIdBeforeDeletion,
                 trackImageBeforeDeletion,
                 trackNameBeforeDeletion,
                 trackIsLikedBeforeDeletion);
@@ -850,7 +861,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private void undoReorderingRecyclerView(int fromPosition, int toPosition) {
-        trackListRecyclerViewAdapter.swapItems(toPosition, fromPosition); // swap fromPosition & toPosition params
+        trackListRecyclerViewAdapter.swapTracks(toPosition, fromPosition); // swap fromPosition & toPosition params
         trackListRecyclerViewAdapter.notifyItemMoved(toPosition, fromPosition); // swap fromPosition & toPosition params
     }
 

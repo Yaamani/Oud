@@ -37,7 +37,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     private MutableLiveData<OudList<Album>> lastSetOfLoadedAlbums;
     private ArrayList<MutableLiveData<Album>> loadedAlbums = new ArrayList<>();
 
-    private MutableLiveData<IsFoundResponse> areTracksLikedLiveData;
+    private MutableLiveData<ArrayList<Boolean>> areTracksLikedLiveData;
 
 
     private MutableLiveData<RelatedArtists> similarArtistsMutableLiveData;
@@ -126,7 +126,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * @param ids
      * @return The {@link MutableLiveData} that tell us whether the user like the specified tracks or not (array of booleans).
      */
-    public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+    public MutableLiveData<ArrayList<Boolean>> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
         if (areTracksLikedLiveData == null)
             areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
         return areTracksLikedLiveData;
@@ -233,14 +233,14 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * When the {@link #currentOperation} succeeds, update the {@link MutableLiveData} accordingly to match that on the server.
      */
     private void updateLiveDataUponAddingTrackToLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, true);
     }
 
     /**
      * When the {@link #currentOperation} succeeds, update the {@link MutableLiveData} accordingly to match that on the server.
      */
     private void updateLiveDataUponRemovingTrackFromLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, false);
     }
 
     /**

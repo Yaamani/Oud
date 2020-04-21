@@ -53,10 +53,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
     // Album
     private MutableLiveData<Album> albumLiveData;
-    private MutableLiveData<IsFoundResponse> isThisAlbumSavedByUser;
+    private MutableLiveData<ArrayList<Boolean>> isThisAlbumSavedByUser;
 
 
-    private MutableLiveData<IsFoundResponse> areTracksLikedLiveData;
+    private MutableLiveData<ArrayList<Boolean>> areTracksLikedLiveData;
 
 
 
@@ -148,7 +148,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return doesUserFollowThisPlaylist;
     }
 
-    public MutableLiveData<IsFoundResponse> getIsThisAlbumSavedByUser(String token) {
+    public MutableLiveData<ArrayList<Boolean>> getIsThisAlbumSavedByUser(String token) {
         if (isThisAlbumSavedByUser == null) {
             ArrayList<String> albumId = new ArrayList<>();
             albumId.add(albumLiveData.getValue().get_id());
@@ -192,7 +192,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.deleteTrack(token, playlistId, trackId);
     }
 
-    public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+    public MutableLiveData<ArrayList<Boolean>> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
         if (areTracksLikedLiveData == null)
             areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
         return areTracksLikedLiveData;
@@ -365,11 +365,11 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponAddingTrackToLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, true);
     }
 
     private void updateLiveDataUponRemovingTrackFromLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, false);
     }
 
     private void updateLiveDataUponFollowingPlaylist() {
@@ -397,11 +397,11 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponSavingAnAlbum() {
-        isThisAlbumSavedByUser.getValue().getIsFound().set(0, true);
+        isThisAlbumSavedByUser.getValue().set(0, true);
     }
 
     private void updateLiveDataUponUnSavingAnAlbum() {
-        isThisAlbumSavedByUser.getValue().getIsFound().set(0, false);
+        isThisAlbumSavedByUser.getValue().set(0, false);
     }
 
     @Override

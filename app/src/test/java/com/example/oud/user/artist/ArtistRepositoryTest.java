@@ -139,15 +139,15 @@ public class ArtistRepositoryTest {
         ids.add("track2");
         ids.add("track3");
 
-        IsFoundResponse isFoundResponse = oudApi.getAreTheseTracksLiked("", OudUtils.commaSeparatedListQueryParameter(ids)).execute().body();
+        ArrayList<Boolean> isFoundResponse = oudApi.getAreTheseTracksLiked("", OudUtils.commaSeparatedListQueryParameter(ids)).execute().body();
 
-        MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = repo.areTracksLiked("", ids);
+        MutableLiveData<ArrayList<Boolean>> savedTracksMutableLiveData = repo.areTracksLiked("", ids);
 
         TestUtils.sleep(1, 100);
 
-        for (int i = 0; i < isFoundResponse.getIsFound().size(); i++) {
-            assertThat(isFoundResponse.getIsFound().get(i))
-                    .isEqualTo(savedTracksMutableLiveData.getValue().getIsFound().get(i));
+        for (int i = 0; i < isFoundResponse.size(); i++) {
+            assertThat(isFoundResponse.get(i))
+                    .isEqualTo(savedTracksMutableLiveData.getValue().get(i));
         }
     }
 }

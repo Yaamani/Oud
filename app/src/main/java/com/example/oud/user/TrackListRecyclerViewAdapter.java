@@ -1,6 +1,7 @@
 package com.example.oud.user;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,14 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
+import com.example.oud.api.OudApi;
+import com.huxq17.download.Pump;
+import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.DownloadListener;
+import com.huxq17.download.core.DownloadRequest;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -28,35 +35,41 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
     private Context mContext;
 
-    private ArrayList<String> ids;
+    //private ArrayList<Track> mTracks = new ArrayList<>();
+    private ArrayList<String> mIds = new ArrayList<>();
+    private ArrayList<String> mTrackImages = new ArrayList<>();
+    private ArrayList<String> mTrackNames = new ArrayList<>();
+    private ArrayList<Boolean> mLikedTracks = new ArrayList<>();
+    private ArrayList<Boolean> mDownloaded = new ArrayList<>();
+
 
     private OnTrackClickListener mTrackClickListener;
-    private ArrayList<String> mTrackImages;
-    private ArrayList<String> mTrackNames;
-    private ArrayList<Boolean> mLikedTracks;
     private OnTrackClickListener mAvailableOfflineClickListener;
     private OnTrackClickListener mHeartClickListener;
+
+    private String baseUrl;
+    // private OudApi oudApi;
 
     //private ArrayList<View> reorderingSeparators;
 
     public TrackListRecyclerViewAdapter(Context mContext,
-                                        ArrayList<String> ids,
+                                        String baseUrl,
                                         OnTrackClickListener mTrackClickListener,
-                                        ArrayList<String> mTrackImages,
-                                        ArrayList<String> mTrackNames,
-                                        ArrayList<Boolean> mLikedTracks,
                                         OnTrackClickListener mAvailableOfflineClickListener,
                                         OnTrackClickListener mHeartClickListener) {
         this.mContext = mContext;
-        this.ids = ids;
+        // this.ids = ids;
         this.mTrackClickListener = mTrackClickListener;
-        this.mTrackImages = mTrackImages;
-        this.mTrackNames = mTrackNames;
+        // this.mTrackImages = mTrackImages;
+        // this.mTrackNames = mTrackNames;
 
         //reorderingSeparators = new ArrayList<>();
-        this.mLikedTracks = mLikedTracks;
+        // this.mLikedTracks = mLikedTracks;
         this.mAvailableOfflineClickListener = mAvailableOfflineClickListener;
         this.mHeartClickListener = mHeartClickListener;
+
+        this.baseUrl = baseUrl;
+        // oudApi = OudUtils.instantiateRetrofitOudApi(baseUrl);
     }
 
     @NonNull
@@ -77,7 +90,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         //holder.mLayout.setOnClickListener(mTrackClickListeners.get(position));
-        String fullUrl = OudUtils.convertImageToFullUrl(mTrackImages.get(position));
+        String url = mTrackImages.get(position);
+        String fullUrl = OudUtils.convertImageToFullUrl(url);
         Glide.with(mContext)
                 .load(fullUrl)
                 .placeholder(R.drawable.ic_oud_loading)
@@ -96,16 +110,18 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         String heartTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_heart);
         holder.mHeart.setTag(heartTagPrefix + position);
 
+        if (mDownloaded.get(position))
+            holder.mAvailableOffline.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
+
         //holder.mHeart.setOnClickListener(mHeartClickListeners.get(position));
 
     }
 
     @Override
     public int getItemCount() {
-        return mTrackNames.size();
+        return mIds.size();
+        // return mTracks.size();
     }
-
-
 
     /*public void hideAllReorderingSeparators() {
         Log.i(TAG, "hideAllReorderingSeparators: " + reorderingSeparators.size());
@@ -114,12 +130,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         }
     }*/
 
-    public ArrayList<String> getIds() {
-        return ids;
-    }
-
-    public OnTrackClickListener getTrackClickListener() {
-        return mTrackClickListener;
+    public ArrayList<String> getmIds() {
+        return mIds;
     }
 
     public ArrayList<String> getTrackImages() {
@@ -134,6 +146,10 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mLikedTracks;
     }
 
+    public OnTrackClickListener getTrackClickListener() {
+        return mTrackClickListener;
+    }
+
     public OnTrackClickListener getAvailableOfflineClickListener() {
         return mAvailableOfflineClickListener;
     }
@@ -142,34 +158,53 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mHeartClickListener;
     }
 
-    public void addItem(int position,
-                        String trackImage,
-                        String trackName,
-                        Boolean isLiked) {
+    public void addTrack(String id,
+                         String image,
+                         String name,
+                         Boolean isLiked) {
+        addTrack(mIds.size(),
+                id,
+                image,
+                name,
+                isLiked);
+    }
+
+    public void addTrack(int position,
+                         String trackId,
+                         String trackImage,
+                         String trackName,
+                         boolean isLiked) {
         //mTrackClickListener.add(position, trackClickListener);
+        mIds.add(trackId);
         mTrackImages.add(position, trackImage);
         mTrackNames.add(position, trackName);
         mLikedTracks.add(position, isLiked);
+        mDownloaded.add(OudUtils.isDownloaded(trackId));
+
         //mHeartClickListener.add(position, heartClickListener);
     }
 
-    public void removeItem(int position) {
+    public void removeTrack(int position) {
         //mTrackClickListener.remove(position);
+        mIds.remove(position);
         mTrackImages.remove(position);
         mTrackNames.remove(position);
         mLikedTracks.remove(position);
+        mDownloaded.remove(position);
         //mHeartClickListener.remove(position);
     }
 
-    public void swapItems(int i, int j) {
+    public void swapTracks(int i, int j) {
         //Collections.swap(mTrackClickListener, i, j);
+        Collections.swap(mIds, i, j);
         Collections.swap(mTrackImages, i, j);
         Collections.swap(mTrackNames, i, j);
         Collections.swap(mLikedTracks, i, j);
+        Collections.swap(mDownloaded, i, j);
         //Collections.swap(mHeartClickListener, i, j);
     }
 
-    public static class TrackItemViewHolder extends RecyclerView.ViewHolder {
+    public class TrackItemViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout mLayout;
         private ImageView mTrackImage;
@@ -201,7 +236,35 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             mHeart = itemView.findViewById(R.id.btn_track_like);
 
             mLayout.setOnClickListener(v -> this.trackClickListener.onTrackClickListener(getAdapterPosition(), v));
-            mAvailableOffline.setOnClickListener(v -> this.availableOfflineClickListener.onTrackClickListener(getAdapterPosition(), v));
+            mAvailableOffline.setOnClickListener(v -> {
+                this.availableOfflineClickListener.onTrackClickListener(getAdapterPosition(), v);
+                String id = mIds.get(getAdapterPosition());
+                String userId = OudUtils.getUserId(mContext);
+                String filePath = userId + '/' + id;
+                File file = new File(mContext.getExternalCacheDir().getAbsolutePath(), filePath);
+                Pump.newRequest(baseUrl + "tracks/" + id + "/download", file.getAbsolutePath())
+                        .setId(filePath)
+                        .listener(new DownloadListener() {
+                            @Override
+                            public void onSuccess() {
+                                super.onSuccess();
+                                Log.d(TAG, "onSuccess: ");
+                            }
+
+                            @Override
+                            public void onFailed() {
+                                super.onFailed();
+                                Log.d(TAG, "onFailed: " + getDownloadInfo().getStatus());
+                            }
+
+                            @Override
+                            public void onProgress(int progress) {
+                                super.onProgress(progress);
+                                Log.d(TAG, "onProgress: " + progress);
+                            }
+                        })
+                        .submit();
+            });
             mHeart.setOnClickListener(v -> this.heartClickListener.onTrackClickListener(getAdapterPosition(), v));
         }
     }
