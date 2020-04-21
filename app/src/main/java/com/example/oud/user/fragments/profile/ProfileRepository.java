@@ -181,13 +181,13 @@ public class ProfileRepository extends ConnectionAwareRepository {
 
 
     public void checkIfIFollowThisUser(String token,String commaSeparatedUsers,MutableLiveData<Boolean> isFollowed){
-        Call<ListOfBoolean> call = oudApi.checkIfIFollowTheseUsersOrArtists(token,"user",commaSeparatedUsers);
-        addCall(call).enqueue(new FailureSuccessHandledCallback<ListOfBoolean>(this) {
+        Call<ArrayList<Boolean>> call = oudApi.checkIfIFollowTheseUsersOrArtists(token,"user",commaSeparatedUsers);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
             @Override
-            public void onResponse(Call<ListOfBoolean> call, Response<ListOfBoolean> response) {
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
                 super.onResponse(call,response);
                 if(response.isSuccessful()){
-                    isFollowed.setValue(response.body().getIds().get(0));
+                    isFollowed.setValue(response.body().get(0));
                 }
 
             }

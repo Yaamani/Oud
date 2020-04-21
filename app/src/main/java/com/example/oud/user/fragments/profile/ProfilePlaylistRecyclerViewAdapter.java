@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.profile;
 
 import android.content.Context;
+import android.content.pm.ShortcutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,8 @@ public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<Pro
 
     @Override
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
-        Glide.with(context).asBitmap().load(OudUtils.convertImageToFullUrl(playListImagesUrls.get(position))).into(holder.playlistItemImageView);
+        String imageUrl = OudUtils.convertImageToFullUrl(playListImagesUrls.get(position));
+        OudUtils.glideBuilder(context,imageUrl).into(holder.playlistItemImageView);
         holder.playlistItemTextView.setText(playlistNames.get(position));
         holder.playlistParentConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +87,7 @@ public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<Pro
 
         MutableLiveData<Boolean> isFollowed;
         holder.followButton.setVisibility(View.VISIBLE);
+        holder.followButton.setEnabled(false);
         holder.unFollowButton.setVisibility(View.INVISIBLE);
 
 
@@ -94,9 +97,11 @@ public class ProfilePlaylistRecyclerViewAdapter extends RecyclerView.Adapter<Pro
             @Override
             public void onChanged(Boolean isFollowed) {
                 if(!isFollowed){
+                    holder.followButton.setEnabled(true);
                     holder.followButton.setVisibility(View.VISIBLE);
                     holder.unFollowButton.setVisibility(View.INVISIBLE);
                 }else {
+                    holder.unFollowButton.setEnabled(true);
                     holder.followButton.setVisibility(View.INVISIBLE);
                     holder.unFollowButton.setVisibility(View.VISIBLE);
                 }
