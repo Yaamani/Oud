@@ -118,7 +118,7 @@ public interface OudApi {
     Call<ResponseBody> reorderPlaylistTracks(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ReorderPlaylistPayload reorderPlaylistPayload);
 
     @PUT("playlists/{playlistId}")
-    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body ChangePlaylistDetailsPayload changePlaylistDetailsPayload);
+    Call<ResponseBody> changePlaylistDetails(@Header("AUTHORIZATION") String token, @Path("playlistId") String playlistId, @Body PlaylistDetailsPayload changePlaylistDetailsPayload);
 
     @DELETE("playlists/{playlistId}/tracks")
     //@HTTP(method = "DELETE", path = "playlists/{playlistId}/tracks", hasBody = true)
@@ -198,10 +198,10 @@ public interface OudApi {
     Call<Void> unFollowUsersOrArtists (@Header("AUTHORIZATION") String token, @Query("type") String type,@Query("ids")String commaSeparatedUserId);
 
     @GET("me/following/contains")
-    Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
+    Call<ArrayList<Boolean>> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
 
     @GET("playlists/{playlistId}/followers/contains")
-    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
+    Call<ArrayList<Boolean>> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
 
     @PUT("playlists/{playlistId}/followers")
     Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
