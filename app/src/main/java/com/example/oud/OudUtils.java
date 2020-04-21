@@ -3,6 +3,7 @@ package com.example.oud;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.util.Log;
@@ -147,7 +148,7 @@ public class OudUtils {
         return imageUrl;
     }
 
-    public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
+    public static RequestBuilder<PictureDrawable> glideBuilder(Activity activity, String imageUrl){
         if(imageUrl.contains(".svg")) {
         return GlideToVectorYou
                     .init()
@@ -157,7 +158,7 @@ public class OudUtils {
         else
             return Glide
                     .with(activity)
-                    .asBitmap();
+                    .as(PictureDrawable.class);
 
     }
 }

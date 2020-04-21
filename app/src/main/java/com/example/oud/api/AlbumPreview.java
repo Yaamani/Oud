@@ -18,7 +18,9 @@ public class AlbumPreview {
 
     private String type;
 
-    public AlbumPreview(String id, String albumType, String albumGroup, ArrayList<ArtistPreview> artists, String image, String name, String type) {
+    private boolean released;
+
+    public AlbumPreview(String id, String albumType, String albumGroup, ArrayList<ArtistPreview> artists, String image, String name, String type,boolean released) {
         this.id = id;
         this.albumType = albumType;
         this.albumGroup = albumGroup;
@@ -26,6 +28,11 @@ public class AlbumPreview {
         this.image = image;
         this.name = name;
         this.type = type;
+        this.released = released;
+    }
+
+    public boolean isReleased() {
+        return released;
     }
 
     public String getId() {

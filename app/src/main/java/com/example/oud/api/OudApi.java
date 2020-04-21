@@ -203,7 +203,7 @@ public interface OudApi {
     Call<ListOfBoolean> checkIfIFollowTheseUsersOrArtists(@Header("AUTHORIZATION") String token, @Query("type") String type, @Query("ids") String ids);
 
     @GET("playlists/{playlistId}/followers/contains")
-    Call<ListOfBoolean> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
+    Call<ArrayList<Boolean>> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
 
     @PUT("playlists/{playlistId}/followers")
     Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
@@ -215,5 +215,10 @@ public interface OudApi {
 
     @PUT("me/profile")
     Call<ResponseBody> updateProfile(@Header("AUTHORIZATION") String token,@Body UpdateProfileData updateProfileData);
+
+
+
+    @GET("artists/{artistId}/albums")
+    Call<AlbumPreview> getMyAlbums(@Header("AUTHORIZATION") String token,@Path("artistId") String artistId,@Query("limit") int limit,@Query("offset") int offset);
 
 }
