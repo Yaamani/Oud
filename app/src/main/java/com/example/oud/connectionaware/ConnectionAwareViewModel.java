@@ -1,7 +1,5 @@
 package com.example.oud.connectionaware;
 
-import android.util.Log;
-
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 
@@ -20,7 +18,7 @@ public abstract class ConnectionAwareViewModel<ConnectionAwareRepo extends Conne
         mRepo = repoInstance;
         mRepo.setConnectionStatusListener(this);
 
-        if (mRepo.getBaseUrl().equals("http://localhost:"+ Constants.OKHTTP_MOCK_WEB_SERVER_PORT + "/"))
+        if (mRepo.getBaseUrl().equals("http://localhost:"+ Constants.OK_HTTP_MOCK_WEB_SERVER_PORT + "/"))
             return;
 
         if (Constants.MOCK)

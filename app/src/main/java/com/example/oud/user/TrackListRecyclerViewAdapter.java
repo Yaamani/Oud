@@ -1,5 +1,6 @@
 package com.example.oud.user;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -239,29 +240,45 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 this.availableOfflineClickListener.onTrackClickListener(getAdapterPosition(), v);
                 String id = mIds.get(getAdapterPosition());
                 String userId = OudUtils.getUserId(mContext);
-                String filePath = userId + '/' + id;
-                File file = new File(mContext.getExternalCacheDir().getAbsolutePath(), filePath);
-                Pump.newRequest(baseUrl + "tracks/" + id + "/download", file.getAbsolutePath())
-                        .setId(filePath)
+                //String filePath = userId + '/' + id;
+                File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
+
+                ProgressDialog progressDialog = new ProgressDialog(mContext);
+                progressDialog.setProgress(0);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+                progressDialog.show();
+
+                Pump.newRequest(baseUrl + "tracks/" + id + "/download"/*, file.getAbsolutePath()*/)
+                //Pump.newRequest("https://server10.mp3quran.net/ajm/128/001.mp3")
+                        .setId(id)
+                        .tag(userId)
+                        .forceReDownload(true)
                         .listener(new DownloadListener() {
                             @Override
                             public void onSuccess() {
                                 super.onSuccess();
-                                Log.d(TAG, "onSuccess: ");
+                                Log.d(TAG, "onSuccess: " + id + " Downloaded.");
+                                progressDialog.dismiss();
                             }
 
                             @Override
                             public void onFailed() {
                                 super.onFailed();
+                                Log.d(TAG, "onFailed: " + id + " Failed.");
                                 Log.d(TAG, "onFailed: " + getDownloadInfo().getStatus());
+                                progressDialog.dismiss();
+
                             }
 
                             @Override
                             public void onProgress(int progress) {
                                 super.onProgress(progress);
                                 Log.d(TAG, "onProgress: " + progress);
+                                progressDialog.setProgress(progress);
                             }
                         })
+                        .threadNum(1)
                         .submit();
             });
             mHeart.setOnClickListener(v -> this.heartClickListener.onTrackClickListener(getAdapterPosition(), v));

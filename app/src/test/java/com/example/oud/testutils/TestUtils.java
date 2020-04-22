@@ -6,8 +6,6 @@ import com.example.oud.Constants;
 import com.example.oud.OudUtils;
 import com.example.oud.api.OudApi;
 import com.example.tryingstuff.OudApiJsonGenerator;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +62,7 @@ public class TestUtils {
     public static MockWebServer getOkHttpMockWebServer() {
         MockWebServer server = new MockWebServer();
         try {
-            server.start(Constants.OKHTTP_MOCK_WEB_SERVER_PORT);
+            server.start(Constants.OK_HTTP_MOCK_WEB_SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }

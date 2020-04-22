@@ -37,8 +37,10 @@ import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.huxq17.download.Pump;
+import com.huxq17.download.PumpFactory;
 import com.huxq17.download.config.DownloadConfig;
 import com.huxq17.download.core.DownloadRequest;
+import com.huxq17.download.core.service.IDownloadConfigService;
 
 import java.util.List;
 import java.util.Stack;
@@ -210,6 +212,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         /*NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);*/
+
+        pumpConfig();
 
     }
 
@@ -507,6 +511,30 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.commit();
     }
 
+
+    /**
+     * Configure the download manager (Pump).
+     */
+    private void pumpConfig() {
+        String token = OudUtils.getToken(this);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    Response response = chain.proceed(request);
+                    // Log.d(TAG, "pumpConfig: " + response.code());
+                    if (response.code() == 403)
+                        Toast.makeText(this, "يا فقير.", Toast.LENGTH_SHORT).show();
+                    return response;
+                })
+                .addInterceptor(new OudUtils.LoggingInterceptor())
+                .build();
+
+        if (PumpFactory.getService(IDownloadConfigService.class) != null)
+            DownloadConfig.newBuilder()
+                    .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(OudUtils.getIgnoreCertificateOkHttpClient(), token))
+                    .build();
+    }
 
 
     /**

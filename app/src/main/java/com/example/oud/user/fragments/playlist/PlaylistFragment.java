@@ -298,7 +298,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 mImageViewPlaylist.setImageDrawable(new BitmapDrawable(getResources(), selectedImage));
 
                 String token = OudUtils.getToken(getContext());
-                mViewModel.uploadPlaylistImage(token, getContext(), this, before, selectedImage);
+                mViewModel.uploadPlaylistImage(token, getContext(), this, before, selectedImage, imageUri);
 
             } catch (FileNotFoundException e) {
                 Log.e(TAG, e.getMessage());

@@ -29,11 +29,22 @@ import com.huxq17.download.core.service.IDownloadManager;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -46,6 +57,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class OudUtils {
 
     private static final String TAG = OudUtils.class.getSimpleName();
+
+    private static OkHttpClient OK_HTTP_CLIENT;
 
     public static OudApi instantiateRetrofitOudApi(String baseUrl) {
 
@@ -219,7 +232,7 @@ public class OudUtils {
 
         for (int i = 0; i < imageUrl.length(); i++) {
             if (imageUrl.charAt(i) == (char) 92) {
-                Log.e(TAG, "convertImageToFullUrl: " + imageUrl.charAt(i) + " at position: " + i);
+                // Log.e(TAG, "convertImageToFullUrl: " + imageUrl.charAt(i) + " at position: " + i);
                 StringBuilder tempString = new StringBuilder(imageUrl);
                 tempString.setCharAt(i, '/');
                 imageUrl = tempString.toString();
@@ -295,6 +308,57 @@ public class OudUtils {
                     }
                 });
 
+    }
+
+    public static OkHttpClient getIgnoreCertificateOkHttpClient() {
+        if (OK_HTTP_CLIENT == null) {
+            OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
+//                .cache(cache)
+                    .followRedirects(true)
+                    .retryOnConnectionFailure(true)
+                    .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                    .writeTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS);
+
+            try {
+                // Create a trust manager that does not validate certificate chains
+                final TrustManager[] trustAllCerts = new TrustManager[]{
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                                    throws CertificateException {
+                            }
+
+                            @Override
+                            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                                    throws CertificateException {
+                            }
+
+                            @Override
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return new java.security.cert.X509Certificate[]{};
+                            }
+                        }
+                };
+
+                final SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                // Create an ssl socket factory with our all-trusting manager
+                final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+                builder.hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return true;
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            OK_HTTP_CLIENT = builder.build();
+        }
+        return OK_HTTP_CLIENT;
     }
 
     /*public static RequestBuilder glideBuilder(Activity activity,String imageUrl){

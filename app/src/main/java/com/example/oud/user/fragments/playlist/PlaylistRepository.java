@@ -1,5 +1,7 @@
 package com.example.oud.user.fragments.playlist;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.oud.OudUtils;
@@ -305,9 +307,9 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         });
     }
 
-    public void uploadPlaylistImage(String token, String playlistId, File file) {
+    public void uploadPlaylistImage(String token, Context context, String playlistId, File file, Uri uri) {
 
-        RequestBody requestFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
+        RequestBody requestFile = RequestBody.create(file, MediaType.parse(context.getContentResolver().getType(uri)));
 
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
         //MultipartBody.Part multipartBody = MultipartBody.Part.create(requestFile);

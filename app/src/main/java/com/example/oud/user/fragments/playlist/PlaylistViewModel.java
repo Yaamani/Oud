@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.oud.Constants;
@@ -282,7 +283,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.changePlaylistDetails(token, id, name, null, false);
     }
 
-    public void uploadPlaylistImage(String token, Context context, PlaylistFragment playlistFragment, Drawable before, Bitmap bitmap) {
+    public void uploadPlaylistImage(String token, Context context, PlaylistFragment playlistFragment, Drawable before, Bitmap bitmap, Uri imageUri) {
         File sd = context.getCacheDir();
         File folder = new File(sd, "/myfolder/");
         if (!folder.exists()) {
@@ -322,7 +323,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
         String id = playlistLiveData.getValue().getId();
 
-        mRepo.uploadPlaylistImage(token, id, file);
+        mRepo.uploadPlaylistImage(token, context, id, file, imageUri);
 
     }
 

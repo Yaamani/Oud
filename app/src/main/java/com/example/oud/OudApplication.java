@@ -20,21 +20,21 @@ public class OudApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        pumpConfig();
+        //pumpConfig();
 
     }
 
     /**
      * Configure the download manager (Pump).
      */
-    private void pumpConfig() {
+    /*private void pumpConfig() {
         String token = OudUtils.getToken(this);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
                     Request request = chain.request();
                     Response response = chain.proceed(request);
-                    Log.d(TAG, "pumpConfig: " + response.code());
+                    // Log.d(TAG, "pumpConfig: " + response.code());
                     if (response.code() == 403)
                         Toast.makeText(this, "يا فقير.", Toast.LENGTH_SHORT).show();
                     return response;
@@ -46,5 +46,5 @@ public class OudApplication extends Application {
             DownloadConfig.newBuilder()
                     .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(client, token))
                     .build();
-    }
+    }*/
 }
