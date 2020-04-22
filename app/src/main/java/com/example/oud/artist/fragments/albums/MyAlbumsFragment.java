@@ -30,14 +30,15 @@ import com.example.oud.api.Album;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 
-import java.util.ArrayList;
-
 
 public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel> {
     String token;
     String myId;
     RecyclerView recyclerView;
     Button createAlbumButton;
+    ProgressBar loadMoreProgressBar;
+
+    boolean isAllLoaded=false;
 
     GenericVerticalRecyclerViewAdapter adapter;
     public  MyAlbumsFragment(Activity activity){
@@ -126,29 +127,48 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
         token = OudUtils.getToken(getContext());
         myId = OudUtils.getUserId(getContext());
 
-        startAdapter();
+        handleAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                RecyclerView.LayoutManager layoutManager =recyclerView.getLayoutManager();
+                if(layoutManager.getChildCount()==0)
+                    return;
+                if(layoutManager.findViewByPosition(layoutManager.getChildCount()-1).isShown()) {
+                    if (!isAllLoaded) {
+                        mViewModel.getMoreAlbums(token, myId, layoutManager.getChildCount());
+
+                    }
+                }
+            }
+        });
 
 
-        
+
+
+
+
     }
 
     public static MyAlbumsFragment newInstance(Activity activity) {
         return new MyAlbumsFragment(activity);
     }
 
-    private void startAdapter(){
+    private void handleAdapter(){
         mViewModel.getMyAlbums(token,myId).observe(getViewLifecycleOwner(), new Observer<OudList<Album>>() {
             @Override
             public void onChanged(OudList<Album> albumOudList) {
-                for(Album album : albumOudList.getItems()){
-                    Log.i(getTag(),album.get_id());
+                if(albumOudList.getTotal()<=albumOudList.getItems().size())
+                    isAllLoaded = true;
+                for(int i =albumOudList.getOffset();i<albumOudList.getItems().size();i++){
+                    Album album = albumOudList.getItems().get(i);
                     String imageUrl = OudUtils.convertImageToFullUrl(album.getImage());
                     adapter.addItem(album.get_id(),imageUrl,false,album.getName(),true);
                     adapter.notifyItemInserted(adapter.getIds().size()-1);
                 }
-
             }
         });
     }

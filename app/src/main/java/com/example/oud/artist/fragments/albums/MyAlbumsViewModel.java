@@ -28,6 +28,10 @@ public class MyAlbumsViewModel extends ConnectionAwareViewModel<MyAlbumsReposito
         mRepo.deleteAnAlbum(token,albumId,connectionStatusListener);
     }
 
+    public void getMoreAlbums(String token,String myId,int offset){
+        mRepo.getMoreAlbums(token,myId,offset,myAlbums);
+    }
+
     @Override
     public void clearData() {
         myAlbums=null;

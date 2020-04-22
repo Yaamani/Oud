@@ -4,10 +4,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.api.Album;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
+
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -30,6 +33,25 @@ public class MyAlbumsRepository extends ConnectionAwareRepository {
         });
         return myAlbums;
 
+    }
+
+
+    public void getMoreAlbums(String token, String myId, int offset, MutableLiveData<OudList<Album>> albumList){
+        Call<OudList<Album>>call = oudApi.artistAlbums(token,myId,offset, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+
+        addCall(call).enqueue(new FailureSuccessHandledCallback<OudList<Album>>(this){
+            @Override
+            public void onResponse(Call<OudList<Album>> call, Response<OudList<Album>> response) {
+                super.onResponse(call, response);
+                if(response.isSuccessful()){
+                    OudList<Album> albums =  albumList.getValue();
+                    albums.setOffset(response.body().getOffset());
+                    albums.addItems(response.body().getItems());
+                    albums.setTotal(response.body().getTotal());
+                    albumList.setValue(albums);
+                }
+            }
+        });
     }
 
 

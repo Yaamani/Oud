@@ -12,6 +12,22 @@ public class OudList<T> {
 
     private int total;
 
+    public void setItems(ArrayList<T> items) {
+        this.items = items;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     public OudList(ArrayList<T> items, int limit, int offset, int total) {
         this.items = items;
         this.limit = limit;
@@ -21,6 +37,10 @@ public class OudList<T> {
 
     public ArrayList<T> getItems() {
         return items;
+    }
+
+    public void addItems (ArrayList<T> items){
+        items.addAll(items);
     }
 
     public int getLimit() {
