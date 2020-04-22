@@ -305,14 +305,14 @@ public class PlaylistRepository extends ConnectionAwareRepository {
         });
     }
 
-    public void uploadPlaylistImage(String token, File file) {
+    public void uploadPlaylistImage(String token, String playlistId, File file) {
 
         RequestBody requestFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
 
-        //MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("profileImage", fileName.getName(), requestFile);
-        MultipartBody.Part multipartBody = MultipartBody.Part.create(requestFile);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("images", file.getName(), requestFile);
+        //MultipartBody.Part multipartBody = MultipartBody.Part.create(requestFile);
 
-        Call<ResponseBody> uploadImageCall = oudApi.uploadPlaylistImage(token, multipartBody);
+        Call<ResponseBody> uploadImageCall = oudApi.uploadPlaylistImage(token, playlistId, multipartBody);
         addCall(uploadImageCall).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this) {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

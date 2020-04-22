@@ -145,7 +145,7 @@ public interface OudApi {
 
     @Multipart
     @PUT("playlists/{playlist_id}/images")
-    Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Part MultipartBody.Part image);
+    Call<ResponseBody> uploadPlaylistImage(@Header("AUTHORIZATION") String token, @Path("playlist_id") String id, @Part MultipartBody.Part image);
 
     @POST("users/{user_id}/playlists")
     Call<Playlist> createPlaylist(@Header("AUTHORIZATION") String token, @Path("user_id") String loggedInUserId, @Body PlaylistDetailsPayload playlistDetailsPayload);
@@ -219,7 +219,7 @@ public interface OudApi {
 
 
 
-    @GET
+    @GET("me")
     Call<Profile> getProfileOfCurrentUser(@Header("AUTHORIZATION") String token);
 
 }

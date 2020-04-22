@@ -320,7 +320,9 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistFragment.setPlaylistImageBeforeUploadingTheNewOne(before);
         playlistFragment.blockUiAndWait();
 
-        mRepo.uploadPlaylistImage(token, file);
+        String id = playlistLiveData.getValue().getId();
+
+        mRepo.uploadPlaylistImage(token, id, file);
 
     }
 

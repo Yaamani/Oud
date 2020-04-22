@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oud.OudUtils;
@@ -25,7 +26,7 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
 
     private String token;
 
-    private ImageButton mImageViewProfilePic;
+    private ImageView mImageViewProfilePic;
     private TextView mTextViewUserName;
     private TextView mTextViewCredit;
 
