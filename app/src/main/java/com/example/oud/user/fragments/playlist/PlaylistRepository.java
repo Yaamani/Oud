@@ -309,7 +309,7 @@ public class PlaylistRepository extends ConnectionAwareRepository {
 
         RequestBody requestFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
 
-        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("images", file.getName(), requestFile);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
         //MultipartBody.Part multipartBody = MultipartBody.Part.create(requestFile);
 
         Call<ResponseBody> uploadImageCall = oudApi.uploadPlaylistImage(token, playlistId, multipartBody);
