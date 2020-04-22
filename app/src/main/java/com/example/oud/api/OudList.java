@@ -39,8 +39,13 @@ public class OudList<T> {
         return items;
     }
 
-    public void addItems (ArrayList<T> items){
-        items.addAll(items);
+    public void addItems (ArrayList<T> items1){
+        for(int i = 0;i<items1.size();i++)
+            items.add(items1.get(i));
+    }
+
+    public void deleteItem (int position){
+        items.remove(position);
     }
 
     public int getLimit() {

@@ -86,6 +86,7 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
                                 adapter.removeItem(position);
                                 adapter.notifyItemRemoved(position);
                                 mViewModel.deleteAlbum(token,albumId,undoDeleteAlbum);
+                                mViewModel.deleteAlbum(position);
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
                                 //No button clicked
@@ -134,13 +135,15 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                RecyclerView.LayoutManager layoutManager =recyclerView.getLayoutManager();
+                LinearLayoutManager layoutManager =(LinearLayoutManager) recyclerView.getLayoutManager();
                 if(layoutManager.getChildCount()==0)
                     return;
-                if(layoutManager.findViewByPosition(layoutManager.getChildCount()-1).isShown()) {
+                int lastVisibleViewPosition =layoutManager.findLastCompletelyVisibleItemPosition();
+                int lastViewPosition = layoutManager.getChildCount()-1;
+                if(lastVisibleViewPosition == lastViewPosition) {
                     if (!isAllLoaded) {
-                        mViewModel.getMoreAlbums(token, myId, layoutManager.getChildCount());
-
+                        mViewModel.getMoreAlbums(token, myId, layoutManager.getChildCount()+1);
+                        isAllLoaded = true; //to avoid multible requests
                     }
                 }
             }
@@ -163,8 +166,12 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
             public void onChanged(OudList<Album> albumOudList) {
                 if(albumOudList.getTotal()<=albumOudList.getItems().size())
                     isAllLoaded = true;
-                for(int i =albumOudList.getOffset();i<albumOudList.getItems().size();i++){
+                else
+                    isAllLoaded = false;
+
+                for(int i =adapter.getItemCount();i<albumOudList.getItems().size();i++){
                     Album album = albumOudList.getItems().get(i);
+
                     String imageUrl = OudUtils.convertImageToFullUrl(album.getImage());
                     adapter.addItem(album.get_id(),imageUrl,false,album.getName(),true);
                     adapter.notifyItemInserted(adapter.getIds().size()-1);

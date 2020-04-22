@@ -86,6 +86,12 @@ public class Constants {
     public static final String API_USER = "user";
     public static final String API_PREMIUM = "premium";
 
+
+    public static final String BUNDLE_CREATE_ALBUM_ALBUM_NAME = "album_name";
+
+
+
+
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
     public enum PlaylistFragmentType {PLAYLIST, ALBUM}
 

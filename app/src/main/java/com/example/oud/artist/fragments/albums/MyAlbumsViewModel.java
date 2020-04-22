@@ -1,5 +1,7 @@
 package com.example.oud.artist.fragments.albums;
 
+import android.os.AsyncTask;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -20,9 +22,17 @@ public class MyAlbumsViewModel extends ConnectionAwareViewModel<MyAlbumsReposito
     public MutableLiveData<OudList<Album>> getMyAlbums(String token, String myId){
         if(myAlbums == null)
             myAlbums = mRepo.getMyAlbums(token,myId);
-        return myAlbums;
 
+        return myAlbums;
     }
+
+    public void deleteAlbum(int position){
+        OudList<Album>  newAlbums= myAlbums.getValue();
+        newAlbums.deleteItem(position);
+        newAlbums.setTotal(newAlbums.getTotal()-1);
+        myAlbums.setValue(newAlbums);
+    }
+
 
     public void deleteAlbum(String token, String albumId, ConnectionStatusListener connectionStatusListener){
         mRepo.deleteAnAlbum(token,albumId,connectionStatusListener);

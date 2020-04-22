@@ -45,9 +45,7 @@ public class MyAlbumsRepository extends ConnectionAwareRepository {
                 super.onResponse(call, response);
                 if(response.isSuccessful()){
                     OudList<Album> albums =  albumList.getValue();
-                    albums.setOffset(response.body().getOffset());
                     albums.addItems(response.body().getItems());
-                    albums.setTotal(response.body().getTotal());
                     albumList.setValue(albums);
                 }
             }
