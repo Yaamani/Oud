@@ -33,18 +33,24 @@ public abstract class LibrarySubFragmentViewModel<ConnectionAwareRepo extends Co
         if (lastSetOfLoadedItems == null)
             lastSetOfLoadedItems = repoFetchItems(token, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0);
         else {
-            int prevOffset = lastSetOfLoadedItems.getValue().getOffset();
-            int prevLimit = lastSetOfLoadedItems.getValue().getLimit();
+            if (lastSetOfLoadedItems.getValue() != null) {
+                int prevOffset = lastSetOfLoadedItems.getValue().getOffset();
+                int prevLimit = lastSetOfLoadedItems.getValue().getLimit();
 
-            int offset = prevOffset+prevLimit, limit = Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT;
+                int offset = prevOffset + prevLimit, limit = Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT;
 
-            lastSetOfLoadedItems = repoFetchItems(token, limit, offset);
+                lastSetOfLoadedItems = repoFetchItems(token, limit, offset);
+            } /*else
+                lastSetOfLoadedItems = repoFetchItems(token, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0);*/
+
         }
 
         return lastSetOfLoadedItems;
     }
 
     public ArrayList<MutableLiveData<Item>> getLoadedItems() {
+        if (loadedItems == null)
+            loadedItems = new ArrayList<>();
         return loadedItems;
     }
 

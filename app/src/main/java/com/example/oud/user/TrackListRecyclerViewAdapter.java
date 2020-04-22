@@ -1,5 +1,6 @@
 package com.example.oud.user;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -133,7 +134,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mIds;
     }
 
-    public ArrayList<String> getTrackImages() {
+    /*public ArrayList<String> getTrackImages() {
         return mTrackImages;
     }
 
@@ -143,6 +144,22 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
     public ArrayList<Boolean> getLikedTracks() {
         return mLikedTracks;
+    }*/
+
+    public String getId(int position) {
+        return mIds.get(position);
+    }
+
+    public String getImage(int position) {
+        return mTrackImages.get(position);
+    }
+
+    public String getName(int position) {
+        return mTrackNames.get(position);
+    }
+
+    public boolean isLiked(int position) {
+        return mLikedTracks.get(position);
     }
 
     public OnTrackClickListener getTrackClickListener() {
@@ -174,11 +191,26 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                          String trackName,
                          boolean isLiked) {
         //mTrackClickListener.add(position, trackClickListener);
-        mIds.add(trackId);
+        mIds.add(position, trackId);
         mTrackImages.add(position, trackImage);
         mTrackNames.add(position, trackName);
         mLikedTracks.add(position, isLiked);
-        mDownloaded.add(OudUtils.isDownloaded(trackId));
+        mDownloaded.add(position, OudUtils.isDownloaded(trackId));
+
+        //mHeartClickListener.add(position, heartClickListener);
+    }
+
+    public void setTrack(int position,
+                         String trackId,
+                         String trackImage,
+                         String trackName,
+                         boolean isLiked) {
+        //mTrackClickListener.add(position, trackClickListener);
+        mIds.set(position, trackId);
+        mTrackImages.set(position, trackImage);
+        mTrackNames.set(position, trackName);
+        mLikedTracks.set(position, isLiked);
+        mDownloaded.set(position, OudUtils.isDownloaded(trackId));
 
         //mHeartClickListener.add(position, heartClickListener);
     }
@@ -239,29 +271,45 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 this.availableOfflineClickListener.onTrackClickListener(getAdapterPosition(), v);
                 String id = mIds.get(getAdapterPosition());
                 String userId = OudUtils.getUserId(mContext);
-                String filePath = userId + '/' + id;
-                File file = new File(mContext.getExternalCacheDir().getAbsolutePath(), filePath);
-                Pump.newRequest(baseUrl + "tracks/" + id + "/download", file.getAbsolutePath())
-                        .setId(filePath)
+                //String filePath = userId + '/' + id;
+                File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
+
+                ProgressDialog progressDialog = new ProgressDialog(mContext);
+                progressDialog.setProgress(0);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+                progressDialog.show();
+
+                Pump.newRequest(baseUrl + "tracks/" + id + "/download"/*, file.getAbsolutePath()*/)
+                //Pump.newRequest("https://server10.mp3quran.net/ajm/128/001.mp3")
+                        .setId(id)
+                        .tag(userId)
+                        .forceReDownload(true)
                         .listener(new DownloadListener() {
                             @Override
                             public void onSuccess() {
                                 super.onSuccess();
-                                Log.d(TAG, "onSuccess: ");
+                                Log.d(TAG, "onSuccess: " + id + " Downloaded.");
+                                progressDialog.dismiss();
                             }
 
                             @Override
                             public void onFailed() {
                                 super.onFailed();
+                                Log.d(TAG, "onFailed: " + id + " Failed.");
                                 Log.d(TAG, "onFailed: " + getDownloadInfo().getStatus());
+                                progressDialog.dismiss();
+
                             }
 
                             @Override
                             public void onProgress(int progress) {
                                 super.onProgress(progress);
                                 Log.d(TAG, "onProgress: " + progress);
+                                progressDialog.setProgress(progress);
                             }
                         })
+                        .threadNum(1)
                         .submit();
             });
             mHeart.setOnClickListener(v -> this.heartClickListener.onTrackClickListener(getAdapterPosition(), v));

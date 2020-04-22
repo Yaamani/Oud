@@ -22,19 +22,33 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.huxq17.download.Pump;
+import com.huxq17.download.PumpFactory;
 import com.huxq17.download.core.DownloadInfo;
+import com.huxq17.download.core.service.IDownloadManager;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -43,6 +57,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class OudUtils {
 
     private static final String TAG = OudUtils.class.getSimpleName();
+
+    private static OkHttpClient OK_HTTP_CLIENT;
 
     public static OudApi instantiateRetrofitOudApi(String baseUrl) {
 
@@ -70,8 +86,14 @@ public class OudUtils {
             Request request = chain.request();
 
             if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & Constants.SENDING) == Constants.SENDING) {
-                Log.i(TAG, String.format("Sending request %s on %s%n%s",
-                        request.url(), chain.connection(), request.headers()));
+
+                final Buffer buffer = new Buffer();
+                if (request.body() != null)
+                    request.body().writeTo(buffer);
+
+                Log.i(TAG, String.format("Sending request %s on %s%n Headers: %s%n Body: %s",
+                        request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
+
             }
 
             long t2 = System.nanoTime();
@@ -100,7 +122,8 @@ public class OudUtils {
             stringBuilder.append(item.toString());
             stringBuilder.append(',');
         }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        if (stringBuilder.length() > 0)
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }
 
@@ -199,14 +222,17 @@ public class OudUtils {
 
     public static String convertImageToFullUrl(String imageUrl) {
 
-        if(Constants.MOCK)
+        if (imageUrl == null)
+            return null;
+
+        if(imageUrl.contains("http"))
             return imageUrl;
 
         imageUrl = (Constants.IMAGES_BASE_URL + imageUrl);
 
         for (int i = 0; i < imageUrl.length(); i++) {
             if (imageUrl.charAt(i) == (char) 92) {
-                Log.e(TAG, "convertImageToFullUrl: " + imageUrl.charAt(i) + " at position: " + i);
+                // Log.e(TAG, "convertImageToFullUrl: " + imageUrl.charAt(i) + " at position: " + i);
                 StringBuilder tempString = new StringBuilder(imageUrl);
                 tempString.setCharAt(i, '/');
                 imageUrl = tempString.toString();
@@ -217,6 +243,9 @@ public class OudUtils {
     }
 
     public static boolean isDownloaded(String trackId) {
+        if (PumpFactory.getService(IDownloadManager.class) == null)
+            return false;
+
         DownloadInfo downloadInfo = Pump.getDownloadInfoById(trackId);
         boolean downloaded = false;
         if (downloadInfo != null) {
@@ -243,41 +272,93 @@ public class OudUtils {
     }
 
     public static RequestBuilder<? extends Drawable> glideBuilder(Context context, String imageUrl, RequestListener listener) {
-        if(imageUrl.contains(".svg")) {
-            return GlideToVectorYou
-                    .init()
-                    .with(context)
-                    .getRequestBuilder()
-                    .load(imageUrl)
-                    .addListener(new RequestListener<PictureDrawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target, boolean isFirstResource) {
-                            return listener.onLoadFailed(e, model, target, isFirstResource);
-                        }
+        if (imageUrl != null)
+            if (imageUrl.contains(".svg")) {
+                return GlideToVectorYou
+                        .init()
+                        .with(context)
+                        .getRequestBuilder()
+                        .load(imageUrl)
+                        .addListener(new RequestListener<PictureDrawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<PictureDrawable> target, boolean isFirstResource) {
+                                return listener.onLoadFailed(e, model, target, isFirstResource);
+                            }
 
-                        @Override
-                        public boolean onResourceReady(PictureDrawable resource, Object model, Target<PictureDrawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
+                            @Override
+                            public boolean onResourceReady(PictureDrawable resource, Object model, Target<PictureDrawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
+                            }
+                        });
+            }
+
+        return Glide
+                .with(context)
+                //.as(PictureDrawable.class)
+                .load(imageUrl)
+                .addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return listener.onLoadFailed(e, model, target, isFirstResource);
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
+                    }
+                });
+
+    }
+
+    public static OkHttpClient getIgnoreCertificateOkHttpClient() {
+        if (OK_HTTP_CLIENT == null) {
+            OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
+//                .cache(cache)
+                    .followRedirects(true)
+                    .retryOnConnectionFailure(true)
+                    .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                    .writeTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS);
+
+            try {
+                // Create a trust manager that does not validate certificate chains
+                final TrustManager[] trustAllCerts = new TrustManager[]{
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                                    throws CertificateException {
+                            }
+
+                            @Override
+                            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                                    throws CertificateException {
+                            }
+
+                            @Override
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return new java.security.cert.X509Certificate[]{};
+                            }
                         }
-                    });
+                };
+
+                final SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                // Create an ssl socket factory with our all-trusting manager
+                final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+                builder.hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return true;
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            OK_HTTP_CLIENT = builder.build();
         }
-        else
-            return Glide
-                    .with(context)
-                    //.as(PictureDrawable.class)
-                    .load(imageUrl)
-                    .addListener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return listener.onLoadFailed(e, model, target, isFirstResource);
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return listener.onResourceReady(resource, model, target, dataSource, isFirstResource);
-                        }
-                    });
-
+        return OK_HTTP_CLIENT;
     }
 
     /*public static RequestBuilder glideBuilder(Activity activity,String imageUrl){

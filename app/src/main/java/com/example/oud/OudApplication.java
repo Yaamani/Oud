@@ -5,7 +5,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.oud.user.fragments.premium.AuthorizationHeaderConnection;
+import com.huxq17.download.PumpFactory;
 import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.service.IDownloadConfigService;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,21 +20,21 @@ public class OudApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        pumpConfig();
+        //pumpConfig();
 
     }
 
     /**
      * Configure the download manager (Pump).
      */
-    private void pumpConfig() {
+    /*private void pumpConfig() {
         String token = OudUtils.getToken(this);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
                     Request request = chain.request();
                     Response response = chain.proceed(request);
-                    Log.d(TAG, "pumpConfig: " + response.code());
+                    // Log.d(TAG, "pumpConfig: " + response.code());
                     if (response.code() == 403)
                         Toast.makeText(this, "يا فقير.", Toast.LENGTH_SHORT).show();
                     return response;
@@ -40,8 +42,9 @@ public class OudApplication extends Application {
                 .addInterceptor(new OudUtils.LoggingInterceptor())
                 .build();
 
-        DownloadConfig.newBuilder()
-                .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(client, token))
-                .build();
-    }
+        if (PumpFactory.getService(IDownloadConfigService.class) != null)
+            DownloadConfig.newBuilder()
+                    .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(client, token))
+                    .build();
+    }*/
 }

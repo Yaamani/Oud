@@ -1,6 +1,11 @@
 package com.example.oud;
 
+import android.widget.Toast;
+
 import androidx.annotation.DrawableRes;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.example.oud.connectionaware.ConnectionAwareRepository.*;
 
@@ -12,13 +17,13 @@ public class Constants {
     public static final String IMAGES_BASE_URL = "https://oud-zerobase.me/api/";
     public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
-    public static final int OKHTTP_MOCK_WEB_SERVER_PORT = 4331;
+    public static final int OK_HTTP_MOCK_WEB_SERVER_PORT = 4331;
 
 
     public static final int SENDING = 1;
     public static final int RECEIVING = 1 << 1;
     public static final int JSON_RESPONSE = 1 << 2;
-    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING | RECEIVING | JSON_RESPONSE/*0*/;
+    public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING /*| RECEIVING*/ | JSON_RESPONSE/*0*/;
 
 
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";
@@ -79,9 +84,24 @@ public class Constants {
     public static final String API_ARTIST = "artist";
     public static final String API_PLAYLIST = "playlist";
     public static final String API_USER = "user";
+    public static final String API_PREMIUM = "premium";
 
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
     public enum PlaylistFragmentType {PLAYLIST, ALBUM}
+
+
+
+    /*public OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
+            *//*.addInterceptor(chain -> {
+                Request request = chain.request();
+                Response response = chain.proceed(request);
+                // Log.d(TAG, "pumpConfig: " + response.code());
+                if (response.code() == 403)
+                    Toast.makeText(this, "يا فقير.", Toast.LENGTH_SHORT).show();
+                return response;
+            })*//*
+            .addInterceptor(new OudUtils.LoggingInterceptor())
+            .build();*/
 
 
 }

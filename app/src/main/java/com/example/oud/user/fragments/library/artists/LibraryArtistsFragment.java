@@ -6,6 +6,7 @@ import com.example.oud.GenericVerticalRecyclerViewAdapter;
 import com.example.oud.LoadMoreAdapter;
 import com.example.oud.R;
 import com.example.oud.api.ArtistPreview;
+import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.library.LibrarySubFragment;
 
 import java.util.ArrayList;
@@ -37,13 +38,22 @@ public class LibraryArtistsFragment extends LibrarySubFragment<ArtistPreview, Li
             int _i = i;
             itemLiveData.observe(getViewLifecycleOwner(), ArtistPreview -> {
 
+
                 if (mItemsAdapter != null) {
+                    GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
+
                     if (mItemsAdapter.getItemCount()-1 >= _i) { // Items already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(likedTrack.get_id())) {*/
-                        return;
+                        adapter.setItem(_i,
+                                ArtistPreview.get_id(),
+                                ArtistPreview.getImage(),
+                                true,
+                                ArtistPreview.getDisplayName(),
+                                true);
+
+                        mItemsAdapter.notifyItemChanged(_i);
                     } else {
 
-                        GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
                         adapter.addItem(ArtistPreview.get_id(),
                                 ArtistPreview.getImage(),
@@ -101,7 +111,8 @@ public class LibraryArtistsFragment extends LibrarySubFragment<ArtistPreview, Li
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener itemClickListener = (position, view) -> {
         GenericVerticalRecyclerViewAdapter itemAdapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        // talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        ArtistFragment.show(getActivity(), R.id.nav_host_fragment, itemAdapter.getId(position));
     };
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener imageButtonClickListener = (position, view) -> {

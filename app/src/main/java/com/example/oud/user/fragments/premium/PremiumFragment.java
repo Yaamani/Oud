@@ -48,37 +48,14 @@ public class PremiumFragment extends Fragment implements ReconnectingListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Log.i(TAG, "onViewCreated: " + Pump.getAllDownloadList());
+        Log.i(TAG, "onViewCreated: Download list: " + Pump.getAllDownloadList());
 
-
-        String id = "5e909be7cfe5b521a0ccf3ec";
-        String userId = OudUtils.getUserId(getContext());
-        String filePath = userId + '/' + id;
-        File file = new File(getContext().getExternalCacheDir().getAbsolutePath(), filePath);
-        Pump.newRequest(Constants.BASE_URL + "tracks/" + id + "/download", file.getAbsolutePath())
-                .setId(filePath)
-                .listener(new DownloadListener() {
-                    @Override
-                    public void onSuccess() {
-                        super.onSuccess();
-                        Log.d(TAG, "onSuccess: ");
-                    }
-
-                    @Override
-                    public void onFailed() {
-                        super.onFailed();
-                        Log.d(TAG, "onFailed: " + getDownloadInfo().getStatus());
-                    }
-
-                    @Override
-                    public void onProgress(int progress) {
-                        super.onProgress(progress);
-                        Log.d(TAG, "onProgress: " + progress);
-                    }
-                })
-                .submit();
-
-
+        for (DownloadInfo downloadInfo : Pump.getAllDownloadList()) {
+            Log.d(TAG, "onViewCreated: Download status for " + downloadInfo.getId() +
+                    " is " + downloadInfo.getStatus() +
+                    ", Error code = " + downloadInfo.getErrorCode());
+            Pump.deleteById(downloadInfo.getId());
+        }
 
         mViewPager2 = view.findViewById(R.id.view_pager2_premium);
         premiumFragmentAdapter = new PremiumFragmentAdapter(this);

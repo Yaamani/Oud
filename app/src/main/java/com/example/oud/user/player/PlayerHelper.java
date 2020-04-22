@@ -90,7 +90,7 @@ public class PlayerHelper implements ExoPlayer.EventListener {
 
             String userAgent = Util.getUserAgent(userContext, "AudioApp");
 
-            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(/*mSong.getUri()*/"asset:///toccata_fugue.mp3"),
+            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(/*mSong.getUri()*//*"asset:///toccata_fugue.mp3"*/userContext.getExternalCacheDir().getAbsolutePath() + "/5e9b40b80f27b613b44fba32-5e907db0a0645f558160760d-1587347295787.mp3"),
                     new DefaultDataSourceFactory(userContext, userAgent), new DefaultExtractorsFactory(),
                     null/*new Handler()*/, null);
 

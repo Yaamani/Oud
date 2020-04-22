@@ -1,22 +1,27 @@
 package com.example.oud.user.fragments.premium.redeemsubscribe;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.oud.Constants;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +30,7 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
 
     private String token;
 
-    private ImageButton mImageViewProfilePic;
+    private ImageView mImageViewProfilePic;
     private TextView mTextViewUserName;
     private TextView mTextViewCredit;
 
@@ -33,7 +38,7 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
     private Button mButtonRedeem;
 
     private TextView mTextViewPlan;
-    private Button mButtonSubscribe;
+    private Button mButtonSubscribeExtend;
 
 
     public PremiumRedeemSubscribeFragment() {
@@ -70,11 +75,37 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
         mButtonRedeem = view.findViewById(R.id.btn_redeem);
 
         mTextViewPlan = view.findViewById(R.id.txt_plan);
-        mButtonSubscribe = view.findViewById(R.id.btn_subscribe_extend);
+        mButtonSubscribeExtend = view.findViewById(R.id.btn_subscribe_extend);
     }
 
     private void handleData() {
         mViewModel.getProfileLiveData(token).observe(getViewLifecycleOwner(), profile -> {
+
+            Resources resources = getContext().getResources();
+
+            OudUtils.glideBuilder(getContext(), profile.getImages().get(0))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.ic_oud_loading_circular)
+                    //.error(R.drawable.ic_warning)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mImageViewProfilePic);
+
+            mTextViewUserName.setText(profile.getDisplayName());
+
+            String credit = resources.getString(R.string.credit)
+                    .concat("" + profile.getCredit());
+            mTextViewCredit.setText(credit);
+
+
+            if (profile.getRole().equals(Constants.API_PREMIUM)) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                String plan = resources.getString(R.string.end_date);
+                if (profile.getPlan() != null)
+                    plan.concat(dateFormat.format(profile.getPlan()));
+                mTextViewPlan.setText(plan);
+                mButtonSubscribeExtend.setText(resources.getString(R.string.extend));
+            } else
+                mTextViewPlan.setText(resources.getString(R.string.free_plan));
 
 
 

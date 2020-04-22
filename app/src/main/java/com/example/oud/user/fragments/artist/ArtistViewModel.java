@@ -190,21 +190,26 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
         if (lastSetOfLoadedAlbums == null) {
             lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
         } else {
-            int prevOffset = lastSetOfLoadedAlbums.getValue().getOffset();
-            int prevLimit = lastSetOfLoadedAlbums.getValue().getLimit();
+            if (lastSetOfLoadedAlbums.getValue() != null) {
 
-            int offset = prevOffset+prevLimit, limit = Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT;
+                int prevOffset = lastSetOfLoadedAlbums.getValue().getOffset();
+                int prevLimit = lastSetOfLoadedAlbums.getValue().getLimit();
 
-            // if (off)
+                int offset = prevOffset + prevLimit, limit = Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT;
+
+                // if (off)
 
 
-            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, offset, limit);
+                lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, offset, limit);
+            }
         }
 
         return lastSetOfLoadedAlbums;
     }
 
     public ArrayList<MutableLiveData<Album>> getLoadedAlbums() {
+        if (loadedAlbums == null)
+            loadedAlbums = new ArrayList<>();
         return loadedAlbums;
     }
 
