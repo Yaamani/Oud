@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.api.FollowingPublicityPayload;
-import com.example.oud.api.ListOfBoolean;
 import com.example.oud.api.ListOfIds;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;

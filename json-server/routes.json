@@ -91,7 +91,9 @@
     "/me/following*": "/empty_list" , 
 
 
-    "/me": "/full_profile"
+    "/me": "/full_profile",
+
+    "/artists/user0/albums?offset=0&limit=7":"/artist_albums"
 
     
 

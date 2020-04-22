@@ -203,23 +203,15 @@ public interface OudApi {
     @GET("playlists/{playlistId}/followers/contains")
     Call<ArrayList<Boolean>> checkIfIFollowThisPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Query("ids") String ids);
 
-    @PUT("playlists/{playlistId}/followers")
-    Call<Void> followPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId,@Body publicPlaylistfollow playlistfollow);
-
-    @DELETE("playlists/{playlistId}/followers")
-    Call<Void> unFollowPlaylist(@Header("AUTHORIZATION") String token,@Path("playlistId") String playlistId);
-
-
-
     @PUT("me/profile")
     Call<ResponseBody> updateProfile(@Header("AUTHORIZATION") String token,@Body UpdateProfileData updateProfileData);
 
 
 
-    @GET("artists/{artistId}/albums")
-    Call<AlbumPreview> getMyAlbums(@Header("AUTHORIZATION") String token,@Path("artistId") String artistId,@Query("limit") int limit,@Query("offset") int offset);
-    
-    @GET
     Call<Profile> getProfileOfCurrentUser(@Header("AUTHORIZATION") String token);
+
+
+    @DELETE ("/me/artists/albums/{id}")
+    Call<ResponseBody> deleteAlbum(@Header("AUTHORIZATION") String token,@Path("id") String albumId);
 
 }

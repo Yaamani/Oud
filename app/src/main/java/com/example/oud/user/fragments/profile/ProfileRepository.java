@@ -12,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.oud.ConnectionStatusListener;
 
 import com.example.oud.FileUtils;
-import com.example.oud.api.ListOfBoolean;
 import com.example.oud.api.ListOfIds;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;

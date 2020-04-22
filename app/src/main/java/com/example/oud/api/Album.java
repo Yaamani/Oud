@@ -22,6 +22,9 @@ public class Album {
     @SerializedName("release_name")
     private Date releaseDate;
 
+    //todo change name when backend adds the variable to the api
+    private Boolean isReleased;
+
     private OudList<TrackPreview> tracks;
 
     private String type;
