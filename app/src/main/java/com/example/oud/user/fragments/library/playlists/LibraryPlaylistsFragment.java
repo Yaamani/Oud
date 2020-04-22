@@ -1,6 +1,7 @@
 package com.example.oud.user.fragments.library.playlists;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -24,7 +25,8 @@ import androidx.lifecycle.MutableLiveData;
 
 public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, LibraryPlaylistsRepository, LibraryPlaylistsViewModel> {
 
-    private String loggedInUserId;
+    private static final String TAG = LibraryPlaylistsFragment.class.getSimpleName();
+
 
     private Button mButtonCreatePlaylist;
 
@@ -43,7 +45,6 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        loggedInUserId = OudUtils.getUserId(getContext());
 
         mButtonCreatePlaylist = view.findViewById(R.id.btn_create_playlist);
         mButtonCreatePlaylist.setOnClickListener(v -> {
@@ -64,7 +65,8 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
         }
 
         @Override
-        public void onCreationFailure() {
+        public void onCreationFailure(PlaylistCreationFailureState playlistCreationFailureState) {
+            Log.e(TAG, "onCreationFailure: " + playlistCreationFailureState);
             Toast.makeText(getContext(), "Error!!", Toast.LENGTH_SHORT).show();
         }
     };
@@ -81,12 +83,20 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
             itemLiveData.observe(getViewLifecycleOwner(), playlist -> {
 
                 if (mItemsAdapter != null) {
+                    GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
+
                     if (mItemsAdapter.getItemCount()-1 >= _i) { // Items already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(likedTrack.get_id())) {*/
-                        return;
+                        adapter.setItem(_i,
+                                playlist.getId(),
+                                playlist.getImage(),
+                                false, playlist.getName(),
+                                true);
+
+                        mItemsAdapter.notifyItemChanged(_i);
+
                     } else {
 
-                        GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
                         adapter.addItem(playlist.getId(), 
                                 playlist.getImage(),
@@ -143,7 +153,12 @@ public class LibraryPlaylistsFragment extends LibrarySubFragment<Playlist, Libra
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener itemClickListener = (position, view) -> {
         GenericVerticalRecyclerViewAdapter itemAdapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        // talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        PlaylistFragment.show(getActivity(),
+                R.id.nav_host_fragment,
+                loggedInUserId,
+                Constants.PlaylistFragmentType.PLAYLIST,
+                itemAdapter.getId(position));
     };
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener imageButtonClickListener = (position, view) -> {

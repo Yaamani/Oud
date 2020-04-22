@@ -44,17 +44,24 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
             trackLiveData.observe(getViewLifecycleOwner(), likedTrack -> {
 
                 if (mItemsAdapter != null) {
+                    TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
+
                     if (mItemsAdapter.getItemCount()-1 >= _i) { // Tracks already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(likedTrack.get_id())) {*/
-                        return;
+
+                        trackAdapter.setTrack(_i, likedTrack.getTrack().get_id(),
+                                likedTrack.getTrack().getAlbum().getImage(),
+                                likedTrack.getTrack().getName(),
+                                true);
+
+                        mItemsAdapter.notifyItemChanged(_i);
+
                     } else {
 
-                        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
-
-                        trackAdapter.getmIds().add(likedTrack.getTrack().get_id());
-                        trackAdapter.getTrackImages().add(likedTrack.getTrack().getAlbum().getImage());
-                        trackAdapter.getTrackNames().add(likedTrack.getTrack().getName());
-                        trackAdapter.getLikedTracks().add(true);
+                        trackAdapter.addTrack(likedTrack.getTrack().get_id(),
+                                likedTrack.getTrack().getAlbum().getImage(),
+                                likedTrack.getTrack().getName(),
+                                true);
 
                         mItemsAdapter.notifyItemInserted(_i);
                     }
@@ -114,7 +121,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
         TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        talkToPlayer.configurePlayer(trackAdapter.getmIds().get(position), true);
+        talkToPlayer.configurePlayer(trackAdapter.getId(position), true);
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
@@ -139,23 +146,30 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
                 // Undo ui
                 TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
-                adapter.getmIds().add(position, removedItemId);
+                /*adapter.getmIds().add(position, removedItemId);
                 adapter.getTrackNames().add(position, removedItemName);
                 adapter.getTrackImages().add(position, removedItemImage);
-                adapter.getLikedTracks().add(position, true);
+                adapter.getLikedTracks().add(position, true);*/
+
+                adapter.addTrack(removedItemId,
+                        removedItemName,
+                        removedItemImage,
+                        true);
 
                 mItemsAdapter.notifyItemInserted(position);
             }
         };
 
         TrackListRecyclerViewAdapter adapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        String id = adapter.getmIds().get(position);
+        String id = adapter.getId(position);
         mViewModel.removeItem(token, id, position, undoUiAndUpdateLiveData);
 
-        removedItemId = adapter.getmIds().remove(position);
-        removedItemName = adapter.getTrackNames().remove(position);
-        removedItemImage = adapter.getTrackImages().remove(position);
-        adapter.getLikedTracks().remove(position);
+        removedItemId = adapter.getId(position);
+        removedItemName = adapter.getName(position);
+        removedItemImage = adapter.getImage(position);
+        // adapter.getLikedTracks().remove(position);
+
+        adapter.removeTrack(position);
 
         mItemsAdapter.notifyItemRemoved(position);
 

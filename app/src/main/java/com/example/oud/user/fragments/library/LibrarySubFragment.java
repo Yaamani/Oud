@@ -28,6 +28,8 @@ public abstract class LibrarySubFragment<Item,
     private static final String TAG = LibrarySubFragment.class.getSimpleName();
 
     protected String token;
+    protected String loggedInUserId;
+
 
     protected RecyclerView mRecyclerViewItems;
     protected LoadMoreAdapter mItemsAdapter;
@@ -76,10 +78,17 @@ public abstract class LibrarySubFragment<Item,
         super.onViewCreated(view, savedInstanceState);
 
         handleToken();
-
-        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+        loggedInUserId = OudUtils.getUserId(getContext());
 
         initializeUiStuff(view);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
 
         handleItems();
     }
@@ -139,6 +148,8 @@ public abstract class LibrarySubFragment<Item,
     @Override
     public void onTryingToReconnect() {
         super.onTryingToReconnect();
+
+        if (mViewModel == null) return;
 
         handleItems();
     }

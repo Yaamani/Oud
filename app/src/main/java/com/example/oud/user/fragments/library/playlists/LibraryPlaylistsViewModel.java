@@ -5,6 +5,7 @@ import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.PlaylistDetailsPayload;
 import com.example.oud.user.fragments.library.LibrarySubFragmentViewModel;
+import com.example.oud.user.fragments.playlist.PlaylistViewModel;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -37,5 +38,8 @@ public class LibraryPlaylistsViewModel extends LibrarySubFragmentViewModel<Libra
                 null);
 
         mRepo.createPlaylist(token, loggedInUserId, playlistDetailsPayload, playlistCreationListener);
+        //mRepo.followPlaylist(token, id, true);
+
     }
+
 }

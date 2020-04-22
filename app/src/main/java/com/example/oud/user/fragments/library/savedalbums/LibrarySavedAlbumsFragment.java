@@ -8,9 +8,11 @@ import com.example.oud.Constants;
 import com.example.oud.GenericVerticalRecyclerViewAdapter;
 import com.example.oud.LoadMoreAdapter;
 import com.example.oud.R;
+import com.example.oud.api.Playlist;
 import com.example.oud.api.SavedAlbum;
 import com.example.oud.api.SavedAlbum;
 import com.example.oud.user.fragments.library.LibrarySubFragment;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import java.util.ArrayList;
 
@@ -45,12 +47,22 @@ public class LibrarySavedAlbumsFragment extends LibrarySubFragment<SavedAlbum, L
             itemLiveData.observe(getViewLifecycleOwner(), savedAlbum -> {
 
                 if (mItemsAdapter != null) {
+                    GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
+
                     if (mItemsAdapter.getItemCount()-1 >= _i) { // Items already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(likedTrack.get_id())) {*/
-                        return;
+
+                        adapter.setItem(_i,
+                                savedAlbum.getAlbum().get_id(),
+                                savedAlbum.getAlbum().getImage(),
+                                false,
+                                savedAlbum.getAlbum().getName(),
+                                true);
+
+                        mItemsAdapter.notifyItemChanged(_i);
+
                     } else {
 
-                        GenericVerticalRecyclerViewAdapter adapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
 
                         adapter.addItem(savedAlbum.getAlbum().get_id(),
                                 savedAlbum.getAlbum().getImage(),
@@ -107,7 +119,12 @@ public class LibrarySavedAlbumsFragment extends LibrarySubFragment<SavedAlbum, L
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener itemClickListener = (position, view) -> {
         GenericVerticalRecyclerViewAdapter itemAdapter = (GenericVerticalRecyclerViewAdapter) mItemsAdapter.getAdapter();
-        talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        //talkToPlayer.configurePlayer(itemAdapter.getId(position), true);
+        PlaylistFragment.show(getActivity(),
+                R.id.nav_host_fragment,
+                loggedInUserId,
+                Constants.PlaylistFragmentType.ALBUM,
+                itemAdapter.getId(position));
     };
 
     private GenericVerticalRecyclerViewAdapter.OnItemClickListener imageButtonClickListener = (position, view) -> {

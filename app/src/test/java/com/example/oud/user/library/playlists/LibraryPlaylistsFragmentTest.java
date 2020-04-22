@@ -229,6 +229,7 @@ public class LibraryPlaylistsFragmentTest {
     public void successfulPlaylistCreationTest() throws IOException {
         MockWebServer server = TestUtils.getOkHttpMockWebServer();
         server.enqueue(new MockResponse().setBody("{  \"_id\": \"playlist0\",  \"name\": \"playlist0\",  \"owner\": \"user0\",  \"collaborative\": true,  \"description\": \"string\",  \"followersCount\": 0,  \"tracks\": [],  \"image\": \"https://i.pinimg.com/564x/ed/ec/ba/edecbabce240d759b58e04ad579b49c5.jpg\",  \"public\": true,  \"type\": \"string\"} "));
+        server.enqueue(new MockResponse().setResponseCode(200));
 
 
         ActivityScenario<UserActivity> scenario = ActivityScenario.launch(UserActivity.class);
@@ -259,7 +260,7 @@ public class LibraryPlaylistsFragmentTest {
             onView(withId(R.id.btn_create_playlist))
                     .perform(click());
 
-            TestUtils.sleep(1, MILLIS_TO_PAUSE);
+            TestUtils.sleep(2, MILLIS_TO_PAUSE);
 
             LibraryPlaylistsRepository.getInstance().setBaseUrl(Constants.YAMANI_MOCK_BASE_URL);
 

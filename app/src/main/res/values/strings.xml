@@ -49,6 +49,7 @@
     <string name="redeem">REDEEM</string>
     <string name="current_plan">Current plan :</string>
     <string name="free_plan">Free</string>
+    <string name="end_date">End date : </string>
     <string name="subscribe">SUBSCRIBE</string>
     <string name="extend">EXTEND</string>
 

@@ -143,7 +143,6 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         token = OudUtils.getToken(getContext());
         userId = OudUtils.getUserId(getContext());
 
-        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageButtonFollowArtist = view.findViewById(R.id.btn_artist_follow);
@@ -194,11 +193,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             }
         });*/
 
-        handleData();
 
         // mMotionLayout.transitionToEnd();
 
     }
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -224,6 +224,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         super.onResume();
 
         Log.i(TAG, "onResume: ");
+
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+
+        handleData();
+
 
         // Motion layout bug fix.
         // if (paused) {
@@ -384,7 +389,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 }
 
                 TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getmIds().get(position), true);
+                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getId(position), true);
                 };
 
 
@@ -424,14 +429,22 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
 
-        String id = trackListRecyclerViewAdapter.getmIds().get(position);
-        if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
+        String id = trackListRecyclerViewAdapter.getId(position);
+        if (trackListRecyclerViewAdapter.isLiked(position)) {
             mViewModel.removeTrackFromLikedTracks(token, id, position);
-            trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
+            trackListRecyclerViewAdapter.setTrack(position,
+                    trackListRecyclerViewAdapter.getId(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    false);
             trackListRecyclerViewAdapter.notifyItemChanged(position);
         } else {
             mViewModel.addTrackToLikedTracks(token, id, position);
-            trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
+            trackListRecyclerViewAdapter.setTrack(position,
+                    trackListRecyclerViewAdapter.getId(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    true);
             trackListRecyclerViewAdapter.notifyItemChanged(position);
         }
 
@@ -443,6 +456,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
      * Handles the data and the logic behind the albums of this artist.
      */
     private void handleAlbums() {
+
 
         if (mViewModel.getLoadedAlbums().size() < Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT)
             loadMoreAlbums();
@@ -616,8 +630,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
      * Undo the ui change when liking a track.
      */
     private void undoLikingTrack() {
-        boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
-        trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
+        boolean bool = trackListRecyclerViewAdapter.isLiked(trackLikePosition);
+        trackListRecyclerViewAdapter.setTrack(trackLikePosition,
+                trackListRecyclerViewAdapter.getId(trackLikePosition),
+                trackListRecyclerViewAdapter.getImage(trackLikePosition),
+                trackListRecyclerViewAdapter.getImage(trackLikePosition),
+                !bool);
         trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
     }
 

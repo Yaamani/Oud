@@ -134,7 +134,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         return mIds;
     }
 
-    public ArrayList<String> getTrackImages() {
+    /*public ArrayList<String> getTrackImages() {
         return mTrackImages;
     }
 
@@ -144,6 +144,22 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
     public ArrayList<Boolean> getLikedTracks() {
         return mLikedTracks;
+    }*/
+
+    public String getId(int position) {
+        return mIds.get(position);
+    }
+
+    public String getImage(int position) {
+        return mTrackImages.get(position);
+    }
+
+    public String getName(int position) {
+        return mTrackNames.get(position);
+    }
+
+    public boolean isLiked(int position) {
+        return mLikedTracks.get(position);
     }
 
     public OnTrackClickListener getTrackClickListener() {
@@ -175,11 +191,26 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                          String trackName,
                          boolean isLiked) {
         //mTrackClickListener.add(position, trackClickListener);
-        mIds.add(trackId);
+        mIds.add(position, trackId);
         mTrackImages.add(position, trackImage);
         mTrackNames.add(position, trackName);
         mLikedTracks.add(position, isLiked);
-        mDownloaded.add(OudUtils.isDownloaded(trackId));
+        mDownloaded.add(position, OudUtils.isDownloaded(trackId));
+
+        //mHeartClickListener.add(position, heartClickListener);
+    }
+
+    public void setTrack(int position,
+                         String trackId,
+                         String trackImage,
+                         String trackName,
+                         boolean isLiked) {
+        //mTrackClickListener.add(position, trackClickListener);
+        mIds.set(position, trackId);
+        mTrackImages.set(position, trackImage);
+        mTrackNames.set(position, trackName);
+        mLikedTracks.set(position, isLiked);
+        mDownloaded.set(position, OudUtils.isDownloaded(trackId));
 
         //mHeartClickListener.add(position, heartClickListener);
     }

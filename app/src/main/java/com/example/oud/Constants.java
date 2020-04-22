@@ -84,6 +84,7 @@ public class Constants {
     public static final String API_ARTIST = "artist";
     public static final String API_PLAYLIST = "playlist";
     public static final String API_USER = "user";
+    public static final String API_PREMIUM = "premium";
 
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
     public enum PlaylistFragmentType {PLAYLIST, ALBUM}

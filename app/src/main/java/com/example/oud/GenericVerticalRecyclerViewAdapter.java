@@ -110,9 +110,23 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
                         boolean imageButtonSelected) {
         mIds.add(position, id);
         mImages.add(position, image);
-        mCircularImages.add(circularImage);
+        mCircularImages.add(position, circularImage);
         mTitles.add(position, title);
         mImageButtonSelected.add(position, imageButtonSelected);
+    }
+
+    public void setItem(int position,
+                         String id,
+                         String image,
+                         boolean circularImage,
+                         String title,
+                         boolean imageButtonSelected) {
+
+        mIds.set(position, id);
+        mImages.set(position, image);
+        mCircularImages.set(position, circularImage);
+        mTitles.set(position, title);
+        mImageButtonSelected.set(position, imageButtonSelected);
     }
 
     public void removeItem(int position) {
