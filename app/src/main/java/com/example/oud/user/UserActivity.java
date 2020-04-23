@@ -5,10 +5,13 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.OfflineFragment;
 import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.RenameFragment;
@@ -28,13 +32,18 @@ import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
 import com.example.oud.user.fragments.premium.PremiumFragment;
 import com.example.oud.user.fragments.search.SearchFragment;
 import com.example.oud.user.fragments.settings.SettingsFragment;
+import com.example.oud.user.player.MediaBrowserHelper;
+import com.example.oud.user.player.MediaBrowserHelperCallback;
+import com.example.oud.user.player.MediaService;
 import com.example.oud.user.player.PlayerFragment;
 import com.example.oud.user.player.PlayerHelper;
 import com.example.oud.user.player.PlayerInterface;
 import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.mp4.Track;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -46,7 +55,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.media.session.MediaButtonReceiver;
 
-public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener , PlayerInterface  {
+public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener, PlayerInterface, MediaBrowserHelperCallback {
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
@@ -57,17 +66,18 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
 
-
     private Toast mConnectionFailedToast;
     private BottomNavigationView bottomNavigationView;
     private boolean backButtonPressed = false;
     //private boolean navigationItemReselected = false;
     private Stack<Integer> bottomNavViewBackStack = new Stack<>(); // Menu Item Ids
 
-    private  Fragment mSmallPlayerFragment;
     private NotificationManager mNotificationManager;
     private static MediaSessionCompat mMediaSession;
     private PlayerHelper mPlayerHelper;
+    private CurrentPlaybackStateReceiver currentPlaybackStateReceiver;
+
+    private MediaBrowserHelper mediaBrowserHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,30 +86,85 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         getSupportActionBar().hide();
 
-        mSmallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);
+        mediaBrowserHelper = new MediaBrowserHelper(this, MediaService.class);
 
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mPlayerHelper = new PlayerHelper(this,mNotificationManager);
-        mMediaSession = PlayerHelper.getMediaSession();
+        mPlayerHelper = new PlayerHelper(this);
 
+        // for making mediaSession control on ExoPlayer
+        initCurrentPlaybackStateReceiver();
+
+
+        if (mediaBrowserHelper != null/* && !mediaBrowserHelper.isConnected()*/) {
+
+            mediaBrowserHelper.startTheService();
+        }
+
+
+        boolean isTherePlayback = false;
+
+        if (isTherePlayback) {
+
+            Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);
+
+            if (smallPlayerFragment == null) {
+
+                FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
+                smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(),
+                        Constants.SMALL_PLAYER_FRAGMENT_TAG)
+                        .commit();
+            }
+
+        }
+
+        if (getIntent() != null) {
+
+            if (getIntent().getExtras() != null) {
+
+                boolean openBigPlayer = getIntent().getExtras().getBoolean(Constants.OPEN_BIG_PLAYER);
+
+                if (openBigPlayer) {
+
+                    PlayerFragment.show(this, R.id.big_player_fragment,
+                            mPlayerHelper, mediaBrowserHelper,
+                            mediaBrowserHelper.getMediaMetadata());
+
+                }
+
+            } else {
+
+                Log.d(TAG, "bundle that is coming from notification is null");
+            }
+
+        } else {
+            Log.d(TAG, "intent that is coming from notification is null");
+        }
+
+        /*boolean isNewUser = OudUtils.isNewUser(getApplicationContext());
+
+        if(!isNewUser){
+
+            FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
+            smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(),
+                    Constants.SMALL_PLAYER_FRAGMENT_TAG)
+                    .commit();
+
+        }*/
 
         FragmentContainerView fragmentContainerView = findViewById(R.id.container_small_player);
         bottomNavigationView = findViewById(R.id.nav_view);
+
         fragmentContainerView.setOnClickListener(view -> {
 
-            FragmentTransaction bigPlayer = getSupportFragmentManager().beginTransaction();
+
             bottomNavigationView.setVisibility(View.GONE);
             // TODO: Animate instead of just setVisibility(View.GONE)
 
             /*ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1000).setDuration(400);
             valueAnimator.addUpdateListener(animation -> bottomNavigationView.setY((Float) animation.getAnimatedValue()));
             valueAnimator.start();*/
-
-
-
-            bigPlayer.replace(R.id.big_player_fragment, new PlayerFragment(), Constants.BIG_PLAYER_FRAGMENT_TAG)
-                    .addToBackStack(null)
-                    .commit();
+            PlayerFragment.show(this, R.id.big_player_fragment,
+                    mPlayerHelper, mediaBrowserHelper,
+                    mediaBrowserHelper.getMediaMetadata());
         });
 
 
@@ -195,7 +260,6 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 R.id.navigation_settings).build();*/
 
 
-
         //appBarConfiguration.getDrawerLayout().
 
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -231,6 +295,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         }
 
     }*/
+
 
     private void handleBottomNavViewBackStack(BottomNavigationView navView) {
         if (backButtonPressed & !bottomNavViewBackStack.isEmpty()) { // pop & peak
@@ -268,7 +333,6 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         FragmentTransaction transaction = manager.beginTransaction();
 
 
-
         switch (itemId) {
             case R.id.navigation_home:
                 //selected = new HomeFragment2();
@@ -297,7 +361,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 if (libraryFragment == null)
                     transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), Constants.LIBRARY_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment,libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
@@ -330,7 +394,6 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.commit();
 
 
-
         return true;
     }
 
@@ -340,8 +403,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         Log.i(TAG, "Back stack : " + "Back button pressed.");
 
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        Log.i(TAG, "onBackPressed: " + fragments.get(fragments.size()-1));
-
+        Log.i(TAG, "onBackPressed: " + fragments.get(fragments.size() - 1));
 
 
         if (RenameFragment.doesRenameFragmentExist(this, R.id.nav_host_fragment)) {
@@ -426,7 +488,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {
             //Fragment fragment = fragments.get(fragments.size() - 2);
-        //Fragment fragment = null;
+            //Fragment fragment = null;
 
 
 
@@ -451,11 +513,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                         }
                     }*/
 
-                    if (fragment instanceof ReconnectingListener) {
-                        ((ReconnectingListener) fragment).onTryingToReconnect();
-                        Log.i(TAG, "onTryingToReconnect: " + fragment);
-                        //break;
-                    } /*else {
+            if (fragment instanceof ReconnectingListener) {
+                ((ReconnectingListener) fragment).onTryingToReconnect();
+                Log.i(TAG, "onTryingToReconnect: " + fragment);
+                //break;
+            } /*else {
                         //continue;
                         throw new RuntimeException("onRetryToConnect: " + fragment.getClass().getSimpleName() + " must implement " + ReconnectingListener.class.getSimpleName());
                     }*/
@@ -500,20 +562,32 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
     /**
      * these functions deal with track in fragments (home or search) and small player fragment
-     * */
-    @Override
-    public SimpleExoPlayer getSimpleExoPlayer() {
-
-       return mPlayerHelper.getExoPlayer();
-    }
+     */
 
     @Override
-    public void configurePlayer(String trackId,boolean resetPlay)  {
+    public void configurePlayer(String contextId, String contextType, Integer offset, String token) {
 
-        mPlayerHelper.setTrackId(trackId);
-        mPlayerHelper.setResetPlay(resetPlay);
 
-        if(mSmallPlayerFragment == null) {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+
+
+        String contextUri = "oud:"+ /*contextType.toLowerCase()*/"5e6dea511e17a305285ba616" + ":" + contextId;
+
+        bundle.putString(Constants.CONTEXT_URI, contextUri);
+        bundle.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME, token);
+        bundle.putInt(Constants.OFFSET, offset);
+        bundle.putStringArrayList(Constants.LIST_OF_TRACKS_URIS, null);
+
+        intent.putExtras(bundle);
+        intent.setAction(String.valueOf(Constants.IntentAction.START_OR_RESUME_BROADCAST));
+        sendBroadcast(intent);
+
+        /*mediaBrowserHelper.getTransportControls().prepare();*/
+
+        Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);
+
+        if (smallPlayerFragment == null) {
 
             FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
             smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
@@ -523,9 +597,39 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     }
 
     @Override
+    public void configurePlayer(ArrayList<String> ids, String token) {
 
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+
+        ArrayList<String> uris = new ArrayList<>();
+
+        for(int i=0 ;i < ids.size(); i++){
+
+            uris.set(i,"oud:track:"+ids.get(i));
+        }
+
+        bundle.putStringArrayList(Constants.LIST_OF_TRACKS_URIS, uris);
+        bundle.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME, token);
+        bundle.putString(Constants.CONTEXT_URI, null);
+        bundle.putInt(Constants.OFFSET, -1);
+
+        intent.putExtras(bundle);
+
+        sendBroadcast(intent);
+
+
+    }
+
+    @Override
     public PlayerHelper getPlayerHelper() {
         return mPlayerHelper;
+    }
+
+    @Override
+    public MediaBrowserHelper getMediaBrowserHelper() {
+
+        return mediaBrowserHelper;
     }
 
     public void createSmallFragmentForFirstTime() {
@@ -533,9 +637,8 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         /*Fragment smallPlayerFragment = getSupportFragmentManager().findFragmentById(R.id.container_small_player);*/
 
         FragmentTransaction smallPlayerTransaction = getSupportFragmentManager().beginTransaction();
-        smallPlayerTransaction.replace(R.id.container_small_player , new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
+        smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
                 .commit();
-
 
 
     }
@@ -543,11 +646,22 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPlayerHelper.releasePlayer();
+
+        if (mediaBrowserHelper != null ) {
+            mediaBrowserHelper.stopTheService();
+            Log.d(TAG, "Stop THE SERVICE");
+        }
+
+        if (currentPlaybackStateReceiver != null) {
+
+            unregisterReceiver(currentPlaybackStateReceiver);
+        }
+
     }
 
     /**
      * USED FOR TESTS ONLY.
+     *
      * @param userId
      */
     @Deprecated
@@ -555,33 +669,64 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         this.userId = userId;
     }
 
-    // for handle button click in notification
-    public static class MediaReceiver extends BroadcastReceiver {
+    @Override
+    public void mediaMetaDataChanged(MediaMetadataCompat mediaMetaData) {
 
-        public MediaReceiver() {
+    }
 
-        }
+    public class CurrentPlaybackStateReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            MediaButtonReceiver.handleIntent(mMediaSession, intent);
+            if (intent != null) {
+
+                if (intent.getExtras() != null) {
+
+                    int state = intent.getExtras().getInt(Constants.CURRENT_PLAYBACK_STATE);
+
+                    switch (state) {
+
+                        case PlaybackStateCompat.STATE_PLAYING:
+                            mPlayerHelper.playCurrentPlayback();
+                            break;
+                        case PlaybackStateCompat.STATE_PAUSED:
+                            mPlayerHelper.pauseCurrentPlayback();
+                            break;
+                        case PlaybackStateCompat.STATE_STOPPED:
+                            mPlayerHelper.releasePlayer();
+                            break;
+                        case Constants.STATE_PREPARING:
+                            mPlayerHelper.preparePlayback(mediaBrowserHelper.getMediaMetadata());
+                            break;
+                        case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
+                            mPlayerHelper.resetPlayback();
+                    }
+
+
+                } else {
+
+                    Log.d(TAG, "bundle of currentPlaybackState is null");
+                }
+            } else {
+
+                Log.d(TAG, "intent of currentPlaybackState is null");
+            }
+
 
         }
+    }
+
+    private void initCurrentPlaybackStateReceiver() {
+
+        IntentFilter intentFilter = new IntentFilter(String.valueOf(Constants.IntentAction.STATE_OF_PLAYBACK));
+        currentPlaybackStateReceiver = new CurrentPlaybackStateReceiver();
+        registerReceiver(currentPlaybackStateReceiver, intentFilter);
+
     }
 
     // handle Hand Free problem
-    public static class BecomingNoisyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
 
-                /*if(mPlayerHelper != null) {
-                    mPlayerHelper.getExoPlayer().setPlayWhenReady(false);
-                }*/
-            }
-        }
-    }
 
     /*public interface UserActivityCommunicationListener {
         void onReconnecting();

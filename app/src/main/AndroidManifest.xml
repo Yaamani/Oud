@@ -72,14 +72,15 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".user.UserActivity$MediaReceiver">
+        <service android:name=".user.player.MediaService"
+            android:permission="TODO">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
-        </receiver>
-        <receiver android:name=".user.UserActivity$BecomingNoisyReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_AUDIO_BECOMING_NOISY" />
+        </service>
+        <receiver android:name=".user.player.MediaService$MediaReceiver">
+            <intent-filter >
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
     </application>

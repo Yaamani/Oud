@@ -72,10 +72,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
 
-            app:layout_constraintRight_toLeftOf="@id/exo_next"/>
+            app:layout_constraintRight_toLeftOf="@id/next_button"/>
 
         <ImageButton
-            android:id="@id/exo_next"
+            android:id="@+id/next_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

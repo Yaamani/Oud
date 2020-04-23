@@ -560,7 +560,9 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
                 Track current = tracks.get(i);
 
-                //clickListeners.add(v -> talkToPlayer.configurePlayer(current.get_id(), true));
+                /*clickListeners.add(v -> {
+                    return talkToPlayer.configurePlayer(current.get_id(), true);
+                });*/
 
                 trackImages.add(current.getAlbum().getImage());
 
@@ -625,7 +627,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     }
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+        talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), 5,token);
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener heartClickListener = (position, view) -> {

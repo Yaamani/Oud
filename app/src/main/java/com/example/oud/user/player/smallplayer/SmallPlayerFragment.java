@@ -3,9 +3,14 @@ package com.example.oud.user.player.smallplayer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +23,8 @@ import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.example.oud.user.UserActivity;
+import com.example.oud.user.player.MediaBrowserHelper;
 import com.example.oud.user.player.PlayerHelper;
 import com.example.oud.user.player.PlayerInterface;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -38,7 +45,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerViewModel> {
+public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerViewModel>  {
 
     private View v;
     private PlayerControlView mPlayerControlView;
@@ -48,10 +55,16 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     private PlayerHelper mPlayerHelper;
     private DefaultTimeBar defaultTimeBar;
     private Track mTrack;
-    private String trackId ="track";
+    private String trackId = "track";
     private boolean isLoadingTrack;
     private TextView loadingFailed;
     private Album mAlbum;
+    private ImageButton nextButton;
+    private ImageButton prevButton;
+    private MediaMetadataCompat mediaMetadata;
+    private final static String TAG = SmallPlayerFragment.class.getSimpleName();
+    private Context context;
+    private MediaBrowserHelper mediaBrowserHelper;
 
     public SmallPlayerFragment() {
         super(SmallPlayerViewModel.class, R.layout.small_player_fragment, R.id.loading_track, null);
@@ -62,18 +75,36 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        v = view;
+
+        initializeViews();
+
+        Log.d(TAG,"Fragment is opened");
         mPlayerHelper = mPlayerInterface.getPlayerHelper();
+
+
+        mediaBrowserHelper = mPlayerInterface.getMediaBrowserHelper();
+
+        if(mediaBrowserHelper !=null) {
+            mediaMetadata = mediaBrowserHelper.getMediaMetadata();
+        }
+        else{
+            Log.d(TAG,"MediaBrowserHelper is null so i can't get data");
+        }
+
+        initializePlayerControlView();
+
+
+
+        /*mPlayerHelper = mPlayerInterface.getPlayerHelper();*/
 
         /*trackId = mPlayerHelper.getTrackId();
         Toast.makeText(getContext(), trackId, Toast.LENGTH_SHORT).show();*/
 
         /*restPlayer = mPlayerHelper.isResetPlay();*/
 
-        v = view;
 
-        initializeViews();
-
-        /*mViewModel.getTrackMutableLiveData(trackId).observe(getViewLifecycleOwner(), track -> {
+        mViewModel.getTrackMutableLiveData(trackId).observe(getViewLifecycleOwner(), (Track track) -> {
 
             mTrack = track;
             if(restPlayer) {
@@ -114,14 +145,13 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
 
         mViewModel.checkIsLoadingTrack().observe(getViewLifecycleOwner(), aBoolean -> {
             isLoadingTrack = aBoolean;
-        });*/
+        });
 
-        mPlayerHelper.getPlayerback(Uri.parse(trackId));
+        /*mPlayerHelper.getPlayerback(Uri.parse(trackId));
         mExoPlayer = mPlayerHelper.getExoPlayer();
-        /*defaultTimeBar.setEnabled(false);*/
+        *//*defaultTimeBar.setEnabled(false);*//*
         mPlayerControlView.setPlayer(mExoPlayer);
-        mExoPlayer.setPlayWhenReady(true);
-
+        mExoPlayer.setPlayWhenReady(true);*/
 
 
     }
@@ -130,7 +160,7 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-
+            this.context = context;
             mPlayerInterface = (PlayerInterface) context;
 
         } catch (ClassCastException e) {
@@ -143,12 +173,17 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
     private void initializeViews() {
 
         mPlayerControlView = v.findViewById(R.id.player_control_view);
-        mPlayerControlView.setVisibility(View.VISIBLE);
+
+        nextButton = v.findViewById(R.id.next_button);
+        prevButton = v.findViewById(R.id.prev_button);
+
+        /*mPlayerControlView.setVisibility(View.VISIBLE);*/
 
         defaultTimeBar = v.findViewById(R.id.exo_progress);
 
-        loadingFailed = v.findViewById(R.id.text_loading_failed);
-        loadingFailed.setVisibility(View.GONE);
+
+        /*loadingFailed = v.findViewById(R.id.text_loading_failed);
+        loadingFailed.setVisibility(View.GONE);*/
     }
 
     private void initializePlayerControlView() {
@@ -156,14 +191,48 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
         TextView playerName = v.findViewById(R.id.text_player_name);
         TextView artistName = v.findViewById(R.id.text_artist_name);
 
-        playerName.setText(mTrack.getName());
-        artistName.setText(mPlayerHelper.getArtistsNames());
+        if (mediaMetadata != null) {
+            playerName.setText(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+            artistName.setText(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+        } else {
+            Log.d(TAG, "mediaMetadata of currentPlayback is null");
+        }
 
         mExoPlayer = mPlayerHelper.getExoPlayer();
 
-        defaultTimeBar.setEnabled(false);
+        if(mExoPlayer != null){
 
-        mPlayerControlView.setPlayer(mExoPlayer);
+            mPlayerControlView.setPlayer(mExoPlayer);
+        }
+        else{
+            Log.d(TAG, "mExoPlayer is null");
+        }
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(mediaBrowserHelper != null){
+
+                    mediaBrowserHelper.getTransportControls().skipToNext();
+
+                }
+                else{
+                    Log.d(TAG, "mediaBrowserHelper is null so i can't skipToNext");
+                }
+            }
+        });
+
+        if (mPlayerHelper != null) {
+
+            mExoPlayer = mPlayerHelper.getExoPlayer();
+            mPlayerControlView.setPlayer(mExoPlayer);
+
+        } else {
+            Log.d(TAG, "playerHelper is null ");
+        }
+
+        defaultTimeBar.setEnabled(false);
 
     }
 
@@ -172,6 +241,5 @@ public class SmallPlayerFragment extends ConnectionAwareFragment<SmallPlayerView
         super.onDestroy();
         restPlayer = false;
     }
-
 
 }

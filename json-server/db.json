@@ -6903,10 +6903,54 @@
   }, 
 
   "user_doesn't_follow_this_artist": {
+  
     "ids": [
       false
     ]
+  },
+  "currently-playing":{
+  
+	"track": {
+		"_id": "track0",
+		"name": "track0",
+		"artists": [
+			{
+          "_id": "artist0",
+          "name": "artist0",
+          "type": "artist_type0",
+          "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+			}
+		],
+		"albumId": "album0",
+		"album": {
+			"_id": "album0",
+			"album_type": "album_type0",
+			"album_group": "album_group0",
+			"artists": [
+				{
+					"_id": "artist0",
+					"name": "artist0",
+					"type": "artist_type0",
+					"image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+				}
+			],
+			"image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+			"name": "album0",
+			"type": "album_type0"
+		},
+		"type": "string",
+		"audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+		"duartion": 1000,
+		"views": 1000
+	},
+	"context": {
+  
+		"type": "unknwon",
+		"id": "string"
+	}
   }
+  
+	
 
   
 }

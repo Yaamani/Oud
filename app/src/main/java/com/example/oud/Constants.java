@@ -14,8 +14,6 @@ public class Constants {
 
     public static final int SERVER_CONNECTION_AWARE_LOG_SETTINGS = SENDING/* | RECEIVING | JSON_RESPONSE*//*0*/;
 
-
-
     public static final String USER_HOME_RECENTLY_PLAYED = "Recently played";
     public static final int USER_HOME_CATEGORIES_COUNT = 7;
     public static final int USER_HOME_HORIZONTAL_RECYCLERVIEW_ITEM_COUNT = 6;
@@ -58,8 +56,32 @@ public class Constants {
     public static final String API_PLAYLIST = "playlist";
     public static final String API_USER = "user";
 
+
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
     public enum PlaylistFragmentType {PLAYLIST, ALBUM}
+    public enum PlaybackState{PREPARING}
+
+    public enum IntentAction{START_OR_RESUME_BROADCAST,STATE_OF_PLAYBACK,STATE_OF_PLAYBACK_COMING_FROM_EXOPLAYER}
+
+
+    /**
+     * For Player
+     * */
+    public static final String SHARED_PREFERENCES_PLAYER_FILE_NAME = "PlayerPreferences";
+    public static final String NEW_USER = "newUser";
+    public static final String FIRST_LAUNCH = "firstLaunch";
+    /*public static final String START_OR_RESUME_BROADCAST = "StartOrResumeBroadCast";*/
+    public static final String CONTEXT_URI = "contextUri";
+    public static final String OFFSET = "offset";
+    public static final String LIST_OF_TRACKS_URIS = "tracksIds";
+    public static final String CURRENT_PLAYBACK_STATE = "currentPlaybackState";
+    public static final String OPEN_BIG_PLAYER = "openBigPlayer";
+    /*public static final String STATE_OF_PLAYBACK = "stateOfPlayback";*/
+    public static final String CURRENT_PLAYBACK_STATE_SENDING_FROM_EXOPLAYER = "exPlayerState";
+    public static final String POSITION_OF_PLAYBACK_ON_SEEK = "exPlayerState";
+
+    public static final int STATE_PREPARING = 0;
+
 
 
 }

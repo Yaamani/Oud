@@ -67,8 +67,34 @@ public class OudUtils {
         return  prefs.getString(Constants.SHARED_PREFERENCES_USER_ID_NAME,"");
 
     }
+    public static boolean isNewUser(Context context){
 
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        return prefs.getBoolean(Constants.NEW_USER,true);
+    }
+    /** new user or not */
+    public static void setSateOfUser(Context context,boolean isNewUser){
 
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
 
+        prefsEditor.putBoolean(Constants.NEW_USER ,isNewUser);
+        prefsEditor.apply();
+    }
+
+    public static void firstLaunch(Context context, boolean firstLaunch){
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        prefsEditor.putBoolean(Constants.FIRST_LAUNCH ,firstLaunch);
+        prefsEditor.apply();
+    }
+
+    public static boolean isFirstLaunch(Context context){
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        return prefs.getBoolean(Constants.FIRST_LAUNCH,true);
+    }
 
 }

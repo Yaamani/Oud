@@ -386,7 +386,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 }
 
                 TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), true);
+                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), 5,token);
                 };
 
 

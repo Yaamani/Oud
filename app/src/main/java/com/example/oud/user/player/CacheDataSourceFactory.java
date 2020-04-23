@@ -41,13 +41,15 @@ public class CacheDataSourceFactory implements DataSource.Factory {
     public DataSource createDataSource() {
 
         LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(maxCacheSize);
-        /*mSimpleCache = new SimpleCache(new File(context.getCacheDir(), "media"), evictor);*/
+
         return new CacheDataSource(getInstance(context,evictor), defaultDatasourceFactory.createDataSource(),
                 new FileDataSource(), new CacheDataSink(getInstance(context,evictor), maxFileSize),
                 CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null);
     }
+
     public static SimpleCache getInstance(Context context ,LeastRecentlyUsedCacheEvictor evictor ) {
-        if (mSimpleCache == null) mSimpleCache = new SimpleCache(new File(context.getCacheDir(), "media"), evictor, new ExoDatabaseProvider(context));
+        if (mSimpleCache == null) mSimpleCache = new SimpleCache(new File(context.getCacheDir(), "media"),
+                evictor, new ExoDatabaseProvider(context));
         return mSimpleCache;
     }
 }

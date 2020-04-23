@@ -1,6 +1,8 @@
 {
     "/me/player/recently-played": "/recently-played", 
-    "/me/player/recently-played?limit=:limit": "/recently-played", 
+    "/me/player/recently-played?limit=:limit": "/recently-played",
+	"/me/player/currently-playing": "/currently-playing",
+	
 
     "/browse/categories/:category_id/playlists": "/category_list_:category_id", 
     "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
@@ -53,5 +55,6 @@
     "/users/1/followers?type=user&offset=11":"/followersUser1",
     
     "/users/1/following?type=artist&offset=0":"/followingUser1"
+	
 
 }
