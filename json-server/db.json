@@ -902,7 +902,16 @@
     "facebook_id": "string",
     "google_id": "string",
     "type": "string"
-  }
+  },
+
+  "genres":{
+      "items": [{"_id": "genre1","name": "relax"},{"_id": "genre2","name": "summer"},{"_id": "genre3","name": "jazz"},{"_id": "genre4","name": "rock"},{"_id": "genre5","name": "classical music"},{"_id": "genre6","name": "genre6"},{"_id": "genre7","name": "random genre"},{"_id": "genre8","name": "i ran out of names"},{"_id": "genre9","name": "i shouldnt have made all these genres"},{"_id": "genre10","name": "test"},{"_id": "genre11","name": "test2"},{"_id": "genre12","name": "test3"},{"_id": "genre13","name": "string"},{"_id": "genre14","name": "genre14"}
+      ],
+      "limit": 0,
+      "offset": 0,
+      "total": 14
+    }
+  
 
   
 }

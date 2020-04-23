@@ -95,7 +95,9 @@
 
     "/artists/user0/albums?offset=0&limit=7":"/artist_albums",
     
-    "/artists/user0/albums?offset=6&limit=7":"/artist_more_albums"
+    "/artists/user0/albums?offset=6&limit=7":"/artist_more_albums",
+
+    "/genres?offset=0":"/genres"
 
     
 

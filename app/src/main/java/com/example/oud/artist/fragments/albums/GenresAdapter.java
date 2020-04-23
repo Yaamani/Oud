@@ -37,6 +37,10 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.GenresView
         holder.notAdded.setVisibility(View.VISIBLE);
         holder.added.setVisibility(View.INVISIBLE);
 
+        holder.notAdded.setText(genresNames.get(position));
+        holder.added.setText(genresNames.get(position));
+
+
         holder.notAdded.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

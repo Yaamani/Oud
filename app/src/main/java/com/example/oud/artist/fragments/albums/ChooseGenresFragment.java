@@ -25,6 +25,7 @@ import com.example.oud.api.AlbumForUpdate;
 import com.example.oud.api.Genre;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
+import com.google.android.flexbox.FlexboxLayoutManager;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
 
     public ChooseGenresFragment(Activity activity, Bundle albumData, ConnectionStatusListener connectionStatusListener) {
         super(MyAlbumsViewModel.class
-                ,R.layout.fragment_my_albums
+                ,R.layout.fragment_choose_genres
                 ,(ProgressBar) activity.findViewById(R.id.progress_bar_artist_activity)
                 ,(View)activity.findViewById(R.id.block_view_artist_Activity)
                 ,null);
@@ -49,20 +50,16 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initialize(view);
-        setFinishButtonClickListener();
-        handleAdapter();
-        recyclerView.setLayoutManager(new FlexboxLayoutManager);
-        recyclerView.setAdapter(adapter);
-
-
-
-    }
-    public void initialize(View view){
         adapter = new GenresAdapter(getContext());
         finishButton = view.findViewById(R.id.btn_choose_genres);
         recyclerView = view.findViewById(R.id.recycler_view_choose_genres);
+
+        setFinishButtonClickListener();
+        handleAdapter();
+        recyclerView.setLayoutManager(new FlexboxLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
     }
+
 
     public void setFinishButtonClickListener(){
         finishButton.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +71,7 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
                    return;
                }
                albumData.putStringArrayList(Constants.BUNDLE_CREATE_ALBUM_GENRES_ID,chosenGenres);
+               sendAlbumData();
 
             }
         });
@@ -86,8 +84,10 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
             public void onChanged(OudList<Genre> genreOudList) {
                 ArrayList<Genre> myGenres = genreOudList.getItems();
                 for(int i = adapter.getItemCount();i<genreOudList.getTotal();i++){
+
                     Genre genre = myGenres.get(i);
                     adapter.addItem(genre.getName(),genre.getId());
+                    adapter.notifyItemChanged(adapter.getItemCount()-1);
                 }
             }
         });
@@ -99,7 +99,7 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
             @Override
             public void onConnectionSuccess() {
                 connectionStatusListener.onConnectionSuccess();
-                for(int i =0 ;i<5 ; i++)
+                for(int i =0 ;i<4 ; i++)
                     getParentFragmentManager().popBackStack();
 
             }
@@ -107,7 +107,7 @@ public class ChooseGenresFragment extends ConnectionAwareFragment<MyAlbumsViewMo
             @Override
             public void onConnectionFailure() {
                 connectionStatusListener.onConnectionSuccess();
-                for(int i =0 ;i<5 ; i++)
+                for(int i =0 ;i<4 ; i++)
                     getParentFragmentManager().popBackStack();
                 Toast.makeText(getContext(),"Changes where not applied",Toast.LENGTH_LONG);
             }

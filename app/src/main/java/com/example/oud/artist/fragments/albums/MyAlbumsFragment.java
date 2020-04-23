@@ -33,6 +33,8 @@ import com.example.oud.api.Album;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 
+import java.util.ArrayList;
+
 
 public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel> {
     String token;
@@ -153,16 +155,35 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
         });
 
 
+        ConnectionStatusListener c = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                for(int i = adapter.getItemCount()-1;i>=0;i--){
+                    adapter.removeItem(i);
+                    adapter.notifyItemRemoved(i);
+                }
+                mViewModel.clearData();
+                handleAdapter();
+            }
+
+            @Override
+            public void onConnectionFailure() {
+
+            }
+        };
         createAlbumButton = view.findViewById(R.id.btn_create_album);
         createAlbumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle albumDate = new Bundle();
-                albumDate.putString(Constants.BUNDLE_CREATE_ALBUM_ARTIST_ID,myId);
-                CreateAlbumNameFragment fragment= new CreateAlbumNameFragment(albumDate);
+                ArrayList<String>myIdInList = new ArrayList<>();
+                myIdInList.add(myId);
+                albumDate.putStringArrayList(Constants.BUNDLE_CREATE_ALBUM_ARTIST_ID,myIdInList);
+                albumDate.putBoolean(Constants.BUNDLE_CREATE_ALBUM_IS_NEW_ALBUM_ID,true);
+                CreateAlbumNameFragment fragment= new CreateAlbumNameFragment(albumDate,c);
                 getParentFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_right,R.anim.enter_from_right,R.anim.exit_to_right)
-                        .add(R.id.nav_host_fragment_artist_full_screen,fragment)
+                        .add(R.id.nav_host_fragment_artist,fragment)
                         .addToBackStack(null)
                         .commit();
             }
