@@ -14,6 +14,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_artist"
         android:layout_width="0dp"
@@ -31,7 +33,7 @@
         android:id="@+id/nav_host_fragment_artist"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/container_small_player"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_artist"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -66,11 +68,12 @@
         android:id="@+id/nav_host_fragment_artist_full_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:show_timeout="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

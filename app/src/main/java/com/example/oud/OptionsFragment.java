@@ -35,6 +35,9 @@ public class OptionsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
 
+    private int mContainerId;
+
+
 
     public OptionsFragment() {
         // Required empty public constructor
@@ -43,12 +46,14 @@ public class OptionsFragment extends Fragment {
     public static OptionsFragment newInstance(ArrayList<Integer> icons,
                                               ArrayList<String> titles,
                                               ArrayList<Boolean> selectedItems,
-                                              ArrayList<View.OnClickListener> clickListeners) {
+                                              ArrayList<View.OnClickListener> clickListeners,
+                                              @IdRes int containerId) {
         OptionsFragment instance = new OptionsFragment();
         instance.mIcons = icons;
         instance.mTitles = titles;
         instance.mSelectedItems = selectedItems;
         instance.mClickListeners = clickListeners;
+        instance.mContainerId = containerId;
 
         return instance;
     }
@@ -68,7 +73,7 @@ public class OptionsFragment extends Fragment {
 
         view.setOnClickListener(v -> {
             // Log.i(TAG, "Outer View");
-            hideOptionsFragment(getActivity(), R.id.container_options);
+            hideOptionsFragment(getActivity(), mContainerId);
         });
 
 
@@ -77,7 +82,8 @@ public class OptionsFragment extends Fragment {
                 mIcons,
                 mTitles,
                 mSelectedItems,
-                mClickListeners
+                mClickListeners,
+                mContainerId
         );
 
         mRecyclerView = view.findViewById(R.id.recycler_view_options);
@@ -187,7 +193,7 @@ public class OptionsFragment extends Fragment {
          */
         public void show() {
             FragmentManager manager = fragmentActivity.getSupportFragmentManager();
-            OptionsFragment optionsFragment = newInstance(icons, titles, selectedItems, clickListeners);
+            OptionsFragment optionsFragment = newInstance(icons, titles, selectedItems, clickListeners,containerId);
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.add(containerId, optionsFragment, Constants.OPTIONS_FRAGMENT_TAG)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

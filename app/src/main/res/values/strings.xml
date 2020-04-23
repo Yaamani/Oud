@@ -1,4 +1,3 @@
-
 <resources>
     <string name="app_name">Oud</string>
     <string name="title_activity_user">UserActivity</string>
@@ -52,8 +51,6 @@
     <string name="end_date">End date : </string>
     <string name="subscribe">SUBSCRIBE</string>
     <string name="extend">EXTEND</string>
-
-
 
 
 </resources>
