@@ -1,9 +1,11 @@
 package com.example.oud.artist.fragments.albums;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
+import com.example.oud.Constants;
 import com.example.oud.GenericVerticalRecyclerViewAdapter;
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
@@ -149,6 +152,21 @@ public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel>
             }
         });
 
+
+        createAlbumButton = view.findViewById(R.id.btn_create_album);
+        createAlbumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle albumDate = new Bundle();
+                albumDate.putString(Constants.BUNDLE_CREATE_ALBUM_ARTIST_ID,myId);
+                CreateAlbumNameFragment fragment= new CreateAlbumNameFragment(albumDate);
+                getParentFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_right,R.anim.enter_from_right,R.anim.exit_to_right)
+                        .add(R.id.nav_host_fragment_artist_full_screen,fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 
 
 

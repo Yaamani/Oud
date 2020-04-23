@@ -19,7 +19,7 @@ public class Album {
 
     private String name;
 
-    @SerializedName("release_name")
+    @SerializedName("release_date")
     private Date releaseDate;
 
     //todo change name when backend adds the variable to the api

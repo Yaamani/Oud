@@ -138,5 +138,8 @@ dependencies {
 
     implementation 'com.google.android.material:material:<version>'
 
+    implementation 'com.google.android:flexbox:2.0.1'
+
+
 
 }

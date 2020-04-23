@@ -8,11 +8,14 @@ import androidx.lifecycle.ViewModel;
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
 import com.example.oud.api.Album;
+import com.example.oud.api.AlbumForUpdate;
+import com.example.oud.api.Genre;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
 
 public class MyAlbumsViewModel extends ConnectionAwareViewModel<MyAlbumsRepository> {
     MutableLiveData<OudList<Album>> myAlbums;
+    MutableLiveData<OudList<Genre>> genres;
 
     public  MyAlbumsViewModel(){
         super(new MyAlbumsRepository(), Constants.YAMANI_MOCK_BASE_URL);
@@ -32,6 +35,13 @@ public class MyAlbumsViewModel extends ConnectionAwareViewModel<MyAlbumsReposito
         newAlbums.setTotal(newAlbums.getTotal()-1);
         myAlbums.setValue(newAlbums);
     }
+    public void createAlbum(String token, AlbumForUpdate album, ConnectionStatusListener connectionStatusListener){
+        mRepo.createAlbum(token,album,connectionStatusListener);
+    }
+
+    public void updateAlbum(String token ,String albumId,AlbumForUpdate album,ConnectionStatusListener connectionStatusListener){
+        mRepo.updateAlbum(token, albumId, album, connectionStatusListener);
+    }
 
 
     public void deleteAlbum(String token, String albumId, ConnectionStatusListener connectionStatusListener){
@@ -40,6 +50,16 @@ public class MyAlbumsViewModel extends ConnectionAwareViewModel<MyAlbumsReposito
 
     public void getMoreAlbums(String token,String myId,int offset){
         mRepo.getMoreAlbums(token,myId,offset,myAlbums);
+    }
+
+    public MutableLiveData<OudList<Genre>> getGenres(){
+        if(genres == null)
+           genres= mRepo.getGenres(0);
+
+        return genres;
+    }
+    public void getMoreGenres(int offset){
+        mRepo.getMoreGenres(offset,genres);
     }
 
     @Override

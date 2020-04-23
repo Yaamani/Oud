@@ -223,7 +223,18 @@ public interface OudApi {
     Call<Profile> getProfileOfCurrentUser(@Header("AUTHORIZATION") String token);
 
 
-    @DELETE ("/me/artists/albums/{id}")
+    @GET("genres")
+    Call<OudList<Genre>> getGenres(@Query("offset") int offset);
+
+    @POST("me/artists/albums")
+    Call<Album> createNewAlbum(@Header("AUTHORIZATION") String token,@Body AlbumForUpdate album);
+
+
+    @PATCH("me/artists/albums/{id}")
+    Call<Album> updateAlbum(@Header("AUTHORIZATION") String token,@Body AlbumForUpdate album,@Path("id") String albumId);
+
+
+    @DELETE ("me/artists/albums/{id}")
     Call<ResponseBody> deleteAlbum(@Header("AUTHORIZATION") String token,@Path("id") String albumId);
 
 }
