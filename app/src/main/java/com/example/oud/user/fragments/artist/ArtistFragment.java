@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.Constants;
 import com.example.oud.OudUtils;
@@ -250,6 +249,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     public void onPause() {
         super.onPause();
 
+        if (trackListRecyclerViewAdapter != null)
+            trackListRecyclerViewAdapter.disableDownloadListener();
+
         // Motion layout bug fix.
         /*((UserActivity) getActivity()).setArtistFragPaused(true);
         ((UserActivity) getActivity()).setArtistFragPausedArtistId(artistId);*/
@@ -398,9 +400,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 };
 
                 trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                        mViewModel.getRepoBaseUrl(), trackClickListener,
-                        availableOfflineClickListener,
-                        heartClickListener);
+                        mRecyclerViewPopularSongs,
+                        mViewModel.getRepoBaseUrl(),
+                        userId,
+                        trackClickListener, availableOfflineClickListener, heartClickListener);
 
                 for (int j = 0; j < trackIds.size(); j++) {
                     trackListRecyclerViewAdapter.addTrack(trackIds.get(j),

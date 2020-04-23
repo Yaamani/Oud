@@ -228,7 +228,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
      * @param text
      * @param duration {@link Toast#LENGTH_LONG} or {@link Toast#LENGTH_SHORT}
      */
-    public void showToast(String text, int duration) {
+    protected void showToast(String text, int duration) {
         for (Toast toast : toasts) {
             String currentToastText = ((TextView)((LinearLayout)toast.getView()).getChildAt(0)).getText().toString();
 
@@ -250,7 +250,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
      * @param stringResourceId
      * @param duration {@link Toast#LENGTH_LONG} or {@link Toast#LENGTH_SHORT}
      */
-    public void showToast(@StringRes int stringResourceId, int duration) {
+    protected void showToast(@StringRes int stringResourceId, int duration) {
         String text = getResources().getString(stringResourceId);
         showToast(text, duration);
     }
@@ -262,7 +262,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
      * @param text
      * @param duration
      */
-    public void forceToast(String text, int duration) {
+    protected void forceToast(String text, int duration) {
         boolean alreadyExists = false;
 
         for (Toast toast : toasts) {
@@ -288,7 +288,7 @@ public class ConnectionAwareFragment<ConnectionAwareViewM extends ConnectionAwar
      * @param stringResourceId
      * @param duration
      */
-    public void forceToast(@StringRes int stringResourceId, int duration) {
+    protected void forceToast(@StringRes int stringResourceId, int duration) {
         String text = getResources().getString(stringResourceId);
         forceToast(text, duration);
     }

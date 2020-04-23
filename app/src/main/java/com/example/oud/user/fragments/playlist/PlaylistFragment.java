@@ -210,6 +210,14 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (trackListRecyclerViewAdapter != null)
+            trackListRecyclerViewAdapter.disableDownloadListener();
+    }
+
     private void loadData(View view) {
         if (type == Constants.PlaylistFragmentType.ALBUM) {
             disableEditing(view);
@@ -566,9 +574,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
             trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                    mViewModel.getRepoBaseUrl(), trackClickListener,
-                    availableOfflineClickListener,
-                    heartClickListener);
+                    mRecyclerViewTracks,
+                    mViewModel.getRepoBaseUrl(),
+                    userId,
+                    trackClickListener, availableOfflineClickListener, heartClickListener);
 
 
 
@@ -620,9 +629,10 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
 
             trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                    mViewModel.getRepoBaseUrl(), trackClickListener,
-                    availableOfflineClickListener,
-                    heartClickListener);
+                    mRecyclerViewTracks,
+                    mViewModel.getRepoBaseUrl(),
+                    userId,
+                    trackClickListener, availableOfflineClickListener, heartClickListener);
 
 
             for (int i = 0; i < tracks.size(); i++) {

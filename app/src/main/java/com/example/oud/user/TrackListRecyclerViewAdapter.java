@@ -1,30 +1,30 @@
 package com.example.oud.user;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
-import com.example.oud.api.OudApi;
 import com.huxq17.download.Pump;
-import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.DownloadInfo;
 import com.huxq17.download.core.DownloadListener;
-import com.huxq17.download.core.DownloadRequest;
 
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -41,7 +41,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
     private ArrayList<String> mTrackImages = new ArrayList<>();
     private ArrayList<String> mTrackNames = new ArrayList<>();
     private ArrayList<Boolean> mLikedTracks = new ArrayList<>();
-    private ArrayList<Boolean> mDownloaded = new ArrayList<>();
+    private ArrayList<DownloadInfo> mDownloadInfos = new ArrayList<>();
 
 
     private OnTrackClickListener mTrackClickListener;
@@ -49,12 +49,18 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
     private OnTrackClickListener mHeartClickListener;
 
     private String baseUrl;
+    private String loggedInUserId;
     // private OudApi oudApi;
+
+    private Toast mToastDownloadFailed;
+
+    private RecyclerView recyclerView;
 
     //private ArrayList<View> reorderingSeparators;
 
     public TrackListRecyclerViewAdapter(Context mContext,
-                                        String baseUrl,
+                                        RecyclerView recyclerView, String oudBaseUrl,
+                                        String loggedInUserId,
                                         OnTrackClickListener mTrackClickListener,
                                         OnTrackClickListener mAvailableOfflineClickListener,
                                         OnTrackClickListener mHeartClickListener) {
@@ -69,8 +75,77 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         this.mAvailableOfflineClickListener = mAvailableOfflineClickListener;
         this.mHeartClickListener = mHeartClickListener;
 
-        this.baseUrl = baseUrl;
-        // oudApi = OudUtils.instantiateRetrofitOudApi(baseUrl);
+        this.recyclerView = recyclerView;
+
+        this.baseUrl = oudBaseUrl;
+        this.loggedInUserId = loggedInUserId;
+        // oudApi = OudUtils.instantiateRetrofitOudApi(oudBaseUrl);
+
+        downloadListener.enable();
+
+
+    }
+
+    private DownloadListener downloadListener = new DownloadListener() {
+        @Override
+        public void onProgress(int progress) {
+            super.onProgress(progress);
+            DownloadInfo downloadInfo = getDownloadInfo();
+            //TrackItemViewHolder holder = (TrackItemViewHolder) downloadInfo.getExtraData();
+
+            int pos = mIds.indexOf(downloadInfo.getId());
+
+            if (pos >= 0) {
+                TrackItemViewHolder holder = (TrackItemViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(pos));
+
+                if (holder != null) {
+                    ProgressBar progressBar = holder.mProgressBarDownload;
+                    progressBar.setProgress(progress);
+                }
+            }
+        }
+
+        @Override
+        public void onSuccess() {
+            super.onSuccess();
+            DownloadInfo downloadInfo = getDownloadInfo();
+
+            int pos = mIds.indexOf(downloadInfo.getId());
+
+            if (pos >= 0) {
+                TrackItemViewHolder holder = (TrackItemViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(pos));
+
+                if (holder != null) {
+                    holder.mAvailableOffline.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
+                    holder.mProgressBarDownload.setVisibility(View.GONE);
+                    holder.mAvailableOffline.setAlpha(1.0f);
+                }
+            }
+        }
+
+        @Override
+        public void onFailed() {
+            super.onFailed();
+            DownloadInfo downloadInfo = getDownloadInfo();
+
+            int pos = mIds.indexOf(downloadInfo.getId());
+
+            if (pos >= 0) {
+                TrackItemViewHolder holder = (TrackItemViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(pos));
+
+                if (holder != null) {
+                    holder.mProgressBarDownload.setVisibility(View.GONE);
+                    holder.mAvailableOffline.setAlpha(1.0f);
+                }
+            }
+
+
+
+        }
+    };
+
+    public void disableDownloadListener() {
+        downloadListener.disable();
     }
 
     @NonNull
@@ -110,8 +185,20 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         String heartTagPrefix = mContext.getResources().getString(R.string.tag_track_list_adapter_heart);
         holder.mHeart.setTag(heartTagPrefix + position);
 
-        if (mDownloaded.get(position))
-            holder.mAvailableOffline.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
+        DownloadInfo currentDownloadInfo = mDownloadInfos.get(position);
+        if (currentDownloadInfo != null) {
+            //currentDownloadInfo.setExtraData(holder);
+            if (currentDownloadInfo.getStatus() == DownloadInfo.Status.FINISHED)
+                holder.mAvailableOffline.setColorFilter(mContext.getResources().getColor(R.color.colorPrimary));
+            else if (currentDownloadInfo.getStatus() == DownloadInfo.Status.RUNNING) {
+                holder.mAvailableOffline.setAlpha(0.5f);
+                holder.mProgressBarDownload.setVisibility(View.VISIBLE);
+                holder.mProgressBarDownload.setProgress(currentDownloadInfo.getProgress());
+            }
+        }
+
+
+
 
         //holder.mHeart.setOnClickListener(mHeartClickListeners.get(position));
 
@@ -195,7 +282,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.add(position, trackImage);
         mTrackNames.add(position, trackName);
         mLikedTracks.add(position, isLiked);
-        mDownloaded.add(position, OudUtils.isDownloaded(trackId));
+        mDownloadInfos.add(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
 
         //mHeartClickListener.add(position, heartClickListener);
     }
@@ -210,7 +297,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.set(position, trackImage);
         mTrackNames.set(position, trackName);
         mLikedTracks.set(position, isLiked);
-        mDownloaded.set(position, OudUtils.isDownloaded(trackId));
+        mDownloadInfos.set(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
+
 
         //mHeartClickListener.add(position, heartClickListener);
     }
@@ -221,7 +309,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.remove(position);
         mTrackNames.remove(position);
         mLikedTracks.remove(position);
-        mDownloaded.remove(position);
+        mDownloadInfos.remove(position);
         //mHeartClickListener.remove(position);
     }
 
@@ -231,7 +319,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         Collections.swap(mTrackImages, i, j);
         Collections.swap(mTrackNames, i, j);
         Collections.swap(mLikedTracks, i, j);
-        Collections.swap(mDownloaded, i, j);
+        Collections.swap(mDownloadInfos, i, j);
         //Collections.swap(mHeartClickListener, i, j);
     }
 
@@ -242,7 +330,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         private TextView mTrackName;
         private ImageButton mHeart;
         private ImageButton mAvailableOffline;
-
+        private ProgressBar mProgressBarDownload;
 
         private OnTrackClickListener trackClickListener;
         private OnTrackClickListener heartClickListener;
@@ -265,55 +353,92 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             mTrackName.setSelected(true);
             mAvailableOffline = itemView.findViewById(R.id.btn_track_available_offline);
             mHeart = itemView.findViewById(R.id.btn_track_like);
+            mProgressBarDownload = itemView.findViewById(R.id.progress_bar_track_download);
 
             mLayout.setOnClickListener(v -> this.trackClickListener.onTrackClickListener(getAdapterPosition(), v));
             mAvailableOffline.setOnClickListener(v -> {
                 this.availableOfflineClickListener.onTrackClickListener(getAdapterPosition(), v);
-                String id = mIds.get(getAdapterPosition());
-                String userId = OudUtils.getUserId(mContext);
-                //String filePath = userId + '/' + id;
-                File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
 
-                ProgressDialog progressDialog = new ProgressDialog(mContext);
-                progressDialog.setProgress(0);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                //DownloadInfo downloadInfo = mDownloadInfos.get(getAdapterPosition());
+                if (mAvailableOffline.getAlpha() <= 0.5f)
+                    return;
 
-                progressDialog.show();
+                mAvailableOffline.setAlpha(0.5f);
 
-                Pump.newRequest(baseUrl + "tracks/" + id + "/download"/*, file.getAbsolutePath()*/)
-                //Pump.newRequest("https://server10.mp3quran.net/ajm/128/001.mp3")
-                        .setId(id)
-                        .tag(userId)
-                        .forceReDownload(true)
-                        .listener(new DownloadListener() {
-                            @Override
-                            public void onSuccess() {
-                                super.onSuccess();
-                                Log.d(TAG, "onSuccess: " + id + " Downloaded.");
-                                progressDialog.dismiss();
-                            }
+                if (/*downloadInfo != null*/Pump.getFileIfSucceed(mIds.get(getAdapterPosition())) != null)
+                    deleteTrack();
+                else {
+                    downloadTrack();
+                }
 
-                            @Override
-                            public void onFailed() {
-                                super.onFailed();
-                                Log.d(TAG, "onFailed: " + id + " Failed.");
-                                Log.d(TAG, "onFailed: " + getDownloadInfo().getStatus());
-                                progressDialog.dismiss();
-
-                            }
-
-                            @Override
-                            public void onProgress(int progress) {
-                                super.onProgress(progress);
-                                Log.d(TAG, "onProgress: " + progress);
-                                progressDialog.setProgress(progress);
-                            }
-                        })
-                        .threadNum(1)
-                        .submit();
             });
             mHeart.setOnClickListener(v -> this.heartClickListener.onTrackClickListener(getAdapterPosition(), v));
         }
+
+        private void downloadTrack() {
+            String id = mIds.get(getAdapterPosition());
+            //String filePath = userId + '/' + id;
+            File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
+
+            mProgressBarDownload.setVisibility(View.VISIBLE);
+
+            Pump.newRequest(baseUrl + "tracks/" + id + "/download"/*, file.getAbsolutePath()*/)
+                    //Pump.newRequest("https://server10.mp3quran.net/ajm/128/001.mp3")
+                    .setId(id)
+                    .forceReDownload(true)
+                    .tag(loggedInUserId)
+                    .submit();
+
+            List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
+            for (DownloadInfo downloadInfo : downloadInfoList) {
+                if (downloadInfo.getId().equals(id)) {
+                    downloadInfo.setExtraData(TrackItemViewHolder.this);
+                    mDownloadInfos.set(getAdapterPosition(), downloadInfo);
+                }
+            }
+        }
+
+        private void deleteTrack() {
+            //mDownloadInfos.get(getAdapterPosition())
+            String id = mIds.get(getAdapterPosition());
+            new DeleteTrackAsyncTask().doInBackground(id, mAvailableOffline);
+        }
+
+
+    }
+
+    private static class DeleteTrackAsyncTask extends AsyncTask<Object, Void, ImageButton> {
+
+            /*@Override
+            protected Void doInBackground(Void... voids) {
+                Pump.deleteById(mIds.get(getAdapterPosition()));
+                return null;
+            }*/
+
+        @Override
+        protected ImageButton doInBackground(Object... params) {
+            String id = (String) params[0];
+            Pump.deleteById(id);
+            return (ImageButton) params[1];
+        }
+
+        @Override
+        protected void onPostExecute(ImageButton mAvailableOffline) {
+            super.onPostExecute(mAvailableOffline);
+
+            mAvailableOffline.setAlpha(1.0f);
+            mAvailableOffline.setColorFilter(Color.WHITE);
+        }
+
+            /*@Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                mAvailableOffline.setAlpha(1.0f);
+                mAvailableOffline.setColorFilter(Color.WHITE);
+
+            }*/
+
+
     }
 
     public interface OnTrackClickListener {

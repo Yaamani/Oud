@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -237,19 +238,15 @@ public class OudUtils {
         return imageUrl;
     }
 
-    public static boolean isDownloaded(String trackId) {
-        if (PumpFactory.getService(IDownloadManager.class) == null)
-            return false;
-
-        DownloadInfo downloadInfo = Pump.getDownloadInfoById(trackId);
-        boolean downloaded = false;
-        if (downloadInfo != null) {
-            if (downloadInfo.getStatus() == DownloadInfo.Status.FINISHED)
-                downloaded = true;
-
+    public static DownloadInfo getTrackDownloadInfo(String loggedInUserId, String trackId) {
+        List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
+        DownloadInfo trackDownloadInfo = null;
+        for (DownloadInfo downloadInfo : downloadInfoList) {
+            if (downloadInfo.getId().equals(trackId))
+                trackDownloadInfo = downloadInfo;
         }
 
-        return downloaded;
+        return trackDownloadInfo;
     }
 
     public static RequestBuilder<? extends Drawable> glideBuilder(Context context, String imageUrl){

@@ -104,7 +104,8 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
             else
                 forceToast(R.string.please_enter_a_valid_coupon, Toast.LENGTH_LONG);
             //showEnterValidCouponToast();
-        }
+        } else
+            forceToast(statusMessageResponse.getMessage(), Toast.LENGTH_LONG);
 
         //Log.e(TAG, "error message : " + message);
     };

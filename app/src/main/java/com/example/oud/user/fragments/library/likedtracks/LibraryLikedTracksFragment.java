@@ -28,7 +28,14 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
                 R.id.recycler_view_library_liked_tracks, 
                 R.id.txt_no_liked_tracks);
     }
-    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mItemsAdapter != null)
+            ((TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter()).disableDownloadListener();
+    }
+
     @Override
     protected void observerLoadedItems() {
 
@@ -84,9 +91,10 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
 
             TrackListRecyclerViewAdapter trackAdapter = new TrackListRecyclerViewAdapter(
                     getContext(),
-                    mViewModel.getRepoBaseUrl(), trackClickListener,
-                    availableOfflineClickListener,
-                    heartClickListener);
+                    mRecyclerViewItems,
+                    mViewModel.getRepoBaseUrl(),
+                    loggedInUserId,
+                    trackClickListener, availableOfflineClickListener, heartClickListener);
 
 
             for (int j = 0; j < trackIds.size(); j++) {
