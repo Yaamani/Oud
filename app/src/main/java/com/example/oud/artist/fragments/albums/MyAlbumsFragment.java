@@ -1,43 +1,224 @@
 package com.example.oud.artist.fragments.albums;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
+
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.example.oud.ConnectionStatusListener;
+import com.example.oud.Constants;
+import com.example.oud.GenericVerticalRecyclerViewAdapter;
+import com.example.oud.OptionsFragment;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
+import com.example.oud.api.Album;
+import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.connectionaware.ConnectionAwareViewModel;
+
+import java.util.ArrayList;
+
 
 public class MyAlbumsFragment extends ConnectionAwareFragment<MyAlbumsViewModel> {
+    String token;
+    String myId;
+    RecyclerView recyclerView;
+    Button createAlbumButton;
+    ProgressBar loadMoreProgressBar;
 
+    boolean isAllLoaded=false;
+
+    GenericVerticalRecyclerViewAdapter adapter;
     public  MyAlbumsFragment(Activity activity){
         super(MyAlbumsViewModel.class
                 ,R.layout.fragment_my_albums
                 ,(ProgressBar) activity.findViewById(R.id.progress_bar_artist_activity)
                 ,(View)activity.findViewById(R.id.block_view_artist_Activity)
                 ,null);
+
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        GenericVerticalRecyclerViewAdapter.OnItemClickListener  onItemClickListener= new GenericVerticalRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClickListener(int position, View view) {
+
+            }
+        };
+
+        GenericVerticalRecyclerViewAdapter.OnItemClickListener  onImageButtonClick = new GenericVerticalRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClickListener(int position, View view) {
+                String albumId= adapter.getIds().get(position);
+                String albumImage = adapter.getImage(position);
+                String albumName=adapter.getTitle(position);
+                ConnectionStatusListener undoDeleteAlbum= new ConnectionStatusListener() {
+                    @Override
+                    public void onConnectionSuccess() {
+
+                    }
+                    @Override
+                    public void onConnectionFailure() {
+                        adapter.addItem(position,albumId,albumImage,false,albumName,false);
+                        adapter.notifyItemInserted(position);
+                    }
+                };
+
+                DialogInterface.OnClickListener dialogClickListenerForDelete = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                adapter.removeItem(position);
+                                adapter.notifyItemRemoved(position);
+                                mViewModel.deleteAlbum(token,albumId,undoDeleteAlbum);
+                                mViewModel.deleteAlbum(position);
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+
+                View.OnClickListener deleteAlbumClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Are you want to delete this album?").setPositiveButton("yes", dialogClickListenerForDelete)
+                                .setNegativeButton("No", dialogClickListenerForDelete).show();
+                    }
+                };
+
+                View.OnClickListener editAlbumClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //todo open edit album
+                    }
+                };
+
+                OptionsFragment.builder(getActivity())
+                        .inContainer(R.id.nav_host_fragment_artist)
+                        .addItem(R.drawable.ic_edit_2,"edit album",editAlbumClickListener)
+                        .addItem(R.drawable.ic_delete_2,"delete album",deleteAlbumClickListener)
+                        .show();
+            }
+        };
+
+
+        adapter = new GenericVerticalRecyclerViewAdapter(getContext(),R.drawable.ic_options,onItemClickListener,onImageButtonClick);
+
+        recyclerView = view.findViewById(R.id.recycler_view_artist_activity_albums);
+
+        token = OudUtils.getToken(getContext());
+        myId = OudUtils.getUserId(getContext());
+
+        handleAdapter();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager =(LinearLayoutManager) recyclerView.getLayoutManager();
+                if(layoutManager.getChildCount()==0)
+                    return;
+                int lastVisibleViewPosition =layoutManager.findLastCompletelyVisibleItemPosition();
+                int lastViewPosition = layoutManager.getChildCount()-1;
+                if(lastVisibleViewPosition == lastViewPosition) {
+                    if (!isAllLoaded) {
+                        mViewModel.getMoreAlbums(token, myId, layoutManager.getChildCount()+1);
+                        isAllLoaded = true; //to avoid multible requests
+                    }
+                }
+            }
+        });
+
+
+        ConnectionStatusListener c = new ConnectionStatusListener() {
+            @Override
+            public void onConnectionSuccess() {
+                for(int i = adapter.getItemCount()-1;i>=0;i--){
+                    adapter.removeItem(i);
+                    adapter.notifyItemRemoved(i);
+                }
+                mViewModel.clearData();
+                handleAdapter();
+            }
+
+            @Override
+            public void onConnectionFailure() {
+
+            }
+        };
+        createAlbumButton = view.findViewById(R.id.btn_create_album);
+        createAlbumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle albumDate = new Bundle();
+                ArrayList<String>myIdInList = new ArrayList<>();
+                myIdInList.add(myId);
+                albumDate.putStringArrayList(Constants.BUNDLE_CREATE_ALBUM_ARTIST_ID,myIdInList);
+                albumDate.putBoolean(Constants.BUNDLE_CREATE_ALBUM_IS_NEW_ALBUM_ID,true);
+                CreateAlbumNameFragment fragment= new CreateAlbumNameFragment(albumDate,c);
+                getParentFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_right,R.anim.enter_from_right,R.anim.exit_to_right)
+                        .add(R.id.nav_host_fragment_artist,fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+
+
+
+
+    }
 
     public static MyAlbumsFragment newInstance(Activity activity) {
         return new MyAlbumsFragment(activity);
     }
 
+    private void handleAdapter(){
+        mViewModel.getMyAlbums(token,myId).observe(getViewLifecycleOwner(), new Observer<OudList<Album>>() {
+            @Override
+            public void onChanged(OudList<Album> albumOudList) {
+                if(albumOudList.getTotal()<=albumOudList.getItems().size())
+                    isAllLoaded = true;
+                else
+                    isAllLoaded = false;
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+                for(int i =adapter.getItemCount();i<albumOudList.getItems().size();i++){
+                    Album album = albumOudList.getItems().get(i);
 
+                    String imageUrl = OudUtils.convertImageToFullUrl(album.getImage());
+                    adapter.addItem(album.get_id(),imageUrl,false,album.getName(),true);
+                    adapter.notifyItemInserted(adapter.getIds().size()-1);
+                }
+            }
+        });
     }
+
+
 
 }

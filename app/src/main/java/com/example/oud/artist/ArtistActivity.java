@@ -131,7 +131,7 @@ public class ArtistActivity extends AppCompatActivity implements ConnectionStatu
                 if (artistSettingsFragment == null)
                     transaction.replace(R.id.nav_host_fragment_artist, new ArtistSettingsFragment(), Constants.ARTIST_SETTINGS_FRAGMENT_TAG);
                 else
-                    transaction.replace(R.id.nav_host_fragment_artist, artistSettingsFragment, Constants.SETTINGS_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment_artist, artistSettingsFragment, Constants.ARTIST_SETTINGS_FRAGMENT_TAG);
                 break;
         }
 
@@ -159,7 +159,7 @@ public class ArtistActivity extends AppCompatActivity implements ConnectionStatu
     }
     private void handleBottomNavViewItemReselected() {
 
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_artist);
 
         if (f instanceof HomeFragment2) return;
         else if (f instanceof SearchFragment) return;
@@ -167,7 +167,7 @@ public class ArtistActivity extends AppCompatActivity implements ConnectionStatu
         else if (f instanceof PremiumFragment) return;
         else if (f instanceof SettingsFragment) return;
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        BottomNavigationView navView = findViewById(R.id.bottom_navigation_artist);
         inflateFragmentBasedOnMenuItem(navView.getSelectedItemId());
     }
 
@@ -184,7 +184,7 @@ public class ArtistActivity extends AppCompatActivity implements ConnectionStatu
     public void onConnectionFailure() {
         if (getSupportFragmentManager().findFragmentByTag(Constants.OFFLINE_FRAGMENT_TAG) == null) {
             FragmentTransaction offlineFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            offlineFragmentTransaction.replace(R.id.fragment_offline_container, new OfflineFragment(), Constants.OFFLINE_FRAGMENT_TAG);
+            offlineFragmentTransaction.replace(R.id.fragment_offline_container_artist, new OfflineFragment(), Constants.OFFLINE_FRAGMENT_TAG);
             offlineFragmentTransaction.commit();
         }
 
@@ -197,8 +197,6 @@ public class ArtistActivity extends AppCompatActivity implements ConnectionStatu
 
     @Override
     public void onTryingToReconnect() {
-
-
 
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {

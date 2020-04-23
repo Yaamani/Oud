@@ -15,8 +15,8 @@ public class Constants {
 
     public static String BASE_URL = "https://oud-zerobase.me/api/v1/";
     public static final String IMAGES_BASE_URL = "https://oud-zerobase.me/api/";
-    public static final boolean MOCK = false;
-    public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.3:3000";
+    public static final boolean MOCK = true;
+    public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.100:3000";
     public static final int OK_HTTP_MOCK_WEB_SERVER_PORT = 4331;
 
 
@@ -86,6 +86,18 @@ public class Constants {
     public static final String API_PLAYLIST = "Playlist";
     public static final String API_USER = "user";
     public static final String API_PREMIUM = "premium";
+
+
+    public static final String BUNDLE_CREATE_ALBUM_ALBUM_NAME = "album_name";
+    public static final String BUNDLE_CREATE_ALBUM_ARTIST_ID = "artist_id";
+    public static final String BUNDLE_CREATE_ALBUM_GENRES_ID = "genres";
+    public static final String BUNDLE_CREATE_ALBUM_IS_NEW_ALBUM_ID = "new_album";
+    public static final String BUNDLE_CREATE_ALBUM_TYPE_ID = "album_type";
+    public static final String BUNDLE_CREATE_ALBUM_RELEASE_DATE_ID = "release_date";
+    public static final String BUNDLE_CREATE_ALBUM_ALBUM_ID_ID = "album_id";
+
+
+
 
     public enum ConnectionStatus {SUCCESSFUL, FAILED}
     public enum PlaylistFragmentType {PLAYLIST, ALBUM}
