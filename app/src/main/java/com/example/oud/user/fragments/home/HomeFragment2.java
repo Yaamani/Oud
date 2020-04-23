@@ -115,9 +115,9 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
             for (RecentlyPlayedTrack2 recentlyPlayedTrack : recentlyPlayedTracks2.getItems()) {
                 com.example.oud.api.Context context = recentlyPlayedTrack.getContext();
 
-                /*if (context.getType().equals(API_UNKNOWN)) {
+                if (context.getType().equals(API_UNKNOWN)) {
                     continue;
-                }*/
+                }
 
                 if (!hasAlreadyBeenFetchedRecentlyPlayed(recentlyPlayedTrack)) {
                     // fetch
@@ -214,8 +214,8 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
         for (int i = 0; i < recentlyPlayedTracks2.getItems().size(); i++) {
             com.example.oud.api.Context context = recentlyPlayedTracks2.getItems().get(i).getContext();
 
-            /*if (!context.getType().equals(API_UNKNOWN))
-                break;*/
+            if (!context.getType().equals(API_UNKNOWN))
+                break;
 
             if (i == recentlyPlayedTracks2.getItems().size() - 1) {
                 return null;

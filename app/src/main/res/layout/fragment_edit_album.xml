@@ -17,12 +17,12 @@
         android:layout_marginTop="30dp"
         android:scaleType="centerCrop"
         />
-    
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/image_edit_album"
-        app:layout_constraintBottom_toTopOf=""
+        app:layout_constraintBottom_toTopOf="@+id/btn_release"
         />
     <Button
         android:background="@drawable/filled_button"
