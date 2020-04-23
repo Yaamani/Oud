@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".artist.fragments.albums.AlbumTypeFragment"
+    android:background="@color/colorPrimaryDark"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/radio_group_album_type"
+        app:layout_constraintBottom_toTopOf="@id/radio_group_album_type"
+        android:layout_marginBottom="15dp"
+        android:text="album Type :"
+        />
+
+    <RadioGroup
+        android:id="@+id/radio_group_album_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+
+        app:layout_constraintVertical_bias="0.42000002">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="single"
+            android:textSize="25dp" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="album"
+            android:textSize="25dp" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="compilation"
+            android:textSize="25dp" />
+
+    </RadioGroup>
+    <Button
+        android:id="@+id/btn_album_type_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/borderlessButtonStyle"
+        android:text="next"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_group_album_type"
+        android:layout_marginTop="10dp"
+
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

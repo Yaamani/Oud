@@ -162,6 +162,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                 MutableLiveData liveData = mViewModel.getRecentlyPlayedAlbumsPlaylistsArtists().get(i);
 
                 NestedRecyclerViewHelper.Item _item = item;
+
                 liveData.observe(getViewLifecycleOwner(), new Observer() {
                     @Override
                     public void onChanged(Object o) {
@@ -198,6 +199,44 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
                         _item.setTitle(title);
                         _item.setImage(image, circularImage);
+
+                liveData.observe(getViewLifecycleOwner(), o -> {
+                    boolean circularImage = false;
+
+                    String title = "", image = "";
+                    if (o instanceof Album) {
+                        title = ((Album) o).getName();
+                        image = ((Album) o).getImage();
+                        _item.setClickListener(v ->
+                                PlaylistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        userId,
+                                        Constants.PlaylistFragmentType.ALBUM,
+                                        ((Album) o).get_id()));
+                    }
+                    else if (o instanceof Playlist) {
+                        title = ((Playlist) o).getName();
+                        image = ((Playlist) o).getImage();
+                        _item.setClickListener(v ->
+                                PlaylistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        userId,
+                                        Constants.PlaylistFragmentType.PLAYLIST,
+                                        ((Playlist) o).getId()));
+                    }
+                    else if (o instanceof Artist) {
+                        circularImage = true;
+                        title = ((Artist) o).getDisplayName();
+                        image = ((Artist) o).getImages().get(0);
+                        _item.setClickListener(v ->
+                                ArtistFragment.show(getActivity(),
+                                        R.id.nav_host_fragment,
+                                        ((Artist) o).get_id()));
+                    }
+
+                    _item.setTitle(title);
+                    _item.setImage(image, circularImage);
+
 
                     }
                 });

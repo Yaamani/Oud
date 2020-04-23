@@ -17,10 +17,7 @@ import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.contrib.RecyclerViewActions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static com.google.common.truth.Truth.*;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(AndroidJUnit4.class)
@@ -43,7 +40,7 @@ public class ArtistFragmentTest {
                 e.printStackTrace();
             }
 
-            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist10", "user0");
+            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist10");
             //TestUtils.sleep(2, MILLIS_TO_PAUSE*4);
 
             try {

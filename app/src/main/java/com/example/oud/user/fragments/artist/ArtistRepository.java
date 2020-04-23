@@ -27,6 +27,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
 
     private static final ArtistRepository ourInstance = new ArtistRepository();
 
+    private ArtistRepository() {}
 
     public static ArtistRepository getInstance() {
         return ourInstance;
@@ -194,13 +195,13 @@ public class ArtistRepository extends ConnectionAwareRepository {
      * @param ids Ids for tracks you wanna know whether they're liked by the current user or not.
      * @return {@link MutableLiveData} that wil hold, when the server successfully responds, an array of booleans.
      */
-    public MutableLiveData<IsFoundResponse> areTracksLiked(String token, ArrayList<String> ids) {
-        MutableLiveData<IsFoundResponse> savedTracksMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<Boolean>> areTracksLiked(String token, ArrayList<String> ids) {
+        MutableLiveData<ArrayList<Boolean>> savedTracksMutableLiveData = new MutableLiveData<>();
 
-        Call<IsFoundResponse> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
-        addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<IsFoundResponse>(this) {
+        Call<ArrayList<Boolean>> areTracksSavedCall = oudApi.getAreTheseTracksLiked(token, OudUtils.commaSeparatedListQueryParameter(ids));
+        addCall(areTracksSavedCall).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
             @Override
-            public void onResponse(Call<IsFoundResponse> call, Response<IsFoundResponse> response) {
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
                 super.onResponse(call, response);
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "onResponse: " + response.code());

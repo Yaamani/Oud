@@ -2,12 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.oud">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-
     <application
+        android:name=".OudApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
@@ -15,14 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".EmptyActivityForTesting"></activity>
+        <activity android:name=".artist.ArtistActivity" />
 
-
-        <uses-library
-            android:name="android.test.runner"
-            android:required="false" />
-
-        <!-- android:theme="@style/AppTheme"> -->
-        <activity android:name=".ResetPasswordActivity">
+        <activity android:name=".authentication.ResetPasswordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -30,18 +22,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
                     android:host="oud-zerobase.me"
-
-                    android:pathPrefix="/verify" />
+                    android:pathPrefix="/resetPassword"
+                    android:scheme="https" />
             </intent-filter>
-        </activity>
+        </activity> <!-- android:theme="@style/AppTheme"> -->
         <activity
             android:name=".user.UserActivity"
-            android:label="@string/title_activity_user"
-            android:configChanges="screenSize|orientation|screenLayout|navigation" />
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
+            android:label="@string/title_activity_user" />
         <activity
-            android:name=".MainActivity"
+            android:name=".authentication.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -50,15 +41,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -74,15 +61,28 @@
 
         <service android:name=".user.player.MediaService"
             android:permission="TODO">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+
         </service>
+
         <receiver android:name=".user.player.MediaService$MediaReceiver">
-            <intent-filter >
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
+            <intent-filter><action android:name="android.intent.action.MEDIA_BUTTON" /> </intent-filter>
         </receiver>
+
+        <uses-library
+            android:name="android.test.runner"
+            android:required="false" />
     </application>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

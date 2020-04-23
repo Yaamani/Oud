@@ -18,12 +18,20 @@
 
     "/artists/*/albums?offset=0&limit=7": "/artist_albums",
     "/artists/*/albums?offset=7&limit=7": "/artist_more_albums", 
+    "/artists/*/albums*": "/empty_list", 
     
     "/artists/:id/related-artists": "/related_artists", 
 
     "/me/following/contains?type=artist&ids=artist10": "/user_doesn't_follow_this_artist", 
     "/me/following/contains?type=artist*": "/user_follows_this_artist", 
 
+    "/me/tracks?limit=20&offset=0": "/liked_tracks", 
+    "/me/tracks?limit=20&offset=20": "/more_liked_tracks", 
+    "/me/tracks*": "/empty_list",    
+
+    "/me/playlists?limit=20&offset=0": "/followed_playlists", 
+    "/me/playlists?limit=20&offset=20": "/more_followed_playlists", 
+    "/me/playlists*": "/empty_list",    
 
 
     "/tracks/track0": "/track0",
@@ -39,22 +47,79 @@
 
     "/users/1":"/user1",
 
-    "/users/1/playlists":"/playlistsUser1",
 
-    "/users/1/playlists?offset=5":"/playlistsUser1",
+    "/me/albums?limit=20&offset=0": "/saved_albums", 
+    "/me/albums?limit=20&offset=20": "/more_saved_albums", 
+    "/me/albums*": "/empty_list",
 
-    "/users/1/playlists?offset=11":"/playlistsUser1",
 
-    "/users/1/playlists?offset=17":"/playlistsUser1",
+
+    "/users/user1":"/user1",
+
+    "/users/user1/playlists":"/playlistsUser1",
+
+    "/users/user1/playlists?offset=5":"/playlistsUser1",
+
+    "/users/user1/playlists?offset=11":"/playlistsUser1",
+
+    "/users/user1/playlists?offset=17":"/playlistsUser1",
+
+    "/users/user1/followers?type=user&offset=0":"/followersUser1",
+
+    "/users/user1/followers?type=user&offset=5":"/followersUser1",
+
+    "/users/user1/followers?type=user&offset=11":"/followersUser1",
+    
+    "/users/user1/following?type=artist&offset=0":"/followingUser1",
+
+
+
+
+    "/users/user0":"/user0",
+
+    "/users/user0/playlists":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=5":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=11":"/playlistsUser0",
+
+    "/users/user0/playlists?offset=17":"/playlistsUser0",
     
 
-    "/users/1/followers?type=user&offset=0":"/followersUser1",
+    "/users/user0/followers?type=user&offset=0":"/followersUser0",
 
-    "/users/1/followers?type=user&offset=5":"/followersUser1",
+    "/users/user0/followers?type=user&offset=5":"/followersUser0",
 
-    "/users/1/followers?type=user&offset=11":"/followersUser1",
+    "/users/user0/followers?type=user&offset=11":"/followersUser0",
     
+    "/users/user0/following?type=artist&offset=0":"/followingUser0artists",
+
+    "/users/user0/following?type=user&offset=0":"/followingUser0users",
+
+    "/me/following/contains*":"/oneIdTrue",
+
+
+
+
+    "/me/following?type=artist&limit=20&offset=0": "/followed_artists", 
+    "/me/following?type=artist&limit=20&offset=20": "/more_followed_artists", 
+    
+    "/me/following*": "/empty_list" , 
+
+
+    "/me": "/full_profile",
+
+    "/artists/user0/albums?offset=0&limit=7":"/artist_albums",
+    
+    "/artists/user0/albums?offset=6&limit=7":"/artist_more_albums",
+
+    "/genres?offset=0":"/genres"
+
+    
+    
+
     "/users/1/following?type=artist&offset=0":"/followingUser1"
 	
+
 
 }

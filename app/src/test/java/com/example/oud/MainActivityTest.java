@@ -4,12 +4,12 @@ package com.example.oud;
 
 import android.content.SharedPreferences;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 
+
+import com.example.oud.authentication.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,11 +21,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.annotation.LooperMode;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

@@ -4,14 +4,19 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.api.FollowingPublicityPayload;
+import com.example.oud.api.ListOfIds;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.UserPlaylistsResponse;
+import com.example.oud.api.publicPlaylistfollow;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -19,15 +24,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
-    private OudApi oudApi;
+    // private OudApi oudApi;
 
     public ProfilePlaylistRepository() {
-        oudApi = instantiateRetrofitOudApi();
+        // oudApi = instantiateRetrofitOudApi();
     }
 
 
         public  MutablePlaylistWithTotal loadUserPlaylists(String userId){
-            oudApi = instantiateRetrofitOudApi();
+            // oudApi = instantiateRetrofitOudApi();
             MutableLiveData<List<PlaylistPreview>> mutablePlaylists = new MutableLiveData<>();
             MutableLiveData<Integer> total= new MutableLiveData<>();
 
@@ -51,7 +56,7 @@ public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
 
         public void loadMoreUserPlaylists(String userId,int offset,MutableLiveData<List<PlaylistPreview>> mutablePlaylists){
-            oudApi = instantiateRetrofitOudApi();
+            // oudApi = instantiateRetrofitOudApi();
             Call<UserPlaylistsResponse> call = oudApi.getMoreUserPlaylists(userId,offset);
 
             addCall(call).enqueue(new FailureSuccessHandledCallback<UserPlaylistsResponse>(this){
@@ -70,5 +75,44 @@ public class ProfilePlaylistRepository extends ConnectionAwareRepository {
 
             });
         }
+
+    public void followPlaylist(String token,String playlistId,ConnectionStatusListener connectionStatusListener){
+
+
+        FollowingPublicityPayload followingPublicityPayload = new FollowingPublicityPayload(true);
+        Call<ResponseBody> call = oudApi.followPlaylist(token,playlistId,followingPublicityPayload);
+
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this,connectionStatusListener) {});
+
     }
+
+    public void unFollowPlaylist(String token,String playlistId,ConnectionStatusListener connectionStatusListener){
+        Call<ResponseBody> call = oudApi.unfollowPlaylist(token,playlistId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ResponseBody>(this,connectionStatusListener) {
+
+
+        });
+
+
+    }
+
+
+    public void checkIfIFollowThisPlaylist(String token,String commaSeparatedUsers,String userId,MutableLiveData<Boolean> isFollowed){
+        Call<ArrayList<Boolean>> call = oudApi.checkIfIFollowThisPlaylist(token,commaSeparatedUsers,userId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
+            @Override
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    isFollowed.setValue(response.body().get(0));
+                }
+            }
+
+        });
+
+
+
+    }
+
+}
 

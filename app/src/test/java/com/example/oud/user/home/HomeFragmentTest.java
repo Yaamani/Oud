@@ -17,7 +17,6 @@ import com.example.oud.user.fragments.playlist.PlaylistFragment;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -215,7 +214,7 @@ public class HomeFragmentTest {
         } else if (current.getType().equals(Constants.API_ARTIST)) {
             try {
                 Artist currentArtist = oudApi.artist("token", current.getId()).execute().body();
-                currentName = currentArtist.getName();
+                currentName = currentArtist.getDisplayName();
             } catch (IOException e) {
                 e.printStackTrace();
             }

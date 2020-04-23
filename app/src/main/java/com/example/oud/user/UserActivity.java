@@ -29,6 +29,7 @@ import com.example.oud.user.fragments.home.HomeFragment2;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragmentOpeningListener;
+import com.example.oud.user.fragments.premium.AuthorizationHeaderConnection;
 import com.example.oud.user.fragments.premium.PremiumFragment;
 import com.example.oud.user.fragments.search.SearchFragment;
 import com.example.oud.user.fragments.settings.SettingsFragment;
@@ -42,6 +43,11 @@ import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.mp4.Track;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.huxq17.download.Pump;
+import com.huxq17.download.PumpFactory;
+import com.huxq17.download.config.DownloadConfig;
+import com.huxq17.download.core.DownloadRequest;
+import com.huxq17.download.core.service.IDownloadConfigService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +60,17 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.media.session.MediaButtonReceiver;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 
 public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener, PlayerInterface, MediaBrowserHelperCallback {
+
+/*
+public class UserActivity extends AppCompatActivity implements ConnectionStatusListener, ReconnectingListener, PlaylistFragmentOpeningListener, PlayerInterface  {
+*/
+
 
     private static final String TAG = UserActivity.class.getSimpleName();
 
@@ -73,7 +88,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     private Stack<Integer> bottomNavViewBackStack = new Stack<>(); // Menu Item Ids
 
     private NotificationManager mNotificationManager;
-    private static MediaSessionCompat mMediaSession;
+    /*private static MediaSessionCompat mMediaSession;*/
     private PlayerHelper mPlayerHelper;
     private CurrentPlaybackStateReceiver currentPlaybackStateReceiver;
 
@@ -266,6 +281,9 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
         /*NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);*/
+
+        pumpConfig();
+
     }
 
     /*private boolean artistFragPaused = false;
@@ -357,21 +375,26 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 break;
             case R.id.navigation_library:
                 //selected = new LibraryFragment();
-                LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(Constants.LIBRARY_FRAGMENT_TAG);
-                if (libraryFragment == null)
+                /*LibraryFragment libraryFragment = (LibraryFragment) manager.findFragmentByTag(Constants.LIBRARY_FRAGMENT_TAG);
+                if (libraryFragment == null)*/
                     transaction.replace(R.id.nav_host_fragment, new LibraryFragment(), Constants.LIBRARY_FRAGMENT_TAG);
-                else
-                    transaction.replace(R.id.nav_host_fragment, libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);
+
+                /*else
+                    transaction.replace(R.id.nav_host_fragment, libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);*/
+
+                /*else
+                    transaction.replace(R.id.nav_host_fragment,libraryFragment, Constants.LIBRARY_FRAGMENT_TAG);*/
+
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
             case R.id.navigation_premium:
                 //selected = new PremiumFragment();
-                PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(Constants.PREMIUM_FRAGMENT_TAG);
-                if (premiumFragment == null)
+               /* PremiumFragment premiumFragment = (PremiumFragment) manager.findFragmentByTag(Constants.PREMIUM_FRAGMENT_TAG);
+                if (premiumFragment == null)*/
                     transaction.replace(R.id.nav_host_fragment, new PremiumFragment(), Constants.PREMIUM_FRAGMENT_TAG);
-                else
-                    transaction.replace(R.id.nav_host_fragment, premiumFragment, Constants.PREMIUM_FRAGMENT_TAG);
+                /*else
+                    transaction.replace(R.id.nav_host_fragment, premiumFragment, Constants.PREMIUM_FRAGMENT_TAG);*/
 
                 /*transaction.replace(R.id.container_small_player , smallPlayerFragment);*/
                 break;
@@ -379,7 +402,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 //selected = new SettingsFragment();
                 SettingsFragment settingsFragment = (SettingsFragment) manager.findFragmentByTag(Constants.SETTINGS_FRAGMENT_TAG);
                 if (settingsFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(), Constants.SETTINGS_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, new SettingsFragment(this), Constants.SETTINGS_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, settingsFragment, Constants.SETTINGS_FRAGMENT_TAG);
 
@@ -483,7 +506,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     @Override
     public void onTryingToReconnect() {
 
-        //hideOfflineFragment();
+
 
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {
@@ -559,6 +582,32 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
     }
+
+
+    /**
+     * Configure the download manager (Pump).
+     */
+    private void pumpConfig() {
+        String token = OudUtils.getToken(this);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    Response response = chain.proceed(request);
+                    // Log.d(TAG, "pumpConfig: " + response.code());
+                    if (response.code() == 403)
+                        Toast.makeText(this, "يا فقير.", Toast.LENGTH_SHORT).show();
+                    return response;
+                })
+                .addInterceptor(new OudUtils.LoggingInterceptor())
+                .build();
+
+        if (PumpFactory.getService(IDownloadConfigService.class) != null)
+            DownloadConfig.newBuilder()
+                    .setDownloadConnectionFactory(new AuthorizationHeaderConnection.Factory(OudUtils.getIgnoreCertificateOkHttpClient(), token))
+                    .build();
+    }
+
 
     /**
      * these functions deal with track in fragments (home or search) and small player fragment
@@ -640,12 +689,12 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         smallPlayerTransaction.replace(R.id.container_small_player, new SmallPlayerFragment(), Constants.SMALL_PLAYER_FRAGMENT_TAG)
                 .commit();
 
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
 
         if (mediaBrowserHelper != null ) {
             mediaBrowserHelper.stopTheService();
@@ -656,6 +705,10 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
 
             unregisterReceiver(currentPlaybackStateReceiver);
         }
+
+
+        mPlayerHelper.releasePlayer();
+        Pump.shutdown();
 
     }
 
@@ -673,6 +726,11 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
     public void mediaMetaDataChanged(MediaMetadataCompat mediaMetaData) {
 
     }
+
+    /*@Override
+    public void mediaMetaDataChanged(MediaMetadataCompat mediaMetaData) {
+
+    }*/
 
     public class CurrentPlaybackStateReceiver extends BroadcastReceiver {
 

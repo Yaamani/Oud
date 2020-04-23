@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainLoginFragment"
-        android:name="com.example.oud.MainLoginFragment"
+        android:name="com.example.oud.authentication.MainLoginFragment"
         android:label="fragment_main_login"
         tools:layout="@layout/fragment_main_login" >
         <action
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/actualLoginFragment"
-        android:name="com.example.oud.ActualLoginFragment"
+        android:name="com.example.oud.authentication.ActualLoginFragment"
         android:label="ActualLoginFragment" >
         <action
             android:id="@+id/action_actualLoginFragment_to_forgetPasswordFragment"
@@ -30,16 +30,16 @@
     </fragment>
     <fragment
         android:id="@+id/forgetPasswordFragment"
-        android:name="com.example.oud.ForgetPasswordFragment"
+        android:name="com.example.oud.authentication.ForgetPasswordFragment"
         android:label="fragment_forget_password"
         tools:layout="@layout/fragment_forget_password" />
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.example.oud.SignupFragment"
+        android:name="com.example.oud.authentication.SignupFragment"
         android:label="SignupFragment" />
     <fragment
         android:id="@+id/connectWithOtherServicesDialogFragment"
-        android:name="com.example.oud.ConnectWithOtherServicesDialogFragment"
+        android:name="com.example.oud.authentication.ConnectWithOtherServicesDialogFragment"
         android:label="ConnectWithOtherServicesDialogFragment" >
         <action
             android:id="@+id/action_connectWithOtherServicesDialogFragment_to_signupFragment"

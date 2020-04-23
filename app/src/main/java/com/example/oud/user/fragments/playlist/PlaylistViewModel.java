@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.oud.Constants;
@@ -53,10 +54,10 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
 
     // Album
     private MutableLiveData<Album> albumLiveData;
-    private MutableLiveData<IsFoundResponse> isThisAlbumSavedByUser;
+    private MutableLiveData<ArrayList<Boolean>> isThisAlbumSavedByUser;
 
 
-    private MutableLiveData<IsFoundResponse> areTracksLikedLiveData;
+    private MutableLiveData<ArrayList<Boolean>> areTracksLikedLiveData;
 
 
 
@@ -148,7 +149,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return doesUserFollowThisPlaylist;
     }
 
-    public MutableLiveData<IsFoundResponse> getIsThisAlbumSavedByUser(String token) {
+    public MutableLiveData<ArrayList<Boolean>> getIsThisAlbumSavedByUser(String token) {
         if (isThisAlbumSavedByUser == null) {
             ArrayList<String> albumId = new ArrayList<>();
             albumId.add(albumLiveData.getValue().get_id());
@@ -192,7 +193,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.deleteTrack(token, playlistId, trackId);
     }
 
-    public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+    public MutableLiveData<ArrayList<Boolean>> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
         if (areTracksLikedLiveData == null)
             areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
         return areTracksLikedLiveData;
@@ -282,7 +283,7 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         mRepo.changePlaylistDetails(token, id, name, null, false);
     }
 
-    public void uploadPlaylistImage(String token, Context context, PlaylistFragment playlistFragment, Drawable before, Bitmap bitmap) {
+    public void uploadPlaylistImage(String token, Context context, PlaylistFragment playlistFragment, Drawable before, Bitmap bitmap, Uri imageUri) {
         File sd = context.getCacheDir();
         File folder = new File(sd, "/myfolder/");
         if (!folder.exists()) {
@@ -320,7 +321,9 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         playlistFragment.setPlaylistImageBeforeUploadingTheNewOne(before);
         playlistFragment.blockUiAndWait();
 
-        mRepo.uploadPlaylistImage(token, file);
+        String id = playlistLiveData.getValue().getId();
+
+        mRepo.uploadPlaylistImage(token, context, id, file, imageUri);
 
     }
 
@@ -365,11 +368,11 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponAddingTrackToLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, true);
     }
 
     private void updateLiveDataUponRemovingTrackFromLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, false);
     }
 
     private void updateLiveDataUponFollowingPlaylist() {
@@ -397,11 +400,11 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
     }
 
     private void updateLiveDataUponSavingAnAlbum() {
-        isThisAlbumSavedByUser.getValue().getIsFound().set(0, true);
+        isThisAlbumSavedByUser.getValue().set(0, true);
     }
 
     private void updateLiveDataUponUnSavingAnAlbum() {
-        isThisAlbumSavedByUser.getValue().getIsFound().set(0, false);
+        isThisAlbumSavedByUser.getValue().set(0, false);
     }
 
     @Override
@@ -453,17 +456,34 @@ public class PlaylistViewModel extends ConnectionAwareViewModel<PlaylistReposito
         return currentOperation;
     }
 
+    public void clearDoesUserFollowThisPlaylistData() {
+        doesUserFollowThisPlaylist = null;
+    }
+
+    public void clearIsThisAlbumSavedByUserData() {
+        isThisAlbumSavedByUser = null;
+    }
+
+    public void clearAreTracksLikedData() {
+        areTracksLikedLiveData = null;
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearDoesUserFollowThisPlaylistData();
+        clearIsThisAlbumSavedByUserData();
+        clearAreTracksLikedData();
+    }
+
     @Override
     public void clearData() {
         playlistLiveData = null;
         //eachTrackAlbumLiveData = null;
-        doesUserFollowThisPlaylist = null;
+        clearDoesUserFollowThisPlaylistData();
         newPlaylistImage = null;
 
         albumLiveData = null;
-        isThisAlbumSavedByUser = null;
+        clearIsThisAlbumSavedByUserData();
 
-
-        areTracksLikedLiveData = null;
+        clearAreTracksLikedData();
     }
 }

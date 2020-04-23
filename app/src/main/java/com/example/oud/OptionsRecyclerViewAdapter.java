@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,21 +21,26 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
 
     private Context mContext;
 
+    private int mContainerId;
+
     private ArrayList<Integer> mIcons;
     private ArrayList<String> mText;
     private ArrayList<Boolean> mSelectedItems;
     private ArrayList<View.OnClickListener> mClickListeners;
 
+
     public OptionsRecyclerViewAdapter(android.content.Context mContext,
                                       ArrayList<Integer> mIcons,
                                       ArrayList<String> mText,
                                       ArrayList<Boolean> selectedItems,
-                                      ArrayList<View.OnClickListener> mClickListeners) {
+                                      ArrayList<View.OnClickListener> mClickListeners,
+                                      @IdRes int mContainerId) {
         this.mContext = mContext;
         this.mIcons = mIcons;
         this.mText = mText;
         this.mSelectedItems = selectedItems;
         this.mClickListeners = mClickListeners;
+        this.mContainerId = mContainerId;
     }
 
     @NonNull
@@ -47,6 +53,7 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
     @Override
     public void onBindViewHolder(@NonNull OptionItemViewHolder holder, int position) {
 
+
         Glide.with(mContext)
                 .load(mIcons.get(position))
                 .into(holder.mIcon);
@@ -55,7 +62,7 @@ public class OptionsRecyclerViewAdapter extends RecyclerView.Adapter<OptionsRecy
 
         holder.itemView.setOnClickListener(v -> {
             mClickListeners.get(position).onClick(v);
-            OptionsFragment.hideOptionsFragment((FragmentActivity) mContext, R.id.container_options);
+            OptionsFragment.hideOptionsFragment((FragmentActivity) mContext, mContainerId);
         });
 
         /*holder.itemView.setClickable(false);

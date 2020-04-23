@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 
@@ -64,6 +65,7 @@ public class VerticalRecyclerViewAdapter extends RecyclerView.Adapter<VerticalRe
 
         String iconTagPrefix = mContext.getResources().getString(R.string.tag_home_outer_item_icon);
         holder.mTitle.setTag(iconTagPrefix + position);
+
         Glide.with(mContext)
                 .load(icons.get(position))
                 //.placeholder(R.drawable.ic_loading)

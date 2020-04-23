@@ -1,11 +1,6 @@
 package com.example.oud.user.artist;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.widget.ImageButton;
 
 import com.example.oud.Constants;
 import com.example.oud.R;
@@ -16,7 +11,6 @@ import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.artist.ArtistRepository;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -24,17 +18,10 @@ import org.robolectric.annotation.LooperMode;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.Espresso.*;
-import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
-import static androidx.test.espresso.contrib.RecyclerViewActions.*;
 import static com.google.common.truth.Truth.*;
 
 
@@ -61,7 +48,7 @@ public class ArtistFragmentTest {
         activityScenario.onActivity(activity -> {
             TestUtils.sleep(2, MILLIS_TO_PAUSE);
 
-            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist0", "user0");
+            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist0");
             TestUtils.sleep(2, MILLIS_TO_PAUSE);
 
 
@@ -85,7 +72,7 @@ public class ArtistFragmentTest {
         activityScenario.onActivity(activity -> {
             TestUtils.sleep(2, MILLIS_TO_PAUSE);
 
-            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist10", "user0");
+            ArtistFragment.show(activity, R.id.nav_host_fragment, "artist10");
             TestUtils.sleep(2, MILLIS_TO_PAUSE);
 
             // ImageButton followArtist = ((ImageButton) activity.findViewById(R.id.btn_artist_follow));
@@ -164,15 +151,13 @@ public class ArtistFragmentTest {
 
     @Test
     public void myArgsTest() {
-        Bundle bundle = ArtistFragment.myArgs("artistId", "userId");
+        Bundle bundle = ArtistFragment.myArgs("artistId");
 
         String artistId = bundle.getString(Constants.ARTIST_ID_KEY);
-        String userId = bundle.getString(Constants.USER_ID_KEY);
 
         assertThat(artistId)
                 .isEqualTo("artistId");
-        assertThat(userId)
-                .isEqualTo("userId");
+
 
     }
 

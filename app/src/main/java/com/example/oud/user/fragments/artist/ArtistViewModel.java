@@ -8,7 +8,7 @@ import com.example.oud.api.IsFoundResponse;
 import com.example.oud.api.OudList;
 import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareViewModel;
-import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     private MutableLiveData<OudList<Album>> lastSetOfLoadedAlbums;
     private ArrayList<MutableLiveData<Album>> loadedAlbums = new ArrayList<>();
 
-    private MutableLiveData<IsFoundResponse> areTracksLikedLiveData;
+    private MutableLiveData<ArrayList<Boolean>> areTracksLikedLiveData;
 
 
     private MutableLiveData<RelatedArtists> similarArtistsMutableLiveData;
@@ -126,7 +126,7 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * @param ids
      * @return The {@link MutableLiveData} that tell us whether the user like the specified tracks or not (array of booleans).
      */
-    public MutableLiveData<IsFoundResponse> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
+    public MutableLiveData<ArrayList<Boolean>> getAreTracksLikedLiveData(String token, ArrayList<String> ids) {
         if (areTracksLikedLiveData == null)
             areTracksLikedLiveData = mRepo.areTracksLiked(token, ids);
         return areTracksLikedLiveData;
@@ -189,13 +189,27 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     public MutableLiveData<OudList<Album>> loadMoreAlbums(String token, String artistId) {
         if (lastSetOfLoadedAlbums == null) {
             lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, 0, Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
-        } else
-            lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, lastSetOfLoadedAlbums.getValue().getLimit(), Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT);
+        } else {
+            if (lastSetOfLoadedAlbums.getValue() != null) {
+
+                int prevOffset = lastSetOfLoadedAlbums.getValue().getOffset();
+                int prevLimit = lastSetOfLoadedAlbums.getValue().getLimit();
+
+                int offset = prevOffset + prevLimit, limit = Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT;
+
+                // if (off)
+
+
+                lastSetOfLoadedAlbums = mRepo.fetchSomeAlbums(token, artistId, offset, limit);
+            }
+        }
 
         return lastSetOfLoadedAlbums;
     }
 
     public ArrayList<MutableLiveData<Album>> getLoadedAlbums() {
+        if (loadedAlbums == null)
+            loadedAlbums = new ArrayList<>();
         return loadedAlbums;
     }
 
@@ -224,14 +238,14 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
      * When the {@link #currentOperation} succeeds, update the {@link MutableLiveData} accordingly to match that on the server.
      */
     private void updateLiveDataUponAddingTrackToLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, true);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, true);
     }
 
     /**
      * When the {@link #currentOperation} succeeds, update the {@link MutableLiveData} accordingly to match that on the server.
      */
     private void updateLiveDataUponRemovingTrackFromLikedTracks() {
-        areTracksLikedLiveData.getValue().getIsFound().set(trackLikePosition, false);
+        areTracksLikedLiveData.getValue().set(trackLikePosition, false);
     }
 
     /**
@@ -275,14 +289,27 @@ public class ArtistViewModel extends ConnectionAwareViewModel<ArtistRepository> 
     }
 
 
+    public void clearDoesUserFollowThisArtist() {
+        doesUserFollowThisArtist = null;
+    }
+
+    public void clearAreTracksLikedData() {
+        areTracksLikedLiveData = null;
+    }
+
+    public void clearTheDataThatHasThePotentialToBeChangedOutside() {
+        clearDoesUserFollowThisArtist();
+        clearAreTracksLikedData();
+    }
 
     @Override
     public void clearData() {
         artistMutableLiveData = null;
-        doesUserFollowThisArtist = null;
+        clearDoesUserFollowThisArtist();
+        loadedAlbums = new ArrayList<>();
 
         similarArtistsMutableLiveData = null;
 
-        areTracksLikedLiveData = null;
+        clearAreTracksLikedData();
     }
 }

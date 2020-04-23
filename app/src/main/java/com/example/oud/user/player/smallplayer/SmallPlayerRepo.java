@@ -29,7 +29,8 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
         mutableLiveData = new MutableLiveData<>();
         isLoadingTrackMutableLiveData = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
+
+        /*OudApi oudApi = instantiateRetrofitOudApi();*/
 
         Call<Track> trackCall = oudApi.getTrack(trackId);
         trackCall.enqueue(new FailureSuccessHandledCallback<Track>(connectionStatusListener){
@@ -61,6 +62,11 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
             }
         });
 
+        MutableLiveData<Track> mutableLiveData = new MutableLiveData<>();
+        // OudApi oudApi = instantiateRetrofitOudApi();
+        //todo create fun to getTrack from Api
+
+
         return  mutableLiveData;
 
     }
@@ -69,7 +75,7 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
 
         albumMutableLiveData = new MutableLiveData<>();
 
-        OudApi oudApi = instantiateRetrofitOudApi();
+        /*OudApi oudApi = instantiateRetrofitOudApi();*/
 
         Call<Album> albumCall = oudApi.album("token",albumId);
         albumCall.enqueue(new FailureSuccessHandledCallback<Album>(connectionStatusListener){

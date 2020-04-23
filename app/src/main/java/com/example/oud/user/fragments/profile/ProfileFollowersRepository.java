@@ -2,7 +2,9 @@ package com.example.oud.user.fragments.profile;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.oud.ConnectionStatusListener;
 import com.example.oud.api.FollowingOrFollowersResponse;
+import com.example.oud.api.ListOfIds;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.PlaylistPreview;
 import com.example.oud.api.UserOrArtistPreview;
@@ -10,6 +12,7 @@ import com.example.oud.api.UserPlaylistsResponse;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -17,7 +20,7 @@ import retrofit2.Response;
 
 public class ProfileFollowersRepository extends ConnectionAwareRepository {
     public MutableUserOrArtistWithTotal loadUserFollowers(String userId){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi(getBaseUrl());
 
         MutableLiveData<List<UserOrArtistPreview>> mutableFollowers = new MutableLiveData<>();
         MutableLiveData<Integer> mutableTotal= new MutableLiveData<>();
@@ -37,7 +40,7 @@ public class ProfileFollowersRepository extends ConnectionAwareRepository {
     }
 
     public void loadMoreUserFollowers(String userId,int offset,MutableLiveData<List<UserOrArtistPreview>> mutableUserOrArtistList){
-        OudApi oudApi = instantiateRetrofitOudApi();
+        // OudApi oudApi = instantiateRetrofitOudApi();
         Call<FollowingOrFollowersResponse> call = oudApi.getFollowers(userId,"user",offset);
 
         addCall(call).enqueue(new FailureSuccessHandledCallback<FollowingOrFollowersResponse>(this){
@@ -56,5 +59,107 @@ public class ProfileFollowersRepository extends ConnectionAwareRepository {
 
         });
     }
+
+    public void followUser(String token, String userId, ConnectionStatusListener connectionStatusListener){
+        ArrayList<String> id = new ArrayList<>();
+        id.add(userId);
+        ListOfIds listOfIds = new ListOfIds(id);
+        Call<Void> call = oudApi.followUsersOrArtists(token,"user",listOfIds);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
+
+
+    }
+
+    public void unFollowUser(String token,String userId,ConnectionStatusListener connectionStatusListener){
+
+        Call<Void> call = oudApi.unFollowUsersOrArtists(token,"user",userId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
+
+
+    }
+
+    public void followArtist(String token,String userId,ConnectionStatusListener connectionStatusListener){
+        ArrayList<String>id = new ArrayList<>();
+        id.add(userId);
+        ListOfIds listOfIds = new ListOfIds(id);
+        Call<Void> call = oudApi.followUsersOrArtists(token,"artist",listOfIds);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
+
+
+    }
+
+    public void unFollowArtist(String token,String userId,ConnectionStatusListener connectionStatusListener){
+
+        Call<Void> call = oudApi.unFollowUsersOrArtists(token,"artist",userId);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<Void>(this,connectionStatusListener) {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                super.onResponse(call,response);
+
+            }
+
+        });
+
+
+    }
+
+    public void checkIfIFollowThisUser(String token,String commaSeparatedUsers,MutableLiveData<Boolean> isFollowed){
+        Call<ArrayList<Boolean>> call = oudApi.checkIfIFollowTheseUsersOrArtists(token,"user",commaSeparatedUsers);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
+            @Override
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    isFollowed.setValue(response.body().get(0));
+                }
+            }
+
+        });
+
+
+
+    }
+
+
+    public void checkIfIFollowThisArtist(String token,String commaSeparatedUsers,MutableLiveData<Boolean> isFollowed){
+        Call<ArrayList<Boolean>> call = oudApi.checkIfIFollowTheseUsersOrArtists(token,"artist",commaSeparatedUsers);
+        addCall(call).enqueue(new FailureSuccessHandledCallback<ArrayList<Boolean>>(this) {
+            @Override
+            public void onResponse(Call<ArrayList<Boolean>> call, Response<ArrayList<Boolean>> response) {
+                super.onResponse(call,response);
+                if(response.isSuccessful()){
+                    isFollowed.setValue(response.body().get(0));
+                }
+            }
+
+        });
+
+
+
+    }
+
+
+
 
 }

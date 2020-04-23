@@ -168,6 +168,7 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
                     100 * 1024 * 1024,
                     5 * 1024 * 1024);
 
+
             MediaSource mediaSource = new ExtractorMediaSource(trackUri/*Uri.parse("asset:///toccata_fugue.mp3")*/,cacheDataSourceFactory
                     , new DefaultExtractorsFactory(),
                     null/*new Handler()*/,null /*Throwable::printStackTrace*/);
@@ -176,6 +177,11 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
            /* MediaSource secondSource= new ProgressiveMediaSource.Factory(new FileDataSourceFactory()).createMediaSource(Uri.parse(uri.get(1)));
             MediaSource mediaSource;
             mediaSource.addMediaSources(firstSource);*/
+
+            /*MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(*//*mSong.getUri()*//**//*"asset:///toccata_fugue.mp3"*//*userContext.getExternalCacheDir().getAbsolutePath() + "/5e9b40b80f27b613b44fba32-5e907db0a0645f558160760d-1587347295787.mp3"),
+                    new DefaultDataSourceFactory(userContext, userAgent), new DefaultExtractorsFactory(),
+                    null*//*new Handler()*//*, null);*/
+
 
             mExoPlayer.prepare(mediaSource);
             /*mExoPlayer.setPlayWhenReady(true);*/
@@ -293,7 +299,7 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
         }
     }
 
-    public String getArtistsNames(){
+    /*public String getArtistsNames(){
 
         StringBuilder stringBuilder = new StringBuilder();
         ArtistPreview[] artistPreviews = mTrack.getArtists();
@@ -303,11 +309,11 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
             stringBuilder.append(artistPreviews[index].getName());
         }
         return stringBuilder.toString();
-    }
+    }*/
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showNotification(PlaybackStateCompat state) {
+    /*private void showNotification(PlaybackStateCompat state) {
 
         Log.v(TAG, "Open Show Notification");
 
@@ -315,10 +321,10 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "channel name";
-            /*String description = userContext.getString(R.string.channel_description);*/
+            *//*String description = userContext.getString(R.string.channel_description);*//*
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(NotificationChannel.DEFAULT_CHANNEL_ID, name, importance);
-            /*channel.setDescription(description);*/
+            *//*channel.setDescription(description);*//*
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             mNotificationManager.createNotificationChannel(channel);
@@ -420,9 +426,9 @@ public class PlayerHelper extends MediaControllerCompat.Callback  implements Exo
                 .setStyle(nM);
 
         mNotificationManager.notify(0, builder.build());
-    }
+    }*/
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    /*@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)*/
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 

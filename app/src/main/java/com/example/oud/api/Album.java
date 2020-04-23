@@ -13,14 +13,17 @@ public class Album {
 
     private ArtistPreview[] artists;
 
-    private String[] genres;
+    private Genre[] genres;
 
     private String image;
 
     private String name;
 
-    @SerializedName("release_name")
+    @SerializedName("release_date")
     private Date releaseDate;
+
+    //todo change name when backend adds the variable to the api
+    private Boolean isReleased;
 
     private OudList<TrackPreview> tracks;
 
@@ -29,7 +32,7 @@ public class Album {
     public Album(String _id,
                  String albumType,
                  ArtistPreview[] artists,
-                 String[] genres,
+                 Genre[] genres,
                  String image,
                  String name,
                  Date releaseDate,
@@ -58,7 +61,7 @@ public class Album {
         return artists;
     }
 
-    public String[] getGenres() {
+    public Genre[] getGenres() {
         return genres;
     }
 

@@ -1,7 +1,6 @@
 package com.example.oud.user.fragments.artist;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -24,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oud.Constants;
 import com.example.oud.OudUtils;
@@ -33,11 +31,11 @@ import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Track;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
-import com.example.oud.user.LoadMoreAdapter;
+import com.example.oud.LoadMoreAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.adapters.HorizontalRecyclerViewAdapter;
 import com.example.oud.user.fragments.home.nestedrecyclerview.decorations.HorizontalSpaceDecoration;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
-import com.example.oud.user.fragments.playlist.TrackListRecyclerViewAdapter;
+import com.example.oud.user.TrackListRecyclerViewAdapter;
 import com.example.oud.user.player.PlayerInterface;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.Fragment;
@@ -45,8 +43,6 @@ import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
@@ -94,25 +90,23 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 null);
     }
 
-    public static ArtistFragment newInstance(String artistId, String userId) {
+    public static ArtistFragment newInstance(String artistId) {
         ArtistFragment artistFragment = new ArtistFragment();
-        artistFragment.setArguments(myArgs(artistId, userId));
+        artistFragment.setArguments(myArgs(artistId));
         return artistFragment;
     }
 
     /**
-     *
-     * @param activity Most likely you'll call {@link #getActivity()} if you're in other {@link Fragment}.
+     *  @param activity Most likely you'll call {@link #getActivity()} if you're in other {@link Fragment}.
      *                 Or <code>this</code> if you're inside the activity itself.
      * @param containerId The {@link FragmentContainerView} that you want the layout of this fragment to be inflated in.
      * @param artistId
-     * @param userId The id of the logged in user.
      */
-    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId, String userId) {
+    public static void show(FragmentActivity activity, @IdRes int containerId, String artistId) {
         FragmentManager manager = activity.getSupportFragmentManager();
         ArtistFragment artistFragment/* = (ArtistFragment) manager.findFragmentByTag(Constants.ARTIST_FRAGMENT_TAG)*/;
         //if (artistFragment == null)
-            artistFragment = ArtistFragment.newInstance(artistId, userId);
+            artistFragment = ArtistFragment.newInstance(artistId);
         //else {
             //artistFragment.setArguments(ArtistFragment.myArgs(artistId));
         //}
@@ -129,13 +123,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     /**
      * When creating a new instance, this method returns the {@link Bundle} object that {@link ArtistFragment} needs.
      * @param artistId
-     * @param userId The id of the logged in user.
      * @return
      */
-    public static Bundle myArgs(String artistId, String userId) {
+    public static Bundle myArgs(String artistId) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ARTIST_ID_KEY, artistId);
-        bundle.putString(Constants.USER_ID_KEY, userId);
         return bundle;
     }
 
@@ -148,6 +140,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         handleArgs();
         //handleToken();
         token = OudUtils.getToken(getContext());
+        userId = OudUtils.getUserId(getContext());
+
 
         mTextViewArtistName = view.findViewById(R.id.txt_artist_name);
         mImageButtonFollowArtist = view.findViewById(R.id.btn_artist_follow);
@@ -198,11 +192,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             }
         });*/
 
-        handleData();
 
-        mMotionLayout.transitionToEnd();
+        // mMotionLayout.transitionToEnd();
 
     }
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -229,6 +224,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         Log.i(TAG, "onResume: ");
 
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+
+        handleData();
+
+
         // Motion layout bug fix.
         // if (paused) {
 
@@ -248,6 +248,9 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     @Override
     public void onPause() {
         super.onPause();
+
+        if (trackListRecyclerViewAdapter != null)
+            trackListRecyclerViewAdapter.disableDownloadListener();
 
         // Motion layout bug fix.
         /*((UserActivity) getActivity()).setArtistFragPaused(true);
@@ -293,15 +296,15 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
             //mMotionLayout.getTransition(R.id.transition_artist).setEnable(true);
 
-            mTextViewArtistName.setText(artist.getName());
-            Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+            String fullUrl = OudUtils.convertImageToFullUrl(artist.getImages().get(0));
+            mTextViewArtistName.setText(artist.getDisplayName());
+
+            OudUtils.glideBuilder(getContext(), fullUrl)
                     .apply(RequestOptions.fitCenterTransform())
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtist);
             //new RequestOptions();
-            Glide.with(getContext())
-                    .load(artist.getImages().get(0))
+            OudUtils.glideBuilder(getContext(), fullUrl)
                     .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 2)))
                     //.placeholder(R.drawable.ic_oud_loading)
                     .into(mImageViewArtistBlurred);
@@ -312,6 +315,8 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
 
             mTextViewBio.setText(artist.getBio());
+
+            unBlockUi();
 
         });
 
@@ -386,7 +391,11 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 }
 
                 TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-                    talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), 5,token);
+
+                    /*talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getIds().get(position), 5, token);*/
+
+                   /* talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getId(position), true);*/
+
                 };
 
 
@@ -395,15 +404,20 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 };
 
                 trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
-                        trackIds,
-                        trackClickListener,
-                        trackImages,
-                        trackNames,
-                        userAreTracksLiked.getIsFound(),
-                        availableOfflineClickListener,
-                        heartClickListener);
+                        mRecyclerViewPopularSongs,
+                        mViewModel.getRepoBaseUrl(),
+                        userId,
+                        trackClickListener, availableOfflineClickListener, heartClickListener);
+
+                for (int j = 0; j < trackIds.size(); j++) {
+                    trackListRecyclerViewAdapter.addTrack(trackIds.get(j),
+                            trackImages.get(j),
+                            trackNames.get(j),
+                            userAreTracksLiked.get(j));
+                }
 
                 mRecyclerViewPopularSongs.setAdapter(trackListRecyclerViewAdapter);
+                trackListRecyclerViewAdapter.notifyDataSetChanged();
             } else {
                 mRecyclerViewPopularSongs.setVisibility(View.GONE);
                 mTextViewNoSongsToShow.setVisibility(View.VISIBLE);
@@ -422,14 +436,22 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         if (mViewModel.getConnectionStatus().getValue() == Constants.ConnectionStatus.FAILED)
             return;
 
-        String id = trackListRecyclerViewAdapter.getIds().get(position);
-        if (trackListRecyclerViewAdapter.getLikedTracks().get(position)) {
+        String id = trackListRecyclerViewAdapter.getId(position);
+        if (trackListRecyclerViewAdapter.isLiked(position)) {
             mViewModel.removeTrackFromLikedTracks(token, id, position);
-            trackListRecyclerViewAdapter.getLikedTracks().set(position, false);
+            trackListRecyclerViewAdapter.setTrack(position,
+                    trackListRecyclerViewAdapter.getId(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    false);
             trackListRecyclerViewAdapter.notifyItemChanged(position);
         } else {
             mViewModel.addTrackToLikedTracks(token, id, position);
-            trackListRecyclerViewAdapter.getLikedTracks().set(position, true);
+            trackListRecyclerViewAdapter.setTrack(position,
+                    trackListRecyclerViewAdapter.getId(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    trackListRecyclerViewAdapter.getImage(position),
+                    true);
             trackListRecyclerViewAdapter.notifyItemChanged(position);
         }
 
@@ -441,6 +463,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
      * Handles the data and the logic behind the albums of this artist.
      */
     private void handleAlbums() {
+
 
         if (mViewModel.getLoadedAlbums().size() < Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT)
             loadMoreAlbums();
@@ -456,7 +479,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
     private void loadMoreAlbums() {
         mViewModel.loadMoreAlbums(token, artistId).observe(getViewLifecycleOwner(), albumOudList -> {
 
-            if (albumOudList.getTotal() == 0) {
+            if (albumOudList.getTotal() == 0 & mViewModel.getLoadedAlbums().size() == 0) {
                 mRecyclerViewAlbums.setVisibility(View.GONE);
                 mTextViewNoAlbumsToShow.setVisibility(View.VISIBLE);
             }
@@ -492,26 +515,28 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
             albumMutableLiveData.observe(getViewLifecycleOwner(), album -> {
 
                 if (mAlbumsAdapter != null) {
-                    if (mAlbumsAdapter.getItemCount()-1 >= _i) {
+                    if (mAlbumsAdapter.getItemCount()-1 >= _i) { // Tracks already loaded
                         /*if (mAlbumsAdapter.getRelatedInfo().get(_i).get(Constants.ID_KEY).equals(album.get_id())) {*/
                             return;
                         } else {
 
-                            mAlbumsAdapter.getClickListeners().add(v -> PlaylistFragment.show(getActivity(),
+                        HorizontalRecyclerViewAdapter hAdapter = (HorizontalRecyclerViewAdapter) mAlbumsAdapter.getAdapter();
+
+                        hAdapter.getClickListeners().add(v -> PlaylistFragment.show(getActivity(),
                                     R.id.nav_host_fragment,
                                     userId,
                                     Constants.PlaylistFragmentType.ALBUM,
                                     album.get_id()));
-                            mAlbumsAdapter.getImages().add(album.getImage());
-                            mAlbumsAdapter.getCircularImages().add(false);
-                            mAlbumsAdapter.getTitles().add(album.getName());
-                            mAlbumsAdapter.getSubtitles().add("");
+                            hAdapter.getImages().add(album.getImage());
+                            hAdapter.getCircularImages().add(false);
+                            hAdapter.getTitles().add(album.getName());
+                            hAdapter.getSubtitles().add("");
 
                             HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put(Constants.ID_KEY, album.get_id());
-                            mAlbumsAdapter.getRelatedInfo().add(hashMap);
+                            hAdapter.getRelatedInfo().add(hashMap);
                             
-                            mAlbumsAdapter.notifyItemInserted(_i);
+                            hAdapter.notifyItemInserted(_i);
                         }
 
                         
@@ -538,15 +563,19 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
         if (mAlbumsAdapter == null) {
 
-            mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
-                    Constants.USER_ARTIST_ALBUMS_SINGLE_FETCH_LIMIT,
+            HorizontalRecyclerViewAdapter hAdapter = new HorizontalRecyclerViewAdapter(
                     getContext(),
+                    R.layout.item_inner,
                     clickListeners,
                     images,
                     circularImages,
                     titles,
                     subtitles,
                     relatedInfo);
+
+            mAlbumsAdapter = new LoadMoreAdapter(mRecyclerViewAlbums,
+                    hAdapter,
+                    HorizontalRecyclerViewAdapter.InnerItemViewHolder.class, hAdapter.getImages(), R.layout.progressbar_item);
             mRecyclerViewAlbums.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
             //mRecyclerViewAlbums.setAdapter(mAlbumsAdapter);
             mAlbumsAdapter.setOnLoadMoreListener(() -> {
@@ -581,10 +610,10 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                 for (Artist artist : artists.getArtists()) {
                     clickListeners.add(v -> ArtistFragment.show(getActivity(),
                             R.id.nav_host_fragment,
-                            artist.get_id(), userId));
+                            artist.get_id()));
                     images.add(artist.getImages().get(0));
                     circularImages.add(true);
-                    titles.add(artist.getName());
+                    titles.add(artist.getDisplayName());
                     subtitles.add("");
 
                     HashMap<String, Object> hashMap = new HashMap<>();
@@ -592,7 +621,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                     relatedInfo.add(hashMap);
                 }
 
-                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), clickListeners, images, circularImages, titles, subtitles, relatedInfo);
+                mSimilarArtistsAdapter = new HorizontalRecyclerViewAdapter(getContext(), R.layout.item_inner, clickListeners, images, circularImages, titles, subtitles, relatedInfo);
                 mRecyclerViewSimilarArtists.addItemDecoration(new HorizontalSpaceDecoration(getResources(), R.dimen.item_margin));
 
                 mRecyclerViewSimilarArtists.setAdapter(mSimilarArtistsAdapter);
@@ -608,8 +637,12 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
      * Undo the ui change when liking a track.
      */
     private void undoLikingTrack() {
-        boolean bool = trackListRecyclerViewAdapter.getLikedTracks().get(trackLikePosition);
-        trackListRecyclerViewAdapter.getLikedTracks().set(trackLikePosition, !bool);
+        boolean bool = trackListRecyclerViewAdapter.isLiked(trackLikePosition);
+        trackListRecyclerViewAdapter.setTrack(trackLikePosition,
+                trackListRecyclerViewAdapter.getId(trackLikePosition),
+                trackListRecyclerViewAdapter.getImage(trackLikePosition),
+                trackListRecyclerViewAdapter.getImage(trackLikePosition),
+                !bool);
         trackListRecyclerViewAdapter.notifyItemChanged(trackLikePosition);
     }
 
