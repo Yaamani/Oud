@@ -222,4 +222,10 @@ public interface OudApi {
     @GET("me")
     Call<Profile> getProfileOfCurrentUser(@Header("AUTHORIZATION") String token);
 
+    @PATCH("me/premium/redeem")
+    Call<Profile> redeemCoupon(@Header("AUTHORIZATION") String token, @Body CouponPayload couponPayload);
+
+    @PATCH("me/premium/subscribe")
+    Call<Profile> subscribeToPremiumOrExtendCurrentPlan(@Header("AUTHORIZATION") String token);
+
 }

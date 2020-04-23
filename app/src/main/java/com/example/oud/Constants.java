@@ -52,6 +52,7 @@ public class Constants {
     public static final String LIBRARY_PLAYLISTS_FRAGMENT_TAG = "LIBRARY_PLAYLISTS_TRACKS";
     public static final String LIBRARY_ARTISTS_FRAGMENT_TAG = "LIBRARY_ARTISTS_TRACKS";
     public static final String LIBRARY_SAVED_ALBUMS_FRAGMENT_TAG = "LIBRARY_SAVED_ALBUMS";
+    public static final String PREMIUM_REDEEM_SUBSCRIBE_FRAGMENT_TAG = "PREMIUM_REDEEM_SUBSCRIBE";
 
     public static final String ARTIST_HOME_FRAGMENT_TAG = "HOME";
     public static final String BIO_FRAGMENT_TAG = "SEARCH";
@@ -80,9 +81,9 @@ public class Constants {
     public static final String PLAYLIST_FRAGMENT_TYPE_KEY = "PLAYLIST_FRAGMENT_TYPE";
 
     public static final String API_UNKNOWN = "unknown";
-    public static final String API_ALBUM = "album";
-    public static final String API_ARTIST = "artist";
-    public static final String API_PLAYLIST = "playlist";
+    public static final String API_ALBUM = "Album";
+    public static final String API_ARTIST = "Artist";
+    public static final String API_PLAYLIST = "Playlist";
     public static final String API_USER = "user";
     public static final String API_PREMIUM = "premium";
 

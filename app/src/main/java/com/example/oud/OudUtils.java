@@ -1,15 +1,11 @@
 package com.example.oud;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
-import android.net.Uri;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -18,6 +14,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.oud.api.OudApi;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
+import com.example.oud.api.StatusMessageResponse;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,8 +24,6 @@ import com.huxq17.download.core.DownloadInfo;
 import com.huxq17.download.core.service.IDownloadManager;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -358,11 +353,27 @@ public class OudUtils {
             }
             OK_HTTP_CLIENT = builder.build();
         }
+
         return OK_HTTP_CLIENT;
     }
 
-    /*public static RequestBuilder glideBuilder(Activity activity,String imageUrl){
-        return glideBuilder((Context) activity, imageUrl);
+    public interface ServerSuccessResponseListener<T> {
 
-    }*/
+        /**
+         * Called when the response code is in the range [200, 300).
+         * @param code
+         * @param responseBody
+         */
+        void respondsWithSuccessCode(int code, T responseBody);
+
+    }
+
+    public interface ServerFailureResponseListener {
+        /**
+         * Called when the response code is NOT in the range [200, 300).
+         * @param code
+         * @param statusMessageResponse
+         */
+        void respondsWithFailureCode(int code, StatusMessageResponse statusMessageResponse);
+    }
 }

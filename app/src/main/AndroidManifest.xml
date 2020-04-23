@@ -2,25 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.oud">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
+        android:name=".OudApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".OudApplication"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".artist.ArtistActivity"></activity>
+        <activity android:name=".EmptyActivityForTesting"></activity>
+        <activity android:name=".artist.ArtistActivity" />
 
-        <uses-library
-            android:name="android.test.runner"
-            android:required="false" /> <!-- android:theme="@style/AppTheme"> -->
         <activity android:name=".authentication.ResetPasswordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -33,7 +26,7 @@
                     android:pathPrefix="/resetPassword"
                     android:scheme="https" />
             </intent-filter>
-        </activity>
+        </activity> <!-- android:theme="@style/AppTheme"> -->
         <activity
             android:name=".user.UserActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
@@ -48,15 +41,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -70,16 +59,28 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
         <receiver android:name=".user.UserActivity$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".user.UserActivity$BecomingNoisyReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
+        <uses-library
+            android:name="android.test.runner"
+            android:required="false" />
     </application>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

@@ -7,11 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,6 +30,11 @@ import java.text.SimpleDateFormat;
  */
 public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<PremiumRedeemSubscribeViewModel> {
 
+    private static final String TAG = PremiumRedeemSubscribeFragment.class.getSimpleName();
+
+    public static final int NOT_ENOUGH_CREDIT_CODE = 400;
+    public static final int INVALID_COUPON_CODE = 400;
+
     private String token;
 
     private ImageView mImageViewProfilePic;
@@ -39,6 +46,9 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
 
     private TextView mTextViewPlan;
     private Button mButtonSubscribeExtend;
+    
+    /*private Toast enterValidCouponToast;
+    private Toast youDontHaveEnoughCreditToast;*/
 
 
     public PremiumRedeemSubscribeFragment() {
@@ -58,8 +68,15 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
 
         initializeUiStuff(view);
 
-        handleData();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mViewModel.clearTheDataThatHasThePotentialToBeChangedOutside();
+
+        handleProfileData();
     }
 
     private void handleToken() {
@@ -73,12 +90,54 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
 
         mEditTextCoupon = view.findViewById(R.id.edit_txt_coupon);
         mButtonRedeem = view.findViewById(R.id.btn_redeem);
+        mButtonRedeem.setOnClickListener(redeemClickListener);
 
         mTextViewPlan = view.findViewById(R.id.txt_plan);
         mButtonSubscribeExtend = view.findViewById(R.id.btn_subscribe_extend);
+        mButtonSubscribeExtend.setOnClickListener(subscribeExtendClickListener);
     }
+    
+    private OudUtils.ServerFailureResponseListener redeemCouponFailureResponseListener = (code, statusMessageResponse) -> {
+        if (code == INVALID_COUPON_CODE) {
+            if (statusMessageResponse.getMessage().equals("Coupon is already used."))
+                forceToast("Coupon is already used.", Toast.LENGTH_LONG);
+            else
+                forceToast(R.string.please_enter_a_valid_coupon, Toast.LENGTH_LONG);
+            //showEnterValidCouponToast();
+        }
 
-    private void handleData() {
+        //Log.e(TAG, "error message : " + message);
+    };
+
+    private OudUtils.ServerFailureResponseListener subscribeExtendFailureResponseListener = (code, statusMessageResponse) -> {
+        if (code == NOT_ENOUGH_CREDIT_CODE)
+            forceToast(R.string.you_dont_have_enough_credit, Toast.LENGTH_LONG);
+            //showYouDontHaveEnoughCreditToast();
+        else
+            forceToast(statusMessageResponse.getMessage(), Toast.LENGTH_LONG);
+    };
+
+    private View.OnClickListener redeemClickListener = v -> {
+        String coupon = mEditTextCoupon.getText().toString();
+
+        if (coupon.isEmpty()) {
+            forceToast(R.string.please_enter_a_valid_coupon, Toast.LENGTH_LONG);
+            //showEnterValidCouponToast();
+            return;
+        }
+
+        blockUiAndWait();
+
+        mViewModel.redeemCoupon(token, coupon, redeemCouponFailureResponseListener);
+    };
+
+    private View.OnClickListener subscribeExtendClickListener = v -> {
+        blockUiAndWait();
+
+        mViewModel.subscribeToPremiumOrExtendCurrentPlan(token, subscribeExtendFailureResponseListener);
+    };
+
+    private void handleProfileData() {
         mViewModel.getProfileLiveData(token).observe(getViewLifecycleOwner(), profile -> {
 
             Resources resources = getContext().getResources();
@@ -93,23 +152,42 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
             mTextViewUserName.setText(profile.getDisplayName());
 
             String credit = resources.getString(R.string.credit)
-                    .concat("" + profile.getCredit());
+                    .concat(" " + profile.getCredit());
             mTextViewCredit.setText(credit);
 
 
             if (profile.getRole().equals(Constants.API_PREMIUM)) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String plan = resources.getString(R.string.end_date);
                 if (profile.getPlan() != null)
-                    plan.concat(dateFormat.format(profile.getPlan()));
+                    plan = plan
+                            .concat(" ")
+                            .concat(dateFormat.format(profile.getPlan()));
                 mTextViewPlan.setText(plan);
                 mButtonSubscribeExtend.setText(resources.getString(R.string.extend));
             } else
                 mTextViewPlan.setText(resources.getString(R.string.free_plan));
-
-
-
-
         });
     }
+    
+    /*private void showEnterValidCouponToast() {
+        if (enterValidCouponToast == null)
+            enterValidCouponToast = Toast.makeText(getContext(), R.string.please_enter_a_valid_coupon, Toast.LENGTH_LONG);
+
+        if (youDontHaveEnoughCreditToast != null)
+            youDontHaveEnoughCreditToast.cancel();
+        
+        enterValidCouponToast.show();
+    }
+
+    private void showYouDontHaveEnoughCreditToast() {
+        if (youDontHaveEnoughCreditToast == null)
+            youDontHaveEnoughCreditToast = Toast.makeText(getContext(), R.string.you_dont_have_enough_credit, Toast.LENGTH_LONG);
+
+        if (enterValidCouponToast != null)
+            enterValidCouponToast.cancel();
+
+        youDontHaveEnoughCreditToast.show();
+    }*/
+
 }

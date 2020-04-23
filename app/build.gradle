@@ -128,7 +128,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.0.0'
 
     // Pump download manager
-    implementation'com.huxq17.pump:download:1.2.14'
+    implementation 'com.huxq17.pump:download:1.2.14'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 
     implementation 'org.apache.commons:commons-io:1.3.2'
