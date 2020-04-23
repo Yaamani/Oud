@@ -142,19 +142,18 @@
 
   "recently-played": {
     "items": [ 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist0"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "artist","id": "artist10"}    },
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "album","id": "album5"}    },
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "album","id": "album0"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "unknown","id": "unknown1"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist2"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "artist","id": "artist3"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "album","id": "album4"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "artist","id": "artist5"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "album","id": "album6"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist7"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist8"}    }, 
-      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "playlist","id": "playlist9"}    }
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Playlist","id": "playlist0"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Artist","id": "artist10"}    },
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Album","id": "album5"}    },
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Album","id": "album0"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Playlist","id": "playlist2"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Artist","id": "artist3"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Album","id": "album4"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Artist","id": "artist5"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Album","id": "album6"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Playlist","id": "playlist7"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Playlist","id": "playlist8"}    }, 
+      {      "playedAt": "2020-03-26T16:23:02Z",      "context": {"type": "Playlist","id": "playlist9"}    }
     ],
     "limit": 10
 },
