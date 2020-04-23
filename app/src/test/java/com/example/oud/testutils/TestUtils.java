@@ -1,18 +1,23 @@
 package com.example.oud.testutils;
 
+import android.os.IBinder;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.example.oud.Constants;
 import com.example.oud.OudUtils;
 import com.example.oud.api.OudApi;
 import com.example.tryingstuff.OudApiJsonGenerator;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import androidx.test.espresso.Root;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -77,8 +82,11 @@ public class TestUtils {
         else
             baseUrl = Constants.BASE_URL;
 
+        return instantiateOudApi(baseUrl);
 
+    }
 
+    public static OudApi instantiateOudApi(String baseUrl) {
         OudApi oudApi = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(OudUtils.getGson()))
@@ -303,4 +311,30 @@ public class TestUtils {
         return new DrawableMatcher(-1);
     }
 
+    public static class ToastMatcher extends TypeSafeMatcher<Root> {
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("is toast");
+        }
+
+        @Override
+        public boolean matchesSafely(Root root) {
+            int type = root.getWindowLayoutParams().get().type;
+            if (type == WindowManager.LayoutParams.TYPE_TOAST) {
+                IBinder windowToken = root.getDecorView().getWindowToken();
+                IBinder appToken = root.getDecorView().getApplicationWindowToken();
+                if (windowToken == appToken) {
+                    // windowToken == appToken means this window isn't contained by any other windows.
+                    // if it was a window for an activity, it would have TYPE_BASE_APPLICATION.
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static Matcher<Root> isToast() {
+        return new ToastMatcher();
+    }
 }

@@ -236,5 +236,11 @@ public interface OudApi {
 
     @DELETE ("me/artists/albums/{id}")
     Call<ResponseBody> deleteAlbum(@Header("AUTHORIZATION") String token,@Path("id") String albumId);
+    
+    @PATCH("me/premium/redeem")
+    Call<Profile> redeemCoupon(@Header("AUTHORIZATION") String token, @Body CouponPayload couponPayload);
+
+    @PATCH("me/premium/subscribe")
+    Call<Profile> subscribeToPremiumOrExtendCurrentPlan(@Header("AUTHORIZATION") String token);
 
 }
