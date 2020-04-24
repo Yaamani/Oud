@@ -165,11 +165,11 @@ public interface OudApi {
 
     /** Requests for player */
 
-    @GET("/tracks/{id}")
+    @GET("tracks/{id}")
     Call<Track> getTrack(@Path("id") String trackId);
 
     @PUT("me/player/play")
-    Call<StatusMessageResponse> startOrResumeTrack(@Header("AUTHORIZATION") String token,@Body
+    Call<StatusMessageResponse> startOrResumeTrack(@Header("AUTHORIZATION") String token, @Body
                                                    StartOrResumePlayback startOrResumePlayback);
 
     @PUT("me/player/shuffle")

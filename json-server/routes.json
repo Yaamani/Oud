@@ -113,7 +113,7 @@
     
     "/artists/user0/albums?offset=6&limit=7":"/artist_more_albums",
 
-    "/genres?offset=0":"/genres"
+    "/genres?offset=0":"/genres", 
 
     
     

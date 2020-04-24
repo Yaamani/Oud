@@ -88,8 +88,8 @@ public class OudUtils {
                     request.body().writeTo(buffer);
 
 
-                Log.i(TAG, String.format("Sending request %s on %s%n Headers: %s%n Body: %s",
-                        request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
+                Log.i(TAG, String.format("Sending request {%s} %s on %s%n Headers: %s%n Body: %s",
+                        request.method(), request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
 
             }
 
@@ -104,7 +104,7 @@ public class OudUtils {
 
             final String responseString = new String(response.body().bytes());
             if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & Constants.JSON_RESPONSE) == Constants.JSON_RESPONSE) {
-                Log.i(TAG, "Response for " + response.request().url()+ ": " + responseString);
+                Log.i(TAG, "Response for {" + request.method() + "} " + response.request().url()+ ": " + responseString);
             }
 
             return  response.newBuilder()
