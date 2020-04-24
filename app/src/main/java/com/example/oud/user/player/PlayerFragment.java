@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.oud.Constants;
+import com.example.oud.OudUtils;
 import com.example.oud.R;
 
 import com.example.oud.api.Album;
@@ -147,12 +148,13 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
             artistName.setText(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
             albumName.setText(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
             /*imageView.setImageBitmap(mediaMetadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ART))*/;
-
-            Glide.with(v.getContext())
+            OudUtils.glideBuilder(getContext(),MediaMetadataCompat.METADATA_KEY_ART_URI).placeholder(R.drawable.ic_oud_loading)
+                    .into(imageView);
+            /*Glide.with(v.getContext())
                     .load(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ART_URI))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_oud_loading)
-                    .into(imageView);
+                    .into(imageView);*/
         }
         else {
 

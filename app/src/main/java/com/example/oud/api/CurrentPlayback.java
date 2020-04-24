@@ -7,6 +7,7 @@ public class CurrentPlayback {
     @SerializedName("track")
     private Track mTrack;
 
+
     public Track getTrack() {
         return mTrack;
     }

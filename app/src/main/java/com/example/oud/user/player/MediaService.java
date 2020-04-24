@@ -213,7 +213,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
             //todo fetch currentlyPlayback
 
-            playerServiceHelper.getTrackMutableLiveData(mToken).observe((LifecycleOwner) this, currentPlayback -> {
+            playerServiceHelper.getTrackMutableLiveData(mToken).observeForever( currentPlayback -> {
 
                 String songName = currentPlayback.getTrack().getName();
                 ArtistPreview[] artistName = currentPlayback.getTrack().getArtists();
@@ -350,7 +350,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
             for (int index = 0 ; index < artistPreviews.length ; index++){
 
-                stringBuilder.append(artistPreviews[index].getName());
+                stringBuilder.append(artistPreviews[index].getDisplayName());
             }
             return stringBuilder.toString();
         }
@@ -419,7 +419,7 @@ public class MediaService extends MediaBrowserServiceCompat {
                     Log.d(TAG,"Offset is:" + offset);
                     Log.d(TAG,"Token is:" + token);
 
-                    if(uris == null && offset == -1) {
+                    if(uris == null /*&& offset == -1*/) {
 
                         playerServiceHelper.putStartTrack(contextUri, offset, token);
 

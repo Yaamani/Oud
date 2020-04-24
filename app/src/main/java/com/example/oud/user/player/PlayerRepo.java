@@ -13,6 +13,7 @@ import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PlayerRepo extends ConnectionAwareRepository {
@@ -30,12 +31,12 @@ public class PlayerRepo extends ConnectionAwareRepository {
         trackMutableLiveData = new MutableLiveData<>();
 
         Call<CurrentPlayback> currentlyPlaybackCall = oudApi.getCurrentPlayback(token);
-        currentlyPlaybackCall.enqueue(new FailureSuccessHandledCallback<CurrentPlayback>(connectionStatusListener){
+        addCall(currentlyPlaybackCall).enqueue(new Callback<CurrentPlayback>() {
 
             CurrentPlayback currentPlayback;
             @Override
             public void onResponse(Call<CurrentPlayback> call, Response<CurrentPlayback> response) {
-                super.onResponse(call, response);
+                /*super.onResponse(call, response);*/
 
                 if(!response.isSuccessful()){
 
@@ -48,7 +49,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
 
             @Override
             public void onFailure(Call<CurrentPlayback> call, Throwable t) {
-                super.onFailure(call, t);
+                /*super.onFailure(call, t);*/
                 Log.e(TAG ,t.getMessage());
             }
         });
@@ -60,16 +61,16 @@ public class PlayerRepo extends ConnectionAwareRepository {
 
         final StatusMessageResponse[] statusMessageResponse = new StatusMessageResponse[1];
 
-        StartOrResumePlayback startOrResumePlayback = new StartOrResumePlayback(contextId, offset);
+        /*StartOrResumePlayback startOrResumePlayback = new StartOrResumePlayback(contextId, offset);*/
+        StartOrResumePlayback startOrResumePlayback = new StartOrResumePlayback(contextId);
 
         Call<StatusMessageResponse> call = oudApi.startOrResumeTrack(token,  startOrResumePlayback);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new Callback<StatusMessageResponse>()
+            {
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
-                super.onResponse(call, response);
-
+                /*super.onResponse(call, response);*/
 
                 if(!response.isSuccessful()){
 
@@ -85,7 +86,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
 
             @Override
             public void onFailure(Call<StatusMessageResponse> call, Throwable t) {
-                super.onFailure(call, t);
+                /*super.onFailure(call, t);*/
 
                 Log.e(TAG ,t.getMessage());
 
@@ -102,8 +103,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         StartOrResumePlayback startOrResumePlayback = new StartOrResumePlayback(uris);
 
         Call<StatusMessageResponse> call = oudApi.startOrResumeTrack(token,  startOrResumePlayback);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(this){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -140,8 +140,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         StartOrResumePlayback startOrResumePlayback = new StartOrResumePlayback(positionMs);
 
         Call<StatusMessageResponse> call = oudApi.startOrResumeTrack(token,  startOrResumePlayback);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(this){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -177,7 +176,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
 
         Call<StatusMessageResponse> call = oudApi.skipToNextTrack(token);
 
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(this){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -212,8 +211,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         final StatusMessageResponse[] statusMessageResponse = new StatusMessageResponse[1];
 
         Call<StatusMessageResponse> call = oudApi.skipToPreviousTrack(token);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -248,8 +246,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         final StatusMessageResponse[] statusMessageResponse = new StatusMessageResponse[1];
 
         Call<StatusMessageResponse> call = oudApi.seekTo(token, positionMs);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -284,8 +281,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         final StatusMessageResponse[] statusMessageResponse = new StatusMessageResponse[1];
 
         Call<StatusMessageResponse> call = oudApi.putRepeatMode(token, repeatMode);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
@@ -320,8 +316,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
         final StatusMessageResponse[] statusMessageResponse = new StatusMessageResponse[1];
 
         Call<StatusMessageResponse> call = oudApi.enableShuffle(token, shuffleEnable);
-
-        call.enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
+        addCall(call).enqueue(new FailureSuccessHandledCallback<StatusMessageResponse>(connectionStatusListener){
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {

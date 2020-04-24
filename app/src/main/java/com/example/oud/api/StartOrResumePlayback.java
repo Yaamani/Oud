@@ -9,7 +9,7 @@ public class StartOrResumePlayback {
     @SerializedName("contextUri")
     private String mContextUri;
     private List<String> uris;
-    private Integer offset;
+    private Offset offset;
     private Long positionMs;
 
     public StartOrResumePlayback(List<String> uris){
@@ -26,7 +26,13 @@ public class StartOrResumePlayback {
     public StartOrResumePlayback(String contextUri, Integer offset){
 
         this.mContextUri = contextUri;
-        this.offset = offset;
+        this.offset = new Offset(offset);
+    }
+
+    public StartOrResumePlayback(String contextUri){
+
+        this.mContextUri = contextUri;
+        /*this.offset = new Offset(offset);*/
     }
 
     public String getPlaylistId() {
@@ -37,7 +43,7 @@ public class StartOrResumePlayback {
         return uris;
     }
 
-    public Integer getOffset() {
+    public Offset getOffset() {
         return offset;
     }
 

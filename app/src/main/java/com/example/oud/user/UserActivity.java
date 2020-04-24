@@ -621,7 +621,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         Bundle bundle = new Bundle();
 
 
-        String contextUri = "oud:"+ /*contextType.toLowerCase()*/"5e6dea511e17a305285ba616" + ":" + contextId;
+        String contextUri = "oud:"+ /*contextType.toLowerCase()*/"playlist" + ":" + "5e6dea511e17a305285ba616"/*contextId*/;
 
         bundle.putString(Constants.CONTEXT_URI, contextUri);
         bundle.putString(Constants.SHARED_PREFERENCES_TOKEN_NAME, token);
