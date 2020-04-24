@@ -403,7 +403,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
                         mRecyclerViewPopularSongs,
                         mViewModel.getRepoBaseUrl(),
                         userId,
-                        trackClickListener, availableOfflineClickListener, heartClickListener);
+                        trackClickListener, availableOfflineClickListener, heartClickListener, false);
 
                 for (int j = 0; j < trackIds.size(); j++) {
                     trackListRecyclerViewAdapter.addTrack(trackIds.get(j),

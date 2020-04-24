@@ -35,6 +35,8 @@ public class Profile {
 
     private Date lastLogin;
 
+    private boolean privateSession;
+
     @SerializedName("facebook_id")
     private String facebookId;
 
@@ -145,6 +147,14 @@ public class Profile {
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public boolean isPrivateSession() {
+        return privateSession;
+    }
+
+    public void setPrivateSession(boolean privateSession) {
+        this.privateSession = privateSession;
     }
 
     public String getFacebookId() {

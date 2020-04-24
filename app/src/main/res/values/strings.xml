@@ -42,6 +42,7 @@
     <string name="you_dont_follow_any_artist">You don\'t follow any artist</string>
     <string name="create_playlist">Create playlist ...</string>
 
+    <string name="download_failed">Download failed !!</string>
     <string name="credit">Credit :</string>
     <string name="oud_coins">Oud Coins</string>
     <string name="coupon">Coupon</string>
@@ -54,6 +55,7 @@
     <string name="please_enter_a_valid_coupon">Please enter a valid coupon.</string>
     <string name="you_dont_have_enough_credit">You don\'t have enough credit.</string>
     <string name="unknown_server_error">Unknown error.</string>
+    <string name="you_are_not_subscribed">You are not subscribed.</string>
 
 
 </resources>

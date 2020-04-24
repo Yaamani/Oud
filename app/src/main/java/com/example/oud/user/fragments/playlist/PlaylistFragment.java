@@ -577,7 +577,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     mRecyclerViewTracks,
                     mViewModel.getRepoBaseUrl(),
                     userId,
-                    trackClickListener, availableOfflineClickListener, heartClickListener);
+                    trackClickListener, availableOfflineClickListener, heartClickListener, false);
 
 
 
@@ -632,7 +632,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                     mRecyclerViewTracks,
                     mViewModel.getRepoBaseUrl(),
                     userId,
-                    trackClickListener, availableOfflineClickListener, heartClickListener);
+                    trackClickListener, availableOfflineClickListener, heartClickListener, false);
 
 
             for (int i = 0; i < tracks.size(); i++) {

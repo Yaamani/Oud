@@ -66,7 +66,6 @@ public class PremiumFragment extends Fragment implements ReconnectingListener {
             switch (position) {
                 case 0: tab.setText("Subscribe"); break;
                 case 1: tab.setText("Offline tracks"); break;
-                case 2: tab.setText("Downloading"); break;
 
             }
         }).attach();

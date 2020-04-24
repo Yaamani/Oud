@@ -92,14 +92,15 @@ public class LibraryPlaylistsRepository extends ConnectionAwareRepository {
 
                 Playlist playlist = response.body();
                 follow(token, playlist, playlistCreationListener);
+                //playlistCreationListener.onSuccessfulCreation(playlist);
             }
 
-            @Override
+            /*@Override
             public void onFailure(Call<Playlist> call, Throwable t) {
                 super.onFailure(call, t);
                 playlistCreationListener.onCreationFailure(PlaylistCreationListener.PlaylistCreationFailureState.CREATION_FAILURE);
 
-            }
+            }*/
         });
     }
 

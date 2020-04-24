@@ -87,6 +87,7 @@ public class OudUtils {
                 if (request.body() != null)
                     request.body().writeTo(buffer);
 
+
                 Log.i(TAG, String.format("Sending request %s on %s%n Headers: %s%n Body: %s",
                         request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
 
@@ -214,6 +215,18 @@ public class OudUtils {
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,isAllowed);
         prefsEditor.commit();
+    }
+
+    public static String getUserTypeForPremiumFeature(Context context, String defValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(Constants.SHARED_PREFERENCES_USER_TYPE, "");
+    }
+
+    public static void setUserTypeForPremiumFeature(Context context, String value) {
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString(Constants.SHARED_PREFERENCES_USER_TYPE, value);
+        prefsEditor.apply();
     }
 
     public static String convertImageToFullUrl(String imageUrl) {

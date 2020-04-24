@@ -141,6 +141,8 @@ public class PremiumRedeemSubscribeFragment extends ConnectionAwareFragment<Prem
     private void handleProfileData() {
         mViewModel.getProfileLiveData(token).observe(getViewLifecycleOwner(), profile -> {
 
+            OudUtils.setUserTypeForPremiumFeature(getContext(), profile.getRole());
+
             Resources resources = getContext().getResources();
 
             OudUtils.glideBuilder(getContext(), profile.getImages().get(0))

@@ -89,6 +89,14 @@ public class GenericVerticalRecyclerViewAdapter extends RecyclerView.Adapter<Gen
         return mIds.size();
     }
 
+    /**
+     *
+     * @param id
+     * @param image
+     * @param circularImage
+     * @param title
+     * @param imageButtonSelected
+     */
     public void addItem(String id,
                         String image,
                         boolean circularImage,

@@ -94,7 +94,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
                     mRecyclerViewItems,
                     mViewModel.getRepoBaseUrl(),
                     loggedInUserId,
-                    trackClickListener, availableOfflineClickListener, heartClickListener);
+                    trackClickListener, availableOfflineClickListener, heartClickListener, false);
 
 
             for (int j = 0; j < trackIds.size(); j++) {
