@@ -1,6 +1,8 @@
 {
     "/me/player/recently-played": "/recently-played", 
-    "/me/player/recently-played?limit=:limit": "/recently-played", 
+    "/me/player/recently-played?limit=:limit": "/recently-played",
+	"/me/player/currently-playing": "/currently-playing",
+	
 
     "/browse/categories/:category_id/playlists": "/category_list_:category_id", 
     "/browse/categories/:category_id/playlists?limit=:limit": "/category_list_:category_id", 
@@ -30,6 +32,20 @@
     "/me/playlists?limit=20&offset=0": "/followed_playlists", 
     "/me/playlists?limit=20&offset=20": "/more_followed_playlists", 
     "/me/playlists*": "/empty_list",    
+
+
+    "/tracks/track0": "/track0",
+    "/tracks/track1": "/track1", 
+
+    "/albums/album0": "/album0", 
+    "/albums/album1": "/album1", 
+    "/albums/album2": "/album2", 
+    "/albums/album3": "/album3", 
+    "/albums/album4": "/album4", 
+    "/albums/album5": "/album5", 
+
+
+    "/users/1":"/user1",
 
 
     "/me/albums?limit=20&offset=0": "/saved_albums", 
@@ -100,8 +116,10 @@
     "/genres?offset=0":"/genres"
 
     
+    
 
-    
-    
+    "/users/1/following?type=artist&offset=0":"/followingUser1"
+	
+
 
 }

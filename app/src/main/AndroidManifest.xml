@@ -59,20 +59,22 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".user.player.MediaService"
+            android:permission="TODO">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-        <receiver android:name=".user.UserActivity$MediaReceiver">
+
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+
+        </service>
+
+        <receiver android:name=".user.player.MediaService$MediaReceiver">
+            <intent-filter><action android:name="android.intent.action.MEDIA_BUTTON" /> </intent-filter>
         </receiver>
 
-        <receiver android:name=".user.UserActivity$BecomingNoisyReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_AUDIO_BECOMING_NOISY" />
-            </intent-filter>
-        </receiver>
         <uses-library
             android:name="android.test.runner"
             android:required="false" />

@@ -179,8 +179,36 @@ public class OudUtils {
                 .create();
         return gson;
     }
+    public static boolean isNewUser(Context context){
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        return prefs.getBoolean(Constants.NEW_USER,true);
+    }
+    /** new user or not */
+    public static void setSateOfUser(Context context,boolean isNewUser){
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
 
 
+        prefsEditor.putBoolean(Constants.NEW_USER ,isNewUser);
+        prefsEditor.apply();
+    }
+
+    public static void firstLaunch(Context context, boolean firstLaunch){
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        prefsEditor.putBoolean(Constants.FIRST_LAUNCH ,firstLaunch);
+        prefsEditor.apply();
+    }
+
+    public static boolean isFirstLaunch(Context context) {
+
+        SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_PLAYER_FILE_NAME, MODE_PRIVATE);
+        return prefs.getBoolean(Constants.FIRST_LAUNCH, true);
+    }
     public static boolean isAutoPlayback(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, MODE_PRIVATE);
         if(!prefs.contains(Constants.SHARED_PREFERENCES_IS_AUTO_PLAY_NAME)){
@@ -206,6 +234,7 @@ public class OudUtils {
             prefsEditor.putBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
             prefsEditor.commit();
         }
+
 
         return prefs.getBoolean(Constants.SHARED_PREFERENCES_IS_NOTIFICATION_ALLOWED_NAME,true);
     }

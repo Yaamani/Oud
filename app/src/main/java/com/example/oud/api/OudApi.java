@@ -162,8 +162,72 @@ public interface OudApi {
     @GET("artists/{artistId}")
     Call<Artist> artist(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);
 
+
+    /** Requests for player */
+
+    @GET("/tracks/{id}")
+    Call<Track> getTrack(@Path("id") String trackId);
+
+    @PUT("me/player/play")
+    Call<StatusMessageResponse> startOrResumeTrack(@Header("AUTHORIZATION") String token,@Body
+                                                   StartOrResumePlayback startOrResumePlayback);
+
+    @PUT("me/player/shuffle")
+    Call<StatusMessageResponse> enableShuffle(@Header("AUTHORIZATION") String token,
+                                              @Query(value="state",encoded = true) boolean shuffleEnable);
+
+    @PUT("me/player/repeat")
+    Call<StatusMessageResponse> putRepeatMode(@Header("AUTHORIZATION") String token,
+                                              @Query(value="state",encoded = true) String repeatMode);
+
+    @PUT("me/player/seek")
+    Call<StatusMessageResponse> seekTo(@Header("AUTHORIZATION") String token,
+                                       @Query(value="positionMs",encoded = true) Long seekToPosition);
+
+    @PUT("me/player/pause")
+    Call<StatusMessageResponse> pausePlayback(@Header("AUTHORIZATION") String token);
+
+    @POST("me/player/next")
+    Call<StatusMessageResponse> skipToNextTrack(@Header("AUTHORIZATION") String token);
+
+    @POST("me/player/previous")
+    Call<StatusMessageResponse> skipToPreviousTrack(@Header("AUTHORIZATION") String token);
+
+    @PUT("me/player/volume")
+    Call<StatusMessageResponse> setVolumeOfTrack(@Header("AUTHORIZATION") String token,
+                                       @Query(value="volumePercent",encoded = true) Integer volume);
+
+    @POST("me/queue")
+    Call<StatusMessageResponse> addTrackToQueue(@Header("AUTHORIZATION") String token,
+                                                @Query(value="queueIndex", encoded = true) Integer indexOfQueue
+    , @Query(value="trackId", encoded = true) String id);
+
+    @DELETE("me/queue")
+    Call<StatusMessageResponse> removeTrackFromQueue(@Header("AUTHORIZATION") String token,
+                                                @Query(value="queueIndex", encoded = true) Integer indexOfQueue,
+                                                     @Query(value="trackIndex", encoded = true) Integer index
+            , @Query(value="trackId", encoded = true) String id);
+
+    @PATCH("me/queue")
+    Call<StatusMessageResponse> changeTrackPositionInQueue(@Header("AUTHORIZATION") String token,
+                                                @Query(value="queueIndex", encoded = true) Integer indexOfQueue,
+                                                           @Query(value="trackIndex", encoded = true) Integer oldIndex
+            , @Query(value="trackId", encoded = true) String id,
+    @Query(value="newIndex", encoded = true) Integer indexOfTrack);
+
+    @GET("me/queue")
+    Call<QueueInfo> getQueue(@Header("AUTHORIZATION") String token);
+
+    @GET("me/player/currently-playing")
+    Call<CurrentPlayback> getCurrentPlayback(@Header("AUTHORIZATION") String token);
+
+    /** ****************************************************** */
+    /*@PUT("/playlists/{playlistId}")
+    Call<ResponseBody> changePlaylistDetails(@Path("playlistId") String playlistId, @Body );*/
+
     @GET("artists/{artistId}/albums")
     Call<OudList<Album>> artistAlbums(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId, @Query("offset") Integer offset, @Query("limit") Integer limit);
+
 
     @GET("artists/{artistId}/related-artists")
     Call<RelatedArtists> similarArtists(@Header("AUTHORIZATION") String token, @Path("artistId") String artistId);

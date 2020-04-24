@@ -910,7 +910,1166 @@
       "offset": 0,
       "total": 14
     }
+
+  ], 
+
+
+
+  "artist_albums": {
+    "items": [{"_id": "album0","album_type": "album_type0","album_group": "album_group0","artists": [{   "_id": "artist0",   "name": "artist0",   "type": "artist_type0",   "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"}],"image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7","name": "album0","type": "album_type0"}, {"_id": "album1","album_type": "album_type1","album_group": "album_group1","artists": [{   "_id": "artist1",   "name": "artist1",   "type": "artist_type1",   "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"}],"image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3","name": "album1","type": "album_type1"}, {"_id": "album2","album_type": "album_type2","album_group": "album_group2","artists": [{   "_id": "artist2",   "name": "artist2",   "type": "artist_type2",   "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"}],"image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df","name": "album2","type": "album_type2"}, {"_id": "album3","album_type": "album_type3","album_group": "album_group3","artists": [{   "_id": "artist3",   "name": "artist3",   "type": "artist_type3",   "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"}],"image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45","name": "album3","type": "album_type3"}, {"_id": "album4","album_type": "album_type4","album_group": "album_group4","artists": [{   "_id": "artist4",   "name": "artist4",   "type": "artist_type4",   "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"}],"image": "https://preview.redd.it/ivjv5kyv1in41.jpg?width=640&crop=smart&auto=webp&s=aa9386b9408bb57c2ab818c9658ee247b9d974a2","name": "album4","type": "album_type4"}, {"_id": "album5","album_type": "album_type5","album_group": "album_group5","artists": [{   "_id": "artist5",   "name": "artist5",   "type": "artist_type5",   "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"}],"image": "https://preview.redd.it/28ajodxzbfn41.jpg?width=640&crop=smart&auto=webp&s=24aa6caa8e5e833fc651d0da73f338d15a8d66a4","name": "album5","type": "album_type5"}, {"_id": "album6","album_type": "album_type6","album_group": "album_group6","artists": [{   "_id": "artist6",   "name": "artist6",   "type": "artist_type6",   "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"}],"image": "https://preview.redd.it/f5m4o1rc1an41.png?width=640&crop=smart&auto=webp&s=92bfae8d1f55a9c0f377a2f824120bfeaa2879f0","name": "album6","type": "album_type6"}  ],  
+    "limit": 7,  "offset": 0,  "total": 10
+  }, 
+
+  "artist_more_albums": {
+    "items": [{"_id": "album7","album_type": "album_type7","album_group": "album_group7","artists": [{   "_id": "artist7",   "name": "artist7",   "type": "artist_type7",   "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"}],"image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7","name": "album7","type": "album_type7"}, {"_id": "album8","album_type": "album_type8","album_group": "album_group8","artists": [{   "_id": "artist8",   "name": "artist8",   "type": "artist_type8",   "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"}],"image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3","name": "album8","type": "album_type8"}, {"_id": "album9","album_type": "album_type9","album_group": "album_group9","artists": [{   "_id": "artist9",   "name": "artist9",   "type": "artist_type9",   "image": "https://i.imgur.com/n7WiWDAl.jpg"}],"image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df","name": "album9","type": "album_type9"}, {"_id": "album10","album_type": "album_type10","album_group": "album_group10","artists": [{   "_id": "artist10",   "name": "artist10",   "type": "artist_type10",   "image": "https://preview.redd.it/sa2k512lgrm41.jpg?width=640&crop=smart&auto=webp&s=47acce81a3f9d21ce7cae0d924e0d14c1dc70ccc"}],"image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45","name": "album10","type": "album_type10"}, {"_id": "album11","album_type": "album_type11","album_group": "album_group11","artists": [{   "_id": "artist11",   "name": "artist11",   "type": "artist_type11",   "image": "https://preview.redd.it/nk8lu20ju3n41.jpg?width=640&crop=smart&auto=webp&s=585e8f5a43b6dba5b0a891e4385f42fceca44c83"}],"image": "https://preview.redd.it/ivjv5kyv1in41.jpg?width=640&crop=smart&auto=webp&s=aa9386b9408bb57c2ab818c9658ee247b9d974a2","name": "album11","type": "album_type11"}, {"_id": "album12","album_type": "album_type12","album_group": "album_group12","artists": [{   "_id": "artist12",   "name": "artist12",   "type": "artist_type12",   "image": "https://preview.redd.it/3u059jbl4gm41.jpg?width=640&crop=smart&auto=webp&s=2676441cc582115f5a6de00ddf452cf2d09258ab"}],"image": "https://preview.redd.it/28ajodxzbfn41.jpg?width=640&crop=smart&auto=webp&s=24aa6caa8e5e833fc651d0da73f338d15a8d66a4","name": "album12","type": "album_type12"}, {"_id": "album13","album_type": "album_type13","album_group": "album_group13","artists": [{   "_id": "artist13",   "name": "artist13",   "type": "artist_type13",   "image": "https://preview.redd.it/wvz9019cn3m41.jpg?width=640&crop=smart&auto=webp&s=c556b980c430b8738fd5371cd6cf216816070a7f"}],"image": "https://preview.redd.it/f5m4o1rc1an41.png?width=640&crop=smart&auto=webp&s=92bfae8d1f55a9c0f377a2f824120bfeaa2879f0","name": "album13","type": "album_type13"}  ],  
+    "limit": 7,  "offset": 7,  "total": 10
+  }, 
+
+
+
+  "related_artists": {
+    "artists": [
+      {
+        "_id": "artist14",
+        "followersCount": 1000014,
+        "genres": [
+          "genre7",
+          "genre14"
+        ],
+        "images": [
+          "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+        ],
+        "name": "artist14",
+        "bio": "I'm artist14",
+        "popularSongs": [
+          {
+            "_id": "track0",
+            "name": "track0",
+            "artists": [
+              {
+                "_id": "artist0",
+                "name": "artist0",
+                "type": "artist_type0",
+                "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+              }
+            ],
+            "albumId": "album0",
+            "album": {
+              "_id": "album0",
+              "album_type": "album_type0",
+              "album_group": "album_group0",
+              "artists": [
+                {
+                  "_id": "artist0",
+                  "name": "artist0",
+                  "type": "artist_type0",
+                  "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album0",
+              "type": "album_type0"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1000,
+            "views": 1000
+          },
+          {
+            "_id": "track1",
+            "name": "track1",
+            "artists": [
+              {
+                "_id": "artist1",
+                "name": "artist1",
+                "type": "artist_type1",
+                "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+              }
+            ],
+            "albumId": "album1",
+            "album": {
+              "_id": "album1",
+              "album_type": "album_type1",
+              "album_group": "album_group1",
+              "artists": [
+                {
+                  "_id": "artist1",
+                  "name": "artist1",
+                  "type": "artist_type1",
+                  "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album1",
+              "type": "album_type1"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1001,
+            "views": 1001
+          },
+          {
+            "_id": "track2",
+            "name": "track2",
+            "artists": [
+              {
+                "_id": "artist2",
+                "name": "artist2",
+                "type": "artist_type2",
+                "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+              }
+            ],
+            "albumId": "album2",
+            "album": {
+              "_id": "album2",
+              "album_type": "album_type2",
+              "album_group": "album_group2",
+              "artists": [
+                {
+                  "_id": "artist2",
+                  "name": "artist2",
+                  "type": "artist_type2",
+                  "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album2",
+              "type": "album_type2"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1002,
+            "views": 1002
+          },
+          {
+            "_id": "track3",
+            "name": "track3",
+            "artists": [
+              {
+                "_id": "artist3",
+                "name": "artist3",
+                "type": "artist_type3",
+                "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+              }
+            ],
+            "albumId": "album3",
+            "album": {
+              "_id": "album3",
+              "album_type": "album_type3",
+              "album_group": "album_group3",
+              "artists": [
+                {
+                  "_id": "artist3",
+                  "name": "artist3",
+                  "type": "artist_type3",
+                  "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+                }
+              ],
+              "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45",
+              "name": "album3",
+              "type": "album_type3"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1003,
+            "views": 1003
+          },
+          {
+            "_id": "track4",
+            "name": "track4",
+            "artists": [
+              {
+                "_id": "artist4",
+                "name": "artist4",
+                "type": "artist_type4",
+                "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+              }
+            ],
+            "albumId": "album4",
+            "album": {
+              "_id": "album4",
+              "album_type": "album_type4",
+              "album_group": "album_group4",
+              "artists": [
+                {
+                  "_id": "artist4",
+                  "name": "artist4",
+                  "type": "artist_type4",
+                  "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+                }
+              ],
+              "image": "https://preview.redd.it/ivjv5kyv1in41.jpg?width=640&crop=smart&auto=webp&s=aa9386b9408bb57c2ab818c9658ee247b9d974a2",
+              "name": "album4",
+              "type": "album_type4"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1004,
+            "views": 1004
+          },
+          {
+            "_id": "track5",
+            "name": "track5",
+            "artists": [
+              {
+                "_id": "artist5",
+                "name": "artist5",
+                "type": "artist_type5",
+                "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+              }
+            ],
+            "albumId": "album5",
+            "album": {
+              "_id": "album5",
+              "album_type": "album_type5",
+              "album_group": "album_group5",
+              "artists": [
+                {
+                  "_id": "artist5",
+                  "name": "artist5",
+                  "type": "artist_type5",
+                  "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+                }
+              ],
+              "image": "https://preview.redd.it/28ajodxzbfn41.jpg?width=640&crop=smart&auto=webp&s=24aa6caa8e5e833fc651d0da73f338d15a8d66a4",
+              "name": "album5",
+              "type": "album_type5"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1005,
+            "views": 1005
+          },
+          {
+            "_id": "track6",
+            "name": "track6",
+            "artists": [
+              {
+                "_id": "artist6",
+                "name": "artist6",
+                "type": "artist_type6",
+                "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+              }
+            ],
+            "albumId": "album6",
+            "album": {
+              "_id": "album6",
+              "album_type": "album_type6",
+              "album_group": "album_group6",
+              "artists": [
+                {
+                  "_id": "artist6",
+                  "name": "artist6",
+                  "type": "artist_type6",
+                  "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+                }
+              ],
+              "image": "https://preview.redd.it/f5m4o1rc1an41.png?width=640&crop=smart&auto=webp&s=92bfae8d1f55a9c0f377a2f824120bfeaa2879f0",
+              "name": "album6",
+              "type": "album_type6"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1006,
+            "views": 1006
+          },
+          {
+            "_id": "track7",
+            "name": "track7",
+            "artists": [
+              {
+                "_id": "artist7",
+                "name": "artist7",
+                "type": "artist_type7",
+                "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+              }
+            ],
+            "albumId": "album7",
+            "album": {
+              "_id": "album7",
+              "album_type": "album_type7",
+              "album_group": "album_group7",
+              "artists": [
+                {
+                  "_id": "artist7",
+                  "name": "artist7",
+                  "type": "artist_type7",
+                  "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album7",
+              "type": "album_type7"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1007,
+            "views": 1007
+          },
+          {
+            "_id": "track8",
+            "name": "track8",
+            "artists": [
+              {
+                "_id": "artist8",
+                "name": "artist8",
+                "type": "artist_type8",
+                "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+              }
+            ],
+            "albumId": "album8",
+            "album": {
+              "_id": "album8",
+              "album_type": "album_type8",
+              "album_group": "album_group8",
+              "artists": [
+                {
+                  "_id": "artist8",
+                  "name": "artist8",
+                  "type": "artist_type8",
+                  "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album8",
+              "type": "album_type8"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1008,
+            "views": 1008
+          },
+          {
+            "_id": "track9",
+            "name": "track9",
+            "artists": [
+              {
+                "_id": "artist9",
+                "name": "artist9",
+                "type": "artist_type9",
+                "image": "https://i.imgur.com/n7WiWDAl.jpg"
+              }
+            ],
+            "albumId": "album9",
+            "album": {
+              "_id": "album9",
+              "album_type": "album_type9",
+              "album_group": "album_group9",
+              "artists": [
+                {
+                  "_id": "artist9",
+                  "name": "artist9",
+                  "type": "artist_type9",
+                  "image": "https://i.imgur.com/n7WiWDAl.jpg"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album9",
+              "type": "album_type9"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1009,
+            "views": 1009
+          }
+        ],
+        "type": "type14"
+      }, 
+      {
+        "_id": "artist13",
+        "followersCount": 1000013,
+        "genres": [
+          "genre6",
+          "genre13"
+        ],
+        "images": [
+          "https://preview.redd.it/wvz9019cn3m41.jpg?width=640&crop=smart&auto=webp&s=c556b980c430b8738fd5371cd6cf216816070a7f"
+        ],
+        "name": "artist13",
+        "bio": "I'm artist13",
+        "popularSongs": [
+          {
+            "_id": "track0",
+            "name": "track0",
+            "artists": [
+              {
+                "_id": "artist0",
+                "name": "artist0",
+                "type": "artist_type0",
+                "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+              }
+            ],
+            "albumId": "album0",
+            "album": {
+              "_id": "album0",
+              "album_type": "album_type0",
+              "album_group": "album_group0",
+              "artists": [
+                {
+                  "_id": "artist0",
+                  "name": "artist0",
+                  "type": "artist_type0",
+                  "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album0",
+              "type": "album_type0"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1000,
+            "views": 1000
+          },
+          {
+            "_id": "track1",
+            "name": "track1",
+            "artists": [
+              {
+                "_id": "artist1",
+                "name": "artist1",
+                "type": "artist_type1",
+                "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+              }
+            ],
+            "albumId": "album1",
+            "album": {
+              "_id": "album1",
+              "album_type": "album_type1",
+              "album_group": "album_group1",
+              "artists": [
+                {
+                  "_id": "artist1",
+                  "name": "artist1",
+                  "type": "artist_type1",
+                  "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album1",
+              "type": "album_type1"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1001,
+            "views": 1001
+          },
+          {
+            "_id": "track2",
+            "name": "track2",
+            "artists": [
+              {
+                "_id": "artist2",
+                "name": "artist2",
+                "type": "artist_type2",
+                "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+              }
+            ],
+            "albumId": "album2",
+            "album": {
+              "_id": "album2",
+              "album_type": "album_type2",
+              "album_group": "album_group2",
+              "artists": [
+                {
+                  "_id": "artist2",
+                  "name": "artist2",
+                  "type": "artist_type2",
+                  "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album2",
+              "type": "album_type2"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1002,
+            "views": 1002
+          },
+          {
+            "_id": "track3",
+            "name": "track3",
+            "artists": [
+              {
+                "_id": "artist3",
+                "name": "artist3",
+                "type": "artist_type3",
+                "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+              }
+            ],
+            "albumId": "album3",
+            "album": {
+              "_id": "album3",
+              "album_type": "album_type3",
+              "album_group": "album_group3",
+              "artists": [
+                {
+                  "_id": "artist3",
+                  "name": "artist3",
+                  "type": "artist_type3",
+                  "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+                }
+              ],
+              "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45",
+              "name": "album3",
+              "type": "album_type3"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1003,
+            "views": 1003
+          },
+          {
+            "_id": "track4",
+            "name": "track4",
+            "artists": [
+              {
+                "_id": "artist4",
+                "name": "artist4",
+                "type": "artist_type4",
+                "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+              }
+            ],
+            "albumId": "album4",
+            "album": {
+              "_id": "album4",
+              "album_type": "album_type4",
+              "album_group": "album_group4",
+              "artists": [
+                {
+                  "_id": "artist4",
+                  "name": "artist4",
+                  "type": "artist_type4",
+                  "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+                }
+              ],
+              "image": "https://preview.redd.it/ivjv5kyv1in41.jpg?width=640&crop=smart&auto=webp&s=aa9386b9408bb57c2ab818c9658ee247b9d974a2",
+              "name": "album4",
+              "type": "album_type4"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1004,
+            "views": 1004
+          },
+          {
+            "_id": "track5",
+            "name": "track5",
+            "artists": [
+              {
+                "_id": "artist5",
+                "name": "artist5",
+                "type": "artist_type5",
+                "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+              }
+            ],
+            "albumId": "album5",
+            "album": {
+              "_id": "album5",
+              "album_type": "album_type5",
+              "album_group": "album_group5",
+              "artists": [
+                {
+                  "_id": "artist5",
+                  "name": "artist5",
+                  "type": "artist_type5",
+                  "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+                }
+              ],
+              "image": "https://preview.redd.it/28ajodxzbfn41.jpg?width=640&crop=smart&auto=webp&s=24aa6caa8e5e833fc651d0da73f338d15a8d66a4",
+              "name": "album5",
+              "type": "album_type5"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1005,
+            "views": 1005
+          },
+          {
+            "_id": "track6",
+            "name": "track6",
+            "artists": [
+              {
+                "_id": "artist6",
+                "name": "artist6",
+                "type": "artist_type6",
+                "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+              }
+            ],
+            "albumId": "album6",
+            "album": {
+              "_id": "album6",
+              "album_type": "album_type6",
+              "album_group": "album_group6",
+              "artists": [
+                {
+                  "_id": "artist6",
+                  "name": "artist6",
+                  "type": "artist_type6",
+                  "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+                }
+              ],
+              "image": "https://preview.redd.it/f5m4o1rc1an41.png?width=640&crop=smart&auto=webp&s=92bfae8d1f55a9c0f377a2f824120bfeaa2879f0",
+              "name": "album6",
+              "type": "album_type6"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1006,
+            "views": 1006
+          },
+          {
+            "_id": "track7",
+            "name": "track7",
+            "artists": [
+              {
+                "_id": "artist7",
+                "name": "artist7",
+                "type": "artist_type7",
+                "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+              }
+            ],
+            "albumId": "album7",
+            "album": {
+              "_id": "album7",
+              "album_type": "album_type7",
+              "album_group": "album_group7",
+              "artists": [
+                {
+                  "_id": "artist7",
+                  "name": "artist7",
+                  "type": "artist_type7",
+                  "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album7",
+              "type": "album_type7"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1007,
+            "views": 1007
+          },
+          {
+            "_id": "track8",
+            "name": "track8",
+            "artists": [
+              {
+                "_id": "artist8",
+                "name": "artist8",
+                "type": "artist_type8",
+                "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+              }
+            ],
+            "albumId": "album8",
+            "album": {
+              "_id": "album8",
+              "album_type": "album_type8",
+              "album_group": "album_group8",
+              "artists": [
+                {
+                  "_id": "artist8",
+                  "name": "artist8",
+                  "type": "artist_type8",
+                  "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album8",
+              "type": "album_type8"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1008,
+            "views": 1008
+          },
+          {
+            "_id": "track9",
+            "name": "track9",
+            "artists": [
+              {
+                "_id": "artist9",
+                "name": "artist9",
+                "type": "artist_type9",
+                "image": "https://i.imgur.com/n7WiWDAl.jpg"
+              }
+            ],
+            "albumId": "album9",
+            "album": {
+              "_id": "album9",
+              "album_type": "album_type9",
+              "album_group": "album_group9",
+              "artists": [
+                {
+                  "_id": "artist9",
+                  "name": "artist9",
+                  "type": "artist_type9",
+                  "image": "https://i.imgur.com/n7WiWDAl.jpg"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album9",
+              "type": "album_type9"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1009,
+            "views": 1009
+          }
+        ],
+        "type": "type13"
+      }, 
+      {
+        "_id": "artist6",
+        "followersCount": 100006,
+        "genres": [
+          "genre3",
+          "genre6"
+        ],
+        "images": [
+          "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+        ],
+        "name": "artist6",
+        "bio": "I'm artist6",
+        "popularSongs": [
+          {
+            "_id": "track0",
+            "name": "track0",
+            "artists": [
+              {
+                "_id": "artist0",
+                "name": "artist0",
+                "type": "artist_type0",
+                "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+              }
+            ],
+            "albumId": "album0",
+            "album": {
+              "_id": "album0",
+              "album_type": "album_type0",
+              "album_group": "album_group0",
+              "artists": [
+                {
+                  "_id": "artist0",
+                  "name": "artist0",
+                  "type": "artist_type0",
+                  "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album0",
+              "type": "album_type0"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1000,
+            "views": 1000
+          },
+          {
+            "_id": "track1",
+            "name": "track1",
+            "artists": [
+              {
+                "_id": "artist1",
+                "name": "artist1",
+                "type": "artist_type1",
+                "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+              }
+            ],
+            "albumId": "album1",
+            "album": {
+              "_id": "album1",
+              "album_type": "album_type1",
+              "album_group": "album_group1",
+              "artists": [
+                {
+                  "_id": "artist1",
+                  "name": "artist1",
+                  "type": "artist_type1",
+                  "image": "https://preview.redd.it/81hbz34ggdo41.jpg?width=640&crop=smart&auto=webp&s=ab2b5493e6027a261a4e01f8a0fc1f807247b22f"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album1",
+              "type": "album_type1"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1001,
+            "views": 1001
+          },
+          {
+            "_id": "track2",
+            "name": "track2",
+            "artists": [
+              {
+                "_id": "artist2",
+                "name": "artist2",
+                "type": "artist_type2",
+                "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+              }
+            ],
+            "albumId": "album2",
+            "album": {
+              "_id": "album2",
+              "album_type": "album_type2",
+              "album_group": "album_group2",
+              "artists": [
+                {
+                  "_id": "artist2",
+                  "name": "artist2",
+                  "type": "artist_type2",
+                  "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album2",
+              "type": "album_type2"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1002,
+            "views": 1002
+          },
+          {
+            "_id": "track3",
+            "name": "track3",
+            "artists": [
+              {
+                "_id": "artist3",
+                "name": "artist3",
+                "type": "artist_type3",
+                "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+              }
+            ],
+            "albumId": "album3",
+            "album": {
+              "_id": "album3",
+              "album_type": "album_type3",
+              "album_group": "album_group3",
+              "artists": [
+                {
+                  "_id": "artist3",
+                  "name": "artist3",
+                  "type": "artist_type3",
+                  "image": "https://preview.redd.it/cqbbdskakao41.jpg?width=640&crop=smart&auto=webp&s=f097ab88c95b0c6faadafe2981d4d17310166b5f"
+                }
+              ],
+              "image": "https://preview.redd.it/jtk5l23c2jn41.png?width=640&crop=smart&auto=webp&s=e7374b18b4f25011f6fc1d6e47de6d2af0326c45",
+              "name": "album3",
+              "type": "album_type3"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1003,
+            "views": 1003
+          },
+          {
+            "_id": "track4",
+            "name": "track4",
+            "artists": [
+              {
+                "_id": "artist4",
+                "name": "artist4",
+                "type": "artist_type4",
+                "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+              }
+            ],
+            "albumId": "album4",
+            "album": {
+              "_id": "album4",
+              "album_type": "album_type4",
+              "album_group": "album_group4",
+              "artists": [
+                {
+                  "_id": "artist4",
+                  "name": "artist4",
+                  "type": "artist_type4",
+                  "image": "https://preview.redd.it/m13wwgnv81o41.jpg?width=640&crop=smart&auto=webp&s=3e8389f267e575638145510f50f18c757c756b60"
+                }
+              ],
+              "image": "https://preview.redd.it/ivjv5kyv1in41.jpg?width=640&crop=smart&auto=webp&s=aa9386b9408bb57c2ab818c9658ee247b9d974a2",
+              "name": "album4",
+              "type": "album_type4"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1004,
+            "views": 1004
+          },
+          {
+            "_id": "track5",
+            "name": "track5",
+            "artists": [
+              {
+                "_id": "artist5",
+                "name": "artist5",
+                "type": "artist_type5",
+                "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+              }
+            ],
+            "albumId": "album5",
+            "album": {
+              "_id": "album5",
+              "album_type": "album_type5",
+              "album_group": "album_group5",
+              "artists": [
+                {
+                  "_id": "artist5",
+                  "name": "artist5",
+                  "type": "artist_type5",
+                  "image": "https://preview.redd.it/gy1pczk5cwn41.jpg?width=640&crop=smart&auto=webp&s=20ec76334cfaef6960b116d60b8cbdb5f494c50d"
+                }
+              ],
+              "image": "https://preview.redd.it/28ajodxzbfn41.jpg?width=640&crop=smart&auto=webp&s=24aa6caa8e5e833fc651d0da73f338d15a8d66a4",
+              "name": "album5",
+              "type": "album_type5"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1005,
+            "views": 1005
+          },
+          {
+            "_id": "track6",
+            "name": "track6",
+            "artists": [
+              {
+                "_id": "artist6",
+                "name": "artist6",
+                "type": "artist_type6",
+                "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+              }
+            ],
+            "albumId": "album6",
+            "album": {
+              "_id": "album6",
+              "album_type": "album_type6",
+              "album_group": "album_group6",
+              "artists": [
+                {
+                  "_id": "artist6",
+                  "name": "artist6",
+                  "type": "artist_type6",
+                  "image": "https://preview.redd.it/bsbed8u7xqn41.jpg?width=640&crop=smart&auto=webp&s=3adc502785791875d56b4c0476727f5f92a8ed8e"
+                }
+              ],
+              "image": "https://preview.redd.it/f5m4o1rc1an41.png?width=640&crop=smart&auto=webp&s=92bfae8d1f55a9c0f377a2f824120bfeaa2879f0",
+              "name": "album6",
+              "type": "album_type6"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1006,
+            "views": 1006
+          },
+          {
+            "_id": "track7",
+            "name": "track7",
+            "artists": [
+              {
+                "_id": "artist7",
+                "name": "artist7",
+                "type": "artist_type7",
+                "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+              }
+            ],
+            "albumId": "album7",
+            "album": {
+              "_id": "album7",
+              "album_type": "album_type7",
+              "album_group": "album_group7",
+              "artists": [
+                {
+                  "_id": "artist7",
+                  "name": "artist7",
+                  "type": "artist_type7",
+                  "image": "https://preview.redd.it/p0gtn3ua8qo41.jpg?width=640&crop=smart&auto=webp&s=6698972aa82b03c9ae708964889d52b581b5d1bd"
+                }
+              ],
+              "image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+              "name": "album7",
+              "type": "album_type7"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1007,
+            "views": 1007
+          },
+          {
+            "_id": "track8",
+            "name": "track8",
+            "artists": [
+              {
+                "_id": "artist8",
+                "name": "artist8",
+                "type": "artist_type8",
+                "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+              }
+            ],
+            "albumId": "album8",
+            "album": {
+              "_id": "album8",
+              "album_type": "album_type8",
+              "album_group": "album_group8",
+              "artists": [
+                {
+                  "_id": "artist8",
+                  "name": "artist8",
+                  "type": "artist_type8",
+                  "image": "https://external-preview.redd.it/GJHNq3P2V4MFPQohWp4Y-oPJyjh-OHQpAN7p7SLTiuI.jpg?width=640&crop=smart&auto=webp&s=a0b6773e2719169e815d5743f80e18a6294f4735"
+                }
+              ],
+              "image": "https://preview.redd.it/kl84hi4j53o41.png?width=640&crop=smart&auto=webp&s=3c5026f192a9bfb8028d80c6f22c8ad161c627e3",
+              "name": "album8",
+              "type": "album_type8"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+            "duartion": 1008,
+            "views": 1008
+          },
+          {
+            "_id": "track9",
+            "name": "track9",
+            "artists": [
+              {
+                "_id": "artist9",
+                "name": "artist9",
+                "type": "artist_type9",
+                "image": "https://i.imgur.com/n7WiWDAl.jpg"
+              }
+            ],
+            "albumId": "album9",
+            "album": {
+              "_id": "album9",
+              "album_type": "album_type9",
+              "album_group": "album_group9",
+              "artists": [
+                {
+                  "_id": "artist9",
+                  "name": "artist9",
+                  "type": "artist_type9",
+                  "image": "https://i.imgur.com/n7WiWDAl.jpg"
+                }
+              ],
+              "image": "https://preview.redd.it/3nn2z153s5o41.png?width=640&crop=smart&auto=webp&s=d2027ad0b659b455ec42f37c53f865119b4793df",
+              "name": "album9",
+              "type": "album_type9"
+            },
+            "type": "string",
+            "audioUrl": "https://server10.mp3quran.net/ajm/128/114.mp3",
+            "duartion": 1009,
+            "views": 1009
+          }
+        ],
+        "type": "type6"
+      }
+    ]
+  }, 
+
+
+  "are_these_tracks_liked": {
+    "IsFound": [
+      true, 
+      false, 
+      false, 
+      true, 
+      true, 
+      false, 
+      true, 
+      true, 
+      true,
+      true, 
+      false, 
+      false, 
+      true, 
+      true, 
+      false, 
+      true, 
+      true, 
+      true 
+    ]
+  }, 
+
+  "user_follows_playlist": [
+    true
+  ], 
+
+  "user_doesn't_follow_playlist": [
+    false
+  ], 
+
+  "this_album_is_saved" : {
+    "IsFound": [
+      true
+    ]
+  }, 
+
+  "this_album_isn't_saved" : {
+    "IsFound": [
+      false
+    ]
+  }, 
+
+  "user_follows_this_artist": {
+    "ids": [
+      true
+    ]
+  }, 
+
+  "user_doesn't_follow_this_artist": {
   
+    "ids": [
+      false
+    ]
+  },
+  "currently-playing":{
+  
+	"track": {
+		"_id": "track0",
+		"name": "track0",
+		"artists": [
+			{
+          "_id": "artist0",
+          "name": "artist0",
+          "type": "artist_type0",
+          "image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+			}
+		],
+		"albumId": "album0",
+		"album": {
+			"_id": "album0",
+			"album_type": "album_type0",
+			"album_group": "album_group0",
+			"artists": [
+				{
+					"_id": "artist0",
+					"name": "artist0",
+					"type": "artist_type0",
+					"image": "https://preview.redd.it/b8y11p45efo41.jpg?width=640&crop=smart&auto=webp&s=c5812cbdd8da57657396e933c411489e337b0d41"
+				}
+			],
+			"image": "https://preview.redd.it/tgo1fl9xdgo41.png?width=640&crop=smart&auto=webp&s=6b82d0c5dc1baa6722c89c4d5d3870caef6a77f7",
+			"name": "album0",
+			"type": "album_type0"
+		},
+		"type": "string",
+		"audioUrl": "https://server10.mp3quran.net/ajm/128/001.mp3",
+		"duartion": 1000,
+		"views": 1000
+	},
+	"context": {
+  
+		"type": "unknwon",
+		"id": "string"
+	}
+  }
+  
+	
+
 
   
 }
