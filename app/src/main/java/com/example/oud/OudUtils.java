@@ -15,6 +15,8 @@ import com.example.oud.api.OudApi;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.example.oud.api.StatusMessageResponse;
+import com.example.oud.user.fragments.premium.database.DownloadedTrack;
+import com.example.oud.user.fragments.premium.database.DownloadedTracksDatabase;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,6 +40,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.Nullable;
+import androidx.room.Room;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -280,7 +283,7 @@ public class OudUtils {
         return imageUrl;
     }
 
-    public static DownloadInfo getTrackDownloadInfo(String loggedInUserId, String trackId) {
+    /*public static DownloadInfo getTrackDownloadInfo(String loggedInUserId, String trackId) {
         List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
         DownloadInfo trackDownloadInfo = null;
         for (DownloadInfo downloadInfo : downloadInfoList) {
@@ -289,7 +292,18 @@ public class OudUtils {
         }
 
         return trackDownloadInfo;
+    }*/
+
+    public static DownloadedTracksDatabase getDownloadedTracksDatabase(Context context) {
+        return Room.databaseBuilder(context, DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();
     }
+
+    /*public static DownloadedTrack getDownloadedTrack(Context context, String id) {
+        DownloadedTracksDatabase downloadedTracksDatabase =
+                Room.databaseBuilder(context, DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();
+
+        return downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(id);
+    }*/
 
     public static RequestBuilder<? extends Drawable> glideBuilder(Context context, String imageUrl){
         return glideBuilder(context, imageUrl, new RequestListener() {

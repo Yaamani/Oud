@@ -1,15 +1,18 @@
 package com.example.oud.user.fragments.premium.offlinetracks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.oud.Constants;
@@ -17,19 +20,29 @@ import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.TrackListRecyclerViewAdapter;
+import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.premium.database.DownloadedTrack;
 import com.example.oud.user.fragments.premium.database.DownloadedTracksDatabase;
 import com.huxq17.download.Pump;
 import com.huxq17.download.core.DownloadInfo;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<PremiumOfflineTracksViewModel> {
+
+    private static final String TAG = PremiumOfflineTracksFragment.class.getSimpleName();
 
     private String loggedInUserId;
     private String token;
 
     private TextView mTextViewYouAreNotSubscribed;
+    private TextView mTextViewYouHaveNoOfflineTracks;
 
     private RecyclerView mRecyclerViewOfflineTracks;
     private TrackListRecyclerViewAdapter mTrackListRecyclerViewAdapter;
@@ -55,7 +68,9 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
 
     private void initializeUiStuff(View view) {
         mTextViewYouAreNotSubscribed = view.findViewById(R.id.txt_you_are_not_subscribed);
+        mTextViewYouHaveNoOfflineTracks = view.findViewById(R.id.txt_you_have_no_offline_tracks);
         mRecyclerViewOfflineTracks = view.findViewById(R.id.recycler_view_premium_offline_tracks);
+        mRecyclerViewOfflineTracks.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }
 
     @Override
@@ -99,8 +114,8 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
     }
 
     private void populateRecyclerView() {
-        DownloadedTracksDatabase downloadedTracksDatabase =
-                Room.databaseBuilder(getContext(), DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();
+        /*DownloadedTracksDatabase downloadedTracksDatabase =
+                Room.databaseBuilder(getContext(), DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();*/
 
         mTrackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
                 mRecyclerViewOfflineTracks,
@@ -111,26 +126,85 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
                 null,
                 true);
 
-        List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
-
-        for (DownloadInfo downloadInfo : downloadInfoList) {
-            DownloadInfo.Status status = downloadInfo.getStatus();
-            if (status.shouldStop() | status == DownloadInfo.Status.FINISHED) {
-                String id = downloadInfo.getId();
-                DownloadedTrack downloadedTrack = downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(id);
-
-                mTrackListRecyclerViewAdapter.addTrack(id,
-                        downloadedTrack.image,
-                        downloadedTrack.name,
-                        false);
-            }
-        }
+        new GetAllDownloadedTracks(getContext(), mTrackListRecyclerViewAdapter, mTextViewYouHaveNoOfflineTracks).execute();
 
         mRecyclerViewOfflineTracks.setAdapter(mTrackListRecyclerViewAdapter);
-        mTrackListRecyclerViewAdapter.notifyDataSetChanged();
+        // mTrackListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener onTrackClickListener = (position, view) -> {
 
     };
+
+    private static class GetAllDownloadedTracks extends AsyncTask<Void, Void, List<DownloadedTrack>> {
+
+        private WeakReference<Context> mContext;
+        private WeakReference<TrackListRecyclerViewAdapter> mTrackListRecyclerViewAdapter;
+        private WeakReference<TextView> mTextViewYouHaveNoOfflineTracks;
+
+        public GetAllDownloadedTracks(Context context, TrackListRecyclerViewAdapter trackListRecyclerViewAdapter, TextView youHaveNoOfflineTracks) {
+            this.mContext = new WeakReference<>(context);
+            this.mTrackListRecyclerViewAdapter = new WeakReference<>(trackListRecyclerViewAdapter);
+            this.mTextViewYouHaveNoOfflineTracks = new WeakReference<>(youHaveNoOfflineTracks);
+        }
+
+        @Override
+        protected List<DownloadedTrack> doInBackground(Void... voids) {
+            DownloadedTracksDatabase downloadedTracksDatabase = OudUtils.getDownloadedTracksDatabase(mContext.get());
+            return downloadedTracksDatabase.downloadedTrackDao().getAll();
+        }
+
+        @Override
+        protected void onPostExecute(List<DownloadedTrack> downloadedTracks) {
+            super.onPostExecute(downloadedTracks);
+
+            LinkedList<DownloadedTrack> currentlyBeingDownloadedTracks = TrackListRecyclerViewAdapter.getCurrentlyBeingDownloadedTracks();
+            File file;
+            File parent;
+            String[] files;
+
+
+            if (!downloadedTracks.isEmpty()) {
+
+                List<String> ids = new LinkedList<>();
+                for (DownloadedTrack downloadedTrack : downloadedTracks) {
+                    ids.add(downloadedTrack.id);
+                }
+
+                file = new File(downloadedTracks.get(0).filePath);
+                //parent = file.getParentFile();
+                files = file.list();
+                Log.d(TAG, "onPostExecute: ids = " + Arrays.toString(ids.toArray()));
+                //Log.d(TAG, "onPostExecute: parent = " + parent.getAbsolutePath());
+                Log.d(TAG, "onPostExecute: files = " + Arrays.toString(files));
+            }
+
+
+
+
+            if (downloadedTracks.isEmpty() & currentlyBeingDownloadedTracks.isEmpty()) {
+                mTextViewYouHaveNoOfflineTracks.get().setVisibility(View.VISIBLE);
+                return;
+            }
+
+            for (DownloadedTrack downloadedTrack : downloadedTracks) {
+
+                mTrackListRecyclerViewAdapter.get().addTrack(downloadedTrack.id,
+                        downloadedTrack.image,
+                        downloadedTrack.name,
+                        false);
+
+            }
+
+            for (DownloadedTrack downloadedTrack : currentlyBeingDownloadedTracks) {
+                mTrackListRecyclerViewAdapter.get().addTrack(downloadedTrack.id,
+                        downloadedTrack.image,
+                        downloadedTrack.name,
+                        false);
+            }
+
+
+            mTrackListRecyclerViewAdapter.get().notifyDataSetChanged();
+        }
+    }
 }

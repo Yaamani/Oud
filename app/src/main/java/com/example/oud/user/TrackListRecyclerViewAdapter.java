@@ -2,6 +2,7 @@ package com.example.oud.user;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.example.oud.Constants;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.user.fragments.premium.database.DownloadedTrack;
+import com.example.oud.user.fragments.premium.database.DownloadedTrackDaoHelper;
 import com.example.oud.user.fragments.premium.database.DownloadedTracksDatabase;
 import com.huxq17.download.Pump;
 import com.huxq17.download.core.DownloadInfo;
@@ -28,16 +29,17 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackListRecyclerViewAdapter.TrackItemViewHolder> {
 
     private static final String TAG = TrackListRecyclerViewAdapter.class.getSimpleName();
+
+    private static LinkedList<DownloadedTrack> currentlyBeingDownloadedTracks;
 
     private Context mContext;
 
@@ -46,7 +48,11 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
     private ArrayList<String> mTrackImages = new ArrayList<>();
     private ArrayList<String> mTrackNames = new ArrayList<>();
     private ArrayList<Boolean> mLikedTracks = new ArrayList<>();
-    private ArrayList<DownloadInfo> mDownloadInfos = new ArrayList<>();
+    //private ArrayList<DownloadInfo> mDownloadInfos = new ArrayList<>();
+    private ArrayList<Boolean> mDownloaded = new ArrayList<>();
+
+    //private ArrayList<DownloadedTrack> mDownloadedTracks = new ArrayList<>();
+    //private ArrayList<Boolean> mDownloadedTrackFetched = new ArrayList<>();
 
 
     private OnTrackClickListener mTrackClickListener;
@@ -142,9 +148,8 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             DownloadInfo downloadInfo = getDownloadInfo();
 
 
-            if (mToastDownloadFailed == null) {
+            if (mToastDownloadFailed == null)
                 mToastDownloadFailed = Toast.makeText(mContext, R.string.download_failed, Toast.LENGTH_SHORT);
-            }
             mToastDownloadFailed.show();
 
             int pos = mIds.indexOf(downloadInfo.getId());
@@ -212,7 +217,11 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         }
 
 
-        DownloadInfo currentDownloadInfo = mDownloadInfos.get(position);
+        // if (mDownloadedTracks.get(position) == null)
+
+        new AvailableOfflineImageButtonHandler(mContext, holder, mDownloaded, mIds.get(position), position).execute();
+
+        /*DownloadInfo currentDownloadInfo = mDownloadInfos.get(position);
         if (currentDownloadInfo != null) {
             //currentDownloadInfo.setExtraData(holder);
             if (currentDownloadInfo.getStatus() == DownloadInfo.Status.FINISHED)
@@ -222,7 +231,7 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
                 holder.mProgressBarDownload.setVisibility(View.VISIBLE);
                 holder.mProgressBarDownload.setProgress(currentDownloadInfo.getProgress());
             }
-        }
+        }*/
 
 
 
@@ -231,11 +240,75 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
     }
 
+
     @Override
     public int getItemCount() {
         return mIds.size();
         // return mTracks.size();
     }
+
+    private static class AvailableOfflineImageButtonHandler extends AsyncTask<Void, Void, DownloadedTrack> {
+
+        private WeakReference<Context> mContext;
+        private WeakReference<TrackItemViewHolder> mHolder;
+        private WeakReference<ArrayList<Boolean>> mDownloaded;
+        private String trackId;
+        private int mAdapterPosition;
+
+        public AvailableOfflineImageButtonHandler(Context context, TrackItemViewHolder availableOffline, ArrayList<Boolean> downloaded, String trackId, int adapterPosition) {
+            this.mContext = new WeakReference<>(context);
+            this.mHolder = new WeakReference<>(availableOffline);
+            this.mDownloaded = new WeakReference<>(downloaded);
+            this.trackId = trackId;
+            this.mAdapterPosition = adapterPosition;
+        }
+
+        @Override
+        protected DownloadedTrack doInBackground(Void... params) {
+            DownloadedTracksDatabase downloadedTracksDatabase = OudUtils.getDownloadedTracksDatabase(mContext.get());
+
+            return downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(trackId);
+        }
+
+        @Override
+        protected void onPostExecute(DownloadedTrack downloadedTrack) {
+            super.onPostExecute(downloadedTrack);
+
+            mDownloaded.get().set(mAdapterPosition, false);
+
+            if (downloadedTrack != null) {
+                mHolder.get().mAvailableOffline.setColorFilter(mContext.get().getResources().getColor(R.color.colorPrimary));
+                mHolder.get().mAvailableOffline.setAlpha(1.0f);
+
+                mDownloaded.get().set(mAdapterPosition, true);
+            } else {
+                mHolder.get().mAvailableOffline.setAlpha(1.0f);
+                DownloadInfo downloadInfo = Pump.getDownloadInfoById(trackId);
+                if (downloadInfo != null)
+                    if (downloadInfo.getStatus() == DownloadInfo.Status.RUNNING) {
+                        mHolder.get().mAvailableOffline.setAlpha(0.5f);
+                        mHolder.get().mProgressBarDownload.setVisibility(View.VISIBLE);
+                        mHolder.get().mProgressBarDownload.setProgress(downloadInfo.getProgress());
+                    }
+            }
+
+        }
+    }
+
+
+    public static LinkedList<DownloadedTrack> getCurrentlyBeingDownloadedTracks() {
+        /*LinkedList<DownloadedTrack> copy = new LinkedList<>();
+        if (currentlyBeingDownloadedTracks != null)
+            if (!currentlyBeingDownloadedTracks.isEmpty())
+                Collections.copy(copy, currentlyBeingDownloadedTracks);*/
+        if (currentlyBeingDownloadedTracks == null)
+            currentlyBeingDownloadedTracks = new LinkedList<>();
+        return /*copy*/currentlyBeingDownloadedTracks;
+    }
+
+    //private void handleAvailableOfflineButton(ImageButton button, )
+
+
 
     /*public void hideAllReorderingSeparators() {
         Log.i(TAG, "hideAllReorderingSeparators: " + reorderingSeparators.size());
@@ -309,7 +382,14 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.add(position, trackImage);
         mTrackNames.add(position, trackName);
         mLikedTracks.add(position, isLiked);
-        mDownloadInfos.add(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
+        mDownloaded.add(position, null);
+        // mDownloadInfos.add(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
+        /*new DownloadedTrackDaoHelper.GetDownloadedTrackFromRoomDatabase(mContext, mDownloadedTracks, position, Constants.ArrayOperation.ADD)
+                .execute(trackId);*/
+
+        //mDownloadedTracks.add(position, OudUtils.getDownloadedTrack(mContext, trackId));
+        //mDownloadedTracks.add(position, null); // We'll fetch the database in onBindViewHolder()
+
 
         //mHeartClickListener.add(position, heartClickListener);
     }
@@ -324,7 +404,15 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.set(position, trackImage);
         mTrackNames.set(position, trackName);
         mLikedTracks.set(position, isLiked);
-        mDownloadInfos.set(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
+        mDownloaded.set(position, null);
+
+        // mDownloadInfos.set(position, OudUtils.getTrackDownloadInfo(loggedInUserId, trackId));
+
+        /*new DownloadedTrackDaoHelper.GetDownloadedTrackFromRoomDatabase(mContext, mDownloadedTracks, position, Constants.ArrayOperation.SET)
+                .execute(trackId);*/
+        //mDownloadedTracks.set(position, null); // We'll fetch the database in onBindViewHolder()
+
+        // mDownloadedTracks.set(position, OudUtils.getDownloadedTrack(mContext, trackId));
 
 
         //mHeartClickListener.add(position, heartClickListener);
@@ -336,7 +424,9 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         mTrackImages.remove(position);
         mTrackNames.remove(position);
         mLikedTracks.remove(position);
-        mDownloadInfos.remove(position);
+        mDownloaded.remove(position);
+        // mDownloadInfos.remove(position);
+        //mDownloadedTracks.remove(position);
         //mHeartClickListener.remove(position);
     }
 
@@ -346,7 +436,9 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
         Collections.swap(mTrackImages, i, j);
         Collections.swap(mTrackNames, i, j);
         Collections.swap(mLikedTracks, i, j);
-        Collections.swap(mDownloadInfos, i, j);
+        Collections.swap(mDownloaded, i, j);
+        //Collections.swap(mDownloadInfos, i, j);
+        //Collections.swap(mDownloadedTracks, i, j);
         //Collections.swap(mHeartClickListener, i, j);
     }
 
@@ -383,8 +475,19 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             mProgressBarDownload = itemView.findViewById(R.id.progress_bar_track_download);
 
             mLayout.setOnClickListener(v -> {
-                if (this.trackClickListener != null)
-                    this.trackClickListener.onTrackClickListener(getAdapterPosition(), v);
+                /*if (this.trackClickListener != null)
+                    this.trackClickListener.onTrackClickListener(getAdapterPosition(), v);*/
+
+                MediaPlayer mp = new MediaPlayer();
+
+                try {
+                    mp.setDataSource("/storage/emulated/0/Android/data/com.example.oud/cache/5e9b3d310f27b613b44fba2f-5e907db0a0645f558160760d-1587347166254.mp3");
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             });
             mAvailableOffline.setOnClickListener(v -> {
                 if (this.availableOfflineClickListener != null)
@@ -396,11 +499,12 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
                 mAvailableOffline.setAlpha(0.5f);
 
-                if (/*downloadInfo != null*/Pump.getFileIfSucceed(mIds.get(getAdapterPosition())) != null)
-                    deleteTrack();
-                else {
-                    downloadTrack();
-                }
+                if (mDownloaded.get(getAdapterPosition()) != null)
+                    if (mDownloaded.get(getAdapterPosition()))
+                        deleteDownloadedTrack();
+                    else {
+                        downloadTrack();
+                    }
 
             });
             mHeart.setOnClickListener(v -> {
@@ -416,53 +520,79 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             String name = mTrackNames.get(pos);
             String image = mTrackImages.get(pos);
             //String filePath = userId + '/' + id;
+
+            DownloadedTrack downloadedTrack = new DownloadedTrack();
+            downloadedTrack.id = id;
+            downloadedTrack.name = name;
+            downloadedTrack.image = image;
+
+            if (currentlyBeingDownloadedTracks == null)
+                currentlyBeingDownloadedTracks = new LinkedList<>();
+
+            currentlyBeingDownloadedTracks.add(downloadedTrack);
+
+            //File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
             File file = new File(mContext.getExternalCacheDir().getAbsolutePath());
 
             mProgressBarDownload.setVisibility(View.VISIBLE);
 
-            Pump.newRequest(baseUrl + "tracks/" + id + "/download"/*, file.getAbsolutePath()*/)
+            Pump.newRequest(baseUrl + "tracks/" + id + "/download")
                     //Pump.newRequest("https://server10.mp3quran.net/ajm/128/001.mp3")
                     .setId(id)
-                    //.forceReDownload(true)
+                    .forceReDownload(true)
                     .tag(loggedInUserId)
                     .listener(new DownloadListener() {
                         @Override
+                        public void onFailed() {
+                            super.onFailed();
+
+                            currentlyBeingDownloadedTracks.remove(downloadedTrack);
+                        }
+
+                        @Override
                         public void onSuccess() {
+
+                            currentlyBeingDownloadedTracks.remove(downloadedTrack);
+
                             super.onSuccess();
                             DownloadInfo downloadInfo = getDownloadInfo();
                             if (downloadInfo.getId().equals(id)) {
-                                DownloadedTrack downloadedTrack = new DownloadedTrack();
-                                downloadedTrack.id = id;
-                                downloadedTrack.name = name;
-                                downloadedTrack.image = image;
+
                                 downloadedTrack.filePath = downloadInfo.getFilePath();
 
-                                new InsertDownloadedTrackIntoRoomDataBase(mContext).execute(downloadedTrack);
+                                //mDownloadedTracks.set(pos, downloadedTrack);
+
+                                new DownloadedTrackDaoHelper.InsertDownloadedTrackIntoRoomDatabase(mContext, currentlyBeingDownloadedTracks).execute(downloadedTrack);
                             }
+
+
                         }
                     })
                     .submit();
 
-            List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
+            /*List<DownloadInfo> downloadInfoList = Pump.getDownloadListByTag(loggedInUserId);
             for (DownloadInfo downloadInfo : downloadInfoList) {
                 if (downloadInfo.getId().equals(id)) {
                     downloadInfo.setExtraData(TrackItemViewHolder.this);
-                    mDownloadInfos.set(getAdapterPosition(), downloadInfo);
+                    // mDownloadInfos.set(getAdapterPosition(), downloadInfo);
                 }
-            }
+            }*/
+
+            //mDownloadedTracks.set(getAdapterPosition(), d)
 
 
         }
 
-        private void deleteTrack() {
+        private void deleteDownloadedTrack() {
             String id = mIds.get(getAdapterPosition());
-            new DeleteTrackAsyncTask().execute(id, mAvailableOffline);
+            // new DeleteTrackAsyncTask().execute(id, mAvailableOffline);
+            new DeleteDownloadedTrackFromRoomDatabase(mContext, TrackItemViewHolder.this).execute(id);
         }
 
 
     }
 
-    private static class DeleteTrackAsyncTask extends AsyncTask<Object, Void, ImageButton> {
+    /*private static class DeleteTrackAsyncTask extends AsyncTask<Object, Void, ImageButton> {
 
         @Override
         protected ImageButton doInBackground(Object... params) {
@@ -478,28 +608,40 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             mAvailableOffline.setAlpha(1.0f);
             mAvailableOffline.setColorFilter(Color.WHITE);
         }
-    }
+    }*/
 
-    private static class InsertDownloadedTrackIntoRoomDataBase extends AsyncTask<DownloadedTrack, Void, Void> {
+    public static class DeleteDownloadedTrackFromRoomDatabase extends AsyncTask<String, Void, Void> {
 
         private WeakReference<Context> mContext;
+        private WeakReference<TrackItemViewHolder> mHolder;
 
-        public InsertDownloadedTrackIntoRoomDataBase(Context context) {
+        public DeleteDownloadedTrackFromRoomDatabase(Context context, TrackItemViewHolder trackItemViewHolder) {
             this.mContext = new WeakReference<>(context);
+            this.mHolder = new WeakReference<>(trackItemViewHolder);
         }
 
         @Override
-        protected Void doInBackground(DownloadedTrack... downloadedTracks) {
-            DownloadedTracksDatabase downloadedTracksDatabase =
-                    Room.databaseBuilder(mContext.get(), DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();
+        protected Void doInBackground(String... downloadedTrackIds) {
+            DownloadedTracksDatabase downloadedTracksDatabase = OudUtils.getDownloadedTracksDatabase(mContext.get());
 
-            try {
-                downloadedTracksDatabase.downloadedTrackDao().insert(downloadedTracks[0]);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
+            String filePath = downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(downloadedTrackIds[0]).filePath;
+            File file = new File(filePath);
+
+            if (file.exists()) {
+                file.delete();
             }
 
+            downloadedTracksDatabase.downloadedTrackDao().delete(downloadedTrackIds[0]);
+
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            mHolder.get().mAvailableOffline.setAlpha(1.0f);
+            mHolder.get().mAvailableOffline.setColorFilter(Color.WHITE);
         }
     }
 

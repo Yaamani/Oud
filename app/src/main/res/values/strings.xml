@@ -56,10 +56,11 @@
     <string name="end_date">End date :</string>
     <string name="subscribe">SUBSCRIBE</string>
     <string name="extend">EXTEND</string>
-    <string name="please_enter_a_valid_coupon">Please enter a valid coupon.</string>
-    <string name="you_dont_have_enough_credit">You don\'t have enough credit.</string>
-    <string name="unknown_server_error">Unknown error.</string>
-    <string name="you_are_not_subscribed">You are not subscribed.</string>
+    <string name="please_enter_a_valid_coupon">Please enter a valid coupon</string>
+    <string name="you_dont_have_enough_credit">You don\'t have enough credit</string>
+    <string name="unknown_server_error">Unknown error</string>
+    <string name="you_are_not_subscribed">You are not subscribed</string>
+    <string name="you_have_no_downloaded_tracks">You have no offline tracks</string>
 
 
 </resources>

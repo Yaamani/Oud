@@ -127,6 +127,8 @@ public class Constants {
 
     public static final int STATE_PREPARING = 0;
 
+    public enum ArrayOperation {ADD, SET}
+
 
 
 

@@ -57,6 +57,7 @@
         android:adjustViewBounds="true"
         android:background="#00FFFFFF"
         android:scaleType="fitXY"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="@+id/img_track_playlist"
         app:layout_constraintEnd_toStartOf="@id/btn_track_like"
         app:layout_constraintHorizontal_bias="0.5"
