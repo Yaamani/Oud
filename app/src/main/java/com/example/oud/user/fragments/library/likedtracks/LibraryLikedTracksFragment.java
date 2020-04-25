@@ -128,7 +128,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
     }
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
-        TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
+        //TrackListRecyclerViewAdapter trackAdapter = (TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter();
         /*talkToPlayer.configurePlayer(trackAdapter.getId(position), true);*/
     };
 

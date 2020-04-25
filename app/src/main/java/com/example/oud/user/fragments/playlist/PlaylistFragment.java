@@ -662,7 +662,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
 
-        talkToPlayer.configurePlayer(/*trackListRecyclerViewAdapter.getIds().get(position)*/"lksflasdjfasbflk", "playlist" ,3,token);
+        //talkToPlayer.configurePlayer(/*trackListRecyclerViewAdapter.getIds().get(position)*/"lksflasdjfasbflk", "playlist" ,3,token);
 
         /*talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getId(position), true);*/
 
@@ -701,7 +701,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
     };
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
-        Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
 
         //Pump.newRequest()
     };

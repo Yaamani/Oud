@@ -400,7 +400,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
 
 
                 TrackListRecyclerViewAdapter.OnTrackClickListener availableOfflineClickListener = (position, view) -> {
-                    Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getContext(), "track offline !!", Toast.LENGTH_SHORT).show();
                 };
 
                 trackListRecyclerViewAdapter = new TrackListRecyclerViewAdapter(getContext(),
