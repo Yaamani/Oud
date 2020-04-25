@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mainLoginFragment">
+
+    <fragment
+        android:id="@+id/mainLoginFragment"
+        android:name="com.example.oud.authentication.MainLoginFragment"
+        android:label="fragment_main_login"
+        tools:layout="@layout/fragment_main_login" >
+        <action
+            android:id="@+id/action_mainLoginFragment_to_actualLoginFragment"
+            app:destination="@id/actualLoginFragment" />
+        <action
+            android:id="@+id/action_mainLoginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_mainLoginFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/actualLoginFragment"
+        android:name="com.example.oud.authentication.ActualLoginFragment"
+        android:label="ActualLoginFragment" >
+        <action
+            android:id="@+id/action_actualLoginFragment_to_forgetPasswordFragment"
+            app:destination="@id/forgetPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgetPasswordFragment"
+        android:name="com.example.oud.authentication.ForgetPasswordFragment"
+        android:label="fragment_forget_password"
+        tools:layout="@layout/fragment_forget_password" />
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.oud.authentication.SignupFragment"
+        android:label="SignupFragment" />
+    <fragment
+        android:id="@+id/connectWithOtherServicesDialogFragment"
+        android:name="com.example.oud.authentication.ConnectWithOtherServicesDialogFragment"
+        android:label="ConnectWithOtherServicesDialogFragment" >
+        <action
+            android:id="@+id/action_connectWithOtherServicesDialogFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.oud.user.fragments.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+</navigation>

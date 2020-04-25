@@ -7,13 +7,23 @@
         android:title="@string/title_home"/>
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard"/>
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/title_search"/>
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications"/>
+        android:id="@+id/navigation_library"
+        android:icon="@drawable/ic_library"
+        android:title="@string/title_library"/>
+
+    <item
+        android:id="@+id/navigation_premium"
+        android:icon="@drawable/ic_premium"
+        android:title="@string/title_premium"/>
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings2"
+        android:title="@string/title_settings"/>
 
 </menu>

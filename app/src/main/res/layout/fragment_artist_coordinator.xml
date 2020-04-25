@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/ic_oud"
+        android:scaleType="centerCrop"
+        app:layout_anchor="@id/scroll_view_artist"
+        app:layout_anchorGravity="top"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view_artist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="400dp"
+        android:background="@color/colorPrimaryDark" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp">
+
+
+            <TextView
+                android:id="@+id/txt_artist_popular_songs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/popular_songs"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_view_artist_popular_songs"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_artist_no_songs_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_songs_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_albums"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_artist_popular_songs" />
+
+            <TextView
+                android:id="@+id/txt_artist_albums"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/albums"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_view_artist_albums"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_songs_to_show" />
+
+            <TextView
+                android:id="@+id/txt_artist_no_albums_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_albums_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_similar_artists"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_artist_albums" />
+
+            <TextView
+                android:id="@+id/txt_artist_similar_artists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/similar_artists"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_view_artist_similar_artists"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_albums_to_show" />
+
+            <TextView
+                android:id="@+id/txt_artist_no_artists_to_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/no_albums_to_show"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_about"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_artist_similar_artists" />
+
+            <TextView
+                android:id="@+id/txt_artist_about"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                android:text="@string/about"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_about_bio"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_no_artists_to_show" />
+
+
+            <TextView
+                android:id="@+id/txt_artist_about_bio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_about" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_artist_similar_artists"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_artists_to_show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_similar_artists" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_artist_albums"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_albums_to_show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_albums" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_artist_popular_songs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/artist_layout_margin"
+                android:layout_marginBottom="@dimen/artist_layout_margin"
+                app:layout_constraintBottom_toTopOf="@+id/txt_artist_no_songs_to_show"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_artist_popular_songs" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <ProgressBar
+        android:id="@+id/progress_artist"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

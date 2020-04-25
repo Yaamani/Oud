@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:applyMotionScene="true"
+    app:layoutDescription="@xml/motion_scene_playlist"
+    app:motionProgress="0"
+    android:id="@+id/motion_layout_playlist"
+    tools:context=".user.fragments.playlist.PlaylistFragment">
+
+    <View
+        android:id="@+id/view_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient" />
+
+    <!--<View
+        android:id="@+id/view_heart"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/ic_heart" />-->
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_playlist_options"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="#00FFFFFF"
+        android:visibility="gone"
+        android:src="@drawable/ic_options"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        tools:layout_editor_absoluteX="116dp"
+        tools:layout_editor_absoluteY="72dp" />
+
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_upload_playlist_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:background="@color/colorPrimaryDark"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_upload" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_rename_playlist"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="4dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/ic_rename"
+        tools:layout_editor_absoluteY="336dp" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_playlist_name"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:maxWidth="300dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/transparent"
+        android:requiresFadingEdge="horizontal"
+        android:fadingEdgeLength="40dp"
+        android:singleLine="true"
+        android:ellipsize="none"
+        android:text="Playlist Name"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="260dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_playlist_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimaryDark"
+        tools:layout_editor_absoluteY="319dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_floating_add_track_to_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_plus"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/view_block_ui_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_playlist"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

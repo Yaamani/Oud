@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_artist_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home"/>
+
+
+    <item
+        android:id="@+id/navigation_artist_albums"
+        android:icon="@drawable/ic_album_black"
+        android:title="my albums"/>
+
+    <item
+        android:id="@+id/navigation_artist_info"
+        android:icon="@drawable/ic_info"
+        android:title="bio"/>
+
+    <item
+        android:id="@+id/navigation_artist_settings"
+        android:icon="@drawable/ic_settings2"
+        android:title="@string/title_settings"/>
+
+</menu>

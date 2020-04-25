@@ -1,11 +1,48 @@
 <resources>
+    <!-- #TODO: EditText styles {font , textSize, textColor,....} -->
+    <!-- #TODO: Textview styles {font , textSize, textColor,....} -->
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+
+
+        <!--<item name="android:fontFamily">@font/hk_grotesk_semi_bold</item>-->
+        <!--<item name="android:fontFamily">@font/hk_grotesk_bold</item>-->
+        <!--<item name="android:fontFamily">@font/sk_modernist_regular</item>-->
+        <!--<item name="android:fontFamily">@font/sk_modernist_bold</item>-->
+        <!--<item name="android:fontFamily">@font/gravity_bold</item>-->
+        <!--<item name="android:fontFamily">@font/gravity_book</item>-->
+        <!--<item name="android:fontFamily">@font/gothic_a1_bold</item>-->
+        <!--<item name="android:fontFamily">@font/gothic_a1_extra_bold</item>-->
+        <!--<item name="android:fontFamily">@font/gothic_a1_black</item>-->
+        <!--<item name="android:fontFamily">@font/gothaic_a1</item>-->
+
+        <!--<item name="android:textSize">18sp</item>-->
+
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+
+
+
+    </style>
+    <style name="EditTextLogin" parent="AppTheme">
+        <item name="android:textSize">20sp</item>
+
+    </style>
+    <style name="TextViewLoginHeader" parent="AppTheme">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#191815</item>
     </style>
 
+
+
+
 </resources>
+

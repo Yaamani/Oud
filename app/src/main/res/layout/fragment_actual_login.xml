@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="25dp"
+    android:background="@drawable/gradient_actual_login_color"
+    >
+
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email or username"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:textColor="#191815"
+        />
+
+    <EditText
+        android:id="@+id/text_login_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:textColor="#191919"
+        style="@style/EditTextLogin"
+
+
+        />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:textColor="#191919"
+        />
+
+    <EditText
+        android:id="@+id/text_login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:inputType="textPassword"
+        style="@style/EditTextLogin"
+
+
+        />
+    <TextView
+        android:id="@+id/text_view_login_error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        />
+
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_edge_button"
+        android:text="@string/login"
+        android:textColor="@color/paleOrange" />
+
+    <Button
+        android:id="@+id/btn_to_forget_password"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:text="forgot your password?"
+
+        android:textColor="#191919"
+        style="?android:attr/borderlessButtonStyle"
+
+
+        />
+
+</LinearLayout>
