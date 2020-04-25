@@ -250,7 +250,7 @@ public class ArtistFragment extends ConnectionAwareFragment<ArtistViewModel> {
         super.onPause();
 
         if (trackListRecyclerViewAdapter != null)
-            trackListRecyclerViewAdapter.disableDownloadListener();
+            trackListRecyclerViewAdapter.preventLeaksBecauseOfDownloadService();
 
         // Motion layout bug fix.
         /*((UserActivity) getActivity()).setArtistFragPaused(true);

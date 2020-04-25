@@ -20,15 +20,23 @@ import com.example.oud.user.fragments.premium.database.DownloadedTracksDatabase;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.huxq17.download.Pump;
 import com.huxq17.download.PumpFactory;
 import com.huxq17.download.core.DownloadInfo;
 import com.huxq17.download.core.service.IDownloadManager;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -91,7 +99,7 @@ public class OudUtils {
                     request.body().writeTo(buffer);
 
 
-                Log.i(TAG, String.format("Sending request {%s} %s on %s%n Headers: %s%n Body: %s",
+                Log.d(TAG, String.format("Sending request {%s} %s on %s%n Headers: %s%n Body: %s",
                         request.method(), request.url(), chain.connection(), request.headers(), buffer.readUtf8()));
 
             }
@@ -100,14 +108,14 @@ public class OudUtils {
             Response response = chain.proceed(request);
 
             if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & Constants.RECEIVING) == Constants.RECEIVING) {
-                Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
+                Log.d(TAG, String.format("Received response for %s in %.1fms%n%s",
                         response.request().url(), (t2 - t1) / 1e6d, response.headers()));
             }
 
 
             final String responseString = new String(response.body().bytes());
             if ((Constants.SERVER_CONNECTION_AWARE_LOG_SETTINGS & Constants.JSON_RESPONSE) == Constants.JSON_RESPONSE) {
-                Log.i(TAG, "Response for {" + request.method() + "} " + response.request().url()+ ": " + responseString);
+                Log.d(TAG, "Response for {" + request.method() + "} " + response.request().url()+ ": " + responseString);
             }
 
             return  response.newBuilder()
@@ -178,7 +186,34 @@ public class OudUtils {
 
     public static Gson getGson() {
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                //.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+
+                    private SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    private SimpleDateFormat format2 = new SimpleDateFormat("dd-MM-yyyy");
+
+                    @Override
+                    public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                        try {
+                            String j = json.getAsJsonPrimitive().getAsString();
+                            return parseDate(j);
+                        } catch (ParseException e) {
+                            throw new JsonParseException(e.getMessage(), e);
+                        }
+                    }
+
+                    private Date parseDate(String dateString) throws ParseException {
+                        if (dateString != null && dateString.trim().length() > 0) {
+                            try {
+                                return format1.parse(dateString);
+                            } catch (ParseException pe) {
+                                return format2.parse(dateString);
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                })
                 .create();
         return gson;
     }
@@ -295,7 +330,9 @@ public class OudUtils {
     }*/
 
     public static DownloadedTracksDatabase getDownloadedTracksDatabase(Context context) {
-        return Room.databaseBuilder(context, DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME).build();
+        return Room.databaseBuilder(context, DownloadedTracksDatabase.class, Constants.DOWNLOADED_TRACKS_DATABASE_NAME)
+                .fallbackToDestructiveMigrationFrom(1, 2)
+                .build();
     }
 
     /*public static DownloadedTrack getDownloadedTrack(Context context, String id) {

@@ -14,6 +14,12 @@ public interface DownloadedTrackDao {
     @Query("SELECT * FROM downloaded_track")
     List<DownloadedTrack> getAll();
 
+    @Query("SELECT * FROM downloaded_track WHERE userId = :userId")
+    List<DownloadedTrack> getAllWithUserId(String userId);
+
+    @Query("SELECT COUNT(*) FROM downloaded_track WHERE id = :trackId")
+    int getNumOfTracksWithId(String trackId);
+
     @Query("SELECT * FROM downloaded_track WHERE id = :trackId")
     DownloadedTrack getDownloadedTrack(String trackId);
 
@@ -23,6 +29,6 @@ public interface DownloadedTrackDao {
     @Delete()
     void delete(DownloadedTrack downloadedTrack);
 
-    @Query("DELETE FROM downloaded_track WHERE id = :trackId")
-    void delete(String trackId);
+    @Query("DELETE FROM downloaded_track WHERE id = :trackId AND userId = :userId")
+    void delete(String trackId, String userId);
 }

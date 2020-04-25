@@ -82,6 +82,10 @@ public class Constants {
     public static final String ARTIST_ID_KEY = "ARTIST_ID";
     public static final String PLAYLIST_FRAGMENT_TYPE_KEY = "PLAYLIST_FRAGMENT_TYPE";
 
+    public static final String URL_KEY = "URL";
+    public static final String TRACK_IMAGE_KEY = "TRACK_IMAGE";
+    public static final String TRACK_NAME_KEY = "TRACK_NAME";
+
     public static final String API_UNKNOWN = "unknown";
     public static final String API_ALBUM = "Album";
     public static final String API_ARTIST = "Artist";
@@ -98,7 +102,8 @@ public class Constants {
     public static final String BUNDLE_CREATE_ALBUM_RELEASE_DATE_ID = "release_date";
     public static final String BUNDLE_CREATE_ALBUM_ALBUM_ID_ID = "album_id";
 
-
+    public static final String OFFLINE_TRACKS_DIR_NAME = "OfflineTracks";
+    public static final String OFFLINE_TRACKS_EXTENSION = ".mp3";
 
 
 

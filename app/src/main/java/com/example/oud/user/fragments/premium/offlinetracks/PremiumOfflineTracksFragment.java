@@ -8,11 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.oud.Constants;
@@ -20,17 +17,10 @@ import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.connectionaware.ConnectionAwareFragment;
 import com.example.oud.user.TrackListRecyclerViewAdapter;
-import com.example.oud.user.UserActivity;
 import com.example.oud.user.fragments.premium.database.DownloadedTrack;
 import com.example.oud.user.fragments.premium.database.DownloadedTracksDatabase;
-import com.huxq17.download.Pump;
-import com.huxq17.download.core.DownloadInfo;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -87,7 +77,7 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
         super.onPause();
 
         if (mTrackListRecyclerViewAdapter != null)
-            mTrackListRecyclerViewAdapter.disableDownloadListener();
+            mTrackListRecyclerViewAdapter.preventLeaksBecauseOfDownloadService();
     }
 
     private void handleData() {
@@ -159,7 +149,7 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
             super.onPostExecute(downloadedTracks);
 
             LinkedList<DownloadedTrack> currentlyBeingDownloadedTracks = TrackListRecyclerViewAdapter.getCurrentlyBeingDownloadedTracks();
-            File file;
+            /*File file;
             File parent;
             String[] files;
 
@@ -171,13 +161,13 @@ public class PremiumOfflineTracksFragment extends ConnectionAwareFragment<Premiu
                     ids.add(downloadedTrack.id);
                 }
 
-                file = new File(downloadedTracks.get(0).filePath);
-                //parent = file.getParentFile();
-                files = file.list();
+                file = new File(downloadedTracks.get(0).fileName);
+                parent = file.getParentFile();
+                files = parent.list();
                 Log.d(TAG, "onPostExecute: ids = " + Arrays.toString(ids.toArray()));
                 //Log.d(TAG, "onPostExecute: parent = " + parent.getAbsolutePath());
                 Log.d(TAG, "onPostExecute: files = " + Arrays.toString(files));
-            }
+            }*/
 
 
 

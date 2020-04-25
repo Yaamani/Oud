@@ -131,6 +131,30 @@ public class MediaService extends MediaBrowserServiceCompat {
         sendBroadcast(intentState);
         mMediaSession.setActive(false);
         mNotificationManager.cancelAll();
+
+        if(startOrResumePlaybackReceiver != null){
+
+            unregisterReceiver(startOrResumePlaybackReceiver);
+        }
+
+        /*if(mediaButtonReceiver != null){
+
+            unregisterReceiver(mediaButtonReceiver);
+        }*/
+
+        if(becomingNoisyReceiver != null){
+
+            unregisterReceiver(becomingNoisyReceiver);
+        }
+
+        if(playerInfoReceiver != null){
+
+            unregisterReceiver(playerInfoReceiver);
+        }
+
+        stopSelf();
+
+        // unregisterReceiver();
     }
 
     @Nullable

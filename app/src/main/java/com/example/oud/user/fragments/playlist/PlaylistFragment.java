@@ -215,7 +215,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
         super.onPause();
 
         if (trackListRecyclerViewAdapter != null)
-            trackListRecyclerViewAdapter.disableDownloadListener();
+            trackListRecyclerViewAdapter.preventLeaksBecauseOfDownloadService();
     }
 
     private void loadData(View view) {

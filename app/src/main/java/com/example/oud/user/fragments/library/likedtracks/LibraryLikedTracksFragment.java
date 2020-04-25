@@ -33,7 +33,7 @@ public class LibraryLikedTracksFragment extends LibrarySubFragment<LikedTrack, L
     public void onPause() {
         super.onPause();
         if (mItemsAdapter != null)
-            ((TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter()).disableDownloadListener();
+            ((TrackListRecyclerViewAdapter) mItemsAdapter.getAdapter()).preventLeaksBecauseOfDownloadService();
     }
 
     @Override

@@ -64,17 +64,24 @@ public class DownloadedTrackDaoHelper {
 
             downloadedTracksDatabase.downloadedTrackDao().insert(downloadedTracks[0]);
 
-            return null;
+            return downloadedTracks[0];
         }
 
         @Override
         protected void onPostExecute(DownloadedTrack downloadedTrack) {
             super.onPostExecute(downloadedTrack);
-            currentlyBeingDownloadedTracks.get().remove(downloadedTrack);
+            int i = 0;
+            for (DownloadedTrack current : currentlyBeingDownloadedTracks.get()) {
+                if (current.id.equals(downloadedTrack.id)) {
+                    currentlyBeingDownloadedTracks.get().remove(i);
+                    break;
+                }
+                i++;
+            }
         }
     }
 
-    public static class DeleteDownloadedTrackFromRoomDatabase extends AsyncTask<String, Void, Void> {
+    /*public static class DeleteDownloadedTrackFromRoomDatabase extends AsyncTask<String, Void, Void> {
 
 
         private WeakReference<Context> mContext;
@@ -86,7 +93,7 @@ public class DownloadedTrackDaoHelper {
         protected Void doInBackground(String... downloadedTrackIds) {
             DownloadedTracksDatabase downloadedTracksDatabase = OudUtils.getDownloadedTracksDatabase(mContext.get());
 
-            String filePath = downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(downloadedTrackIds[0]).filePath;
+            String filePath = downloadedTracksDatabase.downloadedTrackDao().getDownloadedTrack(downloadedTrackIds[0]).fileName;
             File file = new File(filePath);
 
             if (file.exists())
@@ -98,5 +105,5 @@ public class DownloadedTrackDaoHelper {
             return null;
         }
 
-    }
+    }*/
 }
