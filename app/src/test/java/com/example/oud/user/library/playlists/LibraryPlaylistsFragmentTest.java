@@ -32,9 +32,7 @@ import static androidx.test.espresso.Espresso.*;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static com.google.common.truth.Truth.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -100,7 +98,7 @@ public class LibraryPlaylistsFragmentTest {
         scenario.onActivity(activity -> {
             OudList<Playlist> itemOudListFirstSet = null;
             try {
-                itemOudListFirstSet = oudApi.getPlaylistsFollowedByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
+                itemOudListFirstSet = oudApi.getPlaylistsFollowedByCurrentUser("", false, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -143,7 +141,7 @@ public class LibraryPlaylistsFragmentTest {
 
             try {
                 itemOudListMore = oudApi.getPlaylistsFollowedByCurrentUser("",
-                        Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT,
+                        false, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT,
                         Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT)
                         .execute()
                         .body();
@@ -184,7 +182,7 @@ public class LibraryPlaylistsFragmentTest {
 
             OudList<Playlist> itemOudListFirstSet = null;
             try {
-                itemOudListFirstSet = oudApi.getPlaylistsFollowedByCurrentUser("", Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
+                itemOudListFirstSet = oudApi.getPlaylistsFollowedByCurrentUser("", false, Constants.USER_LIBRARY_SINGLE_FETCH_LIMIT, 0).execute().body();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -82,6 +82,9 @@ public interface OudApi {
     Call<LoggedInUser> updateDisplayName(@Header(AUTHORIZATION_HEADER) String token,@Body String displayName);
 
 
+    @GET("users/{user_id}/following")
+    Call<OudList<ArtistPreview>> getUserFollowing(@Path("user_id")String userId,@Query("type") String type,@Query("offset") int offset);
+
 
 
 
@@ -244,7 +247,7 @@ public interface OudApi {
     Call<ResponseBody> unfollowArtistsOrUsers(@Header(AUTHORIZATION_HEADER) String token, @Query("type") String type, @Query(value = "ids", encoded = true) String ids);
 
     @GET("me/playlists")
-    Call<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(@Header(AUTHORIZATION_HEADER) String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+    Call<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(@Header(AUTHORIZATION_HEADER) String token, @Query("isOwner") boolean isOwner, @Query("limit") Integer limit, @Query("offset") Integer offset);
 
     @GET("me/following?type=" + Constants.API_ARTIST)
     Call<OudList<ArtistPreview>> getArtistsFollowedByCurrentUser(@Header(AUTHORIZATION_HEADER) String token, @Query("limit") Integer limit, @Query("offset") Integer offset);

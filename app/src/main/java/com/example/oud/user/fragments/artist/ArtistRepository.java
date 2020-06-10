@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.artist;
 
 import android.util.Log;
 
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
@@ -107,6 +108,8 @@ public class ArtistRepository extends ConnectionAwareRepository {
                     Log.e(TAG, "onResponse: " + response.code());
                     return;
                 }
+
+                NotificationUtils.subscribeToFollowedArtistTopic(ids.get(0));
             }
         });
     }
@@ -128,6 +131,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
                     Log.e(TAG, "onResponse: " + response.code());
                     return;
                 }
+                NotificationUtils.unsubscribeFromFollowedArtistTopic(ids.get(0));
             }
         });
 

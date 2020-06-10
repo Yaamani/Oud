@@ -14,13 +14,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
+import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
+import com.example.oud.api.OudList;
 import com.example.oud.artist.ArtistActivity;
+import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.user.UserActivity;
 
+import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +43,9 @@ import static android.content.Context.MODE_PRIVATE;
  * create an instance of this fragment.
  */
 public class MainLoginFragment extends Fragment {
+
+    private static final String TAG = MainLoginFragment.class.getSimpleName();
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     //private static final String ARG_PARAM1 = "param1";
@@ -166,6 +176,11 @@ public class MainLoginFragment extends Fragment {
                 @Override
                 public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                     if(response.isSuccessful()){
+
+
+                        NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token,oudApi);
+
+
                         Intent i = new Intent(getActivity(), UserActivity.class);
 
                         i.putExtra(Constants.USER_ID_KEY, response.body().get_id());

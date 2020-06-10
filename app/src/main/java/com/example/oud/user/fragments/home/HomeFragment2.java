@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.Category2;
+import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.api.Playlist;
 import com.example.oud.api.RecentlyPlayedTrack2;
@@ -31,6 +33,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
@@ -84,6 +88,14 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
 
         handleRecentlyPlayed();
         handleCategories();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        OudApi oudApi = retrofit.create(OudApi.class);
+        NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token, oudApi);
+
 
         //mViewModel.getCategoryListLiveData();
 

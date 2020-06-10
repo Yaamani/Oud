@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.AccessToken;
@@ -36,12 +37,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     CallbackManager callbackManager;
     MyViewModel myViewModel;
     OudApi oudApi;
 
     Boolean isFacebookSignup =false;
     Boolean isGoogleSignup= false;
+
 
     public Boolean getFacebookSignup() {
         return isFacebookSignup;
@@ -139,9 +145,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        /*FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "getInstanceId failed", task.getException());
+                        return;
+                    }
+
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+
+                    // Log and toast
+                    // String msg = getString(R.string.msg_token_fmt, token);
+                    Log.d(TAG, "Current Firebase Token: " + token);
+
+                });*/
+
+        NotificationUtils.handleNotificationDestinationMainActivity(getIntent());
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

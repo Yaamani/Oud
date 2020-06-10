@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OfflineFragment;
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
@@ -233,6 +234,19 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         //homeTransaction.addToBackStack(null);
         bottomNavViewBackStack.push(R.id.navigation_home);
         homeTransaction.commit();
+
+
+        //NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token, oudApi);
+
+
+        NotificationUtils.NotificationDestination notificationDestination = NotificationUtils.consumeNotificationDestinationEntry();
+        if (notificationDestination != null) {
+            String destination = notificationDestination.getDestination();
+            String id = notificationDestination.getId();
+
+            if (destination.equals("ALBUM"))
+                PlaylistFragment.show(this, R.id.nav_host_fragment, userId, Constants.PlaylistFragmentType.ALBUM, id);
+        }
 
         //navView.setSelectedItemId(R.id.navigation_search);
 

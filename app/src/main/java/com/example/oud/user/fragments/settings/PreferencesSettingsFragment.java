@@ -25,6 +25,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 
@@ -106,6 +107,8 @@ public class PreferencesSettingsFragment extends PreferenceFragmentCompat {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 getActivity().finish();
+
+                NotificationUtils.unsubscribeFromAllTopicsUponLoggingOut();
 
                 return true;
             }

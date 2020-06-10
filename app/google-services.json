@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1001676367085",
+    "firebase_url": "https://oudmusic-94c80.firebaseio.com",
+    "project_id": "oudmusic-94c80",
+    "storage_bucket": "oudmusic-94c80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001676367085:android:c13b5db49fd6396a6098e4",
+        "android_client_info": {
+          "package_name": "com.example.oud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001676367085-r5k8sfl0fp9qr1rnmdu2otda1a0bk57o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPeE2nV6X61-cTOzLe95C-rTdSRF97H_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001676367085-r5k8sfl0fp9qr1rnmdu2otda1a0bk57o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

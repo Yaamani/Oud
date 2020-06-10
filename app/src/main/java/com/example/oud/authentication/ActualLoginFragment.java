@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.oud.Constants;
+import com.example.oud.NotificationUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.*;
@@ -124,6 +125,7 @@ public class ActualLoginFragment extends Fragment {
                     String userId = response.body().getUser().get_id();
                     OudUtils.saveUserData(view,token,userId);
                     Log.e("ActualLoginFragment",token);
+
                     Intent i = new Intent(getActivity(), UserActivity.class);
                     i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
                     startActivity(i);
