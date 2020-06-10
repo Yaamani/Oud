@@ -15,7 +15,7 @@ public class Constants {
 
     public static String BASE_URL = "https://oud-zerobase.me/api/v1/";
     public static final String IMAGES_BASE_URL = "https://oud-zerobase.me/api/";
-    public static final boolean MOCK = false;
+    public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.198:3000";
     public static final int OK_HTTP_MOCK_WEB_SERVER_PORT = 4331;
 
@@ -53,6 +53,7 @@ public class Constants {
     public static final String LIBRARY_PLAYLISTS_FRAGMENT_TAG = "LIBRARY_PLAYLISTS_TRACKS";
     public static final String LIBRARY_ARTISTS_FRAGMENT_TAG = "LIBRARY_ARTISTS_TRACKS";
     public static final String LIBRARY_SAVED_ALBUMS_FRAGMENT_TAG = "LIBRARY_SAVED_ALBUMS";
+    public static final String LIBRARY_NOTIFICATIONS_FRAGMENT_TAG = "LIBRARY_NOTIFACATIONS";
     public static final String PREMIUM_REDEEM_SUBSCRIBE_FRAGMENT_TAG = "PREMIUM_REDEEM_SUBSCRIBE";
 
     public static final String ARTIST_HOME_FRAGMENT_TAG = "HOME";

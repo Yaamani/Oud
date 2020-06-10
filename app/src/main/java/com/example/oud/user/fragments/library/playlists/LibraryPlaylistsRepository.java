@@ -10,6 +10,9 @@ import com.example.oud.api.PlaylistDetailsPayload;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
 import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import androidx.lifecycle.MutableLiveData;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -38,8 +41,8 @@ public class LibraryPlaylistsRepository extends ConnectionAwareRepository {
     public MutableLiveData<OudList<Playlist>> getPlaylistsFollowedByCurrentUser(String token, Integer limit, Integer offset) {
         MutableLiveData<OudList<Playlist>> playlistsLiveData = new MutableLiveData<>();
 
-        Call<OudList<Playlist>> playlistsCall = oudApi.getPlaylistsFollowedByCurrentUser(token, limit, offset);
-        addCall(playlistsCall).enqueue(new FailureSuccessHandledCallback<OudList<Playlist>>(this) {
+        Call<OudList<Playlist>> followedPlaylistsCall = oudApi.getPlaylistsFollowedByCurrentUser(token, false, limit, offset);
+        addCall(followedPlaylistsCall).enqueue(new FailureSuccessHandledCallback<OudList<Playlist>>(this) {
             @Override
             public void onResponse(Call<OudList<Playlist>> call, Response<OudList<Playlist>> response) {
                 super.onResponse(call, response);
@@ -48,7 +51,33 @@ public class LibraryPlaylistsRepository extends ConnectionAwareRepository {
                     return;
                 }
 
-                playlistsLiveData.setValue(response.body());
+                OudList<Playlist> followedPlaylists = response.body();
+
+                Call<OudList<Playlist>> createdPlaylistsCall = oudApi.getPlaylistsFollowedByCurrentUser(token, true, limit, offset);
+                addCall(createdPlaylistsCall).enqueue(new FailureSuccessHandledCallback<OudList<Playlist>>(LibraryPlaylistsRepository.this) {
+                    @Override
+                    public void onResponse(Call<OudList<Playlist>> call, Response<OudList<Playlist>> response) {
+                        if (!response.isSuccessful()) {
+                            Log.e(TAG, "onResponse: " + response.code());
+                            return;
+                        }
+
+                        OudList<Playlist> createdPlaylists = response.body();
+
+                        ArrayList<Playlist> playlistsItems = followedPlaylists.getItems();
+                        Collections.addAll(playlistsItems, createdPlaylists.getItems().toArray(new Playlist[createdPlaylists.getItems().size()]));
+
+                        OudList<Playlist> allPlaylists = new OudList<>(playlistsItems,
+                                followedPlaylists.getLimit() + createdPlaylists.getLimit(),
+                                followedPlaylists.getOffset() + createdPlaylists.getOffset(),
+                                createdPlaylists.getTotal());
+
+                        playlistsLiveData.setValue(allPlaylists);
+
+                    }
+                });
+
+
             }
         });
 

@@ -27,7 +27,6 @@
     <string name="track_loading">There is problem to load data</string>
 
 
-
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
@@ -44,6 +43,7 @@
     <string name="you_have_no_liked_tracks">You have no liked tracks</string>
     <string name="you_dont_follow_any_playlist">You don\'t follow any playlist</string>
     <string name="you_dont_follow_any_artist">You don\'t follow any artist</string>
+    <string name="you_dont_have_any_notifications">You don\'t have any notifications</string>
     <string name="create_playlist">Create playlist ...</string>
 
     <string name="download_failed">Download failed !!</string>

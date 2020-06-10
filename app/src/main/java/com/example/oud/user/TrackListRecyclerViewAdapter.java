@@ -360,7 +360,11 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
 
     public void preventLeaksBecauseOfDownloadService() {
         downloadServiceBinder.getDownloadService().removeDownloadListener(downloadListener);
-        mContext.unbindService(serviceConnection);
+        try {
+            mContext.unbindService(serviceConnection);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
 

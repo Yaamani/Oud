@@ -53,6 +53,7 @@ public class LibraryFragment extends Fragment implements ReconnectingListener {
                 case 1: tab.setText("Playlists"); break;
                 case 2: tab.setText("Followed Artists"); break;
                 case 3: tab.setText("Saved Albums"); break;
+                case 4: tab.setText("Notifications"); break;
             }
         }).attach();
     }
@@ -85,5 +86,6 @@ public class LibraryFragment extends Fragment implements ReconnectingListener {
         libraryFragmentAdapter.getLibraryPlaylistsFragment().onTryingToReconnect();
         libraryFragmentAdapter.getLibraryArtistsFragment().onTryingToReconnect();
         libraryFragmentAdapter.getLibrarySavedAlbumsFragment().onTryingToReconnect();
+        libraryFragmentAdapter.getLibraryNotificationsFragment().onTryingToReconnect();
     }
 }

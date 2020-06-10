@@ -256,6 +256,13 @@ public interface OudApi {
     Call<OudList<SavedAlbum>> getSavedAlbumsByCurrentUser(@Header(AUTHORIZATION_HEADER) String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
 
 
+    @GET("me/notifications")
+    Call<OudList<Notification>> getNotificationHistory(@Header(AUTHORIZATION_HEADER) String token, @Query("limit") Integer limit, @Query("offset") Integer offset);
+
+    @DELETE("me/notifications/{notificationId}")
+    Call<ResponseBody> deleteNotification(@Header(AUTHORIZATION_HEADER) String token, @Path("notificationId") String notificationId);
+
+
 
 
 

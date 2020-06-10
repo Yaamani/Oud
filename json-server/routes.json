@@ -37,12 +37,7 @@
     "/tracks/track0": "/track0",
     "/tracks/track1": "/track1", 
 
-    "/albums/album0": "/album0", 
-    "/albums/album1": "/album1", 
-    "/albums/album2": "/album2", 
-    "/albums/album3": "/album3", 
-    "/albums/album4": "/album4", 
-    "/albums/album5": "/album5", 
+    
 
 
     "/users/1":"/user1",
@@ -105,6 +100,11 @@
     "/me/following?type=artist&limit=20&offset=20": "/more_followed_artists", 
     
     "/me/following*": "/empty_list" , 
+
+
+    "/me/notifications?limit=20&offset=0": "/notifications",
+    "/me/notifications?limit=20&offset=20": "/more_notifications", 
+    "/me/notifications*": "/empty_list" , 
 
 
     "/me": "/full_profile",

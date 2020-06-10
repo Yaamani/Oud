@@ -2,6 +2,7 @@ package com.example.oud.user.fragments.library;
 
 import com.example.oud.user.fragments.library.artists.LibraryArtistsFragment;
 import com.example.oud.user.fragments.library.likedtracks.LibraryLikedTracksFragment;
+import com.example.oud.user.fragments.library.notifications.LibraryNotificationsFragment;
 import com.example.oud.user.fragments.library.playlists.LibraryPlaylistsFragment;
 import com.example.oud.user.fragments.library.savedalbums.LibrarySavedAlbumsFragment;
 
@@ -15,6 +16,7 @@ public class LibraryFragmentAdapter extends FragmentStateAdapter {
     private LibraryPlaylistsFragment libraryPlaylistsFragment;
     private LibraryArtistsFragment libraryArtistsFragment;
     private LibrarySavedAlbumsFragment librarySavedAlbumsFragment;
+    private LibraryNotificationsFragment libraryNotificationsFragment;
 
     public LibraryFragmentAdapter(@NonNull Fragment fragment) {
         super(fragment);
@@ -23,6 +25,7 @@ public class LibraryFragmentAdapter extends FragmentStateAdapter {
         libraryPlaylistsFragment = new LibraryPlaylistsFragment();
         libraryArtistsFragment = new LibraryArtistsFragment();
         librarySavedAlbumsFragment = new LibrarySavedAlbumsFragment();
+        libraryNotificationsFragment = new LibraryNotificationsFragment();
     }
 
     @NonNull
@@ -34,6 +37,7 @@ public class LibraryFragmentAdapter extends FragmentStateAdapter {
             case 1: return libraryPlaylistsFragment;
             case 2: return libraryArtistsFragment;
             case 3: return librarySavedAlbumsFragment;
+            case 4: return libraryNotificationsFragment;
         }
 
         return null;
@@ -55,8 +59,12 @@ public class LibraryFragmentAdapter extends FragmentStateAdapter {
         return librarySavedAlbumsFragment;
     }
 
+    public LibraryNotificationsFragment getLibraryNotificationsFragment() {
+        return libraryNotificationsFragment;
+    }
+
     @Override
     public int getItemCount() {
-        return 4;
+        return 5;
     }
 }
