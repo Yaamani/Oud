@@ -1,20 +1,7 @@
 package com.example.oud;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.oud.authentication.MainActivity;
-import com.example.oud.user.UserActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -63,6 +50,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d(TAG, "onMessageReceived: " + remoteMessage.getData());
 
-        NotificationUtils.foregroundNotification(remoteMessage, getApplicationContext());
+        NotificationShareUtils.foregroundNotification(remoteMessage, getApplicationContext());
     }
 }

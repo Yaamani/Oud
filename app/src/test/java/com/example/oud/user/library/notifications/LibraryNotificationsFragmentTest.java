@@ -71,11 +71,9 @@ public class LibraryNotificationsFragmentTest {
 
             LibraryNotificationsFragment fragment = new LibraryNotificationsFragment();
 
-
             LibraryNotificationsRepository.getInstance().setBaseUrl(server.url("/").toString());
 
             //System.out.println(server.url("/").toString());
-
 
             FragmentManager manager = activity.getSupportFragmentManager();
             manager.beginTransaction()

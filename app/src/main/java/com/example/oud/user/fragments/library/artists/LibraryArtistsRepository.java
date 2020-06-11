@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudList;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
@@ -69,7 +69,7 @@ public class LibraryArtistsRepository extends ConnectionAwareRepository {
                     Log.e(TAG, "onResponse: " + response.code());
                     return;
                 }
-                NotificationUtils.unsubscribeFromFollowedArtistTopic(ArtistId);
+                NotificationShareUtils.unsubscribeFromFollowedArtistTopic(ArtistId);
             }
         });
     }

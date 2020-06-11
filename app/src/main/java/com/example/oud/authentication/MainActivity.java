@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.AccessToken;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                 });*/
 
-        NotificationUtils.handleNotificationDestinationMainActivity(getIntent());
+        NotificationShareUtils.handleNotificationShareDestinationMainActivity(getIntent());
     }
 
     @Override

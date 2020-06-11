@@ -2,6 +2,7 @@ package com.example.oud;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,38 +13,59 @@ import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.OudApi;
 import com.example.oud.api.OudList;
 import com.example.oud.authentication.MainActivity;
+import com.example.oud.user.UserActivity;
+import com.example.oud.user.fragments.playlist.PlaylistFragment;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class NotificationUtils {
+public class NotificationShareUtils {
 
-    private static final String TAG = NotificationUtils.class.getSimpleName();
+    private static final String TAG = NotificationShareUtils.class.getSimpleName();
 
-    private static NotificationDestination notificationDestination = null;
+    private static NotificationShareDestination notificationShareDestination = null;
 
     /**
      *
      * @param i The {@link Intent} that opens the {@link MainActivity}.
      */
-    public static void handleNotificationDestinationMainActivity(Intent i) {
-        NotificationDestination receivedDestination = new NotificationDestination();
+    public static void handleNotificationShareDestinationMainActivity(Intent i) {
+        NotificationShareDestination receivedDestination = new NotificationShareDestination();
 
         Bundle extras = i.getExtras();
         if (extras != null) {
-            receivedDestination.destination = extras.getString(Constants.NOTIFICATION_DESTINATION_KEY);
-            receivedDestination.id = extras.getString(Constants.ID_KEY);
 
-            NotificationUtils.notificationDestination = receivedDestination;
+            Log.d(TAG, "handleNotificationDestinationMainActivity: " + extras.toString());
+
+
+            if (extras.getString(Constants.NOTIFICATION_SHARE_DESTINATION_KEY) != null) {
+                receivedDestination.destination = extras.getString(Constants.NOTIFICATION_SHARE_DESTINATION_KEY);
+                receivedDestination.id = extras.getString(Constants.ID_KEY);
+
+                NotificationShareUtils.notificationShareDestination = receivedDestination;
+            }
+        }
+
+        Uri shareData = i.getData();
+        if (shareData != null) {
+
+            LinkedList<String> pathSegments = new LinkedList<>(shareData.getPathSegments());
+
+            if (pathSegments.size() > 0) {
+                receivedDestination.destination = pathSegments.peekFirst();
+                receivedDestination.id = pathSegments.peekLast();
+
+                NotificationShareUtils.notificationShareDestination = receivedDestination;
+            }
+
         }
     }
 
@@ -127,15 +149,33 @@ public class NotificationUtils {
 
     /**
      * Once consumed, it becomes null again.
-     * @return {@link NotificationDestination}.
+     * @return {@link NotificationShareDestination}.
      */
-    public static NotificationDestination consumeNotificationDestinationEntry() {
-        NotificationDestination temp = notificationDestination;
-        notificationDestination = null;
+    public static NotificationShareDestination consumeNotificationShareDestination() {
+        NotificationShareDestination temp = notificationShareDestination;
+
+        notificationShareDestination = null;
         return temp;
     }
 
-    public static class NotificationDestination {
+    public static void consumeNotificationShareDestinationUserActivity(UserActivity userActivity, String userId) {
+        NotificationShareDestination dest = consumeNotificationShareDestination();
+
+        if (dest != null) {
+            String destination = dest.getDestination();
+            String id = dest.getId();
+
+            if (destination.equals(Constants.NOTIFICATION_SHARE_PLAYLIST))
+                PlaylistFragment.show(userActivity, R.id.nav_host_fragment, userId, Constants.PlaylistFragmentType.PLAYLIST, id);
+            else if (destination.equals(Constants.NOTIFICATION_SHARE_ALBUM))
+                PlaylistFragment.show(userActivity, R.id.nav_host_fragment, userId, Constants.PlaylistFragmentType.ALBUM, id);
+
+        }
+
+    }
+
+
+    public static class NotificationShareDestination {
         private String destination;
         private String id;
 

@@ -1,16 +1,13 @@
 package com.example.oud.user;
 
-import android.animation.ValueAnimator;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
@@ -18,14 +15,13 @@ import android.widget.Toast;
 
 import com.example.oud.ConnectionStatusListener;
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OfflineFragment;
 import com.example.oud.OptionsFragment;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.ReconnectingListener;
 import com.example.oud.RenameFragment;
-import com.example.oud.user.fragments.artist.ArtistFragment;
 import com.example.oud.user.fragments.home.HomeFragment2;
 import com.example.oud.user.fragments.library.LibraryFragment;
 import com.example.oud.user.fragments.playlist.PlaylistFragment;
@@ -41,13 +37,10 @@ import com.example.oud.user.player.PlayerFragment;
 import com.example.oud.user.player.PlayerHelper;
 import com.example.oud.user.player.PlayerInterface;
 import com.example.oud.user.player.smallplayer.SmallPlayerFragment;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.mp4.Track;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.huxq17.download.Pump;
 import com.huxq17.download.PumpFactory;
 import com.huxq17.download.config.DownloadConfig;
-import com.huxq17.download.core.DownloadRequest;
 import com.huxq17.download.core.service.IDownloadConfigService;
 
 import java.util.ArrayList;
@@ -60,7 +53,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.media.session.MediaButtonReceiver;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -239,14 +231,9 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
         //NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token, oudApi);
 
 
-        NotificationUtils.NotificationDestination notificationDestination = NotificationUtils.consumeNotificationDestinationEntry();
-        if (notificationDestination != null) {
-            String destination = notificationDestination.getDestination();
-            String id = notificationDestination.getId();
+        /*NotificationShareUtils.NotificationShareDestination notificationShareDestination = NotificationShareUtils.consumeNotificationShareDestination();*/
 
-            if (destination.equals("ALBUM"))
-                PlaylistFragment.show(this, R.id.nav_host_fragment, userId, Constants.PlaylistFragmentType.ALBUM, id);
-        }
+        NotificationShareUtils.consumeNotificationShareDestinationUserActivity(this, userId);
 
         //navView.setSelectedItemId(R.id.navigation_search);
 

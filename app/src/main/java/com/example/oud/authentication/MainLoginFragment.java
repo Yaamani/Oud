@@ -14,20 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
-import com.example.oud.api.ArtistPreview;
 import com.example.oud.api.LoggedInUser;
 import com.example.oud.api.OudApi;
-import com.example.oud.api.OudList;
 import com.example.oud.artist.ArtistActivity;
-import com.example.oud.connectionaware.FailureSuccessHandledCallback;
 import com.example.oud.user.UserActivity;
 
-import java.util.ArrayList;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -178,7 +172,7 @@ public class MainLoginFragment extends Fragment {
                     if(response.isSuccessful()){
 
 
-                        NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token,oudApi);
+                        NotificationShareUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token,oudApi);
 
 
                         Intent i = new Intent(getActivity(), UserActivity.class);

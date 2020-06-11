@@ -357,10 +357,28 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
                 optionsBuilder.addItem(R.drawable.ic_collaborative, "Make Collaborative", isCollaborative, makeCollaborativeClickListener);
             }
 
+            View.OnClickListener shareClickListener = instantiateShareClickListener();
+            optionsBuilder.addItem(R.drawable.ic_share, "Share", false, shareClickListener);
+
             optionsBuilder.show();
         });
 
 
+    }
+
+    private View.OnClickListener instantiateShareClickListener() {
+        View.OnClickListener shareClickListener = v -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            String typeStr = type.equals(Constants.PlaylistFragmentType.PLAYLIST) ? "playlist" : "album";
+            sendIntent.putExtra(Intent.EXTRA_TEXT, Constants.FRONT_END_BASE_URL + typeStr + '/' + playlistOrAlbumId);
+            sendIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+        };
+
+        return shareClickListener;
     }
 
     private void handleAlbumOptions() {
@@ -379,10 +397,13 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
             boolean isSaved = mViewModel.getIsThisAlbumSavedByUser(token).getValue().get(0);
             View.OnClickListener saveAlbumClickListener = instantiateSaveAlbumClickListener(isSaved);
 
+            View.OnClickListener shareClickListener = instantiateShareClickListener();
+
 
             OptionsFragment.builder(getActivity())
                     .addItem(R.drawable.ic_user, "Go To Artist", false, goToArtistClickListener)
                     .addItem(R.drawable.ic_star, "Save Album", isSaved, saveAlbumClickListener)
+                    .addItem(R.drawable.ic_share, "Share", false, shareClickListener)
                     .show();
         });
     }

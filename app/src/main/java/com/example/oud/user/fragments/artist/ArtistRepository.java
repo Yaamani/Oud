@@ -2,12 +2,11 @@ package com.example.oud.user.fragments.artist;
 
 import android.util.Log;
 
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.api.Album;
 import com.example.oud.api.Artist;
 import com.example.oud.api.BooleanIdsResponse;
-import com.example.oud.api.IsFoundResponse;
 import com.example.oud.api.OudList;
 import com.example.oud.api.RelatedArtists;
 import com.example.oud.connectionaware.ConnectionAwareRepository;
@@ -109,7 +108,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
                     return;
                 }
 
-                NotificationUtils.subscribeToFollowedArtistTopic(ids.get(0));
+                NotificationShareUtils.subscribeToFollowedArtistTopic(ids.get(0));
             }
         });
     }
@@ -131,7 +130,7 @@ public class ArtistRepository extends ConnectionAwareRepository {
                     Log.e(TAG, "onResponse: " + response.code());
                     return;
                 }
-                NotificationUtils.unsubscribeFromFollowedArtistTopic(ids.get(0));
+                NotificationShareUtils.unsubscribeFromFollowedArtistTopic(ids.get(0));
             }
         });
 

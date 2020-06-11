@@ -12,12 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
@@ -25,13 +22,12 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 
 import com.example.oud.api.ProfilePreview;
 import com.example.oud.authentication.MainActivity;
-import com.example.oud.user.fragments.profile.ProfileFollowingViewModel;
 
 
 public class PreferencesSettingsFragment extends PreferenceFragmentCompat {
@@ -108,7 +104,7 @@ public class PreferencesSettingsFragment extends PreferenceFragmentCompat {
                 startActivity(intent);
                 getActivity().finish();
 
-                NotificationUtils.unsubscribeFromAllTopicsUponLoggingOut();
+                NotificationShareUtils.unsubscribeFromAllTopicsUponLoggingOut();
 
                 return true;
             }

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.oud.Constants;
-import com.example.oud.NotificationUtils;
+import com.example.oud.NotificationShareUtils;
 import com.example.oud.OudUtils;
 import com.example.oud.R;
 import com.example.oud.api.Album;
@@ -94,7 +94,7 @@ public class HomeFragment2 extends ConnectionAwareFragment<HomeViewModel2> {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OudApi oudApi = retrofit.create(OudApi.class);
-        NotificationUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token, oudApi);
+        NotificationShareUtils.subscribeToAllFollowedArtistsTopicsUponLoggingIn(token, oudApi);
 
 
         //mViewModel.getCategoryListLiveData();
