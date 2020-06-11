@@ -24,6 +24,8 @@ public class SmallPlayerRepo extends ConnectionAwareRepository {
     private MutableLiveData<Album> albumMutableLiveData;
 
     private SmallPlayerRepo(){}
+
+
     public MutableLiveData<Track> fetchTrack(String trackId) {
 
         mutableLiveData = new MutableLiveData<>();

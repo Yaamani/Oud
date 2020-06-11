@@ -38,6 +38,7 @@ public class Constants {
 
     public static final int USER_LIBRARY_SINGLE_FETCH_LIMIT = 20;
 
+    public static final String RECENT_SEARCH_FRAGMENT_TAG = "RECENT";
     public static final String HOME_FRAGMENT_TAG = "HOME";
     public static final String SEARCH_FRAGMENT_TAG = "SEARCH";
     public static final String LIBRARY_FRAGMENT_TAG = "LIBRARY";

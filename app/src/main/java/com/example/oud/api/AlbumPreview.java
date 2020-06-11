@@ -1,9 +1,12 @@
 package com.example.oud.api;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class AlbumPreview {
 
+    @SerializedName("_id")
     private String id;
 
     private String albumType;
