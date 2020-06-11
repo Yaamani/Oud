@@ -1,6 +1,7 @@
 package com.example.oud.api;
 
 import com.example.oud.Constants;
+import com.example.oud.R;
 
 import java.util.ArrayList;
 
@@ -318,5 +319,37 @@ public interface OudApi {
 
     @PATCH("me/premium/subscribe")
     Call<Profile> subscribeToPremiumOrExtendCurrentPlan(@Header(AUTHORIZATION_HEADER) String token);
+
+    /** **************Search************* */
+
+    @GET("browse/categories")
+    Call<OudList<Category2>> getCategories(@Header(AUTHORIZATION_HEADER) String token);
+
+    @GET("me/search/recent")
+    Call<OudList<RecentItem>> getUserRecentlySearched(@Header(AUTHORIZATION_HEADER) String token);
+
+    @GET("search")
+    Call<SearchedResults2> getItem(@Header(AUTHORIZATION_HEADER) String token, @Query("q") String query);
+
+    @PUT("me/search/recent")
+    Call<ResponseBody> updateUserRecentlySearched(@Header(AUTHORIZATION_HEADER) String token,
+                                                  @Body UpdateRecentItem updateRecentItem);
+
+    @GET("search")
+    Call<OudArtist> getArtists(@Header(AUTHORIZATION_HEADER) String token,
+                                            @Query("q") String query,
+                                            @Query(value = "type", encoded = true) String type);
+    @GET("search")
+    Call<OudAlbum> getAlbums(@Header(AUTHORIZATION_HEADER) String token,
+                                     @Query("q") String query,
+                                     @Query(value = "type", encoded = true) String type);
+    @GET("search")
+    Call<OudTrack> getTracks(@Header(AUTHORIZATION_HEADER) String token,
+                                     @Query("q") String query,
+                                     @Query(value = "type", encoded = true) String type);
+    @GET("search")
+    Call<OudPlaylist> getPlaylists(@Header(AUTHORIZATION_HEADER) String token,
+                                     @Query("q") String query,
+                                     @Query(value = "type", encoded = true) String type);
 
 }

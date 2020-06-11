@@ -367,7 +367,7 @@ public class UserActivity extends AppCompatActivity implements ConnectionStatusL
                 //selected = new SearchFragment();
                 SearchFragment searchFragment = (SearchFragment) manager.findFragmentByTag(Constants.SEARCH_FRAGMENT_TAG);
                 if (searchFragment == null)
-                    transaction.replace(R.id.nav_host_fragment, new SearchFragment(), Constants.SEARCH_FRAGMENT_TAG);
+                    transaction.replace(R.id.nav_host_fragment, SearchFragment.newInstance(userId), Constants.SEARCH_FRAGMENT_TAG);
                 else
                     transaction.replace(R.id.nav_host_fragment, searchFragment, Constants.SEARCH_FRAGMENT_TAG);
 
