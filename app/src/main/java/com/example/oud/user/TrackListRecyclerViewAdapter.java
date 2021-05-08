@@ -611,18 +611,18 @@ public class TrackListRecyclerViewAdapter extends RecyclerView.Adapter<TrackList
             mProgressBarDownload = itemView.findViewById(R.id.progress_bar_track_download);
 
             mLayout.setOnClickListener(v -> {
-                /*if (this.trackClickListener != null)
-                    this.trackClickListener.onTrackClickListener(getAdapterPosition(), v);*/
+                if (this.trackClickListener != null)
+                    this.trackClickListener.onTrackClickListener(getAdapterPosition(), v);
 
                 MediaPlayer mp = new MediaPlayer();
 
-                try {
-                    mp.setDataSource("/storage/emulated/0/Android/data/com.example.oud/cache/5e9b3d310f27b613b44fba2f-5e907db0a0645f558160760d-1587347166254.mp3");
+                /*try {
+                    mp.setDataSource("/storage/emulated/0/Android/data/com.example.oud/cache/wlada.mp3");
                     mp.prepare();
                     mp.start();
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                }*/
 
             });
             mAvailableOffline.setOnClickListener(v -> {

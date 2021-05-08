@@ -16,7 +16,7 @@ public class Constants {
     public static String BASE_URL = "https://oud-zerobase.me/api/v1/";
     public static final String IMAGES_BASE_URL = "https://oud-zerobase.me/api/";
     public static final String FRONT_END_BASE_URL = "https://oud-zerobase.me/";
-    public static final boolean MOCK = false;
+    public static final boolean MOCK = true;
     public static final String YAMANI_MOCK_BASE_URL = "http://192.168.1.198:3000";
     public static final int OK_HTTP_MOCK_WEB_SERVER_PORT = 4331;
 

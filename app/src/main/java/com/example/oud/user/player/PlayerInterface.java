@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface PlayerInterface {
 
-    public void configurePlayer(String contextId,String contextType ,Integer offset, String token);
+    void configurePlayer(String contextId,String contextType ,Integer offset, String token);
 
-    public void configurePlayer(ArrayList<String> ids, String token);
+    void configurePlayer(ArrayList<String> ids, String token);
 
-    public PlayerHelper getPlayerHelper();
+    PlayerHelper getPlayerHelper();
 
-    public MediaBrowserHelper getMediaBrowserHelper();
+    MediaBrowserHelper getMediaBrowserHelper();
 
 }

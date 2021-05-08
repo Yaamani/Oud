@@ -683,7 +683,7 @@ public class PlaylistFragment extends ConnectionAwareFragment<PlaylistViewModel>
 
     private TrackListRecyclerViewAdapter.OnTrackClickListener trackClickListener = (position, view) -> {
 
-        //talkToPlayer.configurePlayer(/*trackListRecyclerViewAdapter.getIds().get(position)*/"lksflasdjfasbflk", "playlist" ,3,token);
+        talkToPlayer.configurePlayer(/*trackListRecyclerViewAdapter.getIds().get(position)*/"lksflasdjfasbflk", "playlist" ,3,token);
 
         /*talkToPlayer.configurePlayer(trackListRecyclerViewAdapter.getId(position), true);*/
 

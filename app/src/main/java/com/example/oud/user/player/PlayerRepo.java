@@ -250,7 +250,7 @@ public class PlayerRepo extends ConnectionAwareRepository {
 
             @Override
             public void onResponse(Call<StatusMessageResponse> call, Response<StatusMessageResponse> response) {
-                super.onResponse(call, response);
+                //super.onResponse(call, response);
 
 
                 if(!response.isSuccessful()){

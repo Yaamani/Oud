@@ -92,6 +92,7 @@ public class ActualLoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 makeLoginRequest(view);
+                //goToMainActivity("user0");
             }
         });
 
@@ -120,14 +121,7 @@ public class ActualLoginFragment extends Fragment {
 
                 if (response.isSuccessful()) {
                     //errorTextView.setText(response.body().getUser().getEmail());//remove and change the testing class after you add the correct response
-                    String token = response.body().getToken();
-                    String userId = response.body().getUser().get_id();
-                    OudUtils.saveUserData(view,token,userId);
-                    Log.e("ActualLoginFragment",token);
-
-                    Intent i = new Intent(getActivity(), UserActivity.class);
-                    i.putExtra(Constants.USER_ID_KEY, response.body().getUser().get_id());
-                    startActivity(i);
+                    successfulLogin(view, response);
 
                 } else if (response.errorBody() != null) {
                     Gson gson = new Gson();
@@ -148,6 +142,21 @@ public class ActualLoginFragment extends Fragment {
         });
 
 
+    }
+
+    private void successfulLogin(View view, Response<LoginResponse> response) {
+        String token = response.body().getToken();
+        String userId = response.body().getUser().get_id();
+        OudUtils.saveUserData(view,token,userId);
+        Log.e("ActualLoginFragment",token);
+
+        goToMainActivity(response.body().getUser().get_id());
+    }
+
+    private void goToMainActivity(String userId) {
+        Intent i = new Intent(getActivity(), UserActivity.class);
+        i.putExtra(Constants.USER_ID_KEY, userId);
+        startActivity(i);
     }
 
 
