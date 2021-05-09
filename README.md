@@ -3,8 +3,21 @@
 <img src="oud.png">
 </div>
 
+## Table of contents
+- [About](#about)
+- [Getting started](#getting-started)
+- [Running](#running)
+    - [Using the mock server](#using-the-mock-server)
+    - [Using the real server](#using-the-real-server)
+- [Showcasing](#showcasing)
+- [Notes about the code](#notes-about-the-code)
+- [File structure](#file-structure)
+- [Unit tests](#unit-tests)
+- [Functional documentation](#functional-documentation)
+- [See also](#see-also)
+
 ## About
-> Music player app (spotify clone).
+> Oud's android app. Oud is a mimic of spotify with all its features and functionalities.
 
 ## Getting started
 1) Install Android Studio.
@@ -18,8 +31,9 @@
 4) Open `json-server` folder in the terminal & copy paste the command found in `terminal_command.txt` file (exists in `json-server` folder) in your terminal window to run the server.
 - make sure that private networks is allowed. (This depends on your os)
 
-### Using the real server (currently shutdown)
+### Using the real server
 - Simply change a constant named `MOCK` (inside `Constants` class) to `false`.
+- Currently shutdown unfortunately.
 
 ## Showcasing
 | Login/signup navigation                     | Login                     | Home                               |
@@ -34,6 +48,14 @@
 | Player                     | Settings                     | Premium                     |
 |:--------------------------:|:----------------------------:|:---------------------------:|
 | ![](showcasing/player.gif) | ![](showcasing/settings.gif) | ![](showcasing/premium.gif) |
+
+## Notes about the code
+- `connectionaware` is a package containing a very important set of class that evey fragment/activity use.
+    - When they sense a failed server connection, they prompt the user with a message saying `You are offline` and a refresh button.
+    - All of this happens consistently across the entire app whitout any intervention from any fragement.
+    - Fragments must inherit from `ConnectionAwareFragment`.
+    - Activities must implement `ConnectionStatusListener`.
+    - Every server call must be done using the `FailureSuccessHandledCallback` class.
 
 ## File Structure
 ```
